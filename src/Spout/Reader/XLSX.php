@@ -190,9 +190,11 @@ class XLSX extends AbstractReader
         while ($this->xmlReader->read()) {
             if ($this->xmlReader->nodeType == \XMLReader::ELEMENT && $this->xmlReader->name === 'dimension') {
                 // Read dimensions of the worksheet
-                $dimensionRef = $this->xmlReader->getAttribute('ref'); // returns 'A1:M13' for instance
-                list(, $lastCellIndex) = explode(':', $dimensionRef);
-                $this->numberOfColumns = CellHelper::getColumnIndexFromCellIndex($lastCellIndex) + 1;
+                $dimensionRef = $this->xmlReader->getAttribute('ref'); // returns 'A1:M13' for instance (or 'A1' for empty sheet)
+                if (preg_match('/[A-Z\d]+:([A-Z\d]+)/', $dimensionRef, $matches)) {
+                    $lastCellIndex = $matches[1];
+                    $this->numberOfColumns = CellHelper::getColumnIndexFromCellIndex($lastCellIndex) + 1;
+                }
             } else if ($this->xmlReader->nodeType == \XMLReader::ELEMENT && $this->xmlReader->name === 'row') {
                 // Start of the row description
                 $isInsideRowTag = true;

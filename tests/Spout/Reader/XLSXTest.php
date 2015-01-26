@@ -166,6 +166,15 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testReadShouldBeAbleToProcessEmptySheets()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_no_cells.xlsx');
+        $this->assertEquals([], $allRows, 'Sheet with no cells should be correctly processed.');
+    }
+
+    /**
      * @param string $fileName
      * @return array All the read rows the given file
      */
