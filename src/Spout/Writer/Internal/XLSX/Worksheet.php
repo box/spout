@@ -121,6 +121,11 @@ EOD;
      */
     public function addRow($dataRow)
     {
+        if (count($dataRow) == 0) {
+            // Without this fix, we get a repair issue in regular Microsoft Excel
+            $dataRow=array('');
+        }
+
         $cellNumber = 0;
         $rowIndex = $this->lastWrittenRowIndex + 1;
         $numCells = count($dataRow);
