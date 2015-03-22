@@ -139,7 +139,7 @@ EOD;
             if (empty($cellValue)) {
                 $data .= '/>' . PHP_EOL;
             } else {
-                if (trim($cellValue,'0123456789.') == '' /*similar to is_numeric without having PHPs regular quirkiness*/) {
+                if (trim($cellValue, '0123456789.') == '' /*similar to is_numeric without having PHPs regular quirkiness*/) {
                     $data .= '><v>' . $cellValue . '</v></c>' . PHP_EOL;
                 } else {
                     if ($this->shouldUseInlineStrings) {

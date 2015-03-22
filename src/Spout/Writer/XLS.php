@@ -143,7 +143,7 @@ class XLS extends AbstractWriter
 
         $this->home();
         foreach ($dataRow as $cell) {
-            if (is_integer($cell)) {
+            if (trim($cell, '0123456789.') == '' /*similar to is_numeric without having PHPs regular quirkiness*/) {
                 $wasWriteSuccessful = $wasWriteSuccessful && $this->number($cell);
             } else
             {
