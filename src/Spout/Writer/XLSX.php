@@ -88,7 +88,7 @@ class XLSX extends AbstractWriter
     {
         $this->throwIfBookIsNotAvailable();
 
-        $externalSheets = [];
+        $externalSheets = array();
         $worksheets = $this->book->getWorksheets();
 
         /** @var Internal\XLSX\Worksheet $worksheet */

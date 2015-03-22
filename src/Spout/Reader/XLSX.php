@@ -185,7 +185,7 @@ class XLSX extends AbstractReader
         }
 
         $isInsideRowTag = false;
-        $rowData = [];
+        $rowData = array();
 
         while ($this->xmlReader->read()) {
             if ($this->xmlReader->nodeType == \XMLReader::ELEMENT && $this->xmlReader->name === 'dimension') {
@@ -230,7 +230,7 @@ class XLSX extends AbstractReader
         }
 
         // no data means "end of file"
-        return ($rowData !== []) ? $rowData : null;
+        return ($rowData !== array()) ? $rowData : null;
     }
 
     /**

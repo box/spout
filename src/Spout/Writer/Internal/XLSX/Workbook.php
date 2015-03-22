@@ -36,7 +36,7 @@ class Workbook
     protected $sharedStringsHelper;
 
     /** @var Worksheet[] Array containing the workbook's sheets */
-    protected $worksheets = [];
+    protected $worksheets = array();
 
     /** @var Worksheet The worksheet where data will be written to */
     protected $currentWorksheet;

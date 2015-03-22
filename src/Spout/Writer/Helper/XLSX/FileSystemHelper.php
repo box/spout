@@ -179,7 +179,8 @@ EOD;
      */
     protected function createCoreXmlFile()
     {
-        $createdDate = (new \DateTime())->format('c');
+        $dt = new \DateTime();
+        $createdDate = $dt->format('c');
         $coreXmlFileContents = <<<EOD
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
