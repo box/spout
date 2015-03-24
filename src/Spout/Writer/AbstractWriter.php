@@ -38,13 +38,14 @@ abstract class AbstractWriter implements WriterInterface
     abstract protected function openWriter();
 
     /**
-     * Adds data to the currently openned writer.
+     * Adds data to the currently opened writer.
      *
      * @param  array $dataRow Array containing data to be streamed.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param  array $metaData Array containing meta-data maps for individual cells, such as 'url'
      * @return void
      */
-    abstract protected function addRowToWriter(array $dataRow);
+    abstract protected function addRowToWriter(array $dataRow, array $metaData);
 
     /**
      * Closes the streamer, preventing any additional writing.
@@ -138,15 +139,16 @@ abstract class AbstractWriter implements WriterInterface
      *
      * @param  array $dataRow Array containing data to be streamed.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param  array $metaData Array containing meta-data maps for individual cells, such as 'url'
      *
      * @return \Box\Spout\Writer\AbstractWriter
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    public function addRow(array $dataRow)
+    public function addRow(array $dataRow, array $metaData = array())
     {
         if ($this->isWriterOpened) {
-            $this->addRowToWriter($dataRow);
+            $this->addRowToWriter($dataRow, $metaData);
         } else {
             throw new WriterNotOpenedException('The writer needs to be opened before adding row.');
         }

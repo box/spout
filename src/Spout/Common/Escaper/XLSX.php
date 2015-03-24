@@ -58,8 +58,8 @@ class XLSX implements EscaperInterface
      */
     protected function getControlCharactersEscapingMap()
     {
-        $controlCharactersEscapingMap = [];
-        $whitelistedControlCharacters = ["\t", "\r", "\n"];
+        $controlCharactersEscapingMap = array();
+        $whitelistedControlCharacters = array("\t", "\r", "\n");
 
         // control characters values are from 0 to 1F (hex values) in the ASCII table
         for ($charValue = 0x0; $charValue <= 0x1F; $charValue++) {

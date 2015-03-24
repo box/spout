@@ -40,7 +40,7 @@ class WorksheetHelper
      */
     public function getWorksheets()
     {
-        $worksheets = [];
+        $worksheets = array();
 
         $xmlContents = file_get_contents('zip://' . $this->filePath . '#' . self::CONTENT_TYPES_XML_FILE_PATH);
 

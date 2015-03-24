@@ -20,6 +20,7 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
     const XL_FOLDER_NAME = 'xl';
     const WORKSHEETS_FOLDER_NAME = 'worksheets';
 
+    const STYLES_FILE_NAME = 'styles.xml';
     const RELS_FILE_NAME = '.rels';
     const APP_XML_FILE_NAME = 'app.xml';
     const CORE_XML_FILE_NAME = 'core.xml';
@@ -81,7 +82,8 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
             ->createRootFolder()
             ->createRelsFolderAndFile()
             ->createDocPropsFolderAndFiles()
-            ->createXlFolderAndSubFolders();
+            ->createXlFolderAndSubFolders()
+            ->createStylesFile();
     }
 
     /**
@@ -179,7 +181,8 @@ EOD;
      */
     protected function createCoreXmlFile()
     {
-        $createdDate = (new \DateTime())->format('c');
+        $dt = new \DateTime();
+        $createdDate = $dt->format('c');
         $coreXmlFileContents = <<<EOD
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -205,6 +208,7 @@ EOD;
         $this->xlFolder = $this->createFolder($this->rootFolder, self::XL_FOLDER_NAME);
         $this->createXlRelsFolder();
         $this->createXlWorksheetsFolder();
+        $this->createXlWorksheetsRelsFolder();
 
         return $this;
     }
@@ -234,6 +238,60 @@ EOD;
     }
 
     /**
+     * Creates the "_rels" folder under the "worksheets" folder
+     *
+     * @return FileSystemHelper
+     * @throws \Box\Spout\Common\Exception\IOException If unable to create the folder
+     */
+    protected function createXlWorksheetsRelsFolder()
+    {
+        $this->createFolder($this->xlWorksheetsFolder, self::RELS_FOLDER_NAME);
+        return $this;
+    }
+
+    /**
+     * Creates the "styles.xml" file under the "xl" folder
+     *
+     * @return FileSystemHelper
+     * @throws \Box\Spout\Common\Exception\IOException If unable to create the file
+     */
+    protected function createStylesFile()
+    {
+        $stylesFileContents = <<<EOD
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="x14ac" xmlns:x14ac="http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac">
+<fonts count="2" x14ac:knownFonts="1">
+<font>
+	<sz val="12"/>
+	<color theme="1"/>
+	<name val="Calibri"/>
+	<family val="2"/>
+	<scheme val="minor"/>
+</font>
+<font>
+	<b/>
+	<sz val="12"/>
+	<color theme="1"/>
+	<name val="Calibri"/>
+	<family val="2"/>
+	<scheme val="minor"/>
+</font>
+</fonts>
+<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills>
+<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>
+<cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs>
+<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>
+<dxfs count="0"/>
+</styleSheet>
+
+EOD;
+
+        $this->createFileWithContents($this->xlFolder, self::STYLES_FILE_NAME, $stylesFileContents);
+
+        return $this;
+    }
+
+    /**
      * Creates the "[Content_Types].xml" file under the root folder
      *
      * @param Worksheet[] $worksheets
@@ -247,6 +305,7 @@ EOD;
     <Default ContentType="application/xml" Extension="xml"/>
     <Default ContentType="application/vnd.openxmlformats-package.relationships+xml" Extension="rels"/>
     <Override ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml" PartName="/xl/workbook.xml"/>
+	 <Override ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml" PartName="/xl/styles.xml"/>
 
 EOD;
 
@@ -313,6 +372,7 @@ EOD;
 <?xml version="1.0" encoding="UTF-8"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
     <Relationship Id="rIdSharedStrings" Target="sharedStrings.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings"/>
+	 <Relationship Id="rId3" Target="styles.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"/>
 
 EOD;
 

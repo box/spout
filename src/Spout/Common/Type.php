@@ -10,4 +10,6 @@ abstract class Type
 {
     const CSV = "csv";
     const XLSX = "xlsx";
+    const XLS = "xls";
+    const HTM = "htm";
 }

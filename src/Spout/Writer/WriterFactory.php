@@ -33,6 +33,12 @@ class WriterFactory
             case Type::XLSX:
                 $writer = new XLSX();
                 break;
+            case Type::XLS:
+                $writer = new XLS();
+                break;
+            case Type::HTM:
+                $writer = new HTM();
+                break;
             default:
                 throw new UnsupportedTypeException('No writers supporting the given type: ' . $writerType);
         }

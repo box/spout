@@ -145,9 +145,9 @@ class SharedStringsHelper
      */
     protected function removeSuperfluousTextNodes($parentNode)
     {
-        $tagsToRemove = [
+        $tagsToRemove = array(
             'rPh', // Pronunciation of the text
-        ];
+        );
 
         foreach ($tagsToRemove as $tagToRemove) {
             $xpath = '//ns:' . $tagToRemove;

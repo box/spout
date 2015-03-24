@@ -25,6 +25,9 @@ EOD;
     /** @var string Path to the XML file that will contain the sheet data */
     protected $worksheetFilePath;
 
+    /** @var string Path to the XML file that will contain the sheet rels data */
+    protected $worksheetRelsFilePath;
+
     /** @var \Box\Spout\Writer\Helper\XLSX\SharedStringsHelper Helper to write shared strings */
     protected $sharedStringsHelper;
 
@@ -39,6 +42,9 @@ EOD;
 
     /** @var int */
     protected $lastWrittenRowIndex = 0;
+
+    /** @var array */
+    protected $urls = array();
 
     /**
      * @param \Box\Spout\Writer\Sheet $externalSheet The associated "external" sheet
@@ -55,6 +61,7 @@ EOD;
         $this->stringsEscaper = new \Box\Spout\Common\Escaper\XLSX();
 
         $this->worksheetFilePath = $worksheetFilesFolder . DIRECTORY_SEPARATOR . strtolower($this->externalSheet->getName()) . '.xml';
+        $this->worksheetRelsFilePath = $worksheetFilesFolder . DIRECTORY_SEPARATOR . '_rels' . DIRECTORY_SEPARATOR . strtolower($this->externalSheet->getName()) . '.xml.rels';
         $this->startSheet();
     }
 
@@ -116,11 +123,17 @@ EOD;
      *
      * @param array $dataRow Array containing data to be written.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param array $metaData Array containing meta-data maps for individual cells, such as 'url'
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      */
-    public function addRow($dataRow)
+    public function addRow($dataRow, array $metaData = array())
     {
+        if (count($dataRow) == 0) {
+            // Without this fix, we get a repair issue in regular Microsoft Excel
+            $dataRow=array('');
+        }
+
         $cellNumber = 0;
         $rowIndex = $this->lastWrittenRowIndex + 1;
         $numCells = count($dataRow);
@@ -129,12 +142,14 @@ EOD;
 
         foreach($dataRow as $cellValue) {
             $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
-            $data .= '            <c r="' . $columnIndex . $rowIndex . '"';
+            $cellPath = $columnIndex . $rowIndex;
+
+            $data .= '            <c' . (($rowIndex == 1) ? ' s="1"' : '') . ' r="' . $cellPath . '"';
 
             if (empty($cellValue)) {
                 $data .= '/>' . PHP_EOL;
             } else {
-                if (is_numeric($cellValue)) {
+                if (trim($cellValue, '0123456789.') == '' /*similar to is_numeric without having PHPs regular quirkiness*/) {
                     $data .= '><v>' . $cellValue . '</v></c>' . PHP_EOL;
                 } else {
                     if ($this->shouldUseInlineStrings) {
@@ -144,6 +159,10 @@ EOD;
                         $data .= ' t="s"><v>' . $sharedStringId . '</v></c>' . PHP_EOL;
                     }
                 }
+            }
+
+            if (isset($metaData[$cellNumber]['url'])) {
+                $this->urls[$cellPath] = $metaData[$cellNumber]['url'];
             }
 
             $cellNumber++;
@@ -168,6 +187,34 @@ EOD;
     public function close()
     {
         fwrite($this->sheetFilePointer, '    </sheetData>' . PHP_EOL);
+
+        // Write out any hyperlinks
+        if (count($this->urls) != 0) {
+            fwrite($this->sheetFilePointer, '    <hyperlinks>' . PHP_EOL);
+            $i = 0;
+            foreach ($this->urls as $cellPath => $url) {
+                $refID = 'rId' . ($i + 1);
+                fwrite($this->sheetFilePointer, '        <hyperlink ref="' . $cellPath . '" r:id="' . $refID . '"/>' . PHP_EOL);
+                $i++;
+            }
+            fwrite($this->sheetFilePointer, '    </hyperlinks>' . PHP_EOL);
+        }
+
+        // Write rels file
+        $sheetRelsFilePointer = fopen($this->worksheetRelsFilePath, 'w');
+        if (!$sheetRelsFilePointer) throw new IOException('Unable to open rels sheet for writing.');
+        fwrite($sheetRelsFilePointer, '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' . PHP_EOL);
+        fwrite($sheetRelsFilePointer, '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' . PHP_EOL);
+        $i = 0;
+        foreach ($this->urls as $url) {
+            $refID = 'rId' . ($i + 1);
+            fwrite($sheetRelsFilePointer, '<Relationship Id="' . $refID . '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="' . htmlentities($url) . '" TargetMode="External"/>' . PHP_EOL);
+            $i++;
+        }
+        fwrite($sheetRelsFilePointer, '</Relationships>');
+        fclose($sheetRelsFilePointer);
+
+        // Finish file
         fwrite($this->sheetFilePointer, '</worksheet>');
         fclose($this->sheetFilePointer);
     }
