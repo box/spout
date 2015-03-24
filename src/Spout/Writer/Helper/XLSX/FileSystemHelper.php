@@ -208,6 +208,7 @@ EOD;
         $this->xlFolder = $this->createFolder($this->rootFolder, self::XL_FOLDER_NAME);
         $this->createXlRelsFolder();
         $this->createXlWorksheetsFolder();
+        $this->createXlWorksheetsRelsFolder();
 
         return $this;
     }
@@ -233,6 +234,18 @@ EOD;
     protected function createXlWorksheetsFolder()
     {
         $this->xlWorksheetsFolder = $this->createFolder($this->xlFolder, self::WORKSHEETS_FOLDER_NAME);
+        return $this;
+    }
+
+    /**
+     * Creates the "_rels" folder under the "worksheets" folder
+     *
+     * @return FileSystemHelper
+     * @throws \Box\Spout\Common\Exception\IOException If unable to create the folder
+     */
+    protected function createXlWorksheetsRelsFolder()
+    {
+        $this->createFolder($this->xlWorksheetsFolder, self::RELS_FOLDER_NAME);
         return $this;
     }
 

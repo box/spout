@@ -165,11 +165,12 @@ class Workbook
      *
      * @param array $dataRow Array containing data to be written.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param array $metaData Array containing meta-data maps for individual cells, such as 'url'
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If trying to create a new sheet and unable to open the sheet for writing
      * @throws \Box\Spout\Writer\Exception\WriterException If unable to write data
      */
-    public function addRowToCurrentWorksheet($dataRow)
+    public function addRowToCurrentWorksheet($dataRow, $metaData)
     {
         $currentWorksheet = $this->getCurrentWorksheet();
         $hasReachedMaxRows = $this->hasCurrentWorkseetReachedMaxRows();
@@ -179,12 +180,12 @@ class Workbook
             // ... continue writing in a new sheet if option set
             if ($this->shouldCreateNewSheetsAutomatically) {
                 $currentWorksheet = $this->addNewSheetAndMakeItCurrent();
-                $currentWorksheet->addRow($dataRow);
+                $currentWorksheet->addRow($dataRow, $metaData);
             } else {
                 // otherwise, do nothing as the data won't be read anyways
             }
         } else {
-            $currentWorksheet->addRow($dataRow);
+            $currentWorksheet->addRow($dataRow, $metaData);
         }
     }
 

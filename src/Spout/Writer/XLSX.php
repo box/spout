@@ -160,14 +160,15 @@ class XLSX extends AbstractWriter
      *
      * @param array $dataRow Array containing data to be written.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param  array $metaData Array containing meta-data maps for individual cells, such as 'url'
      * @return void
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the book is not created yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    protected function addRowToWriter(array $dataRow)
+    protected function addRowToWriter(array $dataRow, array $metaData)
     {
         $this->throwIfBookIsNotAvailable();
-        $this->book->addRowToCurrentWorksheet($dataRow);
+        $this->book->addRowToCurrentWorksheet($dataRow, $metaData);
     }
 
     /**

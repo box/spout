@@ -41,10 +41,11 @@ class HTM extends AbstractWriter
      *
      * @param  array $dataRow Array containing data to be written.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param  array $metaData Array containing meta-data maps for individual cells, such as 'url'
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    protected function addRowToWriter(array $dataRow)
+    protected function addRowToWriter(array $dataRow, array $metaData)
     {
         $wasWriteSuccessful = true;
         if ($this->lastWrittenRowIndex == 0) {
@@ -54,8 +55,13 @@ class HTM extends AbstractWriter
             $wasWriteSuccessful = $wasWriteSuccessful && fwrite($this->filePointer, "<tbody>\n");
         }
         $wasWriteSuccessful = $wasWriteSuccessful && fwrite($this->filePointer, "<tr>\n");
-        foreach ($dataRow as $cell) {
+        foreach ($dataRow as $i => $cell) {
             $cell = nl2br(htmlentities($cell));
+
+            if (isset($metaData[$i]['url']))
+            {
+                $cell = '<a href="' . htmlentities($metaData[$i]['url']) . '">' . $cell . '</a>';
+            }
 
             if ($this->lastWrittenRowIndex == 0) {
                 $wasWriteSuccessful = $wasWriteSuccessful && fwrite($this->filePointer, "\t<th>{$cell}</th>\n");
