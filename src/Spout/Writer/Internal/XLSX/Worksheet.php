@@ -134,7 +134,7 @@ EOD;
 
         foreach($dataRow as $cellValue) {
             $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
-            $data .= '            <c r="' . $columnIndex . $rowIndex . '"';
+            $data .= '            <c' . (($rowIndex == 1) ? ' s="1"' : '') . ' r="' . $columnIndex . $rowIndex . '"';
 
             if (empty($cellValue)) {
                 $data .= '/>' . PHP_EOL;
