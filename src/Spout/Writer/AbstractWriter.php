@@ -39,6 +39,7 @@ abstract class AbstractWriter implements WriterInterface
 
     /**
      * Adds data to the currently openned writer.
+     * The data must be UTF-8 encoded.
      *
      * @param  array $dataRow Array containing data to be streamed.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
@@ -135,6 +136,7 @@ abstract class AbstractWriter implements WriterInterface
 
     /**
      * Write given data to the output. New data will be appended to end of stream.
+     * The data must be UTF-8 encoded.
      *
      * @param  array $dataRow Array containing data to be streamed.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
@@ -156,6 +158,7 @@ abstract class AbstractWriter implements WriterInterface
 
     /**
      * Write given data to the output. New data will be appended to end of stream.
+     * The data must be UTF-8 encoded.
      *
      * @param  array $dataRows Array of array containing data to be streamed.
      *          Example $dataRow = [
