@@ -5,7 +5,6 @@ namespace Box\Spout\Writer\Internal\XLSX;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Writer\Helper\XLSX\FileSystemHelper;
 use Box\Spout\Writer\Helper\XLSX\SharedStringsHelper;
-use Box\Spout\Writer\Helper\XLSX\ZipHelper;
 use Box\Spout\Writer\Sheet;
 
 /**

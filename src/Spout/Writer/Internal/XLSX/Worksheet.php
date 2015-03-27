@@ -42,7 +42,8 @@ EOD;
 
     /**
      * @param \Box\Spout\Writer\Sheet $externalSheet The associated "external" sheet
-     * @param string $tempFolder Temporary folder where the files to create the XLSX will be stored
+     * @param string $worksheetFilesFolder Temporary folder where the files to create the XLSX will be stored
+     * @param \Box\Spout\Writer\Helper\XLSX\SharedStringsHelper $sharedStringsHelper Helper for shared strings
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */

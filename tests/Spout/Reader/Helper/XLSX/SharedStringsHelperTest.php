@@ -46,7 +46,7 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($filesInTempFolder), 'One temp file should have been created in the temp folder.');
 
         $tempFileContents = file_get_contents($filesInTempFolder[0]);
-        $tempFileContentsPerLine = explode("\n", $tempFileContents);
+        $tempFileContentsPerLine = explode(PHP_EOL, $tempFileContents);
 
         $this->assertEquals('s1--A1', $tempFileContentsPerLine[0]);
         $this->assertEquals('s1--E5', $tempFileContentsPerLine[24]);
@@ -95,5 +95,24 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
 
         $sharedString = $this->sharedStringsHelper->getStringAtIndex(24);
         $this->assertEquals('s1--E5', $sharedString);
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetStringAtIndexShouldWorkWithMultilineStrings()
+    {
+        $resourcePath = $this->getResourcePath('one_sheet_with_shared_multiline_strings.xlsx');
+        $sharedStringsHelper = new SharedStringsHelper($resourcePath);
+
+        $sharedStringsHelper->extractSharedStrings();
+
+        $sharedString = $sharedStringsHelper->getStringAtIndex(0);
+        $this->assertEquals("s1\nA1", $sharedString);
+
+        $sharedString = $sharedStringsHelper->getStringAtIndex(24);
+        $this->assertEquals("s1\nE5", $sharedString);
+
+        $sharedStringsHelper->cleanup();
     }
 }
