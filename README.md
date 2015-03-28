@@ -149,7 +149,7 @@ $writer->setShouldCreateNewSheetsAutomatically(true); // default value
 $writer->setShouldCreateNewSheetsAutomatically(false); // will stop writing new data when limit is reached
 ```
 
-### Using custom temporary folder
+#### Using custom temporary folder
 
 Processing XLSX files require temporary files to be created. By default, Spout will use the system default temporary folder (as returned by sys_get_temp_dir()). It is possible to override this by explicitly setting it on the reader or writer:
 ```php
