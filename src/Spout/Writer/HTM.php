@@ -31,9 +31,49 @@ class HTM extends AbstractWriter
         fwrite($this->filePointer, "<html>\n");
         fwrite($this->filePointer, "<head>\n");
         fwrite($this->filePointer, "<title>" . htmlentities(basename(basename($this->outputFilePath, '.html'), '.htm')) . "</title>\n");
+        fwrite($this->filePointer, "
+<style>
+table {
+    border-collapse: collapse;
+    width: 100%;
+    position: relative;
+}
+td, th {
+    padding: 10px 25px;
+    border: 1px solid #000;
+}
+th {
+    color: #fff;
+    background: #500;
+    white-space: nowrap;
+}
+th span {
+    visibility: hidden;
+}
+th div {
+    position: fixed;
+    top: 20px;
+    background: #500;
+}
+td {
+    color: #000;
+    background: #ddd;
+}
+</style>
+
+<script>
+window.onscroll=function() {
+    var ths=document.getElementsByTagName('div');
+    for (var i=0;i<ths.length;i++)
+    {
+        ths[i].style.marginLeft=(-window.scrollX)+'px';
+    }
+};
+</script>
+\n");
         fwrite($this->filePointer, "</head>\n");
         fwrite($this->filePointer, "<body>\n");
-        fwrite($this->filePointer, "<table cellspacing=\"3\" cellpadding=\"3\" border=\"1\">\n");
+        fwrite($this->filePointer, "<table>\n");
     }
 
     /**
@@ -64,7 +104,7 @@ class HTM extends AbstractWriter
             }
 
             if ($this->lastWrittenRowIndex == 0) {
-                $wasWriteSuccessful = $wasWriteSuccessful && fwrite($this->filePointer, "\t<th>{$cell}</th>\n");
+                $wasWriteSuccessful = $wasWriteSuccessful && fwrite($this->filePointer, "\t<th><span>{$cell}</span><div>{$cell}</div></th>\n");
             } else
             {
                 $wasWriteSuccessful = $wasWriteSuccessful && fwrite($this->filePointer, "\t<td>{$cell}</td>\n");
