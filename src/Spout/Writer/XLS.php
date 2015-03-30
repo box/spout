@@ -115,6 +115,26 @@ class XLS extends AbstractWriter
             $value = substr($value, 0, 255);
         }
 
+        // We are doing simple Western European encoding (utf-8 storage in BIFF-5 is very complex)
+        if (function_exists('utf8_decode')) {
+            $test = @utf8_decode($value);
+            if (is_string($test)) {
+                $value = $test;
+            }
+        }
+        elseif (function_exists('iconv')) {
+    		$test = @iconv('utf-8', 'iso-8859-1' . '//TRANSLIT', $value);
+            if (is_string($test)) {
+                $value = $test;
+            }
+        }
+        elseif (function_exists('mb_convert_encoding')) {
+            $test = @mb_convert_encoding($value, 'iso-8859-1', 'utf-8');
+            if (is_string($test)) {
+                $value = $test;
+            }
+        }
+
         $length = strlen($value);
         $wasWriteSuccessful = true;
         $wasWriteSuccessful = $wasWriteSuccessful && fwrite($this->filePointer, pack("ssssss", 0x204, 8 + $length, $this->row, $this->col, 0x0, $length));
@@ -144,7 +164,7 @@ class XLS extends AbstractWriter
 
         $this->home();
         foreach ($dataRow as $cell) {
-            if (trim($cell, '0123456789.') == '' /*similar to is_numeric without having PHPs regular quirkiness*/) {
+            if ($cell != '' && trim($cell, '-0123456789.') == '' /*similar to is_numeric without having PHPs regular quirkiness*/) {
                 $wasWriteSuccessful = $wasWriteSuccessful && $this->number($cell);
             } else
             {
