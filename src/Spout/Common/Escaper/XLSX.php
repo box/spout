@@ -27,7 +27,7 @@ class XLSX implements EscaperInterface
     public function escape($string)
     {
         $escapedString = $this->escapeControlCharacters($string);
-        $escapedString = htmlspecialchars($escapedString, ENT_QUOTES, 'utf-8');
+        $escapedString = htmlspecialchars($escapedString, ENT_QUOTES);
 
         return $escapedString;
     }
