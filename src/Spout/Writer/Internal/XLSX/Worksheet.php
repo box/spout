@@ -208,7 +208,7 @@ EOD;
         $i = 0;
         foreach ($this->urls as $url) {
             $refID = 'rId' . ($i + 1);
-            fwrite($sheetRelsFilePointer, '<Relationship Id="' . $refID . '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="' . htmlentities($url) . '" TargetMode="External"/>' . PHP_EOL);
+            fwrite($sheetRelsFilePointer, '<Relationship Id="' . $refID . '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="' . $this->stringsEscaper->escape($url) . '" TargetMode="External"/>' . PHP_EOL);
             $i++;
         }
         fwrite($sheetRelsFilePointer, '</Relationships>');
