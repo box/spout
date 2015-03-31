@@ -135,6 +135,6 @@ class CSVTest extends \PHPUnit_Framework_TestCase
     private function trimWrittenContent($writtenContent)
     {
         // remove line feeds and UTF-8 BOM
-        return trim($writtenContent, "\n" . CSV::UTF8_BOM);
+        return trim($writtenContent, PHP_EOL . CSV::UTF8_BOM);
     }
 }

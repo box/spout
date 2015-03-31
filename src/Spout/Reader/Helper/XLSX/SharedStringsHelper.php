@@ -31,6 +31,9 @@ class SharedStringsHelper
      */
     const MAX_NUM_STRINGS_PER_TEMP_FILE = 10000;
 
+    /** Value to use to escape the line feed character ("\n") */
+    const ESCAPED_LINE_FEED_CHARACTER = '_x000A_';
+
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
@@ -80,7 +83,6 @@ class SharedStringsHelper
      * Please note that SimpleXML does not provide such a functionality but since it is faster
      * and more handy to parse few XML nodes, it is used in combination with XMLReader for that purpose.
      *
-     * @param  string $filePath
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If sharedStrings.xml can't be read
      */
@@ -120,7 +122,12 @@ class SharedStringsHelper
             }
 
             $unescapedTextValue = $escaper->unescape($textValue);
-            $this->writeSharedStringToTempFile($unescapedTextValue, $sharedStringIndex);
+
+            // The shared string retrieval logic expects each cell data to be on one line only
+            // Encoding the line feed character allows to preserve this assumption
+            $lineFeedEncodedTextValue = $this->escapeLineFeed($unescapedTextValue);
+
+            $this->writeSharedStringToTempFile($lineFeedEncodedTextValue, $sharedStringIndex);
 
             $sharedStringIndex++;
 
@@ -246,7 +253,8 @@ class SharedStringsHelper
 
         $sharedString = null;
         if (array_key_exists($indexInFile, $this->inMemoryTempFileContents)) {
-            $sharedString = $this->inMemoryTempFileContents[$indexInFile];
+            $escapedSharedString = $this->inMemoryTempFileContents[$indexInFile];
+            $sharedString = $this->unescapeLineFeed($escapedSharedString);
         }
 
         if (!$sharedString) {
@@ -254,6 +262,28 @@ class SharedStringsHelper
         }
 
         return rtrim($sharedString, PHP_EOL);
+    }
+
+    /**
+     * Escapes the line feed character (\n)
+     *
+     * @param string $unescapedString
+     * @return string
+     */
+    private function escapeLineFeed($unescapedString)
+    {
+        return str_replace("\n", self::ESCAPED_LINE_FEED_CHARACTER, $unescapedString);
+    }
+
+    /**
+     * Unescapes the line feed character (\n)
+     *
+     * @param string $escapedString
+     * @return string
+     */
+    private function unescapeLineFeed($escapedString)
+    {
+        return str_replace(self::ESCAPED_LINE_FEED_CHARACTER, "\n", $escapedString);
     }
 
     /**
