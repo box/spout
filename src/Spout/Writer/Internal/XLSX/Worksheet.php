@@ -135,9 +135,6 @@ EOD;
             $data .= '            <c r="' . $columnIndex . $rowIndex . '"';
 
             switch(true) {
-                case empty($cellValue):
-                    $data .= '/>' . PHP_EOL;
-                    break;
                 case gettype($cellValue) === 'integer':
                 case gettype($cellValue) === 'boolean':
                 case gettype($cellValue) === 'float':
@@ -153,6 +150,9 @@ EOD;
                         $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
                         $data .= ' t="s"><v>' . $sharedStringId . '</v></c>' . PHP_EOL;
                     }
+                    break;
+                case empty($cellValue):
+                    $data .= '/>' . PHP_EOL;
                     break;
                 default:
                     throw new InvalidDataException("Invalid data type " . gettype($cellValue));
