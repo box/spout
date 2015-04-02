@@ -141,6 +141,7 @@ EOD;
                 case gettype($cellValue) === 'integer':
                 case gettype($cellValue) === 'boolean':
                 case gettype($cellValue) === 'float':
+                case gettype($cellValue) === 'double':
                     $data .= '><v>' . $cellValue . '</v></c>' . PHP_EOL;
                     break;
                 case gettype($cellValue) === 'object' && method_exists($cellValue, '__toString'):
