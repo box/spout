@@ -79,6 +79,22 @@ class CSVTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testWriteShouldSkipEmptyRows()
+    {
+        $allRows = [
+            ['csv--11', 'csv--12'],
+            [],
+            ['csv--31', 'csv--32'],
+        ];
+        $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_empty_rows.csv');
+        $writtenContent = $this->trimWrittenContent($writtenContent);
+
+        $this->assertEquals("csv--11,csv--12\ncsv--31,csv--32", $writtenContent, 'Empty rows should be skipped');
+    }
+
+    /**
+     * @return void
+     */
     public function testWriteShouldSupportCustomFieldDelimiter()
     {
         $allRows = [
