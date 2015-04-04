@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\Internal\XLSX;
 
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Writer\Exception\InvalidDataException;
 use Box\Spout\Writer\Helper\XLSX\CellHelper;
 
 /**
@@ -119,6 +120,7 @@ EOD;
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
+     * @throws \Box\Spout\Writer\Exception\InvalidDataException If input data are of invalid type
      */
     public function addRow($dataRow)
     {
@@ -132,19 +134,28 @@ EOD;
             $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
             $data .= '            <c r="' . $columnIndex . $rowIndex . '"';
 
-            if (empty($cellValue)) {
-                $data .= '/>' . PHP_EOL;
-            } else {
-                if (is_numeric($cellValue)) {
+            switch(true) {
+                case gettype($cellValue) === 'integer':
+                case gettype($cellValue) === 'boolean':
+                case gettype($cellValue) === 'float':
+                case gettype($cellValue) === 'double':
                     $data .= '><v>' . $cellValue . '</v></c>' . PHP_EOL;
-                } else {
+                    break;
+                case gettype($cellValue) === 'object' && method_exists($cellValue, '__toString'):
+                    $cellValue = (string)$cellValue;
+                case gettype($cellValue) === 'string':
                     if ($this->shouldUseInlineStrings) {
                         $data .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>' . PHP_EOL;
                     } else {
                         $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
                         $data .= ' t="s"><v>' . $sharedStringId . '</v></c>' . PHP_EOL;
                     }
-                }
+                    break;
+                case empty($cellValue):
+                    $data .= '/>' . PHP_EOL;
+                    break;
+                default:
+                    throw new InvalidDataException("Invalid data type " . gettype($cellValue));
             }
 
             $cellNumber++;
