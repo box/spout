@@ -139,7 +139,8 @@ abstract class AbstractWriter implements WriterInterface
      * The data must be UTF-8 encoded.
      *
      * @param  array $dataRow Array containing data to be streamed.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     *                        If empty, no data is added (i.e. not even as a blank row)
+     *                        Example: $dataRow = ['data1', 1234, null, '', 'data5', false];
      *
      * @return \Box\Spout\Writer\AbstractWriter
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
@@ -148,7 +149,10 @@ abstract class AbstractWriter implements WriterInterface
     public function addRow(array $dataRow)
     {
         if ($this->isWriterOpened) {
-            $this->addRowToWriter($dataRow);
+            // empty $dataRow should not add an empty line
+            if (!empty($dataRow)) {
+                $this->addRowToWriter($dataRow);
+            }
         } else {
             throw new WriterNotOpenedException('The writer needs to be opened before adding row.');
         }
@@ -161,10 +165,11 @@ abstract class AbstractWriter implements WriterInterface
      * The data must be UTF-8 encoded.
      *
      * @param  array $dataRows Array of array containing data to be streamed.
-     *          Example $dataRow = [
-     *              ['data11', 12, , '', 'data13'],
-     *              ['data21', 'data22', null],
-     *          ];
+     *                         If a row is empty, it won't be added (i.e. not even as a blank row)
+     *                         Example: $dataRows = [
+     *                             ['data11', 12, , '', 'data13'],
+     *                             ['data21', 'data22', null, false],
+     *                         ];
      *
      * @return \Box\Spout\Writer\AbstractWriter
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
