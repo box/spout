@@ -31,7 +31,7 @@ class Worksheet
      */
     public function getDataXmlFilePath()
     {
-        return ltrim($this->dataXmlFilePath, DIRECTORY_SEPARATOR);
+        return ltrim($this->dataXmlFilePath, '/');
     }
 
     /**
