@@ -52,7 +52,7 @@ class CSV extends AbstractReader
      * The file must be UTF-8 encoded.
      * @TODO add encoding detection/conversion
      *
-     * @param  string $filePath Path of the XLSX file to be read
+     * @param  string $filePath Path of the CSV file to be read
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException
      */
