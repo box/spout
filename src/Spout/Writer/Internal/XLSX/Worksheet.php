@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\Internal\XLSX;
 
+use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Writer\Helper\XLSX\CellHelper;
 
@@ -119,6 +120,7 @@ EOD;
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
      */
     public function addRow($dataRow)
     {
@@ -132,19 +134,19 @@ EOD;
             $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
             $data .= '            <c r="' . $columnIndex . $rowIndex . '"';
 
-            if (empty($cellValue)) {
+            if (CellHelper::isNonEmptyString($cellValue)) {
+                if ($this->shouldUseInlineStrings) {
+                    $data .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>' . PHP_EOL;
+                } else {
+                    $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
+                    $data .= ' t="s"><v>' . $sharedStringId . '</v></c>' . PHP_EOL;
+                }
+            } else if (CellHelper::isNumeric($cellValue) || CellHelper::isBoolean($cellValue)) {
+                $data .= '><v>' . $cellValue . '</v></c>' . PHP_EOL;
+            } else if (empty($cellValue)) {
                 $data .= '/>' . PHP_EOL;
             } else {
-                if (is_numeric($cellValue)) {
-                    $data .= '><v>' . $cellValue . '</v></c>' . PHP_EOL;
-                } else {
-                    if ($this->shouldUseInlineStrings) {
-                        $data .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>' . PHP_EOL;
-                    } else {
-                        $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
-                        $data .= ' t="s"><v>' . $sharedStringId . '</v></c>' . PHP_EOL;
-                    }
-                }
+                throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
             }
 
             $cellNumber++;

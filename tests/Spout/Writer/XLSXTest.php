@@ -50,6 +50,19 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
+     */
+    public function testAddRowShouldThrowExceptionIfUnsupportedDataTypePassedIn()
+    {
+        $fileName = 'test_add_row_should_throw_exception_if_unsupported_data_type_passed_in.xlsx';
+        $dataRows = [
+            [new \stdClass()],
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName);
+    }
+
+    /**
      * @return void
      */
     public function testAddNewSheetAndMakeItCurrent()
@@ -96,7 +109,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddRowShouldWriteGivenDataToSheetUsingInlineStrings()
     {
-        $fileName = 'test_add_row_should_write_given_data_to_sheet.xlsx';
+        $fileName = 'test_add_row_should_write_given_data_to_sheet_using_inline_strings.xlsx';
         $dataRows = [
             ['xlsx--11', 'xlsx--12'],
             ['xlsx--21', 'xlsx--22', 'xlsx--23'],
@@ -106,7 +119,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
 
         foreach ($dataRows as $dataRow) {
             foreach ($dataRow as $cellValue) {
-                $this->assertInlineStringWasWrittenToSheet($fileName, 1, $cellValue);
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cellValue);
             }
         }
     }
@@ -116,7 +129,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddRowShouldWriteGivenDataToTwoSheetUsingInlineStrings()
     {
-        $fileName = 'test_add_row_should_write_given_data_to_sheet.xlsx';
+        $fileName = 'test_add_row_should_write_given_data_to_two_sheets_using_inline_strings.xlsx';
         $dataRows = [
             ['xlsx--11', 'xlsx--12'],
             ['xlsx--21', 'xlsx--22', 'xlsx--23'],
@@ -128,7 +141,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
         for ($i = 1; $i <= $numSheets; $i++) {
             foreach ($dataRows as $dataRow) {
                 foreach ($dataRow as $cellValue) {
-                    $this->assertInlineStringWasWrittenToSheet($fileName, $numSheets, $cellValue);
+                    $this->assertInlineDataWasWrittenToSheet($fileName, $numSheets, $cellValue);
                 }
             }
         }
@@ -139,7 +152,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddRowShouldWriteGivenDataToSheetUsingSharedStrings()
     {
-        $fileName = 'test_add_row_should_write_given_data_to_sheet.xlsx';
+        $fileName = 'test_add_row_should_write_given_data_to_sheet_using_shared_strings.xlsx';
         $dataRows = [
             ['xlsx--11', 'xlsx--12'],
             ['xlsx--21', 'xlsx--22', 'xlsx--23'],
@@ -159,7 +172,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddRowShouldWriteGivenDataToTwoSheetUsingSharedStrings()
     {
-        $fileName = 'test_add_row_should_write_given_data_to_two_sheet_using_shared_strings.xlsx';
+        $fileName = 'test_add_row_should_write_given_data_to_two_sheets_using_shared_strings.xlsx';
         $dataRows = [
             ['xlsx--11', 'xlsx--12'],
             ['xlsx--21', 'xlsx--22', 'xlsx--23'],
@@ -175,6 +188,24 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
                 }
             }
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldSupportMultipleTypesOfData()
+    {
+        $fileName = 'test_add_row_should_support_multiple_types_of_data.xlsx';
+        $dataRows = [
+            ['xlsx--11', true, '', 0, 10.2, null],
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
+
+        $this->assertSharedStringWasWritten($fileName, 'xlsx--11');
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 1); // true is converted to 1
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 0);
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 10.2);
     }
 
     /**
@@ -219,17 +250,17 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
 
         foreach ($dataRowsSheet1 as $dataRow) {
             foreach ($dataRow as $cellValue) {
-                $this->assertInlineStringWasWrittenToSheet($fileName, 1, $cellValue, 'Data should have been written in Sheet 1');
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cellValue, 'Data should have been written in Sheet 1');
             }
         }
         foreach ($dataRowsSheet2 as $dataRow) {
             foreach ($dataRow as $cellValue) {
-                $this->assertInlineStringWasWrittenToSheet($fileName, 2, $cellValue, 'Data should have been written in Sheet 2');
+                $this->assertInlineDataWasWrittenToSheet($fileName, 2, $cellValue, 'Data should have been written in Sheet 2');
             }
         }
         foreach ($dataRowsSheet1Again as $dataRow) {
             foreach ($dataRow as $cellValue) {
-                $this->assertInlineStringWasWrittenToSheet($fileName, 1, $cellValue, 'Data should have been written in Sheet 1');
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cellValue, 'Data should have been written in Sheet 1');
             }
         }
     }
@@ -252,8 +283,8 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
         $writer = $this->writeToXLSXFile($dataRows, $fileName, true, $shouldCreateSheetsAutomatically = true);
         $this->assertEquals(2, count($writer->getSheets()), '2 sheets should have been created.');
 
-        $this->assertInlineStringWasNotWrittenToSheet($fileName, 1, 'xlsx--sheet2--11');
-        $this->assertInlineStringWasWrittenToSheet($fileName, 2, 'xlsx--sheet2--11');
+        $this->assertInlineDataWasNotWrittenToSheet($fileName, 1, 'xlsx--sheet2--11');
+        $this->assertInlineDataWasWrittenToSheet($fileName, 2, 'xlsx--sheet2--11');
 
         \ReflectionHelper::reset();
     }
@@ -276,7 +307,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
         $writer = $this->writeToXLSXFile($dataRows, $fileName, true, $shouldCreateSheetsAutomatically = false);
         $this->assertEquals(1, count($writer->getSheets()), 'Only 1 sheet should have been created.');
 
-        $this->assertInlineStringWasNotWrittenToSheet($fileName, 1, 'xlsx--sheet1--31');
+        $this->assertInlineDataWasNotWrittenToSheet($fileName, 1, 'xlsx--sheet1--31');
 
         \ReflectionHelper::reset();
     }
@@ -293,8 +324,8 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
 
         $this->writeToXLSXFile($dataRows, $fileName);
 
-        $this->assertInlineStringWasWrittenToSheet($fileName, 1, 'I&#039;m in &quot;great&quot; mood', 'Quotes should be escaped');
-        $this->assertInlineStringWasWrittenToSheet($fileName, 1, 'This &lt;must&gt; be escaped &amp; tested', '<, > and & should be escaped');
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'I&#039;m in &quot;great&quot; mood', 'Quotes should be escaped');
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'This &lt;must&gt; be escaped &amp; tested', '<, > and & should be escaped');
     }
 
     /**
@@ -309,7 +340,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
 
         $this->writeToXLSXFile($dataRows, $fileName);
 
-        $this->assertInlineStringWasWrittenToSheet($fileName, 1, 'control&#039;s _x0015_ &quot;character&quot;');
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'control&#039;s _x0015_ &quot;character&quot;');
     }
 
 
@@ -371,33 +402,33 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $fileName
      * @param int $sheetNumber
-     * @param string $inlineString
+     * @param mixed $inlineData
      * @param string $message
      * @return void
      */
-    private function assertInlineStringWasWrittenToSheet($fileName, $sheetNumber, $inlineString, $message = '')
+    private function assertInlineDataWasWrittenToSheet($fileName, $sheetNumber, $inlineData, $message = '')
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetNumber . '.xml';
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
-        $this->assertContains($inlineString, $xmlContents, $message);
+        $this->assertContains((string)$inlineData, $xmlContents, $message);
     }
 
     /**
      * @param string $fileName
      * @param int $sheetNumber
-     * @param string $inlineString
+     * @param mixed $inlineData
      * @param string $message
      * @return void
      */
-    private function assertInlineStringWasNotWrittenToSheet($fileName, $sheetNumber, $inlineString, $message = '')
+    private function assertInlineDataWasNotWrittenToSheet($fileName, $sheetNumber, $inlineData, $message = '')
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetNumber . '.xml';
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
-        $this->assertNotContains($inlineString, $xmlContents, $message);
+        $this->assertNotContains((string)$inlineData, $xmlContents, $message);
     }
 
     /**
