@@ -50,6 +50,16 @@ class CSVTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
+     */
+    public function testAddRowsShouldThrowExceptionIfRowsAreNotArrayOfArrays()
+    {
+        $writer = WriterFactory::create(Type::CSV);
+        $writer->addRows(['csv--11', 'csv--12']);
+        $writer->close();
+    }
+
+    /**
      * @return void
      */
     public function testWriteShouldAddUtf8Bom()
