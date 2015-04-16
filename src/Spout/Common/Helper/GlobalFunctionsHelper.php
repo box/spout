@@ -6,6 +6,8 @@ namespace Box\Spout\Common\Helper;
  * Class GlobalFunctionsHelper
  * This class wraps global functions to facilitate testing
  *
+ * @codeCoverageIgnore
+ *
  * @package Box\Spout\Common\Helper
  */
 class GlobalFunctionsHelper
