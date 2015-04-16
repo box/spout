@@ -143,6 +143,19 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportEmptySharedString()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_empty_shared_string.xlsx');
+
+        $expectedRows = [
+            ['s1--A1', '', 's1--C1'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldSkipPronunciationData()
     {
         $allRows = $this->getAllRowsForFile('sheet_with_pronunciation.xlsx');
