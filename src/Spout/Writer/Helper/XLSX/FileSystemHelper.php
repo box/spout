@@ -249,10 +249,13 @@ EOD;
     <Override ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml" PartName="/xl/workbook.xml"/>
 
 EOD;
+    
+    $escaper = new \Box\Spout\Common\Escaper\XLSX();
 
     /** @var Worksheet $worksheet */
     foreach ($worksheets as $worksheet) {
-        $contentTypesXmlFileContents .= '    <Override ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml" PartName="/xl/worksheets/sheet' . $worksheet->getId() . '.xml"/>' . PHP_EOL;
+        $worksheetName = $worksheet->getExternalSheet()->getName();
+        $contentTypesXmlFileContents .= '    <Override ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml" PartName="/xl/worksheets/' . $escaper->escape(strtolower($worksheetName)) . '.xml"/>' . PHP_EOL;
     }
 
     $contentTypesXmlFileContents .= <<<EOD
@@ -288,7 +291,7 @@ EOD;
         foreach ($worksheets as $worksheet) {
             $worksheetName = $worksheet->getExternalSheet()->getName();
             $worksheetId = $worksheet->getId();
-            $workbookXmlFileContents .= '        <sheet name="' . $escaper->escape($worksheetName) . '" sheetId="' . $worksheetId . '" r:id="rIdSheet' . $worksheetId . '"/>' . PHP_EOL;
+            $workbookXmlFileContents .= '        <sheet name="' . $escaper->escape($worksheetName) . '" sheetId="' . $worksheetId . '" r:id="rId' . $worksheetId . '"/>' . PHP_EOL;
         }
 
         $workbookXmlFileContents .= <<<EOD
@@ -316,10 +319,13 @@ EOD;
 
 EOD;
 
+        $escaper = new \Box\Spout\Common\Escaper\XLSX();
+
         /** @var Worksheet $worksheet */
         foreach ($worksheets as $worksheet) {
+            $worksheetName = $worksheet->getExternalSheet()->getName();
             $worksheetId = $worksheet->getId();
-            $workbookRelsXmlFileContents .= '    <Relationship Id="rIdSheet' . $worksheetId . '" Target="worksheets/sheet' . $worksheetId . '.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>' . PHP_EOL;
+            $workbookRelsXmlFileContents .= '    <Relationship Id="rId' . $worksheetId . '" Target="worksheets/' . $escaper->escape(strtolower($worksheetName)) . '.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>' . PHP_EOL;
         }
 
         $workbookRelsXmlFileContents .= '</Relationships>';
