@@ -66,15 +66,24 @@ class XLSX extends AbstractWriter
     /**
      * Configures the write and sets the current sheet pointer to a new sheet.
      *
+     * @param string $sheetName The custom name of the sheet
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If unable to open the file for writing
      */
-    protected function openWriter()
+    protected function openWriter($sheetName = null)
     {
         if (!$this->book) {
             $tempFolder = ($this->tempFolder) ? : sys_get_temp_dir();
             $this->book = new Workbook($tempFolder, $this->shouldUseInlineStrings, $this->shouldCreateNewSheetsAutomatically);
-            $this->book->addNewSheetAndMakeItCurrent();
+            if( empty($sheetName) )
+            {
+                $this->book->addNewSheetAndMakeItCurrent();
+            }
+            else
+            {
+                $worksheet = $this->book->addNewSheet($sheetName);
+                $this->book->setCurrentWorksheet($worksheet);
+            }
         }
     }
 
@@ -125,6 +134,18 @@ class XLSX extends AbstractWriter
         return $this->book->getCurrentWorksheet()->getExternalSheet();
     }
 
+    /**
+     * Returns the the workbook for the XLSX file
+     *
+     * @return Book The workbook for the XLSX file
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
+     */
+    public function getBook()
+    {
+        $this->throwIfBookIsNotAvailable();
+        return $this->book;
+    }
+    
     /**
      * Sets the given sheet as the current one. New data will be written to this sheet.
      * The writing will resume where it stopped (i.e. data won't be truncated).

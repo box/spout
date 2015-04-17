@@ -28,6 +28,16 @@ class Sheet
     }
 
     /**
+     * @param string $sheetName The custom name of the sheet
+     * @return void
+     */ 
+    public function setName($sheetName)
+    {
+        $sheetName = str_replace(' ', '_', $sheetName);
+        $this->name = $sheetName;
+    }
+    
+    /**
      * @return int Number of the sheet, based on order of creation (zero-based)
      */
     public function getSheetNumber()
