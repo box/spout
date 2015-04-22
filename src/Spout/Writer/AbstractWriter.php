@@ -69,18 +69,17 @@ abstract class AbstractWriter implements WriterInterface
      * By using this method, the data will be written to a file.
      *
      * @param  string $outputFilePath Path of the output file that will contain the data
-     * @param string $sheetName The custom name of the sheet
      * @return \Box\Spout\Writer\AbstractWriter
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened or if the given path is not writable
      */
-    public function openToFile($outputFilePath, $sheetName = null)
+    public function openToFile($outputFilePath)
     {
         $this->outputFilePath = $outputFilePath;
 
         $this->filePointer = $this->globalFunctionsHelper->fopen($this->outputFilePath, 'wb+');
         $this->throwIfFilePointerIsNotAvailable();
 
-        $this->openWriter($sheetName);
+        $this->openWriter();
         $this->isWriterOpened = true;
 
         return $this;

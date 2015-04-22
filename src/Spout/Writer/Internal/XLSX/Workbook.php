@@ -62,23 +62,18 @@ class Workbook
     /**
      * Creates a new sheet in the workbook. The current sheet remains unchanged.
      *
-     * @param string $sheetName The custom name of the sheet
      * @return Worksheet The created sheet
      * @throws \Box\Spout\Common\Exception\IOException If unable to open the sheet for writing
      */
-    public function addNewSheet($sheetName = null)
+    public function addNewSheet()
     {
         $newSheetNumber = count($this->worksheets);
         $sheet = new Sheet($newSheetNumber);
-        if( !empty($sheetName) )
-        {
-            $sheet->setName($sheetName);
-        }
 
         $worksheetFilesFolder = $this->fileSystemHelper->getXlWorksheetsFolder();
         $worksheet = new Worksheet($sheet, $worksheetFilesFolder, $this->sharedStringsHelper, $this->shouldUseInlineStrings);
         $this->worksheets[] = $worksheet;
-
+        
         return $worksheet;
     }
 

@@ -33,7 +33,6 @@ class Sheet
      */ 
     public function setName($sheetName)
     {
-        $sheetName = str_replace(' ', '_', $sheetName);
         $this->name = $sheetName;
     }
     

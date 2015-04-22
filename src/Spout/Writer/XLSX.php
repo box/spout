@@ -66,24 +66,15 @@ class XLSX extends AbstractWriter
     /**
      * Configures the write and sets the current sheet pointer to a new sheet.
      *
-     * @param string $sheetName The custom name of the sheet
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If unable to open the file for writing
      */
-    protected function openWriter($sheetName = null)
+    protected function openWriter()
     {
         if (!$this->book) {
             $tempFolder = ($this->tempFolder) ? : sys_get_temp_dir();
             $this->book = new Workbook($tempFolder, $this->shouldUseInlineStrings, $this->shouldCreateNewSheetsAutomatically);
-            if( empty($sheetName) )
-            {
-                $this->book->addNewSheetAndMakeItCurrent();
-            }
-            else
-            {
-                $worksheet = $this->book->addNewSheet($sheetName);
-                $this->book->setCurrentWorksheet($worksheet);
-            }
+            $this->book->addNewSheetAndMakeItCurrent();
         }
     }
 
