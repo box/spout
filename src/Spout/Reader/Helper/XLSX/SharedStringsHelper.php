@@ -257,7 +257,7 @@ class SharedStringsHelper
             $sharedString = $this->unescapeLineFeed($escapedSharedString);
         }
 
-        if (!$sharedString) {
+        if ($sharedString === null) {
             throw new SharedStringNotFoundException("Shared string not found for index: $sharedStringIndex");
         }
 

@@ -13,6 +13,8 @@ class CSV implements EscaperInterface
     /**
      * Escapes the given string to make it compatible with CSV
      *
+     * @codeCoverageIgnore
+     *
      * @param string $string The string to escape
      * @return string The escaped string
      */
@@ -23,6 +25,8 @@ class CSV implements EscaperInterface
 
     /**
      * Unescapes the given string to make it compatible with CSV
+     *
+     * @codeCoverageIgnore
      *
      * @param string $string The string to unescape
      * @return string The unescaped string

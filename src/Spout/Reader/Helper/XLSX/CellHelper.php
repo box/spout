@@ -25,7 +25,7 @@ class CellHelper
     {
         $existingIndexes = array_keys($dataArray);
 
-        $newIndexes = array_fill_keys(range(min($existingIndexes), max($existingIndexes)), $fillValue);
+        $newIndexes = array_fill_keys(range(0, max($existingIndexes)), $fillValue);
         $dataArray += $newIndexes;
 
         ksort($dataArray);

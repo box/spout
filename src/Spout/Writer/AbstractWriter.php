@@ -89,6 +89,8 @@ abstract class AbstractWriter implements WriterInterface
      * Inits the writer and opens it to accept data.
      * By using this method, the data will be outputted directly to the browser.
      *
+     * @codeCoverageIgnore
+     *
      * @param  string $outputFileName Name of the output file that will contain the data. If a path is passed in, only the file name will be kept
      * @return \Box\Spout\Writer\AbstractWriter
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened
