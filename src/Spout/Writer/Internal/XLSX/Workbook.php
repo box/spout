@@ -132,7 +132,7 @@ class Workbook
      * @param Worksheet $worksheet
      * @return void
      */
-    public function setCurrentWorksheet($worksheet)
+    protected function setCurrentWorksheet($worksheet)
     {
         $this->currentWorksheet = $worksheet;
     }
