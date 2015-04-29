@@ -205,4 +205,3 @@ abstract class AbstractWriter implements WriterInterface
         $this->isWriterOpened = false;
     }
 }
-

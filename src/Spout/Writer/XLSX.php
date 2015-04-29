@@ -126,6 +126,18 @@ class XLSX extends AbstractWriter
     }
 
     /**
+     * Returns the the workbook for the XLSX file
+     *
+     * @return Book The workbook for the XLSX file
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
+     */
+    public function getBook()
+    {
+        $this->throwIfBookIsNotAvailable();
+        return $this->book;
+    }
+    
+    /**
      * Sets the given sheet as the current one. New data will be written to this sheet.
      * The writing will resume where it stopped (i.e. data won't be truncated).
      *

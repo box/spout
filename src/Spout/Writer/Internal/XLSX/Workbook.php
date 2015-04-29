@@ -73,7 +73,7 @@ class Workbook
         $worksheetFilesFolder = $this->fileSystemHelper->getXlWorksheetsFolder();
         $worksheet = new Worksheet($sheet, $worksheetFilesFolder, $this->sharedStringsHelper, $this->shouldUseInlineStrings);
         $this->worksheets[] = $worksheet;
-
+        
         return $worksheet;
     }
 
