@@ -22,8 +22,8 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $sheets = $this->writeDataAndReturnSheets('test_get_sheet_number.xlsx');
 
         $this->assertEquals(2, count($sheets), '2 sheets should have been created');
-        $this->assertEquals(0, $sheets[0]->getSheetNumber(), 'The first sheet should be number 0');
-        $this->assertEquals(1, $sheets[1]->getSheetNumber(), 'The second sheet should be number 1');
+        $this->assertEquals(0, $sheets[0]->getNumber(), 'The first sheet should be number 0');
+        $this->assertEquals(1, $sheets[1]->getNumber(), 'The second sheet should be number 1');
     }
 
     /**

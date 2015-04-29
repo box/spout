@@ -343,6 +343,27 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
         $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'control&#039;s _x0015_ &quot;character&quot;');
     }
 
+    /**
+     * @return void
+     */
+    public function testSetNameShouldCreateSheetWithCustomName()
+    {
+        $fileName = 'test_set_name_should_create_sheet_with_custom_name.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterFactory::create(Type::XLSX);
+        $writer->openToFile($resourcePath);
+
+        $customSheetName = 'CustomName';
+        $sheet = $writer->getCurrentSheet();
+        $sheet->setName($customSheetName);
+
+        $writer->addRow(['xlsx--11', 'xlsx--12']);
+        $writer->close();
+
+        $this->assertSheetNameEquals($customSheetName, $resourcePath, "The sheet name should have been changed to '$customSheetName'");
+    }
 
     /**
      * @param array $allRows
@@ -444,5 +465,19 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
         $xmlContents = file_get_contents('zip://' . $pathToSharedStringsFile);
 
         $this->assertContains($sharedString, $xmlContents, $message);
+    }
+
+    /**
+     * @param string $expectedName
+     * @param string $resourcePath
+     * @param string $message
+     * @return void
+     */
+    private function assertSheetNameEquals($expectedName, $resourcePath, $message = '')
+    {
+        $pathToWorkbookFile = $resourcePath . '#xl/workbook.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<sheet name="' . $expectedName . '"', $xmlContents, $message);
     }
 }

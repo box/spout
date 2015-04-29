@@ -180,6 +180,23 @@ It is also possible to retrieve all the sheets currently created:
 $sheets = $writer->getSheets();
 ```
 
+If you rely on the sheet's name in your application, you can access it and customize it this way:
+```php
+// Accessing the sheet name when reading
+while ($reader->hasNextSheet()) {
+    $sheet = $reader->nextSheet();
+    $sheetName = $sheet->getName();
+}
+
+// Accessing the sheet name when writing
+$sheet = $writer->getCurrentSheet();
+$sheetName = $sheet->getName();
+
+// Customizing the sheet name when writing
+$sheet = $writer->getCurrentSheet();
+$sheetName = $sheet->setName('My custom name');
+``` 
+
 ### Fluent interface
 
 Because fluent interfaces are great, you can use them with Spout:

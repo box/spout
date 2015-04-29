@@ -30,7 +30,7 @@ class Sheet
     /**
      * @return int Number of the sheet, based on order of creation (zero-based)
      */
-    public function getSheetNumber()
+    public function getNumber()
     {
         return $this->sheetNumber;
     }
@@ -41,5 +41,15 @@ class Sheet
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @param string $name Name of the sheet
+     * @return \Box\Spout\Writer\Sheet
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
     }
 }
