@@ -132,8 +132,8 @@ class XLSX extends AbstractReader
         if ($this->currentWorksheet === null) {
             $nextWorksheet = $this->worksheets[0];
         } else {
-            $currentWorksheetNumber = $this->currentWorksheet->getWorksheetNumber();
-            $nextWorksheet = $this->worksheets[$currentWorksheetNumber + 1];
+            $currentWorksheetIndex = $this->currentWorksheet->getWorksheetIndex();
+            $nextWorksheet = $this->worksheets[$currentWorksheetIndex + 1];
         }
 
         $this->initXmlReaderForWorksheetData($nextWorksheet);
