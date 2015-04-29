@@ -39,6 +39,37 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Box\Spout\Reader\Exception\ReaderNotOpenedException
+     *
+     * @return void
+     */
+    public function testHasNextSheetShouldThrowExceptionIfReaderNotOpened()
+    {
+        $reader = ReaderFactory::create(Type::XLSX);
+        $reader->hasNextSheet();
+    }
+
+    /**
+     * @expectedException \Box\Spout\Reader\Exception\EndOfWorksheetsReachedException
+     *
+     * @return void
+     */
+    public function testNextSheetShouldThrowExceptionIfNoMoreSheetsToRead()
+    {
+        $fileName = 'one_sheet_with_shared_strings.xlsx';
+        $resourcePath = $this->getResourcePath($fileName);
+
+        $reader = ReaderFactory::create(Type::XLSX);
+        $reader->open($resourcePath);
+
+        while ($reader->hasNextSheet()) {
+            $reader->nextSheet();
+        }
+
+        $reader->nextSheet();
+    }
+
+    /**
      * @return array
      */
     public function dataProviderForTestReadForAllWorksheets()

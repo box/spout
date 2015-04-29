@@ -92,6 +92,21 @@ class GlobalFunctionsHelper
     }
 
     /**
+     * Wrapper around global function fputcsv()
+     * @see fputcsv()
+     *
+     * @param resource $handle
+     * @param array $fields
+     * @param string|void $delimiter
+     * @param string|void $enclosure
+     * @return int
+     */
+    public function fputcsv($handle, array $fields, $delimiter = null, $enclosure = null)
+    {
+        return fputcsv($handle, $fields, $delimiter, $enclosure);
+    }
+
+    /**
      * Wrapper around global function fclose()
      * @see fclose()
      *
