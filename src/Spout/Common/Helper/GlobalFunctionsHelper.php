@@ -119,7 +119,7 @@ class GlobalFunctionsHelper
      * Wrapper around global function file_exists()
      * @see file_exists()
      *
-     * @param string $filename
+     * @param string $fileName
      * @return bool
      */
     public function file_exists($fileName)
@@ -128,10 +128,22 @@ class GlobalFunctionsHelper
     }
 
     /**
+     * Wrapper around global function file_get_contents()
+     * @see file_get_contents()
+     *
+     * @param string $filePath
+     * @return bool
+     */
+    public function file_get_contents($filePath)
+    {
+        return file_get_contents($filePath);
+    }
+
+    /**
      * Wrapper around global function is_readable()
      * @see is_readable()
      *
-     * @param string $filename
+     * @param string $fileName
      * @return bool
      */
     public function is_readable($fileName)
@@ -144,11 +156,12 @@ class GlobalFunctionsHelper
      * @see basename()
      *
      * @param string $path
+     * @param string|void $suffix
      * @return string
      */
-    public function basename($path)
+    public function basename($path, $suffix = null)
     {
-        return basename($path);
+        return basename($path, $suffix);
     }
 
     /**
