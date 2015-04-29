@@ -73,7 +73,7 @@ class CSV extends AbstractWriter
      */
     protected function addRowToWriter(array $dataRow)
     {
-        $wasWriteSuccessful = fputcsv($this->filePointer, $dataRow, $this->fieldDelimiter, $this->fieldEnclosure);
+        $wasWriteSuccessful = $this->globalFunctionsHelper->fputcsv($this->filePointer, $dataRow, $this->fieldDelimiter, $this->fieldEnclosure);
         if ($wasWriteSuccessful === false) {
             throw new IOException('Unable to write data');
         }
