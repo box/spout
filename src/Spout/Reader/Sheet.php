@@ -13,21 +13,21 @@ class Sheet
     /** @var int ID of the sheet */
     protected $id;
 
-    /** @var int Number of the sheet, based on order of creation (zero-based) */
-    protected $number;
+    /** @var int Index of the sheet, based on order of creation (zero-based) */
+    protected $index;
 
     /** @var string Name of the sheet */
     protected $name;
 
     /**
      * @param int $sheetId ID of the sheet
-     * @param int $sheetNumber Number of the sheet, based on order of creation (zero-based)
+     * @param int $sheetIndex Index of the sheet, based on order of creation (zero-based)
      * @param string $sheetName Name of the sheet
      */
-    function __construct($sheetId, $sheetNumber, $sheetName)
+    function __construct($sheetId, $sheetIndex, $sheetName)
     {
         $this->id = $sheetId;
-        $this->number = $sheetNumber;
+        $this->index = $sheetIndex;
         $this->name = $sheetName;
     }
 
@@ -40,11 +40,11 @@ class Sheet
     }
 
     /**
-     * @return int Number of the sheet, based on order of creation (zero-based)
+     * @return int Index of the sheet, based on order of creation (zero-based)
      */
-    public function getNumber()
+    public function getIndex()
     {
-        return $this->number;
+        return $this->index;
     }
 
     /**

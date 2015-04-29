@@ -344,28 +344,6 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return void
-     */
-    public function testSetNameShouldCreateSheetWithCustomName()
-    {
-        $fileName = 'test_set_name_should_create_sheet_with_custom_name.xlsx';
-        $this->createGeneratedFolderIfNeeded($fileName);
-        $resourcePath = $this->getGeneratedResourcePath($fileName);
-
-        $writer = WriterFactory::create(Type::XLSX);
-        $writer->openToFile($resourcePath);
-
-        $customSheetName = 'CustomName';
-        $sheet = $writer->getCurrentSheet();
-        $sheet->setName($customSheetName);
-
-        $writer->addRow(['xlsx--11', 'xlsx--12']);
-        $writer->close();
-
-        $this->assertSheetNameEquals($customSheetName, $resourcePath, "The sheet name should have been changed to '$customSheetName'");
-    }
-
-    /**
      * @param array $allRows
      * @param string $fileName
      * @param bool $shouldUseInlineStrings
@@ -422,15 +400,15 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $fileName
-     * @param int $sheetNumber
+     * @param int $sheetIndex
      * @param mixed $inlineData
      * @param string $message
      * @return void
      */
-    private function assertInlineDataWasWrittenToSheet($fileName, $sheetNumber, $inlineData, $message = '')
+    private function assertInlineDataWasWrittenToSheet($fileName, $sheetIndex, $inlineData, $message = '')
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetNumber . '.xml';
+        $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetIndex . '.xml';
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
         $this->assertContains((string)$inlineData, $xmlContents, $message);
@@ -438,15 +416,15 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $fileName
-     * @param int $sheetNumber
+     * @param int $sheetIndex
      * @param mixed $inlineData
      * @param string $message
      * @return void
      */
-    private function assertInlineDataWasNotWrittenToSheet($fileName, $sheetNumber, $inlineData, $message = '')
+    private function assertInlineDataWasNotWrittenToSheet($fileName, $sheetIndex, $inlineData, $message = '')
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetNumber . '.xml';
+        $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetIndex . '.xml';
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
         $this->assertNotContains((string)$inlineData, $xmlContents, $message);
@@ -465,19 +443,5 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
         $xmlContents = file_get_contents('zip://' . $pathToSharedStringsFile);
 
         $this->assertContains($sharedString, $xmlContents, $message);
-    }
-
-    /**
-     * @param string $expectedName
-     * @param string $resourcePath
-     * @param string $message
-     * @return void
-     */
-    private function assertSheetNameEquals($expectedName, $resourcePath, $message = '')
-    {
-        $pathToWorkbookFile = $resourcePath . '#xl/workbook.xml';
-        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
-
-        $this->assertContains('<sheet name="' . $expectedName . '"', $xmlContents, $message);
     }
 }

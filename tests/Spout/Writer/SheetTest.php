@@ -17,13 +17,13 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testGetSheetNumber()
+    public function testGetSheetIndex()
     {
-        $sheets = $this->writeDataAndReturnSheets('test_get_sheet_number.xlsx');
+        $sheets = $this->writeDataAndReturnSheets('test_get_sheet_index.xlsx');
 
         $this->assertEquals(2, count($sheets), '2 sheets should have been created');
-        $this->assertEquals(0, $sheets[0]->getNumber(), 'The first sheet should be number 0');
-        $this->assertEquals(1, $sheets[1]->getNumber(), 'The second sheet should be number 1');
+        $this->assertEquals(0, $sheets[0]->getIndex(), 'The first sheet should be index 0');
+        $this->assertEquals(1, $sheets[1]->getIndex(), 'The second sheet should be index 1');
     }
 
     /**
@@ -36,6 +36,28 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, count($sheets), '2 sheets should have been created');
         $this->assertEquals('Sheet1', $sheets[0]->getName(), 'Invalid name for the first sheet');
         $this->assertEquals('Sheet2', $sheets[1]->getName(), 'Invalid name for the second sheet');
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetSheetNameShouldCreateSheetWithCustomName()
+    {
+        $fileName = 'test_set_name_should_create_sheet_with_custom_name.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterFactory::create(Type::XLSX);
+        $writer->openToFile($resourcePath);
+
+        $customSheetName = 'CustomName';
+        $sheet = $writer->getCurrentSheet();
+        $sheet->setName($customSheetName);
+
+        $writer->addRow(['xlsx--11', 'xlsx--12']);
+        $writer->close();
+
+        $this->assertSheetNameEquals($customSheetName, $resourcePath, "The sheet name should have been changed to '$customSheetName'");
     }
 
     /**
@@ -58,5 +80,19 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $writer->close();
 
         return $writer->getSheets();
+    }
+
+    /**
+     * @param string $expectedName
+     * @param string $resourcePath
+     * @param string $message
+     * @return void
+     */
+    private function assertSheetNameEquals($expectedName, $resourcePath, $message = '')
+    {
+        $pathToWorkbookFile = $resourcePath . '#xl/workbook.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<sheet name="' . $expectedName . '"', $xmlContents, $message);
     }
 }

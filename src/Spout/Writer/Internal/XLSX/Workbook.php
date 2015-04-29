@@ -67,8 +67,8 @@ class Workbook
      */
     public function addNewSheet()
     {
-        $newSheetNumber = count($this->worksheets);
-        $sheet = new Sheet($newSheetNumber);
+        $newSheetIndex = count($this->worksheets);
+        $sheet = new Sheet($newSheetIndex);
 
         $worksheetFilesFolder = $this->fileSystemHelper->getXlWorksheetsFolder();
         $worksheet = new Worksheet($sheet, $worksheetFilesFolder, $this->sharedStringsHelper, $this->shouldUseInlineStrings);

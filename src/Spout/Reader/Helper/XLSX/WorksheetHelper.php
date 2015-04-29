@@ -91,12 +91,12 @@ class WorksheetHelper
      * default to the data sheet XML file name ("xl/worksheets/sheet2.xml" => "sheet2").
      *
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
-     * @param int $sheetNumberZeroBased Index of the sheet, based on order in [Content_Types].xml (zero-based)
+     * @param int $sheetIndexZeroBased Index of the sheet, based on order in [Content_Types].xml (zero-based)
      * @return \Box\Spout\Reader\Sheet Sheet instance
      */
-    protected function getSheet($sheetDataXMLFilePath, $sheetNumberZeroBased)
+    protected function getSheet($sheetDataXMLFilePath, $sheetIndexZeroBased)
     {
-        $sheetId = $sheetNumberZeroBased + 1;
+        $sheetId = $sheetIndexZeroBased + 1;
         $sheetName = $this->getDefaultSheetName($sheetDataXMLFilePath);
 
         /*
@@ -126,7 +126,7 @@ class WorksheetHelper
             }
         }
 
-        return new Sheet($sheetId, $sheetNumberZeroBased, $sheetName);
+        return new Sheet($sheetId, $sheetIndexZeroBased, $sheetName);
     }
 
     /**
@@ -204,6 +204,6 @@ class WorksheetHelper
      */
     public function hasNextWorksheet($currentWorksheet, $allWorksheets)
     {
-        return ($currentWorksheet === null || ($currentWorksheet->getWorksheetNumber() + 1 < count($allWorksheets)));
+        return ($currentWorksheet === null || ($currentWorksheet->getWorksheetIndex() + 1 < count($allWorksheets)));
     }
 }

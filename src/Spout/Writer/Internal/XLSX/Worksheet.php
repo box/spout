@@ -96,8 +96,8 @@ EOD;
      */
     public function getId()
     {
-        // sheet number is zero-based, while ID is 1-based
-        return $this->externalSheet->getNumber() + 1;
+        // sheet index is zero-based, while ID is 1-based
+        return $this->externalSheet->getIndex() + 1;
     }
 
     /**

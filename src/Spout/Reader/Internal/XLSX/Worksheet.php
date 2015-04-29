@@ -13,21 +13,21 @@ class Worksheet
     /** @var \Box\Spout\Reader\Sheet The "external" sheet */
     protected $externalSheet;
 
-    /** @var int Worksheet number, based on the order of appareance in [Content_Types].xml (zero-based) */
-    protected $worksheetNumber;
+    /** @var int Worksheet index, based on the order of appareance in [Content_Types].xml (zero-based) */
+    protected $worksheetIndex;
 
     /** @var string Path of the XML file containing the worksheet data */
     protected $dataXmlFilePath;
 
     /**\
      * @param \Box\Spout\Reader\Sheet $externalSheet The associated "external" sheet
-     * @param int $worksheetNumber Worksheet number, based on the order of appareance in [Content_Types].xml (zero-based)
+     * @param int $worksheetIndex Worksheet index, based on the order of appareance in [Content_Types].xml (zero-based)
      * @param string $dataXmlFilePath Path of the XML file containing the worksheet data
      */
-    public function __construct($externalSheet, $worksheetNumber, $dataXmlFilePath)
+    public function __construct($externalSheet, $worksheetIndex, $dataXmlFilePath)
     {
         $this->externalSheet = $externalSheet;
-        $this->worksheetNumber = $worksheetNumber;
+        $this->worksheetIndex = $worksheetIndex;
         $this->dataXmlFilePath = $dataXmlFilePath;
     }
 
@@ -50,8 +50,8 @@ class Worksheet
     /**
      * @return int
      */
-    public function getWorksheetNumber()
+    public function getWorksheetIndex()
     {
-        return $this->worksheetNumber;
+        return $this->worksheetIndex;
     }
 }

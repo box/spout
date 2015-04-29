@@ -14,7 +14,7 @@ use Box\Spout\Reader\Exception\EndOfFileReachedException;
  */
 abstract class AbstractReader implements ReaderInterface
 {
-    /** @var int Used to keep track of the row number */
+    /** @var int Used to keep track of the row index */
     protected $currentRowIndex = 0;
 
     /** @var bool Indicates whether the stream is currently open */
