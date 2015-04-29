@@ -201,6 +201,32 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testNextSheetShouldReturnCorrectSheetInfos()
+    {
+        $resourcePath = $this->getResourcePath('two_sheets_with_custom_names.xlsx');
+        $reader = ReaderFactory::create(Type::XLSX);
+        $reader->open($resourcePath);
+
+        /** @var \Box\Spout\Reader\Sheet[] $sheets */
+        $sheets = [];
+        while ($reader->hasNextSheet()) {
+            $sheets[] = $reader->nextSheet();
+        }
+
+        $reader->close();
+
+        $this->assertEquals('CustomName1', $sheets[0]->getName());
+        $this->assertEquals(0, $sheets[0]->getNumber());
+        $this->assertEquals(1, $sheets[0]->getId());
+
+        $this->assertEquals('CustomName2', $sheets[1]->getName());
+        $this->assertEquals(1, $sheets[1]->getNumber());
+        $this->assertEquals(2, $sheets[1]->getId());
+    }
+
+    /**
      * @param string $fileName
      * @return array All the read rows the given file
      */

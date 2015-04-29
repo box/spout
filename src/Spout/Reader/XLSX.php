@@ -76,7 +76,7 @@ class XLSX extends AbstractReader
             $this->extractSharedStrings($filePath);
 
             // Fetch all available worksheets
-            $this->worksheetHelper = new WorksheetHelper($filePath);
+            $this->worksheetHelper = new WorksheetHelper($filePath, $this->globalFunctionsHelper);
             $this->worksheets = $this->worksheetHelper->getWorksheets($filePath);
 
             if (count($this->worksheets) === 0) {
@@ -119,29 +119,31 @@ class XLSX extends AbstractReader
      * Moves the pointer to the current worksheet.
      * Moving to another worksheet will stop the reading in the current worksheet.
      *
-     * @return void
+     * @return \Box\Spout\Reader\Sheet The next sheet
      * @throws Exception\ReaderNotOpenedException If the stream was not opened first
      * @throws Exception\EndOfWorksheetsReachedException If there is no more worksheets to read
      */
     public function nextSheet()
     {
-        if ($this->hasNextSheet()) {
-            if ($this->currentWorksheet === null) {
-                $nextWorksheet = $this->worksheets[0];
-            } else {
-                $currentWorksheetNumber = $this->currentWorksheet->getWorksheetNumber();
-                $nextWorksheet = $this->worksheets[$currentWorksheetNumber + 1];
-            }
-
-            $this->initXmlReaderForWorksheetData($nextWorksheet);
-            $this->currentWorksheet = $nextWorksheet;
-
-            // make sure that we are ready to read more rows
-            $this->hasReachedEndOfFile = false;
-            $this->emptyRowDataBuffer();
-        } else {
+        if (!$this->hasNextSheet()) {
             throw new EndOfWorksheetsReachedException('End of worksheets was reached. Cannot read more worksheets.');
         }
+
+        if ($this->currentWorksheet === null) {
+            $nextWorksheet = $this->worksheets[0];
+        } else {
+            $currentWorksheetNumber = $this->currentWorksheet->getWorksheetNumber();
+            $nextWorksheet = $this->worksheets[$currentWorksheetNumber + 1];
+        }
+
+        $this->initXmlReaderForWorksheetData($nextWorksheet);
+        $this->currentWorksheet = $nextWorksheet;
+
+        // make sure that we are ready to read more rows
+        $this->hasReachedEndOfFile = false;
+        $this->emptyRowDataBuffer();
+
+        return $this->currentWorksheet->getExternalSheet();
     }
 
     /**
