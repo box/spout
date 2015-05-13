@@ -32,11 +32,13 @@ class Worksheet
     }
 
     /**
-     * @return string Path of the XML file containing the worksheet data, without the leading slash
+     * @return string Path of the XML file containing the worksheet data,
+     *                without the leading slash and working cross-platforms.
      */
     public function getDataXmlFilePath()
     {
-        return ltrim($this->dataXmlFilePath, '/');
+        $dataXmlFilePath = ltrim($this->dataXmlFilePath, '/');
+        return str_replace('/', DIRECTORY_SEPARATOR, $dataXmlFilePath);
     }
 
     /**
