@@ -93,7 +93,7 @@ class SharedStringsHelper
         $this->tempFilePointer = null;
         $escaper = new \Box\Spout\Common\Escaper\XLSX();
 
-        $sharedStringsFilePath = 'zip://' . $this->filePath . '#' . self::SHARED_STRINGS_XML_FILE_PATH;
+        $sharedStringsFilePath = $this->getSharedStringsFilePath();
         if ($xmlReader->open($sharedStringsFilePath, null, LIBXML_NONET) === false) {
             throw new IOException('Could not open "' . self::SHARED_STRINGS_XML_FILE_PATH . '".');
         }
@@ -141,6 +141,15 @@ class SharedStringsHelper
         }
 
         $xmlReader->close();
+    }
+
+    /**
+     * @return string The path to the shared strings XML file, working cross-platforms
+     */
+    protected function getSharedStringsFilePath()
+    {
+        $sharedStringsXmlFilePath = str_replace('/', DIRECTORY_SEPARATOR, self::SHARED_STRINGS_XML_FILE_PATH);
+        return 'zip://' . $this->filePath . '#' . $sharedStringsXmlFilePath;
     }
 
     /**

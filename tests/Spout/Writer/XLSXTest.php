@@ -408,7 +408,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     private function assertInlineDataWasWrittenToSheet($fileName, $sheetIndex, $inlineData, $message = '')
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetIndex . '.xml';
+        $pathToSheetFile = $resourcePath . $this->normalizePath('#xl/worksheets/sheet' . $sheetIndex . '.xml');
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
         $this->assertContains((string)$inlineData, $xmlContents, $message);
@@ -424,7 +424,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     private function assertInlineDataWasNotWrittenToSheet($fileName, $sheetIndex, $inlineData, $message = '')
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetIndex . '.xml';
+        $pathToSheetFile = $resourcePath . $this->normalizePath('#xl/worksheets/sheet' . $sheetIndex . '.xml');
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
         $this->assertNotContains((string)$inlineData, $xmlContents, $message);
@@ -439,9 +439,18 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     private function assertSharedStringWasWritten($fileName, $sharedString, $message = '')
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $pathToSharedStringsFile = $resourcePath . '#xl/sharedStrings.xml';
+        $pathToSharedStringsFile = $resourcePath . $this->normalizePath('#xl/sharedStrings.xml');
         $xmlContents = file_get_contents('zip://' . $pathToSharedStringsFile);
 
         $this->assertContains($sharedString, $xmlContents, $message);
+    }
+
+    /**
+     * @param string $path
+     * @return string The path with the correct directory separators, as defined for the current platform
+     */
+    private function normalizePath($path)
+    {
+        return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 }

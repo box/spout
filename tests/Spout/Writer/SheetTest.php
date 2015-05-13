@@ -90,9 +90,18 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      */
     private function assertSheetNameEquals($expectedName, $resourcePath, $message = '')
     {
-        $pathToWorkbookFile = $resourcePath . '#xl/workbook.xml';
+        $pathToWorkbookFile = $resourcePath . $this->normalizePath('#xl/workbook.xml');
         $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
 
         $this->assertContains('<sheet name="' . $expectedName . '"', $xmlContents, $message);
+    }
+
+    /**
+     * @param string $path
+     * @return string The path with the correct directory separators, as defined for the current platform
+     */
+    private function normalizePath($path)
+    {
+        return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 }
