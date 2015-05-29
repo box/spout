@@ -250,6 +250,11 @@ Here are a few numbers regarding the performance of Spout:
 | Read XLSX (using shared strings) | 1 second                 | 1-2 minutes                  | 35-40 minutes                    |
 | Write XLSX                       | 1 second                 | 20-25 seconds                | 8-10 minutes                     |
 
+#### Does Spout support charts or formulas?
+
+No. This is a compromise to keep memory usage low. Charts and formulas requires data to be kept in memory in order to be used.
+So the larger the file would be, the more memory would be consumed, preventing your code to scale well.
+
 
 ## Support
 
