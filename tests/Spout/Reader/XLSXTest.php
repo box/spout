@@ -103,6 +103,20 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportFilesWithoutSharedStringsFile()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_no_shared_strings_file.xlsx');
+
+        $expectedRows = [
+            [10, 11],
+            [20, 21],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldKeepEmptyCellsAtTheEndIfDimensionsSpecified()
     {
         $allRows = $this->getAllRowsForFile('sheet_without_dimensions_but_spans_and_empty_cells.xlsx');
