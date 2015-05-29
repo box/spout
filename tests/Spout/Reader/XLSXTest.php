@@ -246,6 +246,21 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testReadShouldSkipFormulas()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_formulas.xlsx');
+
+        $expectedRows = [
+            ['val1', 'val2', 'total1', 'total2'],
+            [10, 20, 30, 21],
+            [11, 21, 32, 41],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
      * @param string $fileName
      * @return array All the read rows the given file
      */
