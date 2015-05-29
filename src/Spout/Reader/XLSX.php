@@ -206,13 +206,25 @@ class XLSX extends AbstractReader
                 $currentColumnIndex = CellHelper::getColumnIndexFromCellIndex($currentCellIndex);
                 $node = $this->xmlReader->expand();
 
+                $hasInlineString = ($this->xmlReader->getAttribute('t') === 'inlineStr');
                 $hasSharedString = ($this->xmlReader->getAttribute('t') === 's');
-                if ($hasSharedString) {
-                    $sharedStringIndex = intval($node->nodeValue);
+
+                if ($hasInlineString) {
+                    // inline strings are formatted this way:
+                    // <c r="A1" t="inlineStr"><is><t>[INLINE_STRING]</t></is></c>
+                    $tNode = $node->getElementsByTagName('t')->item(0);
+                    $rowData[$currentColumnIndex] = trim($tNode->nodeValue);
+                } else if ($hasSharedString) {
+                    // shared strings are formatted this way:
+                    // <c r="A1" t="s"><v>[SHARED_STRING_INDEX]</v></c>
+                    $vNode = $node->getElementsByTagName('v')->item(0);
+                    $sharedStringIndex = intval($vNode->nodeValue);
                     $rowData[$currentColumnIndex] = $this->sharedStringsHelper->getStringAtIndex($sharedStringIndex);
                 } else {
-                    // for inline strings or numbers, just get the value
-                    $rowData[$currentColumnIndex] = trim($node->nodeValue);
+                    // other values are formatted this way:
+                    // <c r="A1"><v>[VALUE]</v></c>
+                    $vNode = $node->getElementsByTagName('v')->item(0);
+                    $rowData[$currentColumnIndex] = intval($vNode->nodeValue);
                 }
             } else if ($this->xmlReader->nodeType == \XMLReader::END_ELEMENT && $this->xmlReader->name === 'row') {
                 // End of the row description
