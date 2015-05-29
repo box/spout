@@ -72,8 +72,12 @@ class XLSX extends AbstractReader
         $this->zip = new \ZipArchive();
 
         if ($this->zip->open($filePath) === true) {
-            // Extracts all the strings from the worksheets for easy access in the future
-            $this->extractSharedStrings($filePath);
+            $this->sharedStringsHelper = new SharedStringsHelper($filePath, $this->tempFolder);
+
+            if ($this->sharedStringsHelper->hasSharedStrings()) {
+                // Extracts all the strings from the worksheets for easy access in the future
+                $this->sharedStringsHelper->extractSharedStrings();
+            }
 
             // Fetch all available worksheets
             $this->worksheetHelper = new WorksheetHelper($filePath, $this->globalFunctionsHelper);
@@ -85,19 +89,6 @@ class XLSX extends AbstractReader
         } else {
             throw new IOException('Could not open ' . $filePath . ' for reading.');
         }
-    }
-
-    /**
-     * Builds an in-memory array containing all the shared strings of the worksheets.
-     *
-     * @param  string $filePath Path of the XLSX file to be read
-     * @return void
-     * @throws \Box\Spout\Common\Exception\IOException If sharedStrings XML file can't be read
-     */
-    protected function extractSharedStrings($filePath)
-    {
-        $this->sharedStringsHelper = new SharedStringsHelper($filePath, $this->tempFolder);
-        $this->sharedStringsHelper->extractSharedStrings();
     }
 
     /**

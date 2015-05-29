@@ -72,6 +72,24 @@ class SharedStringsHelper
     }
 
     /**
+     * Returns whether the XLSX file contains a shared strings XML file
+     *
+     * @return bool
+     */
+    public function hasSharedStrings()
+    {
+        $hasSharedStrings = false;
+        $zip = new \ZipArchive();
+
+        if ($zip->open($this->filePath) === true) {
+            $hasSharedStrings = ($zip->locateName(self::SHARED_STRINGS_XML_FILE_PATH) !== false);
+            $zip->close();
+        }
+
+        return $hasSharedStrings;
+    }
+
+    /**
      * Builds an in-memory array containing all the shared strings of the worksheet.
      * All the strings are stored in a XML file, located at 'xl/sharedStrings.xml'.
      * It is then accessed by the worksheet data, via the string index in the built table.
