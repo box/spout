@@ -2,7 +2,7 @@
     "name": "box/spout",
     "description": "PHP Library to read and write CSV and XLSX files, in a fast and scalable way",
     "type": "library",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "keywords": ["php","read","write","csv","xlsx","excel","spreadsheet","scale","memory","stream","ooxml"],
     "license": "Apache-2.0",
     "homepage": "https://www.github.com/box/spout",
