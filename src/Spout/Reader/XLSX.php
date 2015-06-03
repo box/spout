@@ -177,6 +177,7 @@ class XLSX extends AbstractReader
             throw new BadUsageException('You must call nextSheet() before calling hasNextRow() or nextRow()');
         }
 
+        $escaper = new \Box\Spout\Common\Escaper\XLSX();
         $isInsideRowTag = false;
         $rowData = [];
 
@@ -188,6 +189,7 @@ class XLSX extends AbstractReader
                     $lastCellIndex = $matches[1];
                     $this->numberOfColumns = CellHelper::getColumnIndexFromCellIndex($lastCellIndex) + 1;
                 }
+
             } else if ($this->xmlReader->nodeType == \XMLReader::ELEMENT && $this->xmlReader->name === 'row') {
                 // Start of the row description
                 $isInsideRowTag = true;
@@ -200,32 +202,15 @@ class XLSX extends AbstractReader
                     $numberOfColumnsForRow = intval($numberOfColumnsForRow);
                 }
                 $rowData = ($numberOfColumnsForRow !== 0) ? array_fill(0, $numberOfColumnsForRow, '') : [];
+
             } else if ($isInsideRowTag && $this->xmlReader->nodeType == \XMLReader::ELEMENT && $this->xmlReader->name === 'c') {
                 // Start of a cell description
                 $currentCellIndex = $this->xmlReader->getAttribute('r');
                 $currentColumnIndex = CellHelper::getColumnIndexFromCellIndex($currentCellIndex);
+
                 $node = $this->xmlReader->expand();
+                $rowData[$currentColumnIndex] = $this->getCellValue($node, $escaper);
 
-                $hasInlineString = ($this->xmlReader->getAttribute('t') === 'inlineStr');
-                $hasSharedString = ($this->xmlReader->getAttribute('t') === 's');
-
-                if ($hasInlineString) {
-                    // inline strings are formatted this way:
-                    // <c r="A1" t="inlineStr"><is><t>[INLINE_STRING]</t></is></c>
-                    $tNode = $node->getElementsByTagName('t')->item(0);
-                    $rowData[$currentColumnIndex] = trim($tNode->nodeValue);
-                } else if ($hasSharedString) {
-                    // shared strings are formatted this way:
-                    // <c r="A1" t="s"><v>[SHARED_STRING_INDEX]</v></c>
-                    $vNode = $node->getElementsByTagName('v')->item(0);
-                    $sharedStringIndex = intval($vNode->nodeValue);
-                    $rowData[$currentColumnIndex] = $this->sharedStringsHelper->getStringAtIndex($sharedStringIndex);
-                } else {
-                    // other values are formatted this way:
-                    // <c r="A1"><v>[VALUE]</v></c>
-                    $vNode = $node->getElementsByTagName('v')->item(0);
-                    $rowData[$currentColumnIndex] = intval($vNode->nodeValue);
-                }
             } else if ($this->xmlReader->nodeType == \XMLReader::END_ELEMENT && $this->xmlReader->name === 'row') {
                 // End of the row description
                 // If needed, we fill the empty cells
@@ -236,6 +221,58 @@ class XLSX extends AbstractReader
 
         // no data means "end of file"
         return ($rowData !== []) ? $rowData : null;
+    }
+
+    /**
+     * Returns the (unescaped) cell value associated to the given XML node.
+     *
+     * @param \DOMNode $node
+     * @param \Box\Spout\Common\Escaper\XLSX $escaper
+     * @return string|int|float|bool|null The value associated with the cell (null when the cell has an error)
+     */
+    protected function getCellValue($node, $escaper)
+    {
+        $cellValue = '';
+
+        // Default cell type is "n"
+        $cellType = $node->getAttribute('t') ?: 'n';
+
+        if ($cellType === 'inlineStr') {
+            // inline strings are formatted this way:
+            // <c r="A1" t="inlineStr"><is><t>[INLINE_STRING]</t></is></c>
+            $tNode = $node->getElementsByTagName('t')->item(0);
+            $escapedCellValue = trim($tNode->nodeValue);
+            $cellValue = $escaper->unescape($escapedCellValue);
+        } else {
+            // all other cell types should have a "v" tag containing the value.
+            // if not, the returned value should be empty string.
+            $vNode = $node->getElementsByTagName('v')->item(0);
+
+            if ($vNode !== null) {
+                if ($cellType === 's') {
+                    // shared strings are formatted this way:
+                    // <c r="A1" t="s"><v>[SHARED_STRING_INDEX]</v></c>
+                    $sharedStringIndex = intval($vNode->nodeValue);
+                    $escapedCellValue = $this->sharedStringsHelper->getStringAtIndex($sharedStringIndex);
+                    $cellValue = $escaper->unescape($escapedCellValue);
+                } else if ($cellType === 'b') {
+                    // !! is similar to boolval()
+                    $cellValue = !!$vNode->nodeValue;
+                } else if ($cellType === 'n') {
+                    $nodeValue = $vNode->nodeValue;
+                    $cellValue = is_int($nodeValue) ? intval($nodeValue) : floatval($nodeValue);
+                } else if ($cellType === 'd') {
+                    $cellValue = new \DateTime($vNode->nodeValue);
+                } else if ($cellType === 'e') {
+                    $cellValue = null;
+                } else if ($cellType === 'str') {
+                    $escapedCellValue = trim($vNode->nodeValue);
+                    $cellValue = $escaper->unescape($escapedCellValue);
+                }
+            }
+        }
+
+        return $cellValue;
     }
 
     /**

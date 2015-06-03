@@ -117,6 +117,27 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportAllCellTypes()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_all_cell_types.xlsx');
+
+        $expectedRows = [
+            [
+                's1--A1', 's1--A2',
+                false, true,
+                \DateTime::createFromFormat('Y-m-d H:i:s', '2015-06-03 13:21:58'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '2015-06-01 00:00:00'),
+                10, 10.43,
+                null,
+            ],
+            ['', '', '', '', '', '', '', '', ''],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldKeepEmptyCellsAtTheEndIfDimensionsSpecified()
     {
         $allRows = $this->getAllRowsForFile('sheet_without_dimensions_but_spans_and_empty_cells.xlsx');
