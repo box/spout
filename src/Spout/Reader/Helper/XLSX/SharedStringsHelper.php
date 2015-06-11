@@ -34,6 +34,9 @@ class SharedStringsHelper
     /** Value to use to escape the line feed character ("\n") */
     const ESCAPED_LINE_FEED_CHARACTER = '_x000A_';
 
+    /** This will increase your memory usage but can improve your execution time */
+    static public $KEEP_ALL_STRINGS_IN_MEMORY = false;
+    
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
@@ -56,8 +59,8 @@ class SharedStringsHelper
      * @var string Contents of the temporary file that was last read
      * @see MAX_NUM_STRINGS_PER_TEMP_FILE
      */
-    protected $inMemoryTempFileContents;
-
+    protected $inMemoryContents;
+    
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param string|void $tempFolder Temporary folder where the temporary files to store shared strings will be stored
@@ -141,11 +144,19 @@ class SharedStringsHelper
 
             $unescapedTextValue = $escaper->unescape($textValue);
 
-            // The shared string retrieval logic expects each cell data to be on one line only
-            // Encoding the line feed character allows to preserve this assumption
-            $lineFeedEncodedTextValue = $this->escapeLineFeed($unescapedTextValue);
-
-            $this->writeSharedStringToTempFile($lineFeedEncodedTextValue, $sharedStringIndex);
+            if (self::$KEEP_ALL_STRINGS_IN_MEMORY) {
+                if (!Isset($this->inMemoryContents)) {
+                    $this->inMemoryContents = [];
+                }
+                
+                $this->inMemoryContents[$sharedStringIndex] = $unescapedTextValue;
+            } else {
+                // The shared string retrieval logic expects each cell data to be on one line only
+                // Encoding the line feed character allows to preserve this assumption
+                $lineFeedEncodedTextValue = $this->escapeLineFeed($unescapedTextValue);
+            
+                $this->writeSharedStringToTempFile($lineFeedEncodedTextValue, $sharedStringIndex);
+            }
 
             $sharedStringIndex++;
 
@@ -263,25 +274,32 @@ class SharedStringsHelper
      */
     public function getStringAtIndex($sharedStringIndex)
     {
-        $tempFilePath = $this->getSharedStringTempFilePath($sharedStringIndex);
-        $indexInFile = $sharedStringIndex % self::MAX_NUM_STRINGS_PER_TEMP_FILE;
-
-        if (!file_exists($tempFilePath)) {
-            throw new SharedStringNotFoundException("Shared string temp file not found: $tempFilePath ; for index: $sharedStringIndex");
-        }
-
-        if ($this->inMemoryTempFilePath !== $tempFilePath) {
-            // free memory
-            unset($this->inMemoryTempFileContents);
-
-            $this->inMemoryTempFileContents = explode(PHP_EOL, file_get_contents($tempFilePath));
-            $this->inMemoryTempFilePath = $tempFilePath;
-        }
-
         $sharedString = null;
-        if (array_key_exists($indexInFile, $this->inMemoryTempFileContents)) {
-            $escapedSharedString = $this->inMemoryTempFileContents[$indexInFile];
-            $sharedString = $this->unescapeLineFeed($escapedSharedString);
+    
+        if (self::$KEEP_ALL_STRINGS_IN_MEMORY) {
+            if (isset($this->inMemoryContents) && array_key_exists($sharedStringIndex, $this->inMemoryContents)) {
+                $sharedString = $this->inMemoryContents[$sharedStringIndex];
+            }
+        } else {
+            $tempFilePath = $this->getSharedStringTempFilePath($sharedStringIndex);
+            $indexInFile = $sharedStringIndex % self::MAX_NUM_STRINGS_PER_TEMP_FILE;
+
+            if (!file_exists($tempFilePath)) {
+                throw new SharedStringNotFoundException("Shared string temp file not found: $tempFilePath ; for index: $sharedStringIndex");
+            }
+
+            if ($this->inMemoryTempFilePath !== $tempFilePath) {
+                // free memory
+                unset($this->inMemoryContents);
+
+                $this->inMemoryContents = explode(PHP_EOL, file_get_contents($tempFilePath));
+                $this->inMemoryTempFilePath = $tempFilePath;
+            }
+            
+            if (array_key_exists($indexInFile, $this->inMemoryContents)) {
+                $escapedSharedString = $this->inMemoryContents[$indexInFile];
+                $sharedString = $this->unescapeLineFeed($escapedSharedString);
+            }
         }
 
         if ($sharedString === null) {
