@@ -34,8 +34,8 @@ class SharedStringsHelper
     /** Value to use to escape the line feed character ("\n") */
     const ESCAPED_LINE_FEED_CHARACTER = '_x000A_';
 
-    /** This will increase your memory usage but can improve your execution time */
-    static public $KEEP_ALL_STRINGS_IN_MEMORY = false;
+    /** Disabling this will increase your memory usage but can improve your execution time */
+    protected $useSharedStringsFileCache;
     
     /** @var string Path of the XLSX file being read */
     protected $filePath;
@@ -64,10 +64,12 @@ class SharedStringsHelper
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param string|void $tempFolder Temporary folder where the temporary files to store shared strings will be stored
+     * @param bool|void $useSharedStringsFileCache Disabling this will increase your memory usage but can improve your execution time
      */
-    public function __construct($filePath, $tempFolder = null)
+    public function __construct($filePath, $tempFolder = null, $useSharedStringsFileCache = true)
     {
         $this->filePath = $filePath;
+        $this->useSharedStringsFileCache = $useSharedStringsFileCache;
 
         $rootTempFolder = ($tempFolder) ?: sys_get_temp_dir();
         $this->fileSystemHelper = new FileSystemHelper($rootTempFolder);
@@ -144,18 +146,18 @@ class SharedStringsHelper
 
             $unescapedTextValue = $escaper->unescape($textValue);
 
-            if (self::$KEEP_ALL_STRINGS_IN_MEMORY) {
-                if (!Isset($this->inMemoryContents)) {
-                    $this->inMemoryContents = [];
-                }
-                
-                $this->inMemoryContents[$sharedStringIndex] = $unescapedTextValue;
-            } else {
+            if ($this->useSharedStringsFileCache) {
                 // The shared string retrieval logic expects each cell data to be on one line only
                 // Encoding the line feed character allows to preserve this assumption
                 $lineFeedEncodedTextValue = $this->escapeLineFeed($unescapedTextValue);
             
                 $this->writeSharedStringToTempFile($lineFeedEncodedTextValue, $sharedStringIndex);
+            } else {
+                if (!isset($this->inMemoryContents)) {
+                    $this->inMemoryContents = [];
+                }
+                
+                $this->inMemoryContents[$sharedStringIndex] = $unescapedTextValue;
             }
 
             $sharedStringIndex++;
@@ -276,11 +278,7 @@ class SharedStringsHelper
     {
         $sharedString = null;
     
-        if (self::$KEEP_ALL_STRINGS_IN_MEMORY) {
-            if (isset($this->inMemoryContents) && array_key_exists($sharedStringIndex, $this->inMemoryContents)) {
-                $sharedString = $this->inMemoryContents[$sharedStringIndex];
-            }
-        } else {
+        if ($this->useSharedStringsFileCache) {
             $tempFilePath = $this->getSharedStringTempFilePath($sharedStringIndex);
             $indexInFile = $sharedStringIndex % self::MAX_NUM_STRINGS_PER_TEMP_FILE;
 
@@ -299,6 +297,10 @@ class SharedStringsHelper
             if (array_key_exists($indexInFile, $this->inMemoryContents)) {
                 $escapedSharedString = $this->inMemoryContents[$indexInFile];
                 $sharedString = $this->unescapeLineFeed($escapedSharedString);
+            }
+        } else {
+            if (is_array($this->inMemoryContents) && array_key_exists($sharedStringIndex, $this->inMemoryContents)) {
+                $sharedString = $this->inMemoryContents[$sharedStringIndex];
             }
         }
 
