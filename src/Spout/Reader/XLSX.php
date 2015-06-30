@@ -242,7 +242,10 @@ class XLSX extends AbstractReader
         // all other cell types should have a "v" tag containing the value.
         // if not, the returned value should be empty string.
         $vNode = $node->getElementsByTagName('v')->item(0);
-        return $vNode->nodeValue;
+        if ($vNode !== null) {
+            return $vNode->nodeValue;
+        }
+        return "";
     }
     
     /**
