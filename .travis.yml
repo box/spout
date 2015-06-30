@@ -11,7 +11,7 @@ script: phpunit
 
 before_script:
   - composer self-update
-  - composer install --dev --optimize-autoloader --prefer-source
+  - composer install --dev --prefer-source
   - mkdir -p build/logs
 
 after_script:
