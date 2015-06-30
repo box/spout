@@ -273,7 +273,7 @@ class XLSX extends AbstractReader
     {
         // shared strings are formatted this way:
         // <c r="A1" t="s"><v>[SHARED_STRING_INDEX]</v></c>
-        $sharedStringIndex = intval($this->getVNodeValue(&$node));
+        $sharedStringIndex = intval($this->getVNodeValue($node));
         $escapedCellValue = $this->sharedStringsHelper->getStringAtIndex($sharedStringIndex);
         $cellValue = $escaper->unescape($escapedCellValue);
         return $cellValue;
@@ -288,7 +288,7 @@ class XLSX extends AbstractReader
      */
     protected function formatStrCellValue(&$node, &$escaper)
     {
-        $escapedCellValue = trim($this->getVNodeValue(&$node));
+        $escapedCellValue = trim($this->getVNodeValue($node));
         $cellValue = $escaper->unescape($escapedCellValue);
         return $cellValue;
     }
@@ -302,7 +302,7 @@ class XLSX extends AbstractReader
      */
     protected function formatNumericCellValue(&$node)
     {
-        $nodeValue = $this->getVNodeValue(&$node);
+        $nodeValue = $this->getVNodeValue($node);
         $cellValue = is_int($nodeValue) ? intval($nodeValue) : floatval($nodeValue);
         return $cellValue;
     }
@@ -316,7 +316,7 @@ class XLSX extends AbstractReader
     protected function formatBooleanCellValue(&$node)
     {
         // !! is similar to boolval()
-        $cellValue = (!!$this->getVNodeValue(&$node));
+        $cellValue = (!!$this->getVNodeValue($node));
         return $cellValue;
     }
 
@@ -331,7 +331,7 @@ class XLSX extends AbstractReader
     {
         // Mitigate thrown Exception on invalid date-time format (http://php.net/manual/en/datetime.construct.php)
         try {
-            $cellValue = new \DateTime($this->getVNodeValue(&$node));
+            $cellValue = new \DateTime($this->getVNodeValue($node));
             return $cellValue;
         } catch ( \Exception $e ) {
             // Maybe do something... Not famiiar enough to see about exceptions at this stage
