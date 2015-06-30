@@ -276,7 +276,7 @@ class XLSX extends AbstractReader
     {
         // shared strings are formatted this way:
         // <c r="A1" t="s"><v>[SHARED_STRING_INDEX]</v></c>
-        $sharedStringIndex = intval($this->getVNodeValue($node));
+        $sharedStringIndex = intval($node);
         $escapedCellValue = $this->sharedStringsHelper->getStringAtIndex($sharedStringIndex);
         $cellValue = $escaper->unescape($escapedCellValue);
         return $cellValue;
@@ -291,7 +291,7 @@ class XLSX extends AbstractReader
      */
     protected function formatStrCellValue(&$node, &$escaper)
     {
-        $escapedCellValue = trim($this->getVNodeValue($node));
+        $escapedCellValue = trim($node);
         $cellValue = $escaper->unescape($escapedCellValue);
         return $cellValue;
     }
@@ -303,9 +303,8 @@ class XLSX extends AbstractReader
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
      * @return int|float The value associated with the cell
      */
-    protected function formatNumericCellValue(&$node)
+    protected function formatNumericCellValue(&$nodeValue)
     {
-        $nodeValue = $this->getVNodeValue($node);
         $cellValue = is_int($nodeValue) ? intval($nodeValue) : floatval($nodeValue);
         return $cellValue;
     }
@@ -319,7 +318,7 @@ class XLSX extends AbstractReader
     protected function formatBooleanCellValue(&$node)
     {
         // !! is similar to boolval()
-        $cellValue = (!!$this->getVNodeValue($node));
+        $cellValue = !!$node;
         return $cellValue;
     }
 
@@ -334,7 +333,7 @@ class XLSX extends AbstractReader
     {
         // Mitigate thrown Exception on invalid date-time format (http://php.net/manual/en/datetime.construct.php)
         try {
-            $cellValue = new \DateTime($this->getVNodeValue($node));
+            $cellValue = new \DateTime($node);
             return $cellValue;
         } catch ( \Exception $e ) {
             // Maybe do something... Not famiiar enough to see about exceptions at this stage
@@ -353,20 +352,23 @@ class XLSX extends AbstractReader
     {
         // Default cell type is "n"
         $cellType = $node->getAttribute('t') ?: 'n';
-        
+        $vNodeValue = $this->getVNodeValue($node);
+        if( ($vNodeValue === "") && ($cellType !== self::INLINE_STRING_CELL_TYPE) ) {
+            return $vNodeValue;
+        }
         switch($cellType) {
             case self::INLINE_STRING_CELL_TYPE:
                 return $this->formatInlineStringCellValue($node, $escaper);
             case self::SHARED_STRING_CELL_TYPE:
-                return $this->formatSharedStringCellValue($node, $escaper);
+                return $this->formatSharedStringCellValue($vNodeValue, $escaper);
             case self::STR_CELL_TYPE:
-                return $this->formatStrCellValue($node, $escaper);
+                return $this->formatStrCellValue($vNodeValue, $escaper);
             case self::BOOLEAN_CELL_TYPE:
-                return $this->formatBooleanCellValue($node);
+                return $this->formatBooleanCellValue($vNodeValue);
             case self::NUMERIC_CELL_TYPE:
-                return $this->formatNumericCellValue($node);
+                return $this->formatNumericCellValue($vNodeValue);
             case self::DATE_CELL_TYPE:
-                return $this->formatDateCellValue($node);
+                return $this->formatDateCellValue($vNodeValue);
             default:
                 if($cellType !== self::EMPTY_CELL_TYPE) {
                     \trigger_error('UNKNOWN CELL TYPE', \E_USER_NOTICE);
