@@ -14,14 +14,6 @@
         </testsuite>
     </testsuites>
 
-    <logging>
-        <log type="coverage-clover" target="build/logs/clover.xml"/>
-        <log type="coverage-php" target="build/logs/coverage.cov"/>
-        <log type="coverage-text" target="build/logs/coverage.txt" showUncoveredFiles="false"/>
-        <log type="coverage-html" target="test/reports/coverage/" showUncoveredFiles="true"/>
-        <log type="junit" target="test/reports/junit.xml" logIncompleteSkipped="false"/>
-    </logging>
-
     <filter>
         <blacklist>
             <directory suffix=".php">vendor/</directory>
