@@ -162,12 +162,11 @@ class SharedStringsHelper
     }
 
     /**
-     * @return string The path to the shared strings XML file, working cross-platforms
+     * @return string The path to the shared strings XML file
      */
     protected function getSharedStringsFilePath()
     {
-        $sharedStringsXmlFilePath = str_replace('/', DIRECTORY_SEPARATOR, self::SHARED_STRINGS_XML_FILE_PATH);
-        return 'zip://' . $this->filePath . '#' . $sharedStringsXmlFilePath;
+        return 'zip://' . $this->filePath . '#' . self::SHARED_STRINGS_XML_FILE_PATH;
     }
 
     /**
@@ -250,7 +249,7 @@ class SharedStringsHelper
     protected function getSharedStringTempFilePath($sharedStringIndex)
     {
         $numTempFile = intval($sharedStringIndex / self::MAX_NUM_STRINGS_PER_TEMP_FILE);
-        return $this->tempFolder . DIRECTORY_SEPARATOR . 'sharedstrings' . $numTempFile;
+        return $this->tempFolder . '/sharedstrings' . $numTempFile;
     }
 
     /**
