@@ -3,7 +3,9 @@
 [![Latest Stable Version](https://poser.pugx.org/box/spout/v/stable)](https://packagist.org/packages/box/spout)
 [![Project Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
 [![Build Status](https://travis-ci.org/box/spout.png?branch=master)](http://travis-ci.org/box/spout)
-[![Total Downloads](https://poser.pugx.org/box/spout/downloads)](https://packagist.org/packages/box/spout) [![License](https://poser.pugx.org/box/spout/license)](https://packagist.org/packages/box/spout)
+[![Coverage Status](https://coveralls.io/repos/box/spout/badge.svg)](https://coveralls.io/r/box/spout)
+[![Total Downloads](https://poser.pugx.org/box/spout/downloads)](https://packagist.org/packages/box/spout)
+[![License](https://poser.pugx.org/box/spout/license)](https://packagist.org/packages/box/spout)
 
 Spout is a PHP library to read and write CSV and XLSX files, in a fast and scalable way.
 Contrary to other file readers or writers, it is capable of processing very large files while keeping the memory usage really low (less than 10MB).
