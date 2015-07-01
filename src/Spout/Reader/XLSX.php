@@ -158,7 +158,7 @@ class XLSX extends AbstractReader
         $worksheetDataXMLFilePath = $worksheet->getDataXmlFilePath();
 
         $worksheetDataFilePath = 'zip://' . $this->filePath . '#' . $worksheetDataXMLFilePath;
-        if ($this->xmlReader->open($worksheetDataFilePath, null, LIBXML_NONET) === false) {
+        if ($this->xmlReader->open($worksheetDataFilePath, null, LIBXML_NOENT|LIBXML_NONET) === false) {
             throw new IOException('Could not open "' . $worksheetDataXMLFilePath . '".');
         }
     }
