@@ -7,8 +7,12 @@ php:
   - nightly
   - hhvm
 
-install:
+before_script:
   - composer self-update
-  - composer install --prefer-source
+  - composer install --dev --prefer-source
+  - mkdir -p build/logs
 
-script: phpunit
+script: phpunit --coverage-clover build/logs/clover.xml
+
+after_script:
+  - php vendor/bin/coveralls -v
