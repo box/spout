@@ -36,7 +36,7 @@ class FileSystemHelper
     {
         $this->throwIfOperationNotInBaseFolder($parentFolderPath);
 
-        $folderPath = $parentFolderPath . DIRECTORY_SEPARATOR . $folderName;
+        $folderPath = $parentFolderPath . '/' . $folderName;
 
         $wasCreationSuccessful = mkdir($folderPath, 0777, true);
         if (!$wasCreationSuccessful) {
@@ -60,7 +60,7 @@ class FileSystemHelper
     {
         $this->throwIfOperationNotInBaseFolder($parentFolderPath);
 
-        $filePath = $parentFolderPath . DIRECTORY_SEPARATOR . $fileName;
+        $filePath = $parentFolderPath . '/' . $fileName;
 
         $wasCreationSuccessful = file_put_contents($filePath, $fileContents);
         if (!$wasCreationSuccessful) {

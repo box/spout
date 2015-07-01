@@ -36,7 +36,7 @@ EOD;
      */
     public function __construct($xlFolder)
     {
-        $sharedStringsFilePath = $xlFolder . DIRECTORY_SEPARATOR . self::SHARED_STRINGS_FILE_NAME;
+        $sharedStringsFilePath = $xlFolder . '/' . self::SHARED_STRINGS_FILE_NAME;
         $this->sharedStringsFilePointer = fopen($sharedStringsFilePath, 'w');
 
         $this->throwIfSharedStringsFilePointerIsNotAvailable();

@@ -56,7 +56,7 @@ EOD;
 
         $this->stringsEscaper = new \Box\Spout\Common\Escaper\XLSX();
 
-        $this->worksheetFilePath = $worksheetFilesFolder . DIRECTORY_SEPARATOR . strtolower($this->externalSheet->getName()) . '.xml';
+        $this->worksheetFilePath = $worksheetFilesFolder . '/' . strtolower($this->externalSheet->getName()) . '.xml';
         $this->startSheet();
     }
 

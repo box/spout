@@ -186,8 +186,7 @@ class WorksheetHelper
      */
     protected function getFileAsXMLElementWithNamespace($xmlFilePath, $mainNamespace)
     {
-        $normalizedXmlFilePath = str_replace('/', DIRECTORY_SEPARATOR, $xmlFilePath);
-        $xmlContents = $this->globalFunctionsHelper->file_get_contents('zip://' . $this->filePath . '#' . $normalizedXmlFilePath);
+        $xmlContents = $this->globalFunctionsHelper->file_get_contents('zip://' . $this->filePath . '#' . $xmlFilePath);
 
         $xmlElement = new \SimpleXMLElement($xmlContents);
         $xmlElement->registerXPathNamespace('ns', $mainNamespace);

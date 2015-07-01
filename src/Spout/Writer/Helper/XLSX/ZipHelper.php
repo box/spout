@@ -33,18 +33,30 @@ class ZipHelper
      */
     protected function addFolderToZip($zip, $folderPath)
     {
-        $folderRealPath = realpath($folderPath) . DIRECTORY_SEPARATOR;
+        $folderRealPath = $this->getNormalizedRealPath($folderPath) . '/';
         $itemIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($folderPath, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST);
 
         foreach ($itemIterator as $itemInfo) {
-            $itemRealPath = realpath($itemInfo->getPathname());
+            $itemRealPath = $this->getNormalizedRealPath($itemInfo->getPathname());
             $itemLocalPath = str_replace($folderRealPath, '', $itemRealPath);
 
             if ($itemInfo->isFile()) {
-                $zip->addFile($itemInfo->getPathname(), $itemLocalPath);
+                $zip->addFile($itemRealPath, $itemLocalPath);
             } else if ($itemInfo->isDir()) {
                 $zip->addEmptyDir($itemLocalPath);
             }
         }
+    }
+
+    /**
+     * Returns canonicalized absolute pathname, containing only forward slashes.
+     *
+     * @param string $path Path to normalize
+     * @return string Normalized and canonicalized path
+     */
+    protected function getNormalizedRealPath($path)
+    {
+        $realPath = realpath($path);
+        return str_replace(DIRECTORY_SEPARATOR, '/', $realPath);
     }
 }
