@@ -14,10 +14,6 @@
         </testsuite>
     </testsuites>
 
-    <logging>
-        <log type="coverage-html" target="tests/coverage/"/>
-    </logging>
-
     <filter>
         <whitelist>
             <directory suffix=".php">src/</directory>
