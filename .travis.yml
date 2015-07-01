@@ -8,7 +8,11 @@ php:
   - hhvm
 
 install:
-  - composer self-update
-  - composer install --prefer-source
+  - composer install --no-interaction
 
-script: phpunit
+script:
+  - mkdir -p build/logs
+  - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+
+after_script:
+  - php vendor/bin/coveralls -v
