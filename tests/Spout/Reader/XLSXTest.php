@@ -250,7 +250,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     {
         $allRows = $this->getAllRowsForFile('billion_laughs_test_file.xlsx');
 
-        $expectedMaxMemoryUsage = 20 * 1024 * 1024; // 20MB
+        $expectedMaxMemoryUsage = 30 * 1024 * 1024; // 30MB
         $this->assertLessThan($expectedMaxMemoryUsage, memory_get_peak_usage(true), 'Entities should not be expanded and therefore consume all the memory.');
 
         $expectedFirstRow = ['s1--A1', 's1--B1', 's1--C1', 's1--D1', 's1--E1'];
