@@ -19,13 +19,13 @@ use Box\Spout\Reader\Helper\XLSX\WorksheetHelper;
  */
 class XLSX extends AbstractReader
 {
-    const INLINE_STRING_CELL_TYPE = 'inlineStr';
-    const STR_CELL_TYPE = 'str';
-    const SHARED_STRING_CELL_TYPE = 's';
-    const BOOLEAN_CELL_TYPE = 'b';
-    const NUMERIC_CELL_TYPE = 'n';
-    const DATE_CELL_TYPE = 'd';
-    const EMPTY_CELL_TYPE = 'e';
+    const CELL_TYPE_INLINE_STRING = 'inlineStr';
+    const CELL_TYPE_STR = 'str';
+    const CELL_TYPE_SHARED_STRING = 's';
+    const CELL_TYPE_BOOLEAN = 'b';
+    const CELL_TYPE_NUMERIC = 'n';
+    const CELL_TYPE_DATE = 'd';
+    const CELL_TYPE_ERROR = 'e';
     
     /** @var string Real path of the file to read */
     protected $filePath;
@@ -235,11 +235,11 @@ class XLSX extends AbstractReader
      * Returns the cell String value associated to the given XML node where string is inline.
      *
      * @param \DOMNode $node
-     * @return mixed The value associated with the cell
+     * @return string The value associated with the cell
      */
     protected function getVNodeValue(&$node)
     {
-        // all other cell types should have a "v" tag containing the value.
+        // for cell types having a "v" tag containing the value.
         // if not, the returned value should be empty string.
         $vNode = $node->getElementsByTagName('v')->item(0);
         if ($vNode !== null) {
@@ -247,7 +247,7 @@ class XLSX extends AbstractReader
         }
         return "";
     }
-    
+
     /**
      * Returns the cell String value associated to the given XML node where string is inline.
      *
@@ -255,7 +255,7 @@ class XLSX extends AbstractReader
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
      * @return string The value associated with the cell (null when the cell has an error)
      */
-    protected function formatInlineStringCellValue(&$node, &$escaper)
+    protected function formatInlineStringCellValue($node, &$escaper)
     {
         // inline strings are formatted this way:
         // <c r="A1" t="inlineStr"><is><t>[INLINE_STRING]</t></is></c>
@@ -264,79 +264,77 @@ class XLSX extends AbstractReader
         $cellValue = $escaper->unescape($escapedCellValue);
         return $cellValue;
     }
-    
+
     /**
      * Returns the cell String value associated to the given XML node where string is shared in shared-strings file.
      *
-     * @param \DOMNode $node
+     * @param string $nodeValue
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
      * @return string The value associated with the cell (null when the cell has an error)
      */
-    protected function formatSharedStringCellValue(&$node, &$escaper)
+    protected function formatSharedStringCellValue($nodeValue, &$escaper)
     {
         // shared strings are formatted this way:
         // <c r="A1" t="s"><v>[SHARED_STRING_INDEX]</v></c>
-        $sharedStringIndex = intval($node);
+        $sharedStringIndex = intval($nodeValue);
         $escapedCellValue = $this->sharedStringsHelper->getStringAtIndex($sharedStringIndex);
         $cellValue = $escaper->unescape($escapedCellValue);
         return $cellValue;
     }
-    
+
     /**
      * Returns the cell String value associated to the given XML node where string is stored in value node.
      *
-     * @param \DOMNode $node
+     * @param string $nodeValue
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
      * @return string The value associated with the cell (null when the cell has an error)
      */
-    protected function formatStrCellValue(&$node, &$escaper)
+    protected function formatStrCellValue($nodeValue, &$escaper)
     {
-        $escapedCellValue = trim($node);
+        $escapedCellValue = trim($nodeValue);
         $cellValue = $escaper->unescape($escapedCellValue);
         return $cellValue;
     }
-    
+
     /**
      * Returns the cell Numeric value associated to the given XML node.
      *
-     * @param \DOMNode $node
+     * @param string $nodeValue
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
      * @return int|float The value associated with the cell
      */
-    protected function formatNumericCellValue(&$nodeValue)
+    protected function formatNumericCellValue($nodeValue)
     {
         $cellValue = is_int($nodeValue) ? intval($nodeValue) : floatval($nodeValue);
         return $cellValue;
     }
-    
+
     /**
      * Returns the cell Boolean value associated to the given XML node.
      *
-     * @param \DOMNode $node
+     * @param string $nodeValue
      * @return bool The value associated with the cell
      */
-    protected function formatBooleanCellValue(&$node)
+    protected function formatBooleanCellValue($nodeValue)
     {
         // !! is similar to boolval()
-        $cellValue = !!$node;
+        $cellValue = !!$nodeValue;
         return $cellValue;
     }
 
     /**
      * Returns the cell Date value associated to the given XML node.
      *
-     * @param \DOMNode $node
+     * @param string $nodeValue
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
-     * @return DateTime The value associated with the cell (null when the cell has an error)
+     * @return DateTime|null The value associated with the cell (null when the cell has an error)
      */
-    protected function formatDateCellValue(&$node)
+    protected function formatDateCellValue($nodeValue)
     {
-        // Mitigate thrown Exception on invalid date-time format (http://php.net/manual/en/datetime.construct.php)
-        try {
-            $cellValue = new \DateTime($node);
+        try { // Mitigate thrown Exception on invalid date-time format (http://php.net/manual/en/datetime.construct.php)
+            $cellValue = new \DateTime($nodeValue);
             return $cellValue;
-        } catch ( \Exception $e ) {
-            // Maybe do something... Not famiiar enough to see about exceptions at this stage
+        } catch (\Exception $e) {
             return null;
         }
     }
@@ -353,26 +351,25 @@ class XLSX extends AbstractReader
         // Default cell type is "n"
         $cellType = $node->getAttribute('t') ?: 'n';
         $vNodeValue = $this->getVNodeValue($node);
-        if( ($vNodeValue === "") && ($cellType !== self::INLINE_STRING_CELL_TYPE) ) {
+        if ( ($vNodeValue === "") && ($cellType !== self::CELL_TYPE_INLINE_STRING) ) {
             return $vNodeValue;
         }
-        switch($cellType) {
-            case self::INLINE_STRING_CELL_TYPE:
+
+        switch ($cellType)
+        {
+            case self::CELL_TYPE_INLINE_STRING:
                 return $this->formatInlineStringCellValue($node, $escaper);
-            case self::SHARED_STRING_CELL_TYPE:
+            case self::CELL_TYPE_SHARED_STRING:
                 return $this->formatSharedStringCellValue($vNodeValue, $escaper);
-            case self::STR_CELL_TYPE:
+            case self::CELL_TYPE_STR:
                 return $this->formatStrCellValue($vNodeValue, $escaper);
-            case self::BOOLEAN_CELL_TYPE:
+            case self::CELL_TYPE_BOOLEAN:
                 return $this->formatBooleanCellValue($vNodeValue);
-            case self::NUMERIC_CELL_TYPE:
+            case self::CELL_TYPE_NUMERIC:
                 return $this->formatNumericCellValue($vNodeValue);
-            case self::DATE_CELL_TYPE:
+            case self::CELL_TYPE_DATE:
                 return $this->formatDateCellValue($vNodeValue);
             default:
-                if($cellType !== self::EMPTY_CELL_TYPE) {
-                    \trigger_error('UNKNOWN CELL TYPE', \E_USER_NOTICE);
-                }
                 return null;
         }
     }
