@@ -3,7 +3,7 @@
 [![Latest Stable Version](https://poser.pugx.org/box/spout/v/stable)](https://packagist.org/packages/box/spout)
 [![Project Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
 [![Build Status](https://travis-ci.org/box/spout.png?branch=master)](http://travis-ci.org/box/spout)
-[![Coverage Status](https://coveralls.io/repos/box/spout/badge.svg)](https://coveralls.io/r/box/spout)
+[![Coverage Status](https://coveralls.io/repos/box/spout/badge.svg?branch=master)](https://coveralls.io/r/box/spout?branch=master)
 [![Total Downloads](https://poser.pugx.org/box/spout/downloads)](https://packagist.org/packages/box/spout)
 [![License](https://poser.pugx.org/box/spout/license)](https://packagist.org/packages/box/spout)
 
