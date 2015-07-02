@@ -129,6 +129,8 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
                 \DateTime::createFromFormat('Y-m-d H:i:s', '2015-06-01 00:00:00'),
                 10, 10.43,
                 null,
+                'weird string', // valid 'str' string
+                null, // invalid date
             ],
             ['', '', '', '', '', '', '', '', ''],
         ];
