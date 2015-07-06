@@ -232,12 +232,12 @@ class XLSX extends AbstractReader
     }
 
     /**
-     * Returns the cell String value associated to the given XML node where string is inline.
+     * Returns the cell's string value from a node's nested value node
      *
      * @param \DOMNode $node
      * @return string The value associated with the cell
      */
-    protected function getVNodeValue(&$node)
+    protected function getVNodeValue($node)
     {
         // for cell types having a "v" tag containing the value.
         // if not, the returned value should be empty string.
@@ -249,13 +249,13 @@ class XLSX extends AbstractReader
     }
 
     /**
-     * Returns the cell String value associated to the given XML node where string is inline.
+     * Returns the cell String value where string is inline.
      *
      * @param \DOMNode $node
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
      * @return string The value associated with the cell (null when the cell has an error)
      */
-    protected function formatInlineStringCellValue($node, &$escaper)
+    protected function formatInlineStringCellValue($node, $escaper)
     {
         // inline strings are formatted this way:
         // <c r="A1" t="inlineStr"><is><t>[INLINE_STRING]</t></is></c>
@@ -266,13 +266,13 @@ class XLSX extends AbstractReader
     }
 
     /**
-     * Returns the cell String value associated to the given XML node where string is shared in shared-strings file.
+     * Returns the cell String value from shared-strings file using nodeValue index.
      *
      * @param string $nodeValue
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
      * @return string The value associated with the cell (null when the cell has an error)
      */
-    protected function formatSharedStringCellValue($nodeValue, &$escaper)
+    protected function formatSharedStringCellValue($nodeValue, $escaper)
     {
         // shared strings are formatted this way:
         // <c r="A1" t="s"><v>[SHARED_STRING_INDEX]</v></c>
@@ -283,13 +283,13 @@ class XLSX extends AbstractReader
     }
 
     /**
-     * Returns the cell String value associated to the given XML node where string is stored in value node.
+     * Returns the cell String value, where string is stored in value node.
      *
      * @param string $nodeValue
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
      * @return string The value associated with the cell (null when the cell has an error)
      */
-    protected function formatStrCellValue($nodeValue, &$escaper)
+    protected function formatStrCellValue($nodeValue, $escaper)
     {
         $escapedCellValue = trim($nodeValue);
         $cellValue = $escaper->unescape($escapedCellValue);
@@ -297,7 +297,7 @@ class XLSX extends AbstractReader
     }
 
     /**
-     * Returns the cell Numeric value associated to the given XML node.
+     * Returns the cell Numeric value from string of nodeValue.
      *
      * @param string $nodeValue
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
@@ -310,7 +310,7 @@ class XLSX extends AbstractReader
     }
 
     /**
-     * Returns the cell Boolean value associated to the given XML node.
+     * Returns the cell Boolean value from a specific node's Value.
      *
      * @param string $nodeValue
      * @return bool The value associated with the cell
@@ -323,7 +323,7 @@ class XLSX extends AbstractReader
     }
 
     /**
-     * Returns the cell Date value associated to the given XML node.
+     * Returns a cell's PHP Date value, associated to the given stored nodeValue.
      *
      * @param string $nodeValue
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
@@ -340,7 +340,7 @@ class XLSX extends AbstractReader
     }
 
     /**
-     * Returns the (unescaped) cell value associated to the given XML node.
+     * Returns the (unescaped) correctly marshalled, cell value associated to the given XML node.
      *
      * @param \DOMNode $node
      * @param \Box\Spout\Common\Escaper\XLSX $escaper
