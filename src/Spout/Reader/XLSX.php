@@ -32,6 +32,9 @@ class XLSX extends AbstractReader
 
     /** @var string Temporary folder where the temporary files will be created */
     protected $tempFolder;
+    
+    /** @var bool Disabling this will increase your memory usage but can improve your execution time */
+    protected $useSharedStringsFileCache = true;
 
     /** @var \ZipArchive */
     protected $zip;
@@ -63,6 +66,19 @@ class XLSX extends AbstractReader
         $this->tempFolder = $tempFolder;
         return $this;
     }
+    
+    /**
+     * Disabling the shared strings file cache will increase your memory usage but can improve your execution time.
+     * The shared strings file cache is active by default.
+     *
+     * @param bool $useSharedStringsFileCache
+     * @return XLSX
+     */
+    public function setUseSharedStringsFileCache($useSharedStringsFileCache)
+    {    
+        $this->useSharedStringsFileCache = $useSharedStringsFileCache;
+        return $this;
+    }
 
     /**
      * Opens the file at the given file path to make it ready to be read.
@@ -80,7 +96,7 @@ class XLSX extends AbstractReader
         $this->zip = new \ZipArchive();
 
         if ($this->zip->open($filePath) === true) {
-            $this->sharedStringsHelper = new SharedStringsHelper($filePath, $this->tempFolder);
+            $this->sharedStringsHelper = new SharedStringsHelper($filePath, $this->tempFolder, $this->useSharedStringsFileCache);
 
             if ($this->sharedStringsHelper->hasSharedStrings()) {
                 // Extracts all the strings from the worksheets for easy access in the future
