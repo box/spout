@@ -40,7 +40,8 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
     {
         $this->sharedStringsHelper->extractSharedStrings();
 
-        $tempFolder = \ReflectionHelper::getValueOnObject($this->sharedStringsHelper, 'tempFolder');
+        $cachingStrategy = \ReflectionHelper::getValueOnObject($this->sharedStringsHelper, 'cachingStrategy');
+        $tempFolder = \ReflectionHelper::getValueOnObject($cachingStrategy, 'tempFolder');
 
         $filesInTempFolder = $this->getFilesInFolder($tempFolder);
         $this->assertEquals(1, count($filesInTempFolder), 'One temp file should have been created in the temp folder.');

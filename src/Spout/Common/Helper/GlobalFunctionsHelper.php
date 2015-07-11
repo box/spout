@@ -107,6 +107,19 @@ class GlobalFunctionsHelper
     }
 
     /**
+     * Wrapper around global function fwrite()
+     * @see fwrite()
+     *
+     * @param resource $handle
+     * @param string $string
+     * @return int
+     */
+    public function fwrite($handle, $string)
+    {
+        return fwrite($handle, $string);
+    }
+
+    /**
      * Wrapper around global function fclose()
      * @see fclose()
      *
