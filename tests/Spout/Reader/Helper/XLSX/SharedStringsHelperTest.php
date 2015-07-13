@@ -2,6 +2,9 @@
 
 namespace Box\Spout\Reader\Helper\XLSX;
 
+use Box\Spout\Reader\Helper\XLSX\SharedStringsCaching\CachingStrategyFactory;
+use Box\Spout\Reader\Helper\XLSX\SharedStringsCaching\FileBasedStrategy;
+use Box\Spout\Reader\Helper\XLSX\SharedStringsCaching\InMemoryStrategy;
 use Box\Spout\TestUsingResource;
 
 /**
@@ -34,47 +37,6 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return void
-     */
-    public function testExtractSharedStringsShouldCreateTempFileWithSharedStrings()
-    {
-        $this->sharedStringsHelper->extractSharedStrings();
-
-        $cachingStrategy = \ReflectionHelper::getValueOnObject($this->sharedStringsHelper, 'cachingStrategy');
-        $tempFolder = \ReflectionHelper::getValueOnObject($cachingStrategy, 'tempFolder');
-
-        $filesInTempFolder = $this->getFilesInFolder($tempFolder);
-        $this->assertEquals(1, count($filesInTempFolder), 'One temp file should have been created in the temp folder.');
-
-        $tempFileContents = file_get_contents($filesInTempFolder[0]);
-        $tempFileContentsPerLine = explode(PHP_EOL, $tempFileContents);
-
-        $this->assertEquals('s1--A1', $tempFileContentsPerLine[0]);
-        $this->assertEquals('s1--E5', $tempFileContentsPerLine[24]);
-    }
-
-    /**
-     * Returns all files that are in the given folder.
-     * It does not include "." and ".." and is not recursive.
-     *
-     * @param string $folderPath
-     * @return array
-     */
-    private function getFilesInFolder($folderPath)
-    {
-        $files = [];
-        $directoryIterator = new \DirectoryIterator($folderPath);
-
-        foreach ($directoryIterator as $fileInfo) {
-            if ($fileInfo->isFile()) {
-                $files[] = $fileInfo->getPathname();
-            }
-        }
-
-        return $files;
-    }
-
-    /**
      * @expectedException \Box\Spout\Reader\Exception\SharedStringNotFoundException
      * @return void
      */
@@ -96,6 +58,9 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
 
         $sharedString = $this->sharedStringsHelper->getStringAtIndex(24);
         $this->assertEquals('s1--E5', $sharedString);
+
+        $usedCachingStrategy = \ReflectionHelper::getValueOnObject($this->sharedStringsHelper, 'cachingStrategy');
+        $this->assertTrue($usedCachingStrategy instanceof InMemoryStrategy);
     }
 
     /**
@@ -113,6 +78,28 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
 
         $sharedString = $sharedStringsHelper->getStringAtIndex(24);
         $this->assertEquals("s1\nE5", $sharedString);
+
+        $sharedStringsHelper->cleanup();
+    }
+
+    /**
+     * @return void
+     */
+    public function testGetStringAtIndexWithFileBasedStrategy()
+    {
+        $resourcePath = $this->getResourcePath('sheet_with_lots_of_shared_strings.xlsx');
+        $sharedStringsHelper = new SharedStringsHelper($resourcePath);
+
+        $sharedStringsHelper->extractSharedStrings();
+
+        $sharedString = $sharedStringsHelper->getStringAtIndex(0);
+        $this->assertEquals('str', $sharedString);
+
+        $sharedString = $sharedStringsHelper->getStringAtIndex(CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE + 1);
+        $this->assertEquals('str', $sharedString);
+
+        $usedCachingStrategy = \ReflectionHelper::getValueOnObject($sharedStringsHelper, 'cachingStrategy');
+        $this->assertTrue($usedCachingStrategy instanceof FileBasedStrategy);
 
         $sharedStringsHelper->cleanup();
     }

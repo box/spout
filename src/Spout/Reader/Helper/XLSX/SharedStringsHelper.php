@@ -3,8 +3,6 @@
 namespace Box\Spout\Reader\Helper\XLSX;
 
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Common\Helper\FileSystemHelper;
-use Box\Spout\Reader\Exception\SharedStringNotFoundException;
 use Box\Spout\Reader\Helper\XLSX\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\Helper\XLSX\SharedStringsCaching\CachingStrategyInterface;
 
@@ -81,7 +79,7 @@ class SharedStringsHelper
         $escaper = new \Box\Spout\Common\Escaper\XLSX();
 
         $sharedStringsFilePath = $this->getSharedStringsFilePath();
-        if ($xmlReader->open($sharedStringsFilePath, null, LIBXML_NOENT|LIBXML_NONET) === false) {
+        if ($xmlReader->open($sharedStringsFilePath, null, LIBXML_NONET) === false) {
             throw new IOException('Could not open "' . self::SHARED_STRINGS_XML_FILE_PATH . '".');
         }
 
@@ -93,7 +91,7 @@ class SharedStringsHelper
         }
 
         while ($xmlReader->name === 'si') {
-            $node = new \SimpleXMLElement($xmlReader->readOuterXml());
+            $node = $this->getSimpleXmlElementNodeFromXMLReader($xmlReader);
             $node->registerXPathNamespace('ns', self::MAIN_NAMESPACE_FOR_SHARED_STRINGS_XML);
 
             // removes nodes that should not be read, like the pronunciation of the Kanji characters
@@ -138,10 +136,30 @@ class SharedStringsHelper
      *
      * @param \XMLReader $xmlReader XMLReader instance
      * @return int Number of unique shared strings in the sharedStrings.xml file
+     * @throws \Box\Spout\Common\Exception\IOException If sharedStrings.xml is invalid and can't be read
      */
     protected function getSharedStringsUniqueCount($xmlReader)
     {
+        // Use internal errors to avoid displaying lots of warning messages in case of invalid file
+        // For instance, if the file is used to perform a "Billion Laughs" or "Quadratic Blowup" attacks
+        libxml_clear_errors();
+        libxml_use_internal_errors(true);
+
         $xmlReader->next('sst');
+
+        // Iterate over the "sst" elements to get the actual "sst ELEMENT" (skips any DOCTYPE)
+        while ($xmlReader->name === 'sst' && $xmlReader->nodeType !== \XMLReader::ELEMENT) {
+            $xmlReader->read();
+        }
+
+        $readError = libxml_get_last_error();
+        if ($readError !== false) {
+            throw new IOException("The sharedStrings.xml file is invalid and cannot be read. [{$readError->message}]");
+        }
+
+        // reset the setting to display XML warnings/errors
+        libxml_use_internal_errors(false);
+
         return intval($xmlReader->getAttribute('uniqueCount'));
     }
 
@@ -153,8 +171,37 @@ class SharedStringsHelper
      */
     protected function getBestSharedStringsCachingStrategy($sharedStringsUniqueCount)
     {
-        $factory = new CachingStrategyFactory();
-        return $factory->getBestCachingStrategy($sharedStringsUniqueCount, $this->tempFolder);
+        return CachingStrategyFactory::getBestCachingStrategy($sharedStringsUniqueCount, $this->tempFolder);
+    }
+
+    /**
+     * Returns a SimpleXMLElement node from the current node in the given XMLReader instance.
+     * This is to simplify the parsing of the subtree.
+     *
+     * @param \XMLReader $xmlReader
+     * @return \SimpleXMLElement
+     * @throws \Box\Spout\Common\Exception\IOException If the current node cannot be read
+     */
+    protected function getSimpleXmlElementNodeFromXMLReader($xmlReader)
+    {
+        // Use internal errors to avoid displaying lots of warning messages in case of error found in the XML node.
+        // For instance, if the file is used to perform a "Billion Laughs" or "Quadratic Blowup" attacks
+        libxml_clear_errors();
+        libxml_use_internal_errors(true);
+
+        $node = null;
+        try {
+            $node = new \SimpleXMLElement($xmlReader->readOuterXml());
+        } catch (\Exception $exception) {
+            $error = libxml_get_last_error();
+            libxml_use_internal_errors(false);
+
+            throw new IOException('The sharedStrings.xml file contains unreadable data [' . trim($error->message) . '].');
+        }
+
+        libxml_use_internal_errors(false);
+
+        return $node;
     }
 
     /**

@@ -28,9 +28,13 @@ class CachingStrategyFactory
      * @param string|void $tempFolder Temporary folder where the temporary files to store shared strings will be stored
      * @return CachingStrategyInterface The best caching strategy
      */
-    public function getBestCachingStrategy($sharedStringsUniqueCount, $tempFolder = null)
+    public static function getBestCachingStrategy($sharedStringsUniqueCount, $tempFolder = null)
     {
-        // TODO add in-memory strategy
-        return new FileBasedStrategy($tempFolder, self::MAX_NUM_STRINGS_PER_TEMP_FILE);
+        // TODO: take available memory into account
+        if ($sharedStringsUniqueCount < self::MAX_NUM_STRINGS_PER_TEMP_FILE) {
+            return new InMemoryStrategy($sharedStringsUniqueCount);
+        } else {
+            return new FileBasedStrategy($tempFolder, self::MAX_NUM_STRINGS_PER_TEMP_FILE);
+        }
     }
 }
