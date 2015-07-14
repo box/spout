@@ -19,10 +19,60 @@ class CSVTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testReadShouldThrowExceptionIfFileDoesNotExist()
+    public function testOpenShouldThrowExceptionIfFileDoesNotExist()
     {
-        $this->getAllRowsForFile('/path/to/fake/file.csv');
+        ReaderFactory::create(Type::CSV)->open('/path/to/fake/file.csv');
     }
+
+    /**
+     * @expectedException \Box\Spout\Common\Exception\IOException
+     *
+     * @return void
+     */
+    public function testOpenShouldThrowExceptionIfFileNotReadable()
+    {
+        $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
+                        ->setMethods(['is_readable'])
+                        ->getMock();
+        $helperStub->method('is_readable')->willReturn(false);
+
+        $resourcePath = $this->getResourcePath('csv_standard.csv');
+
+        $reader = ReaderFactory::create(Type::CSV);
+        $reader->setGlobalFunctionsHelper($helperStub);
+        $reader->open($resourcePath);
+    }
+
+    /**
+     * @expectedException \Box\Spout\Reader\Exception\ReaderNotOpenedException
+     *
+     * @return void
+     */
+    public function testReadShouldThrowExceptionIfReadBeforeReaderOpened()
+    {
+        $reader = ReaderFactory::create(Type::CSV);
+        $reader->hasNextRow();
+    }
+
+    /**
+     * @expectedException \Box\Spout\Reader\Exception\EndOfFileReachedException
+     *
+     * @return void
+     */
+    public function testReadShouldThrowExceptionIfNextRowCalledAfterReadingDone()
+    {
+        $resourcePath = $this->getResourcePath('csv_standard.csv');
+
+        $reader = ReaderFactory::create(Type::CSV);
+        $reader->open($resourcePath);
+
+        while ($reader->hasNextRow()) {
+            $reader->nextRow();
+        }
+
+        $reader->nextRow();
+    }
+
 
     /**
      * @return void
