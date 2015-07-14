@@ -87,6 +87,10 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetStringAtIndexWithFileBasedStrategy()
     {
+        // force the file-based strategy by setting no memory limit
+        $originalMemoryLimit = ini_get('memory_limit');
+        ini_set('memory_limit', '-1');
+
         $resourcePath = $this->getResourcePath('sheet_with_lots_of_shared_strings.xlsx');
         $sharedStringsHelper = new SharedStringsHelper($resourcePath);
 
@@ -102,5 +106,7 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($usedCachingStrategy instanceof FileBasedStrategy);
 
         $sharedStringsHelper->cleanup();
+
+        ini_set('memory_limit', $originalMemoryLimit);
     }
 }

@@ -171,7 +171,8 @@ class SharedStringsHelper
      */
     protected function getBestSharedStringsCachingStrategy($sharedStringsUniqueCount)
     {
-        return CachingStrategyFactory::getBestCachingStrategy($sharedStringsUniqueCount, $this->tempFolder);
+        return CachingStrategyFactory::getInstance()
+                ->getBestCachingStrategy($sharedStringsUniqueCount, $this->tempFolder);
     }
 
     /**
