@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Reader;
 
+use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 
@@ -245,18 +246,39 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedRow, $allRows[0], 'Pronunciation data should be removed.');
     }
 
+
     /**
+     * @return array
+     */
+    public function dataProviderForTestReadShouldBeProtectedAgainstAttacks()
+    {
+        return [
+            ['attack_billion_laughs.xlsx'],
+            ['attack_quadratic_blowup.xlsx'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForTestReadShouldBeProtectedAgainstAttacks
+     * @NOTE: The LIBXML_NOENT is used to ACTUALLY substitute entities (and should therefore not be used)
+     *
+     * @param string $fileName
      * @return void
      */
-    public function testReadShouldBeProtectedAgainstBillionLaughsAttack()
+    public function testReadShouldBeProtectedAgainstAttacks($fileName)
     {
-        $allRows = $this->getAllRowsForFile('billion_laughs_test_file.xlsx');
+        $startTime = microtime(true);
 
-        $expectedMaxMemoryUsage = 30 * 1024 * 1024; // 30MB
-        $this->assertLessThan($expectedMaxMemoryUsage, memory_get_peak_usage(true), 'Entities should not be expanded and therefore consume all the memory.');
+        try {
+            $this->getAllRowsForFile($fileName);
+            $this->fail('An exception should have been thrown');
+        } catch (IOException $exception) {
+            $duration = microtime(true) - $startTime;
+            $this->assertLessThan(10, $duration, 'Entities should not be expanded and therefore take more than 10 seconds to be parsed.');
 
-        $expectedFirstRow = ['s1--A1', 's1--B1', 's1--C1', 's1--D1', 's1--E1'];
-        $this->assertEquals($expectedFirstRow, $allRows[0], 'Entities should be ignored when reading XML files.');
+            $expectedMaxMemoryUsage = 30 * 1024 * 1024; // 30MB
+            $this->assertLessThan($expectedMaxMemoryUsage, memory_get_peak_usage(true), 'Entities should not be expanded and therefore consume all the memory.');
+        }
     }
 
     /**

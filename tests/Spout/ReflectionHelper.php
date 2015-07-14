@@ -89,4 +89,27 @@ class ReflectionHelper
 
         return $value;
     }
+
+    /**
+     * Invoke a the given public or protected method on the given object.
+     *
+     * @param object $object
+     * @param string $methodName
+     * @param *mixed|null $params
+     *
+     * @return mixed|null
+     */
+    public static function callMethodOnObject($object, $methodName)
+    {
+        $params = func_get_args();
+        array_shift($params); // object
+        array_shift($params); // methodName
+
+        $className = get_class($object);
+        $class = new ReflectionClass($className);
+        $method = $class->getMethod($methodName);
+        $method->setAccessible(true);
+
+        return $method->invokeArgs($object, $params);
+    }
 }
