@@ -17,6 +17,9 @@
     <filter>
         <whitelist>
             <directory suffix=".php">src/</directory>
+            <exclude>
+                <directory>src/Spout/Autoloader</directory>
+            </exclude>
         </whitelist>
     </filter>
 
