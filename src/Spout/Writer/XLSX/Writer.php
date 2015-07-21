@@ -1,17 +1,18 @@
 <?php
 
-namespace Box\Spout\Writer;
+namespace Box\Spout\Writer\XLSX;
 
+use Box\Spout\Writer\AbstractWriter;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
-use Box\Spout\Writer\Internal\XLSX\Workbook;
+use Box\Spout\Writer\XLSX\Internal\Workbook;
 
 /**
- * Class XLSX
+ * Class Writer
  * This class provides base support to write data to XLSX files
  *
- * @package Box\Spout\Writer
+ * @package Box\Spout\Writer\XLSX
  */
-class XLSX extends AbstractWriter
+class Writer extends AbstractWriter
 {
     /** @var string Content-Type value for the header */
     protected static $headerContentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -25,7 +26,7 @@ class XLSX extends AbstractWriter
     /** @var bool Whether new sheets should be automatically created when the max rows limit per sheet is reached */
     protected $shouldCreateNewSheetsAutomatically = true;
 
-    /** @var Internal\XLSX\Workbook The workbook for the XLSX file */
+    /** @var Internal\Workbook The workbook for the XLSX file */
     protected $book;
 
     /** @var int */
@@ -33,7 +34,7 @@ class XLSX extends AbstractWriter
 
     /**
      * @param string $tempFolder Temporary folder where the files to create the XLSX will be stored
-     * @return XLSX
+     * @return Writer
      */
     public function setTempFolder($tempFolder)
     {
@@ -45,7 +46,7 @@ class XLSX extends AbstractWriter
      * Use inline string to be more memory efficient. If set to false, it will use shared strings.
      *
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
-     * @return XLSX
+     * @return Writer
      */
     public function setShouldUseInlineStrings($shouldUseInlineStrings)
     {
@@ -55,7 +56,7 @@ class XLSX extends AbstractWriter
 
     /**
      * @param bool $shouldCreateNewSheetsAutomatically Whether new sheets should be automatically created when the max rows limit per sheet is reached
-     * @return XLSX
+     * @return Writer
      */
     public function setShouldCreateNewSheetsAutomatically($shouldCreateNewSheetsAutomatically)
     {
@@ -91,7 +92,7 @@ class XLSX extends AbstractWriter
         $externalSheets = [];
         $worksheets = $this->book->getWorksheets();
 
-        /** @var Internal\XLSX\Worksheet $worksheet */
+        /** @var Internal\Worksheet $worksheet */
         foreach ($worksheets as $worksheet) {
             $externalSheets[] = $worksheet->getExternalSheet();
         }

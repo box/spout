@@ -1,15 +1,15 @@
 <?php
 
-namespace Box\Spout\Writer\Helper\XLSX;
+namespace Box\Spout\Writer\XLSX\Helper;
 
-use Box\Spout\Writer\Internal\XLSX\Worksheet;
+use Box\Spout\Writer\XLSX\Internal\Worksheet;
 
 /**
  * Class FileSystemHelper
  * This class provides helper functions to help with the file system operations
  * like files/folders creation & deletion for XLSX files
  *
- * @package Box\Spout\Writer\Helper\XLSX
+ * @package Box\Spout\Writer\XLSX\Helper
  */
 class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
 {

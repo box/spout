@@ -1,12 +1,12 @@
 <?php
 
-namespace Box\Spout\Writer;
+namespace Box\Spout\Writer\XLSX;
 
 /**
  * Class Sheet
  * Represents a worksheet within a XLSX file
  *
- * @package Box\Spout\Writer
+ * @package Box\Spout\Writer\XLSX
  */
 class Sheet
 {
@@ -45,7 +45,7 @@ class Sheet
 
     /**
      * @param string $name Name of the sheet
-     * @return \Box\Spout\Writer\Sheet
+     * @return Sheet
      */
     public function setName($name)
     {

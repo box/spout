@@ -1,16 +1,17 @@
 <?php
 
-namespace Box\Spout\Writer;
+namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\WriterFactory;
 
 /**
  * Class XLSXTest
  *
  * @package Box\Spout\Writer
  */
-class XLSXTest extends \PHPUnit_Framework_TestCase
+class WriterTest extends \PHPUnit_Framework_TestCase
 {
     use TestUsingResource;
 
@@ -230,7 +231,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX $writer */
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
         $writer = WriterFactory::create(Type::XLSX);
         $writer->setShouldUseInlineStrings(true);
 
@@ -278,7 +279,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
         ];
 
         // set the maxRowsPerSheet limit to 2
-        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\Internal\XLSX\Workbook', 'maxRowsPerWorksheet', 2);
+        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\XLSX\Internal\Workbook', 'maxRowsPerWorksheet', 2);
 
         $writer = $this->writeToXLSXFile($dataRows, $fileName, true, $shouldCreateSheetsAutomatically = true);
         $this->assertEquals(2, count($writer->getSheets()), '2 sheets should have been created.');
@@ -302,7 +303,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
         ];
 
         // set the maxRowsPerSheet limit to 2
-        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\Internal\XLSX\Workbook', 'maxRowsPerWorksheet', 2);
+        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\XLSX\Internal\Workbook', 'maxRowsPerWorksheet', 2);
 
         $writer = $this->writeToXLSXFile($dataRows, $fileName, true, $shouldCreateSheetsAutomatically = false);
         $this->assertEquals(1, count($writer->getSheets()), 'Only 1 sheet should have been created.');
@@ -348,14 +349,14 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
      * @param string $fileName
      * @param bool $shouldUseInlineStrings
      * @param bool $shouldCreateSheetsAutomatically
-     * @return XLSX
+     * @return Writer
      */
     private function writeToXLSXFile($allRows, $fileName, $shouldUseInlineStrings = true, $shouldCreateSheetsAutomatically = true)
     {
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX $writer */
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
         $writer = WriterFactory::create(Type::XLSX);
         $writer->setShouldUseInlineStrings($shouldUseInlineStrings);
         $writer->setShouldCreateNewSheetsAutomatically($shouldCreateSheetsAutomatically);
@@ -373,14 +374,14 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
      * @param string $fileName
      * @param bool $shouldUseInlineStrings
      * @param bool $shouldCreateSheetsAutomatically
-     * @return XLSX
+     * @return Writer
      */
     private function writeToMultipleSheetsInXLSXFile($allRows, $numSheets, $fileName, $shouldUseInlineStrings = true, $shouldCreateSheetsAutomatically = true)
     {
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX $writer */
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
         $writer = WriterFactory::create(Type::XLSX);
         $writer->setShouldUseInlineStrings($shouldUseInlineStrings);
         $writer->setShouldCreateNewSheetsAutomatically($shouldCreateSheetsAutomatically);

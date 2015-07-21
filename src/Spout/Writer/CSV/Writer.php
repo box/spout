@@ -1,16 +1,17 @@
 <?php
 
-namespace Box\Spout\Writer;
+namespace Box\Spout\Writer\CSV;
 
+use Box\Spout\Writer\AbstractWriter;
 use Box\Spout\Common\Exception\IOException;
 
 /**
- * Class CSV
+ * Class Writer
  * This class provides support to write data to CSV files
  *
- * @package Box\Spout\Writer
+ * @package Box\Spout\Writer\CSV
  */
-class CSV extends AbstractWriter
+class Writer extends AbstractWriter
 {
     /** Number of rows to write before flushing */
     const FLUSH_THRESHOLD = 500;
@@ -32,7 +33,7 @@ class CSV extends AbstractWriter
      * Sets the field delimiter for the CSV
      *
      * @param string $fieldDelimiter Character that delimits fields
-     * @return CSV
+     * @return Writer
      */
     public function setFieldDelimiter($fieldDelimiter)
     {
@@ -44,7 +45,7 @@ class CSV extends AbstractWriter
      * Sets the field enclosure for the CSV
      *
      * @param string $fieldEnclosure Character that enclose fields
-     * @return CSV
+     * @return Writer
      */
     public function setFieldEnclosure($fieldEnclosure)
     {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Box\Spout\Writer\Helper\XLSX;
+namespace Box\Spout\Writer\XLSX\Helper;
 
 /**
  * Class CellHelper
  * This class provides helper functions when working with cells
  *
- * @package Box\Spout\Writer\Helper\XLSX
+ * @package Box\Spout\Writer\XLSX\Helper
  */
 class CellHelper
 {

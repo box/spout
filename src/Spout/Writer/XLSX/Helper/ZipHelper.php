@@ -1,12 +1,12 @@
 <?php
 
-namespace Box\Spout\Writer\Helper\XLSX;
+namespace Box\Spout\Writer\XLSX\Helper;
 
 /**
  * Class ZipHelper
  * This class provides helper functions to create zip files
  *
- * @package Box\Spout\Writer\Helper\XLSX
+ * @package Box\Spout\Writer\XLSX\Helper
  */
 class ZipHelper
 {

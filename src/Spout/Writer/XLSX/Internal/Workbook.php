@@ -1,18 +1,18 @@
 <?php
 
-namespace Box\Spout\Writer\Internal\XLSX;
+namespace Box\Spout\Writer\XLSX\Internal;
 
 use Box\Spout\Writer\Exception\SheetNotFoundException;
-use Box\Spout\Writer\Helper\XLSX\FileSystemHelper;
-use Box\Spout\Writer\Helper\XLSX\SharedStringsHelper;
-use Box\Spout\Writer\Sheet;
+use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
+use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
+use Box\Spout\Writer\XLSX\Sheet;
 
 /**
  * Class Book
  * Represents a workbook within a XLSX file.
  * It provides the functions to work with worksheets.
  *
- * @package Box\Spout\Writer\Internal\XLSX
+ * @package Box\Spout\Writer\XLSX\Internal
  */
 class Workbook
 {
@@ -28,10 +28,10 @@ class Workbook
     /** @var bool Whether new sheets should be automatically created when the max rows limit per sheet is reached */
     protected $shouldCreateNewSheetsAutomatically;
 
-    /** @var \Box\Spout\Writer\Helper\XLSX\FileSystemHelper Helper to perform file system operations */
+    /** @var \Box\Spout\Writer\XLSX\Helper\FileSystemHelper Helper to perform file system operations */
     protected $fileSystemHelper;
 
-    /** @var \Box\Spout\Writer\Helper\XLSX\SharedStringsHelper Helper to write shared strings */
+    /** @var \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper Helper to write shared strings */
     protected $sharedStringsHelper;
 
     /** @var Worksheet[] Array containing the workbook's sheets */
@@ -114,7 +114,7 @@ class Workbook
      * Sets the given sheet as the current one. New data will be written to this sheet.
      * The writing will resume where it stopped (i.e. data won't be truncated).
      *
-     * @param \Box\Spout\Writer\Sheet $sheet The "external" sheet to set as current
+     * @param \Box\Spout\Writer\XLSX\Sheet $sheet The "external" sheet to set as current
      * @return void
      * @throws \Box\Spout\Writer\Exception\SheetNotFoundException If the given sheet does not exist in the workbook
      */
@@ -140,7 +140,7 @@ class Workbook
     /**
      * Returns the worksheet associated to the given external sheet.
      *
-     * @param \Box\Spout\Writer\Sheet $sheet
+     * @param \Box\Spout\Writer\XLSX\Sheet $sheet
      * @return Worksheet|null The worksheet associated to the given external sheet or null if not found.
      */
     protected function getWorksheetFromExternalSheet($sheet)

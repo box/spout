@@ -1,17 +1,17 @@
 <?php
 
-namespace Box\Spout\Writer\Internal\XLSX;
+namespace Box\Spout\Writer\XLSX\Internal;
 
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Writer\Helper\XLSX\CellHelper;
+use Box\Spout\Writer\XLSX\Helper\CellHelper;
 
 /**
  * Class Worksheet
  * Represents a worksheet within a XLSX file. The difference with the Sheet object is
  * that this class provides an interface to write data
  *
- * @package Box\Spout\Writer\Internal\XLSX
+ * @package Box\Spout\Writer\XLSX\Internal
  */
 class Worksheet
 {
@@ -20,13 +20,13 @@ class Worksheet
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
 EOD;
 
-    /** @var \Box\Spout\Writer\Sheet The "external" sheet */
+    /** @var \Box\Spout\Writer\XLSX\Sheet The "external" sheet */
     protected $externalSheet;
 
     /** @var string Path to the XML file that will contain the sheet data */
     protected $worksheetFilePath;
 
-    /** @var \Box\Spout\Writer\Helper\XLSX\SharedStringsHelper Helper to write shared strings */
+    /** @var \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper Helper to write shared strings */
     protected $sharedStringsHelper;
 
     /** @var bool Whether inline or shared strings should be used */
@@ -42,9 +42,9 @@ EOD;
     protected $lastWrittenRowIndex = 0;
 
     /**
-     * @param \Box\Spout\Writer\Sheet $externalSheet The associated "external" sheet
+     * @param \Box\Spout\Writer\XLSX\Sheet $externalSheet The associated "external" sheet
      * @param string $worksheetFilesFolder Temporary folder where the files to create the XLSX will be stored
-     * @param \Box\Spout\Writer\Helper\XLSX\SharedStringsHelper $sharedStringsHelper Helper for shared strings
+     * @param \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper $sharedStringsHelper Helper for shared strings
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
@@ -76,7 +76,7 @@ EOD;
     }
 
     /**
-     * @return \Box\Spout\Writer\Sheet The "external" sheet
+     * @return \Box\Spout\Writer\XLSX\Sheet The "external" sheet
      */
     public function getExternalSheet()
     {

@@ -1,14 +1,15 @@
 <?php
 
-namespace Box\Spout\Writer;
+namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\WriterFactory;
 
 /**
  * Class SheetTest
  *
- * @package Box\Spout\Writer
+ * @package Box\Spout\Writer\XLSX
  */
 class SheetTest extends \PHPUnit_Framework_TestCase
 {
@@ -69,7 +70,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX $writer */
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
 

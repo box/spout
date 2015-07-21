@@ -1,6 +1,6 @@
 <?php
 
-namespace Box\Spout\Writer\Helper\XLSX;
+namespace Box\Spout\Writer\XLSX\Helper;
 
 use Box\Spout\Common\Exception\IOException;
 
@@ -8,7 +8,7 @@ use Box\Spout\Common\Exception\IOException;
  * Class SharedStringsHelper
  * This class provides helper functions to write shared strings
  *
- * @package Box\Spout\Writer\Helper\XLSX
+ * @package Box\Spout\Writer\XLSX\Helper
  */
 class SharedStringsHelper
 {
