@@ -3,7 +3,7 @@
 namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Common\Type;
-use Box\Spout\Reader\ReaderFactory2;
+use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\TestUsingResource;
 
 /**
@@ -38,7 +38,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     private function openFileAndReturnSheets($fileName)
     {
         $resourcePath = $this->getResourcePath($fileName);
-        $reader = ReaderFactory2::create(Type::XLSX);
+        $reader = ReaderFactory::create(Type::XLSX);
         $reader->open($resourcePath);
 
         $sheets = [];

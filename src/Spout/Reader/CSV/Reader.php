@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Reader\CSV;
 
-use Box\Spout\Reader\AbstractReader2;
+use Box\Spout\Reader\AbstractReader;
 use Box\Spout\Common\Exception\IOException;
 
 /**
@@ -11,7 +11,7 @@ use Box\Spout\Common\Exception\IOException;
  *
  * @package Box\Spout\Reader\CSV
  */
-class Reader extends AbstractReader2
+class Reader extends AbstractReader
 {
     /** @var resource Pointer to the file to be written */
     protected $filePointer;
@@ -75,7 +75,7 @@ class Reader extends AbstractReader2
      *
      * @return SheetIterator To iterate over sheets
      */
-    public function getSheetIterator()
+    public function getConcreteSheetIterator()
     {
         return $this->sheetIterator;
     }

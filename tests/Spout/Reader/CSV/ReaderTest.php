@@ -3,7 +3,7 @@
 namespace Box\Spout\Reader\CSV;
 
 use Box\Spout\Common\Type;
-use Box\Spout\Reader\ReaderFactory2;
+use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\TestUsingResource;
 
 /**
@@ -22,7 +22,17 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testOpenShouldThrowExceptionIfFileDoesNotExist()
     {
-        ReaderFactory2::create(Type::CSV)->open('/path/to/fake/file.csv');
+        ReaderFactory::create(Type::CSV)->open('/path/to/fake/file.csv');
+    }
+
+    /**
+     * @expectedException \Box\Spout\Reader\Exception\ReaderNotOpenedException
+     *
+     * @return void
+     */
+    public function testOpenShouldThrowExceptionIfTryingToReadBeforeOpeningReader()
+    {
+        ReaderFactory::create(Type::CSV)->getSheetIterator();
     }
 
     /**
@@ -39,7 +49,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         $resourcePath = $this->getResourcePath('csv_standard.csv');
 
-        $reader = ReaderFactory2::create(Type::CSV);
+        $reader = ReaderFactory::create(Type::CSV);
         $reader->setGlobalFunctionsHelper($helperStub);
         $reader->open($resourcePath);
     }
@@ -162,7 +172,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
-        $reader = ReaderFactory2::create(Type::CSV);
+        $reader = ReaderFactory::create(Type::CSV);
         $reader->setFieldDelimiter($fieldDelimiter);
         $reader->setFieldEnclosure($fieldEnclosure);
 

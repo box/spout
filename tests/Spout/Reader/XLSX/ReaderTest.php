@@ -4,7 +4,7 @@ namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
-use Box\Spout\Reader\ReaderFactory2;
+use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\TestUsingResource;
 
 /**
@@ -284,7 +284,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
-        $reader = ReaderFactory2::create(Type::XLSX);
+        $reader = ReaderFactory::create(Type::XLSX);
         $reader->open($resourcePath);
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {

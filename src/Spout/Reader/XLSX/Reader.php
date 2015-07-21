@@ -3,7 +3,7 @@
 namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Reader\AbstractReader2;
+use Box\Spout\Reader\AbstractReader;
 use Box\Spout\Reader\XLSX\Helper\SharedStringsHelper;
 
 /**
@@ -12,7 +12,7 @@ use Box\Spout\Reader\XLSX\Helper\SharedStringsHelper;
  *
  * @package Box\Spout\Reader\XLSX
  */
-class Reader extends AbstractReader2
+class Reader extends AbstractReader
 {
     /** @var string Temporary folder where the temporary files will be created */
     protected $tempFolder;
@@ -70,7 +70,7 @@ class Reader extends AbstractReader2
      *
      * @return SheetIterator To iterate over sheets
      */
-    public function getSheetIterator()
+    public function getConcreteSheetIterator()
     {
         return $this->sheetIterator;
     }
