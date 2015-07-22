@@ -131,11 +131,18 @@ class RowIterator implements IteratorInterface
      *
      * @return void
      * @throws \Box\Spout\Reader\Exception\SharedStringNotFoundException If a shared string was not found
+     * @throws \Box\Spout\Common\Exception\IOException If unable to read the sheet data XML
      */
     public function next()
     {
         $isInsideRowTag = false;
         $rowData = [];
+
+        // Use internal errors to avoid displaying lots of warning messages in case of invalid file
+        // For instance on HHVM, XMLReader->open() won't fail when trying to read a unexisting file within a zip...
+        // But the XMLReader->read() will fail!
+        libxml_clear_errors();
+        libxml_use_internal_errors(true);
 
         while ($this->xmlReader->read()) {
             if ($this->xmlReader->nodeType == \XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_DIMENSION) {
@@ -178,6 +185,12 @@ class RowIterator implements IteratorInterface
                 // The closing "</worksheet>" marks the end of the file
                 $this->hasReachedEndOfFile = true;
             }
+        }
+
+        $readError = libxml_get_last_error();
+        if ($readError !== false) {
+            $readErrorMessage = trim($readError->message);
+            throw new IOException("The {$this->sheetDataXMLFilePath} file cannot be read. [{$readErrorMessage}]");
         }
 
         $this->rowDataBuffer = $rowData;

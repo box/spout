@@ -63,7 +63,7 @@ class FileSystemHelper
         $filePath = $parentFolderPath . '/' . $fileName;
 
         $wasCreationSuccessful = file_put_contents($filePath, $fileContents);
-        if (!$wasCreationSuccessful) {
+        if ($wasCreationSuccessful === false) {
             throw new IOException('Unable to create file: ' . $filePath);
         }
 

@@ -6,6 +6,7 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\TestUsingResource;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Class ReaderTest
@@ -24,6 +25,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         return [
             ['/path/to/fake/file.xlsx'],
             ['file_with_no_sheets_in_content_types.xlsx'],
+            ['file_with_sheet_xml_not_matching_content_types.xlsx'],
             ['file_corrupted.xlsx'],
         ];
     }
@@ -37,7 +39,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testReadShouldThrowException($filePath)
     {
-        $this->getAllRowsForFile($filePath);
+        // using @ to prevent warnings/errors from being displayed
+        @$this->getAllRowsForFile($filePath);
     }
 
     /**
@@ -240,7 +243,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $startTime = microtime(true);
 
         try {
-            $this->getAllRowsForFile($fileName);
+            // using @ to prevent warnings/errors from being displayed
+            @$this->getAllRowsForFile($fileName);
             $this->fail('An exception should have been thrown');
         } catch (IOException $exception) {
             $duration = microtime(true) - $startTime;
@@ -271,6 +275,60 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
             ['val1', 'val2', 'total1', 'total2'],
             [10, 20, 30, 21],
             [11, 21, 32, 41],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadMultipleTimesShouldRewindReader()
+    {
+        $allRows = [];
+        $resourcePath = $this->getResourcePath('two_sheets_with_inline_strings.xlsx');
+
+        $reader = ReaderFactory::create(Type::XLSX);
+        $reader->open($resourcePath);
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            // do nothing
+        }
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            // this loop should only add the first row of the first sheet
+            foreach ($sheet->getRowIterator() as $row) {
+                $allRows[] = $row;
+                break;
+            }
+
+            // this loop should rewind the iterator and restart reading from the 1st row again
+            // therefore, it should only add the first row of the first sheet
+            foreach ($sheet->getRowIterator() as $row) {
+                $allRows[] = $row;
+                break;
+            }
+
+            // not reading any more sheets
+            break;
+        }
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            // this loop should only add the first row of the current sheet
+            foreach ($sheet->getRowIterator() as $row) {
+                $allRows[] = $row;
+                break;
+            }
+
+            // not breaking, so we keep reading the next sheets
+        }
+
+        $reader->close();
+
+        $expectedRows = [
+            ['s1 - A1', 's1 - B1', 's1 - C1', 's1 - D1', 's1 - E1'],
+            ['s1 - A1', 's1 - B1', 's1 - C1', 's1 - D1', 's1 - E1'],
+            ['s1 - A1', 's1 - B1', 's1 - C1', 's1 - D1', 's1 - E1'],
+            ['s2 - A1', 's2 - B1', 's2 - C1', 's2 - D1', 's2 - E1'],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }

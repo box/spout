@@ -54,6 +54,25 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $reader->open($resourcePath);
     }
 
+    /**
+     * @expectedException \Box\Spout\Common\Exception\IOException
+     *
+     * @return void
+     */
+    public function testOpenShouldThrowExceptionIfCannotOpenFile()
+    {
+        $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
+                        ->setMethods(['fopen'])
+                        ->getMock();
+        $helperStub->method('fopen')->willReturn(false);
+
+        $resourcePath = $this->getResourcePath('csv_standard.csv');
+
+        $reader = ReaderFactory::create(Type::CSV);
+        $reader->setGlobalFunctionsHelper($helperStub);
+        $reader->open($resourcePath);
+    }
+
 
     /**
      * @return void
@@ -157,6 +176,50 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $expectedRows = [
             ['csv--11', 'csv--12', 'csv--13'],
             ['csv--21', 'csv--22', 'csv--23'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadMultipleTimesShouldRewindReader()
+    {
+        $allRows = [];
+        $resourcePath = $this->getResourcePath('csv_standard.csv');
+
+        $reader = ReaderFactory::create(Type::CSV);
+        $reader->open($resourcePath);
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            // do nothing
+        }
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                $allRows[] = $row;
+                break;
+            }
+
+            foreach ($sheet->getRowIterator() as $row) {
+                $allRows[] = $row;
+                break;
+            }
+        }
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                $allRows[] = $row;
+                break;
+            }
+        }
+
+        $reader->close();
+
+        $expectedRows = [
+            ['csv--11', 'csv--12', 'csv--13'],
+            ['csv--11', 'csv--12', 'csv--13'],
+            ['csv--11', 'csv--12', 'csv--13'],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }

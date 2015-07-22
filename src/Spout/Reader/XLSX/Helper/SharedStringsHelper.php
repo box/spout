@@ -154,7 +154,8 @@ class SharedStringsHelper
 
         $readError = libxml_get_last_error();
         if ($readError !== false) {
-            throw new IOException("The sharedStrings.xml file is invalid and cannot be read. [{$readError->message}]");
+            $readErrorMessage = trim($readError->message);
+            throw new IOException("The sharedStrings.xml file is invalid and cannot be read. [{$readErrorMessage}]");
         }
 
         // reset the setting to display XML warnings/errors
