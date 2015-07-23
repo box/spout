@@ -3,7 +3,9 @@
 namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
+use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Helper\CellHelper;
 
 /**
@@ -45,7 +47,7 @@ class RowIterator implements IteratorInterface
     /** @var Helper\SharedStringsHelper Helper to work with shared strings */
     protected $sharedStringsHelper;
 
-    /** @var \XMLReader The XMLReader object that will help read sheet's XML data */
+    /** @var \Box\Spout\Reader\Wrapper\XMLReader The XMLReader object that will help read sheet's XML data */
     protected $xmlReader;
 
     /** @var \Box\Spout\Common\Escaper\XLSX Used to unescape XML data */
@@ -74,7 +76,7 @@ class RowIterator implements IteratorInterface
         $this->sheetDataXMLFilePath = $this->normalizeSheetDataXMLFilePath($sheetDataXMLFilePath);
         $this->sharedStringsHelper = $sharedStringsHelper;
 
-        $this->xmlReader = new \XMLReader();
+        $this->xmlReader = new XMLReader();
         $this->escaper = new \Box\Spout\Common\Escaper\XLSX();
     }
 
@@ -102,8 +104,8 @@ class RowIterator implements IteratorInterface
         $this->xmlReader->close();
 
         $sheetDataFilePath = 'zip://' . $this->filePath . '#' . $this->sheetDataXMLFilePath;
-        if ($this->xmlReader->open($sheetDataFilePath, null, LIBXML_NONET) === false) {
-            throw new IOException('Could not open "' . $this->sheetDataXMLFilePath . '".');
+        if ($this->xmlReader->open($sheetDataFilePath) === false) {
+            throw new IOException("Could not open \"{$this->sheetDataXMLFilePath}\".");
         }
 
         $this->numReadRows = 0;
@@ -138,59 +140,52 @@ class RowIterator implements IteratorInterface
         $isInsideRowTag = false;
         $rowData = [];
 
-        // Use internal errors to avoid displaying lots of warning messages in case of invalid file
-        // For instance on HHVM, XMLReader->open() won't fail when trying to read a unexisting file within a zip...
-        // But the XMLReader->read() will fail!
-        libxml_clear_errors();
-        libxml_use_internal_errors(true);
+        try {
+            while ($this->xmlReader->read()) {
+                if ($this->xmlReader->nodeType == XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_DIMENSION) {
+                    // Read dimensions of the sheet
+                    $dimensionRef = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_REF); // returns 'A1:M13' for instance (or 'A1' for empty sheet)
+                    if (preg_match('/[A-Z\d]+:([A-Z\d]+)/', $dimensionRef, $matches)) {
+                        $lastCellIndex = $matches[1];
+                        $this->numColumns = CellHelper::getColumnIndexFromCellIndex($lastCellIndex) + 1;
+                    }
 
-        while ($this->xmlReader->read()) {
-            if ($this->xmlReader->nodeType == \XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_DIMENSION) {
-                // Read dimensions of the sheet
-                $dimensionRef = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_REF); // returns 'A1:M13' for instance (or 'A1' for empty sheet)
-                if (preg_match('/[A-Z\d]+:([A-Z\d]+)/', $dimensionRef, $matches)) {
-                    $lastCellIndex = $matches[1];
-                    $this->numColumns = CellHelper::getColumnIndexFromCellIndex($lastCellIndex) + 1;
+                } else if ($this->xmlReader->nodeType == XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_ROW) {
+                    // Start of the row description
+                    $isInsideRowTag = true;
+
+                    // Read spans info if present
+                    $numberOfColumnsForRow = $this->numColumns;
+                    $spans = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_SPANS); // returns '1:5' for instance
+                    if ($spans) {
+                        list(, $numberOfColumnsForRow) = explode(':', $spans);
+                        $numberOfColumnsForRow = intval($numberOfColumnsForRow);
+                    }
+                    $rowData = ($numberOfColumnsForRow !== 0) ? array_fill(0, $numberOfColumnsForRow, '') : [];
+
+                } else if ($isInsideRowTag && $this->xmlReader->nodeType == XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_CELL) {
+                    // Start of a cell description
+                    $currentCellIndex = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_CELL_INDEX);
+                    $currentColumnIndex = CellHelper::getColumnIndexFromCellIndex($currentCellIndex);
+
+                    $node = $this->xmlReader->expand();
+                    $rowData[$currentColumnIndex] = $this->getCellValue($node);
+
+                } else if ($this->xmlReader->nodeType == XMLReader::END_ELEMENT && $this->xmlReader->name === self::XML_NODE_ROW) {
+                    // End of the row description
+                    // If needed, we fill the empty cells
+                    $rowData = ($this->numColumns !== 0) ? $rowData : CellHelper::fillMissingArrayIndexes($rowData);
+                    $this->numReadRows++;
+                    break;
+
+                } else if ($this->xmlReader->nodeType == XMLReader::END_ELEMENT && $this->xmlReader->name === self::XML_NODE_WORKSHEET) {
+                    // The closing "</worksheet>" marks the end of the file
+                    $this->hasReachedEndOfFile = true;
                 }
-
-            } else if ($this->xmlReader->nodeType == \XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_ROW) {
-                // Start of the row description
-                $isInsideRowTag = true;
-
-                // Read spans info if present
-                $numberOfColumnsForRow = $this->numColumns;
-                $spans = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_SPANS); // returns '1:5' for instance
-                if ($spans) {
-                    list(, $numberOfColumnsForRow) = explode(':', $spans);
-                    $numberOfColumnsForRow = intval($numberOfColumnsForRow);
-                }
-                $rowData = ($numberOfColumnsForRow !== 0) ? array_fill(0, $numberOfColumnsForRow, '') : [];
-
-            } else if ($isInsideRowTag && $this->xmlReader->nodeType == \XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_CELL) {
-                // Start of a cell description
-                $currentCellIndex = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_CELL_INDEX);
-                $currentColumnIndex = CellHelper::getColumnIndexFromCellIndex($currentCellIndex);
-
-                $node = $this->xmlReader->expand();
-                $rowData[$currentColumnIndex] = $this->getCellValue($node);
-
-            } else if ($this->xmlReader->nodeType == \XMLReader::END_ELEMENT && $this->xmlReader->name === self::XML_NODE_ROW) {
-                // End of the row description
-                // If needed, we fill the empty cells
-                $rowData = ($this->numColumns !== 0) ? $rowData : CellHelper::fillMissingArrayIndexes($rowData);
-                $this->numReadRows++;
-                break;
-
-            } else if ($this->xmlReader->nodeType == \XMLReader::END_ELEMENT && $this->xmlReader->name === self::XML_NODE_WORKSHEET) {
-                // The closing "</worksheet>" marks the end of the file
-                $this->hasReachedEndOfFile = true;
             }
-        }
 
-        $readError = libxml_get_last_error();
-        if ($readError !== false) {
-            $readErrorMessage = trim($readError->message);
-            throw new IOException("The {$this->sheetDataXMLFilePath} file cannot be read. [{$readErrorMessage}]");
+        } catch (XMLProcessingException $exception) {
+            throw new IOException("The {$this->sheetDataXMLFilePath} file cannot be read. [{$exception->getMessage()}]");
         }
 
         $this->rowDataBuffer = $rowData;
