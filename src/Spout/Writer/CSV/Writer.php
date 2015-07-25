@@ -15,7 +15,7 @@ class Writer extends AbstractWriter
 {
     /** Number of rows to write before flushing */
     const FLUSH_THRESHOLD = 500;
-    const UTF8_BOM = "\xEF\xBB\xBF";
+    const BOM_UTF8 = "\xEF\xBB\xBF";
 
     /** @var string Content-Type value for the header */
     protected static $headerContentType = 'text/csv; charset=UTF-8';
@@ -61,7 +61,7 @@ class Writer extends AbstractWriter
     protected function openWriter()
     {
         // Adds UTF-8 BOM for Unicode compatibility
-        $this->globalFunctionsHelper->fputs($this->filePointer, self::UTF8_BOM);
+        $this->globalFunctionsHelper->fputs($this->filePointer, self::BOM_UTF8);
     }
 
     /**

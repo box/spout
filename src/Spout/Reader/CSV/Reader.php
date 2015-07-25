@@ -25,6 +25,9 @@ class Reader extends AbstractReader
     /** @var string Defines the character used to enclose fields (one character only) */
     protected $fieldEnclosure = '"';
 
+    /** @var string Encoding of the CSV file to be read */
+    protected $encoding = 'UTF-8';
+
     /**
      * Sets the field delimiter for the CSV.
      * Needs to be called before opening the reader.
@@ -52,9 +55,20 @@ class Reader extends AbstractReader
     }
 
     /**
+     * Sets the encoding of the CSV file to be read.
+     * Needs to be called before opening the reader.
+     *
+     * @param string $encoding Encoding of the CSV file to be read
+     * @return Reader
+     */
+    public function setEncoding($encoding)
+    {
+        $this->encoding = $encoding;
+        return $this;
+    }
+
+    /**
      * Opens the file at the given path to make it ready to be read.
-     * The file must be UTF-8 encoded.
-     * @TODO add encoding detection/conversion
      *
      * @param  string $filePath Path of the CSV file to be read
      * @return void
@@ -67,7 +81,13 @@ class Reader extends AbstractReader
             throw new IOException("Could not open file $filePath for reading.");
         }
 
-        $this->sheetIterator = new SheetIterator($this->filePointer, $this->fieldDelimiter, $this->fieldEnclosure, $this->globalFunctionsHelper);
+        $this->sheetIterator = new SheetIterator(
+            $this->filePointer,
+            $this->fieldDelimiter,
+            $this->fieldEnclosure,
+            $this->encoding,
+            $this->globalFunctionsHelper
+        );
     }
 
     /**

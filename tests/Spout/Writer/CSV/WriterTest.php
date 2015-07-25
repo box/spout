@@ -70,7 +70,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         ];
         $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_utf8_bom.csv');
 
-        $this->assertContains(Writer::UTF8_BOM, $writtenContent, 'The CSV file should contain a UTF-8 BOM');
+        $this->assertContains(Writer::BOM_UTF8, $writtenContent, 'The CSV file should contain a UTF-8 BOM');
     }
 
     /**
@@ -162,6 +162,6 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     private function trimWrittenContent($writtenContent)
     {
         // remove line feeds and UTF-8 BOM
-        return trim($writtenContent, PHP_EOL . Writer::UTF8_BOM);
+        return trim($writtenContent, PHP_EOL . Writer::BOM_UTF8);
     }
 }

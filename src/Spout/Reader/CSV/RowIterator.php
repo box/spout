@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Reader\CSV;
 
+use Box\Spout\Reader\CSV\Helper\EncodingHelper;
 use Box\Spout\Reader\IteratorInterface;
 
 /**
@@ -12,8 +13,6 @@ use Box\Spout\Reader\IteratorInterface;
  */
 class RowIterator implements IteratorInterface
 {
-    const UTF8_BOM = "\xEF\xBB\xBF";
-
     /** @var resource Pointer to the CSV file to read */
     protected $filePointer;
 
@@ -27,10 +26,13 @@ class RowIterator implements IteratorInterface
     protected $hasReachedEndOfFile = false;
 
     /** @var string Defines the character used to delimit fields (one character only) */
-    protected $fieldDelimiter = ',';
+    protected $fieldDelimiter;
 
     /** @var string Defines the character used to enclose fields (one character only) */
-    protected $fieldEnclosure = '"';
+    protected $fieldEnclosure;
+
+    /** @var string Encoding of the CSV file to be read */
+    protected $encoding;
 
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
@@ -39,14 +41,18 @@ class RowIterator implements IteratorInterface
      * @param resource $filePointer Pointer to the CSV file to read
      * @param string $fieldDelimiter Character that delimits fields
      * @param string $fieldEnclosure Character that enclose fields
+     * @param string $encoding Encoding of the CSV file to be read
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $globalFunctionsHelper)
+    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $globalFunctionsHelper)
     {
         $this->filePointer = $filePointer;
         $this->fieldDelimiter = $fieldDelimiter;
         $this->fieldEnclosure = $fieldEnclosure;
+        $this->encoding = $encoding;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
+
+        $this->encodingHelper = new EncodingHelper($globalFunctionsHelper);
     }
 
     /**
@@ -57,7 +63,7 @@ class RowIterator implements IteratorInterface
      */
     public function rewind()
     {
-        $this->rewindAndSkipUtf8Bom();
+        $this->rewindAndSkipBom();
 
         $this->numReadRows = 0;
         $this->rowDataBuffer = null;
@@ -66,24 +72,17 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * This rewinds and skips the UTF-8 BOM if inserted at the beginning of the file
+     * This rewinds and skips the BOM if inserted at the beginning of the file
      * by moving the file pointer after it, so that it is not read.
      *
      * @return void
      */
-    protected function rewindAndSkipUtf8Bom()
+    protected function rewindAndSkipBom()
     {
-        $this->globalFunctionsHelper->rewind($this->filePointer);
+        $byteOffsetToSkipBom = $this->encodingHelper->getBytesOffsetToSkipBOM($this->filePointer, $this->encoding);
 
-        $hasUtf8Bom = ($this->globalFunctionsHelper->fgets($this->filePointer, 4) === self::UTF8_BOM);
-
-        if ($hasUtf8Bom) {
-            // we skip the 2 first bytes (so start from the 3rd byte)
-            $this->globalFunctionsHelper->fseek($this->filePointer, 3);
-        } else {
-            // if no BOM, reset the pointer to read from the beginning
-            $this->globalFunctionsHelper->fseek($this->filePointer, 0);
-        }
+        // sets the cursor after the BOM (0 means no BOM, so rewind it)
+        $this->globalFunctionsHelper->fseek($this->filePointer, $byteOffsetToSkipBom);
     }
 
     /**
