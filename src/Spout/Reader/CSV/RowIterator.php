@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Reader\CSV;
 
-use Box\Spout\Reader\CSV\Helper\EncodingHelper;
 use Box\Spout\Reader\IteratorInterface;
+use Box\Spout\Common\Helper\EncodingHelper;
 
 /**
  * Class RowIterator
@@ -36,6 +36,9 @@ class RowIterator implements IteratorInterface
 
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
+
+    /** @var \Box\Spout\Common\Helper\EncodingHelper Helper to work with different encodings */
+    protected $encodingHelper;
 
     /**
      * @param resource $filePointer Pointer to the CSV file to read
@@ -101,6 +104,7 @@ class RowIterator implements IteratorInterface
      * @link http://php.net/manual/en/iterator.next.php
      *
      * @return void
+     * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
      */
     public function next()
     {
@@ -109,7 +113,8 @@ class RowIterator implements IteratorInterface
 
         if (!$this->hasReachedEndOfFile) {
             do {
-               $lineData = $this->globalFunctionsHelper->fgetcsv($this->filePointer, 0, $this->fieldDelimiter, $this->fieldEnclosure);
+                $utf8EncodedLineData = $this->getNextUTF8EncodedLine();
+                $lineData = $this->globalFunctionsHelper->str_getcsv($utf8EncodedLineData, $this->fieldDelimiter, $this->fieldEnclosure);
            } while ($lineData === false || ($lineData !== null && $this->isEmptyLine($lineData)));
 
             if ($lineData !== false && $lineData !== null) {
@@ -117,6 +122,25 @@ class RowIterator implements IteratorInterface
                 $this->numReadRows++;
             }
         }
+    }
+
+    /**
+     * Returns the next line, converted if necessary to UTF-8.
+     * Neither fgets nor fgetcsv don't work with non UTF-8 data... so we need to do some things manually.
+     *
+     * @return string The next line for the current file pointer, encoded in UTF-8
+     * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
+     */
+    protected function getNextUTF8EncodedLine()
+    {
+        // Read until the EOL delimiter or EOF is reached. The delimiter's encoding needs to match the CSV's encoding.
+        $encodedEOLDelimiter = $this->encodingHelper->attemptConversionFromUTF8("\n", $this->encoding);
+        $encodedLineData = $this->globalFunctionsHelper->stream_get_line($this->filePointer, 0, $encodedEOLDelimiter);
+
+        // Once the line has been read, it can be converted to UTF-8
+        $utf8EncodedLineData = $this->encodingHelper->attemptConversionToUTF8($encodedLineData, $this->encoding);
+
+        return $utf8EncodedLineData;
     }
 
     /**

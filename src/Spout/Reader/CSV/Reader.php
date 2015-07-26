@@ -4,6 +4,7 @@ namespace Box\Spout\Reader\CSV;
 
 use Box\Spout\Reader\AbstractReader;
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Common\Helper\EncodingHelper;
 
 /**
  * Class Reader
@@ -26,7 +27,7 @@ class Reader extends AbstractReader
     protected $fieldEnclosure = '"';
 
     /** @var string Encoding of the CSV file to be read */
-    protected $encoding = 'UTF-8';
+    protected $encoding = EncodingHelper::ENCODING_UTF8;
 
     /**
      * Sets the field delimiter for the CSV.
@@ -69,6 +70,7 @@ class Reader extends AbstractReader
 
     /**
      * Opens the file at the given path to make it ready to be read.
+     * If setEncoding() was not called, it assumes that the file is encoded in UTF-8.
      *
      * @param  string $filePath Path of the CSV file to be read
      * @return void

@@ -2,8 +2,9 @@
 
 namespace Box\Spout\Writer\CSV;
 
-use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Common\Type;
+use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Writer\WriterFactory;
 
 /**
@@ -70,7 +71,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         ];
         $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_utf8_bom.csv');
 
-        $this->assertContains(Writer::BOM_UTF8, $writtenContent, 'The CSV file should contain a UTF-8 BOM');
+        $this->assertContains(EncodingHelper::BOM_UTF8, $writtenContent, 'The CSV file should contain a UTF-8 BOM');
     }
 
     /**
@@ -162,6 +163,6 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     private function trimWrittenContent($writtenContent)
     {
         // remove line feeds and UTF-8 BOM
-        return trim($writtenContent, PHP_EOL . Writer::BOM_UTF8);
+        return trim($writtenContent, PHP_EOL . EncodingHelper::BOM_UTF8);
     }
 }
