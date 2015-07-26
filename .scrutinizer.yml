@@ -1,0 +1,54 @@
+filter:
+    excluded_paths: [vendor/*, tests/*]
+
+tools:
+    external_code_coverage:
+        timeout: 600 # Wait 10 minutes for results
+        runs: 3 # Merge results for 5.4, 5.5 and 5.6 jobs
+    php_mess_detector: true
+    php_code_sniffer:
+        config:
+            standard: PSR4
+        filter:
+            paths: ['src']
+    sensiolabs_security_checker: true
+    php_pdepend: true
+    php_loc:
+        enabled: true
+        excluded_dirs: [vendor, tests]
+    php_cpd:
+        enabled: true
+        excluded_dirs: [vendor, tests]
+
+build_failure_conditions:
+    - 'project.metric("scrutinizer.quality", < 9)' # Code Quality Rating drops below 9
+    - 'project.metric_change("scrutinizer.test_coverage", < -0.005)' # Code Coverage decreased by more than 0.5%
+    - 'project.metric("scrutinizer.test_coverage", < 0.97)' # Code Coverage drops below 97%
+
+checks:
+    php:
+        remove_extra_empty_lines: true
+        remove_php_closing_tag: true
+        remove_trailing_whitespace: true
+        fix_use_statements:
+            remove_unused: true
+            preserve_multiple: false
+            preserve_blanklines: true
+        fix_php_opening_tag: true
+        fix_linefeed: true
+        fix_line_ending: true
+        fix_identation_4spaces: true
+        fix_doc_comments: true
+        uppercase_constants: true
+        use_self_instead_of_fqcn: true
+        simplify_boolean_return: true
+        return_doc_comments: true
+        return_doc_comment_if_not_inferrable: true
+        phpunit_assertions: true
+        parameters_in_camelcaps: true
+        parameter_doc_comments: true
+        param_doc_comment_if_not_inferrable: true
+        optional_parameters_at_the_end: true
+        newline_at_end_of_file: true
+        encourage_single_quotes: true
+

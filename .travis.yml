@@ -4,15 +4,15 @@ php:
   - 5.4
   - 5.5
   - 5.6
-  - nightly
+  - 7.0
   - hhvm
 
 install:
-  - composer install --no-interaction
+  - composer install --no-interaction --prefer-source
 
 script:
   - mkdir -p build/logs
   - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_script:
-  - php vendor/bin/coveralls -v
+  - if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != '7.0' ]]; then php vendor/bin/ocular code-coverage:upload --format=php-clover build/logs/clover.xml; fi
