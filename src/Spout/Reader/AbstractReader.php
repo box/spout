@@ -64,9 +64,9 @@ abstract class AbstractReader implements ReaderInterface
         if (!$this->isPhpStream($filePath)) {
             // we skip the checks if the provided file path points to a PHP stream
             if (!$this->globalFunctionsHelper->file_exists($filePath)) {
-                throw new IOException('Could not open ' . $filePath . ' for reading! File does not exist.');
+                throw new IOException("Could not open $filePath for reading! File does not exist.");
             } else if (!$this->globalFunctionsHelper->is_readable($filePath)) {
-                throw new IOException('Could not open ' . $filePath . ' for reading! File is not readable.');
+                throw new IOException("Could not open $filePath for reading! File is not readable.");
             }
         }
 
@@ -74,7 +74,7 @@ abstract class AbstractReader implements ReaderInterface
             $this->openReader($filePath);
             $this->isStreamOpened = true;
         } catch (\Exception $exception) {
-            throw new IOException('Could not open ' . $filePath . ' for reading! (' . $exception->getMessage() . ')');
+            throw new IOException("Could not open $filePath for reading! ({$exception->getMessage()})");
         }
     }
 

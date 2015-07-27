@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Reader\XLSX\Helper;
 
+use Box\Spout\Reader\Wrapper\SimpleXMLElement;
 use Box\Spout\Reader\XLSX\Sheet;
 
 /**
@@ -37,10 +38,10 @@ class SheetHelper
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var \SimpleXMLElement XML element representing the workbook.xml.rels file */
+    /** @var \Box\Spout\Reader\Wrapper\SimpleXMLElement XML element representing the workbook.xml.rels file */
     protected $workbookXMLRelsAsXMLElement;
 
-    /** @var \SimpleXMLElement XML element representing the workbook.xml file */
+    /** @var \Box\Spout\Reader\Wrapper\SimpleXMLElement XML element representing the workbook.xml file */
     protected $workbookXMLAsXMLElement;
 
     /**
@@ -76,7 +77,7 @@ class SheetHelper
 
         for ($i = 0; $i < $numSheetNodes; $i++) {
             $sheetNode = $sheetNodes[$i];
-            $sheetDataXMLFilePath = (string) $sheetNode->attributes()->PartName;
+            $sheetDataXMLFilePath = $sheetNode->getAttribute('PartName');
 
             $sheets[] = $this->getSheetFromXML($sheetDataXMLFilePath, $i);
         }
@@ -115,15 +116,15 @@ class SheetHelper
 
         if (count($relationshipNodes) === 1) {
             $relationshipNode = $relationshipNodes[0];
-            $sheetId = (string) $relationshipNode->attributes()->Id;
+            $sheetId = $relationshipNode->getAttribute('Id');
 
             $workbookXMLElement = $this->getWorkbookXMLAsXMLElement();
             $sheetNodes = $workbookXMLElement->xpath('//ns:sheet[@r:id="' . $sheetId . '"]');
 
             if (count($sheetNodes) === 1) {
                 $sheetNode = $sheetNodes[0];
-                $sheetId = (int) $sheetNode->attributes()->sheetId;
-                $escapedSheetName = (string) $sheetNode->attributes()->name;
+                $sheetId = (int) $sheetNode->getAttribute('sheetId');
+                $escapedSheetName = $sheetNode->getAttribute('name');
 
                 $escaper = new \Box\Spout\Common\Escaper\XLSX();
                 $sheetName = $escaper->unescape($escapedSheetName);
@@ -149,7 +150,7 @@ class SheetHelper
      * Returns a representation of the workbook.xml.rels file, ready to be parsed.
      * The returned value is cached.
      *
-     * @return \SimpleXMLElement XML element representating the workbook.xml.rels file
+     * @return \Box\Spout\Reader\Wrapper\SimpleXMLElement XML element representating the workbook.xml.rels file
      */
     protected function getWorkbookXMLRelsAsXMLElement()
     {
@@ -167,7 +168,7 @@ class SheetHelper
      * Returns a representation of the workbook.xml file, ready to be parsed.
      * The returned value is cached.
      *
-     * @return \SimpleXMLElement XML element representating the workbook.xml.rels file
+     * @return \Box\Spout\Reader\Wrapper\SimpleXMLElement XML element representating the workbook.xml.rels file
      */
     protected function getWorkbookXMLAsXMLElement()
     {
@@ -186,13 +187,13 @@ class SheetHelper
      *
      * @param string $xmlFilePath The path of the XML file inside the XLSX file
      * @param string $mainNamespace The main XPath namespace to register
-     * @return \SimpleXMLElement The XML element representing the file
+     * @return \Box\Spout\Reader\Wrapper\SimpleXMLElement The XML element representing the file
      */
     protected function getFileAsXMLElementWithNamespace($xmlFilePath, $mainNamespace)
     {
         $xmlContents = $this->globalFunctionsHelper->file_get_contents('zip://' . $this->filePath . '#' . $xmlFilePath);
 
-        $xmlElement = new \SimpleXMLElement($xmlContents);
+        $xmlElement = new SimpleXMLElement($xmlContents);
         $xmlElement->registerXPathNamespace('ns', $mainNamespace);
 
         return $xmlElement;

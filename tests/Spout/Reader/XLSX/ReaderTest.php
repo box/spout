@@ -6,7 +6,6 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\TestUsingResource;
-use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Class ReaderTest

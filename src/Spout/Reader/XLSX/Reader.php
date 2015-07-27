@@ -61,7 +61,7 @@ class Reader extends AbstractReader
 
             $this->sheetIterator = new SheetIterator($filePath, $this->sharedStringsHelper, $this->globalFunctionsHelper);
         } else {
-            throw new IOException('Could not open ' . $filePath . ' for reading.');
+            throw new IOException("Could not open $filePath for reading.");
         }
     }
 

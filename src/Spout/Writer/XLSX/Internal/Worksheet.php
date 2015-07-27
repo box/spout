@@ -156,7 +156,7 @@ EOD;
 
         $wasWriteSuccessful = fwrite($this->sheetFilePointer, $data);
         if ($wasWriteSuccessful === false) {
-            throw new IOException('Unable to write data in ' . $this->worksheetFilePath);
+            throw new IOException("Unable to write data in {$this->worksheetFilePath}");
         }
 
         // only update the count if the write worked
