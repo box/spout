@@ -32,7 +32,7 @@ class Sheet implements SheetInterface
      * @param int $sheetIndex Index of the sheet, based on order of creation (zero-based)
      * @param string $sheetName Name of the sheet
      */
-    function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $sheetId, $sheetIndex, $sheetName)
+    public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $sheetId, $sheetIndex, $sheetName)
     {
         $this->rowIterator = new RowIterator($filePath, $sheetDataXMLFilePath, $sharedStringsHelper);
         $this->id = $sheetId;

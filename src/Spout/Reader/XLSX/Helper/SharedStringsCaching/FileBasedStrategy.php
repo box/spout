@@ -26,6 +26,9 @@ class FileBasedStrategy implements CachingStrategyInterface
     /** @var \Box\Spout\Common\Helper\FileSystemHelper Helper to perform file system operations */
     protected $fileSystemHelper;
 
+    /** @var string Temporary folder where the temporary files will be created */
+    protected $tempFolder;
+
     /**
      * @var int Maximum number of strings that can be stored in one temp file
      * @see CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE
@@ -42,7 +45,7 @@ class FileBasedStrategy implements CachingStrategyInterface
     protected $inMemoryTempFilePath;
 
     /**
-     * @var string Contents of the temporary file that was last read
+     * @var array Contents of the temporary file that was last read
      * @see CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE
      */
     protected $inMemoryTempFileContents;

@@ -111,9 +111,9 @@ class RowIterator implements IteratorInterface
         if (!$this->hasReachedEndOfFile) {
             do {
                $lineData = $this->globalFunctionsHelper->fgetcsv($this->filePointer, 0, $this->fieldDelimiter, $this->fieldEnclosure);
-           } while ($lineData && $this->isEmptyLine($lineData));
+           } while ($lineData === false || ($lineData !== null && $this->isEmptyLine($lineData)));
 
-            if ($lineData !== null) {
+            if ($lineData !== false && $lineData !== null) {
                 $this->rowDataBuffer = $lineData;
                 $this->numReadRows++;
             }
@@ -133,7 +133,7 @@ class RowIterator implements IteratorInterface
      * Return the current element from the buffer
      * @link http://php.net/manual/en/iterator.current.php
      *
-     * @return array
+     * @return array|null
      */
     public function current()
     {

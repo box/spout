@@ -12,7 +12,7 @@ install:
 
 script:
   - mkdir -p build/logs
-  - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml --coverage-text
+  - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_script:
   - if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != '7.0' ]]; then php vendor/bin/ocular code-coverage:upload --format=php-clover build/logs/clover.xml; fi

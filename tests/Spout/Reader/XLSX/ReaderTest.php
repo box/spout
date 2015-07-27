@@ -93,6 +93,9 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testReadShouldSupportAllCellTypes()
     {
+        // make sure dates are always created with the same timezone
+        date_default_timezone_set('UTC');
+
         $allRows = $this->getAllRowsForFile('sheet_with_all_cell_types.xlsx');
 
         $expectedRows = [

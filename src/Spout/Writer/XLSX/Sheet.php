@@ -21,7 +21,7 @@ class Sheet
     /**
      * @param int $sheetIndex Index of the sheet, based on order of creation (zero-based)
      */
-    function __construct($sheetIndex)
+    public function __construct($sheetIndex)
     {
         $this->index = $sheetIndex;
         $this->name = self::DEFAULT_SHEET_NAME_PREFIX . ($sheetIndex + 1);

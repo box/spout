@@ -72,8 +72,9 @@ class SheetHelper
 
         // find all nodes defining a sheet
         $sheetNodes = $contentTypesAsXMLElement->xpath('//ns:Override[@ContentType="' . self::OVERRIDE_CONTENT_TYPES_ATTRIBUTE . '"]');
+        $numSheetNodes = count($sheetNodes);
 
-        for ($i = 0; $i < count($sheetNodes); $i++) {
+        for ($i = 0; $i < $numSheetNodes; $i++) {
             $sheetNode = $sheetNodes[$i];
             $sheetDataXMLFilePath = (string) $sheetNode->attributes()->PartName;
 
@@ -95,7 +96,7 @@ class SheetHelper
      *
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
      * @param int $sheetIndexZeroBased Index of the sheet, based on order in [Content_Types].xml (zero-based)
-     * @return \Box\Spout\Reader\Sheet Sheet instance
+     * @return \Box\Spout\Reader\XLSX\Sheet Sheet instance
      */
     protected function getSheetFromXML($sheetDataXMLFilePath, $sheetIndexZeroBased)
     {
@@ -136,7 +137,7 @@ class SheetHelper
      * Returns the default name of the sheet whose data is located
      * at the given path.
      *
-     * @param $sheetDataXMLFilePath
+     * @param string $sheetDataXMLFilePath Path of the sheet data XML file
      * @return string The default sheet name
      */
     protected function getDefaultSheetName($sheetDataXMLFilePath)
