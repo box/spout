@@ -19,7 +19,7 @@ class WriterFactory
      * This creates an instance of the appropriate writer, given the type of the file to be read
      *
      * @param  string $writerType Type of the writer to instantiate
-     * @return \Box\Spout\Writer\CSV|\Box\Spout\Writer\XLSX
+     * @return WriterInterface
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      */
     public static function create($writerType)
@@ -28,10 +28,10 @@ class WriterFactory
 
         switch ($writerType) {
             case Type::CSV:
-                $writer = new CSV();
+                $writer = new CSV\Writer();
                 break;
             case Type::XLSX:
-                $writer = new XLSX();
+                $writer = new XLSX\Writer();
                 break;
             default:
                 throw new UnsupportedTypeException('No writers supporting the given type: ' . $writerType);

@@ -69,7 +69,7 @@ abstract class AbstractWriter implements WriterInterface
      * By using this method, the data will be written to a file.
      *
      * @param  string $outputFilePath Path of the output file that will contain the data
-     * @return \Box\Spout\Writer\AbstractWriter
+     * @return AbstractWriter
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened or if the given path is not writable
      */
     public function openToFile($outputFilePath)
@@ -92,7 +92,7 @@ abstract class AbstractWriter implements WriterInterface
      * @codeCoverageIgnore
      *
      * @param  string $outputFileName Name of the output file that will contain the data. If a path is passed in, only the file name will be kept
-     * @return \Box\Spout\Writer\AbstractWriter
+     * @return AbstractWriter
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened
      */
     public function openToBrowser($outputFileName)
@@ -144,7 +144,7 @@ abstract class AbstractWriter implements WriterInterface
      *                        If empty, no data is added (i.e. not even as a blank row)
      *                        Example: $dataRow = ['data1', 1234, null, '', 'data5', false];
      *
-     * @return \Box\Spout\Writer\AbstractWriter
+     * @return AbstractWriter
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
@@ -173,7 +173,7 @@ abstract class AbstractWriter implements WriterInterface
      *                             ['data21', 'data22', null, false],
      *                         ];
      *
-     * @return \Box\Spout\Writer\AbstractWriter
+     * @return AbstractWriter
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data

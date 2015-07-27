@@ -64,9 +64,10 @@ use Box\Spout\Common\Type;
 $reader = ReaderFactory::create(Type::CSV);
 $reader->open($filePath);
 
-while ($reader->hasNextRow()) {
-    $row = $reader->nextRow();
-    // do stuff
+foreach ($reader->getSheetIterator() as $sheet) {
+    foreach ($reader->getRowIterator() as $row) {
+        // do stuff
+    }
 }
 
 $reader->close();
@@ -81,11 +82,8 @@ use Box\Spout\Common\Type;
 $reader = ReaderFactory::create(Type::XLSX);
 $reader->open($filePath);
 
-while ($reader->hasNextSheet()) {
-    $reader->nextSheet();
-
-    while ($reader->hasNextRow()) {
-        $row = $reader->nextRow();
+foreach ($reader->getSheetIterator() as $sheet) {
+    foreach ($reader->getRowIterator() as $row) {
         // do stuff
     }
 }
@@ -202,8 +200,7 @@ $sheets = $writer->getSheets();
 If you rely on the sheet's name in your application, you can access it and customize it this way:
 ```php
 // Accessing the sheet name when reading
-while ($reader->hasNextSheet()) {
-    $sheet = $reader->nextSheet();
+foreach ($reader->getSheetIterator() as $sheet) {
     $sheetName = $sheet->getName();
 }
 
@@ -253,7 +250,7 @@ For information, the performance tests take about one hour to run (processing 2 
 
 When writing data, Spout is streaming the data to files, one or few lines at a time. That means that it only keeps in memory the few rows that it needs to write. Once written, the memory is freed.
 
-Same goes with reading. Only one row at a time is stored in memory. A special technique is used to handle shared strings in XLSX, storing them into several small temporary files that allows fast access.
+Same goes with reading. Only one row at a time is stored in memory. A special technique is used to handle shared strings in XLSX, storing them - if needed - into several small temporary files that allows fast access.
 
 #### How long does it take to generate a file with X rows?
 

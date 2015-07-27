@@ -160,7 +160,7 @@ class GlobalFunctionsHelper
      * @see file_get_contents()
      *
      * @param string $filePath
-     * @return bool
+     * @return string
      */
     public function file_get_contents($filePath)
     {
