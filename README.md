@@ -126,7 +126,7 @@ For XLSX files, the number of rows per sheet is limited to 1,048,576 (see [Offic
 
 ### Configuring the CSV reader and writer
 
-It is possible to configure the both the CSV reader and writer to specify the field separator as well as the field enclosure:
+It is possible to configure both the CSV reader and writer to specify the field separator as well as the field enclosure:
 ```php
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Common\Type;
@@ -135,6 +135,13 @@ $reader = ReaderFactory::create(Type::CSV);
 $reader->setFieldDelimiter('|');
 $reader->setFieldEnclosure('@');
 ```
+
+Additionally, if you need to read non UTF-8 files, you can specify the encoding of your file this way:
+```php
+$reader->setEncoding('UTF-16LE');
+```
+
+The writer always generate CSV files encoded in UTF-8, with a BOM.
 
 ### Configuring the XLSX writer
 
