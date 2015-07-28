@@ -203,4 +203,73 @@ class GlobalFunctionsHelper
     {
         header($string);
     }
+
+    /**
+     * Wrapper around global function iconv()
+     * @see iconv()
+     *
+     * @param string $string The string to be converted
+     * @param string $sourceEncoding The encoding of the source string
+     * @param string $targetEncoding The encoding the source string should be converted to
+     * @return string|bool the converted string or FALSE on failure.
+     */
+    public function iconv($string, $sourceEncoding, $targetEncoding)
+    {
+        return iconv($sourceEncoding, $targetEncoding, $string);
+    }
+
+    /**
+     * Wrapper around global function mb_convert_encoding()
+     * @see mb_convert_encoding()
+     *
+     * @param string $string The string to be converted
+     * @param string $sourceEncoding The encoding of the source string
+     * @param string $targetEncoding The encoding the source string should be converted to
+     * @return string|bool the converted string or FALSE on failure.
+     */
+    public function mb_convert_encoding($string, $sourceEncoding, $targetEncoding)
+    {
+        return mb_convert_encoding($string, $targetEncoding, $sourceEncoding);
+    }
+
+    /**
+     * Wrapper around global function stream_get_line()
+     * @see stream_get_line()
+     *
+     * @param resource $handle
+     * @param int $length
+     * @param string|void $ending
+     * @return string|bool
+     */
+    public function stream_get_line($handle, $length, $ending = null)
+    {
+        return stream_get_line($handle, $length, $ending);
+    }
+
+    /**
+     * Wrapper around global function str_getcsv()
+     * @see str_getcsv()
+     *
+     * @param string $input
+     * @param string|void $delimiter
+     * @param string|void $enclosure
+     * @param string|void $escape
+     * @return array
+     */
+    public function str_getcsv($input, $delimiter = null, $enclosure = null, $escape = null)
+    {
+        return str_getcsv($input, $delimiter, $enclosure, $escape);
+    }
+
+    /**
+     * Wrapper around global function function_exists()
+     * @see function_exists()
+     *
+     * @param string $functionName
+     * @return bool
+     */
+    public function function_exists($functionName)
+    {
+        return function_exists($functionName);
+    }
 }

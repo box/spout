@@ -2,8 +2,9 @@
 
 namespace Box\Spout\Reader\CSV;
 
-use Box\Spout\Common\Type;
 use Box\Spout\Reader\ReaderFactory;
+use Box\Spout\Common\Type;
+use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\TestUsingResource;
 
 /**
@@ -167,15 +168,96 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return array
+     */
+    public function dataProviderForTestReadShouldSkipBom()
+    {
+        return [
+            ['csv_with_utf8_bom.csv', EncodingHelper::ENCODING_UTF8],
+            ['csv_with_utf16le_bom.csv', EncodingHelper::ENCODING_UTF16_LE],
+            ['csv_with_utf16be_bom.csv', EncodingHelper::ENCODING_UTF16_BE],
+            ['csv_with_utf32le_bom.csv', EncodingHelper::ENCODING_UTF32_LE],
+            ['csv_with_utf32be_bom.csv', EncodingHelper::ENCODING_UTF32_BE],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForTestReadShouldSkipBom
+     *
+     * @param string $fileName
+     * @param string $fileEncoding
      * @return void
      */
-    public function testReadShouldSkipUtf8Bom()
+    public function testReadShouldSkipBom($fileName, $fileEncoding)
     {
-        $allRows = $this->getAllRowsForFile('csv_with_utf8_bom.csv');
+        $allRows = $this->getAllRowsForFile($fileName, ',', '"', $fileEncoding);
 
         $expectedRows = [
             ['csv--11', 'csv--12', 'csv--13'],
             ['csv--21', 'csv--22', 'csv--23'],
+            ['csv--31', 'csv--32', 'csv--33'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForTestReadShouldSupportNonUTF8FilesWithoutBOMs()
+    {
+        $shouldUseIconv = true;
+        $shouldNotUseIconv = false;
+
+        return [
+            ['csv_with_encoding_utf16le_no_bom.csv', EncodingHelper::ENCODING_UTF16_LE, $shouldUseIconv],
+            ['csv_with_encoding_utf16le_no_bom.csv', EncodingHelper::ENCODING_UTF16_LE, $shouldNotUseIconv],
+            ['csv_with_encoding_cp1252.csv', 'CP1252', $shouldUseIconv],
+            ['csv_with_encoding_cp1252.csv', 'CP1252', $shouldNotUseIconv],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForTestReadShouldSupportNonUTF8FilesWithoutBOMs
+     *
+     * @param string $fileName
+     * @param string $fileEncoding
+     * @param bool $shouldUseIconv
+     * @return void
+     */
+    public function testReadShouldSupportNonUTF8FilesWithoutBOMs($fileName, $fileEncoding, $shouldUseIconv)
+    {
+        $allRows = [];
+        $resourcePath = $this->getResourcePath($fileName);
+
+        $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
+                        ->setMethods(['function_exists'])
+                        ->getMock();
+
+        $returnValueMap = [
+            ['iconv', $shouldUseIconv],
+            ['mb_convert_encoding', true],
+        ];
+        $helperStub->method('function_exists')->will($this->returnValueMap($returnValueMap));
+
+        /** @var \Box\Spout\Reader\CSV\Reader $reader */
+        $reader = ReaderFactory::create(Type::CSV);
+        $reader
+            ->setGlobalFunctionsHelper($helperStub)
+            ->setEncoding($fileEncoding)
+            ->open($resourcePath);
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                $allRows[] = $row;
+            }
+        }
+
+        $reader->close();
+
+        $expectedRows = [
+            ['csv--11', 'csv--12', 'csv--13'],
+            ['csv--21', 'csv--22', 'csv--23'],
+            ['csv--31', 'csv--32', 'csv--33'],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }
@@ -228,18 +310,25 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      * @param string $fileName
      * @param string|void $fieldDelimiter
      * @param string|void $fieldEnclosure
+     * @param string|void $encoding
      * @return array All the read rows the given file
      */
-    private function getAllRowsForFile($fileName, $fieldDelimiter = ",", $fieldEnclosure = '"')
+    private function getAllRowsForFile(
+        $fileName,
+        $fieldDelimiter = ',',
+        $fieldEnclosure = '"',
+        $encoding = EncodingHelper::ENCODING_UTF8)
     {
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
+        /** @var \Box\Spout\Reader\CSV\Reader $reader */
         $reader = ReaderFactory::create(Type::CSV);
-        $reader->setFieldDelimiter($fieldDelimiter);
-        $reader->setFieldEnclosure($fieldEnclosure);
-
-        $reader->open($resourcePath);
+        $reader
+            ->setFieldDelimiter($fieldDelimiter)
+            ->setFieldEnclosure($fieldEnclosure)
+            ->setEncoding($encoding)
+            ->open($resourcePath);
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
             foreach ($sheet->getRowIterator() as $rowIndex => $row) {

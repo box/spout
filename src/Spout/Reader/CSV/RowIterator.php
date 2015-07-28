@@ -3,6 +3,7 @@
 namespace Box\Spout\Reader\CSV;
 
 use Box\Spout\Reader\IteratorInterface;
+use Box\Spout\Common\Helper\EncodingHelper;
 
 /**
  * Class RowIterator
@@ -12,8 +13,6 @@ use Box\Spout\Reader\IteratorInterface;
  */
 class RowIterator implements IteratorInterface
 {
-    const UTF8_BOM = "\xEF\xBB\xBF";
-
     /** @var resource Pointer to the CSV file to read */
     protected $filePointer;
 
@@ -27,26 +26,36 @@ class RowIterator implements IteratorInterface
     protected $hasReachedEndOfFile = false;
 
     /** @var string Defines the character used to delimit fields (one character only) */
-    protected $fieldDelimiter = ',';
+    protected $fieldDelimiter;
 
     /** @var string Defines the character used to enclose fields (one character only) */
-    protected $fieldEnclosure = '"';
+    protected $fieldEnclosure;
+
+    /** @var string Encoding of the CSV file to be read */
+    protected $encoding;
 
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
+
+    /** @var \Box\Spout\Common\Helper\EncodingHelper Helper to work with different encodings */
+    protected $encodingHelper;
 
     /**
      * @param resource $filePointer Pointer to the CSV file to read
      * @param string $fieldDelimiter Character that delimits fields
      * @param string $fieldEnclosure Character that enclose fields
+     * @param string $encoding Encoding of the CSV file to be read
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $globalFunctionsHelper)
+    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $globalFunctionsHelper)
     {
         $this->filePointer = $filePointer;
         $this->fieldDelimiter = $fieldDelimiter;
         $this->fieldEnclosure = $fieldEnclosure;
+        $this->encoding = $encoding;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
+
+        $this->encodingHelper = new EncodingHelper($globalFunctionsHelper);
     }
 
     /**
@@ -57,7 +66,7 @@ class RowIterator implements IteratorInterface
      */
     public function rewind()
     {
-        $this->rewindAndSkipUtf8Bom();
+        $this->rewindAndSkipBom();
 
         $this->numReadRows = 0;
         $this->rowDataBuffer = null;
@@ -66,24 +75,17 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * This rewinds and skips the UTF-8 BOM if inserted at the beginning of the file
+     * This rewinds and skips the BOM if inserted at the beginning of the file
      * by moving the file pointer after it, so that it is not read.
      *
      * @return void
      */
-    protected function rewindAndSkipUtf8Bom()
+    protected function rewindAndSkipBom()
     {
-        $this->globalFunctionsHelper->rewind($this->filePointer);
+        $byteOffsetToSkipBom = $this->encodingHelper->getBytesOffsetToSkipBOM($this->filePointer, $this->encoding);
 
-        $hasUtf8Bom = ($this->globalFunctionsHelper->fgets($this->filePointer, 4) === self::UTF8_BOM);
-
-        if ($hasUtf8Bom) {
-            // we skip the 2 first bytes (so start from the 3rd byte)
-            $this->globalFunctionsHelper->fseek($this->filePointer, 3);
-        } else {
-            // if no BOM, reset the pointer to read from the beginning
-            $this->globalFunctionsHelper->fseek($this->filePointer, 0);
-        }
+        // sets the cursor after the BOM (0 means no BOM, so rewind it)
+        $this->globalFunctionsHelper->fseek($this->filePointer, $byteOffsetToSkipBom);
     }
 
     /**
@@ -102,6 +104,7 @@ class RowIterator implements IteratorInterface
      * @link http://php.net/manual/en/iterator.next.php
      *
      * @return void
+     * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
      */
     public function next()
     {
@@ -110,7 +113,8 @@ class RowIterator implements IteratorInterface
 
         if (!$this->hasReachedEndOfFile) {
             do {
-               $lineData = $this->globalFunctionsHelper->fgetcsv($this->filePointer, 0, $this->fieldDelimiter, $this->fieldEnclosure);
+                $utf8EncodedLineData = $this->getNextUTF8EncodedLine();
+                $lineData = $this->globalFunctionsHelper->str_getcsv($utf8EncodedLineData, $this->fieldDelimiter, $this->fieldEnclosure);
            } while ($lineData === false || ($lineData !== null && $this->isEmptyLine($lineData)));
 
             if ($lineData !== false && $lineData !== null) {
@@ -118,6 +122,25 @@ class RowIterator implements IteratorInterface
                 $this->numReadRows++;
             }
         }
+    }
+
+    /**
+     * Returns the next line, converted if necessary to UTF-8.
+     * Neither fgets nor fgetcsv don't work with non UTF-8 data... so we need to do some things manually.
+     *
+     * @return string The next line for the current file pointer, encoded in UTF-8
+     * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
+     */
+    protected function getNextUTF8EncodedLine()
+    {
+        // Read until the EOL delimiter or EOF is reached. The delimiter's encoding needs to match the CSV's encoding.
+        $encodedEOLDelimiter = $this->encodingHelper->attemptConversionFromUTF8("\n", $this->encoding);
+        $encodedLineData = $this->globalFunctionsHelper->stream_get_line($this->filePointer, 0, $encodedEOLDelimiter);
+
+        // Once the line has been read, it can be converted to UTF-8
+        $utf8EncodedLineData = $this->encodingHelper->attemptConversionToUTF8($encodedLineData, $this->encoding);
+
+        return $utf8EncodedLineData;
     }
 
     /**
