@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/box/spout/v/stable)](https://packagist.org/packages/box/spout)
 [![Project Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
-[![Build Status](https://travis-ci.org/box/spout.png?branch=master)](http://travis-ci.org/box/spout)
+[![Build Status](https://travis-ci.org/box/spout.svg?branch=master)](http://travis-ci.org/box/spout)
 [![Code Coverage](https://scrutinizer-ci.com/g/box/spout/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/box/spout/?branch=master)
 [![Total Downloads](https://poser.pugx.org/box/spout/downloads)](https://packagist.org/packages/box/spout)
 [![License](https://poser.pugx.org/box/spout/license)](https://packagist.org/packages/box/spout)
