@@ -20,7 +20,7 @@ Spout can be installed directly from [Composer](https://getcomposer.org/).
 Add "box/spout" as a dependency in your project's composer.json file:
 ```json
 "require": {
-    "box/spout": "~1.0"
+    "box/spout": "~2.0"
 }
 ```
 
