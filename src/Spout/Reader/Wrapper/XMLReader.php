@@ -19,9 +19,11 @@ class XMLReader extends \XMLReader
      * @see \XMLReader::open
      *
      * @param string $URI URI pointing to the document
+   	 * @param string|null|void $encoding The document encoding
+   	 * @param int $options A bitmask of the LIBXML_* constants
      * @return bool TRUE on success or FALSE on failure
      */
-    public function open($URI)
+    public function open($URI, $encoding = null, $options = 0)
     {
         $wasOpenSuccessful = false;
 
@@ -29,10 +31,10 @@ class XMLReader extends \XMLReader
         // @link https://github.com/facebook/hhvm/issues/5779
         if ($this->isRunningHHVM() && $this->isZipStream($URI)) {
             if ($this->fileExistsWithinZip($URI)) {
-                $wasOpenSuccessful = parent::open($URI, null, LIBXML_NONET);
+                $wasOpenSuccessful = parent::open($URI, $encoding, $options|LIBXML_NONET);
             }
         } else {
-            $wasOpenSuccessful = parent::open($URI, null, LIBXML_NONET);
+            $wasOpenSuccessful = parent::open($URI, $encoding, $options|LIBXML_NONET);
         }
 
         return $wasOpenSuccessful;
