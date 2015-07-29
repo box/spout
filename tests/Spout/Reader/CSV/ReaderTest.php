@@ -115,11 +115,25 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return array
+     */
+    public function dataProviderForTestReadShouldSkipEmptyLines()
+    {
+        return [
+            ['csv_with_empty_line.csv'],
+            ['csv_with_empty_last_line.csv'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForTestReadShouldSkipEmptyLines
+     *
+     * @param string $fileName
      * @return void
      */
-    public function testReadShouldSkipEmptyLines()
+    public function testReadShouldSkipEmptyLines($fileName)
     {
-        $allRows = $this->getAllRowsForFile('csv_with_empty_line.csv');
+        $allRows = $this->getAllRowsForFile($fileName);
 
         $expectedRows = [
             ['csv--11', 'csv--12', 'csv--13'],
