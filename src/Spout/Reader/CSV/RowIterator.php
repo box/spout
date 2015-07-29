@@ -40,6 +40,9 @@ class RowIterator implements IteratorInterface
     /** @var \Box\Spout\Common\Helper\EncodingHelper Helper to work with different encodings */
     protected $encodingHelper;
 
+    /** @var string End of line delimiter, encoded using the same encoding as the CSV */
+    protected $encodedEOLDelimiter;
+
     /**
      * @param resource $filePointer Pointer to the CSV file to read
      * @param string $fieldDelimiter Character that delimits fields
@@ -108,18 +111,25 @@ class RowIterator implements IteratorInterface
      */
     public function next()
     {
-        $lineData = null;
-        $this->hasReachedEndOfFile = feof($this->filePointer);
+        $lineData = false;
+        $this->hasReachedEndOfFile = $this->globalFunctionsHelper->feof($this->filePointer);
 
         if (!$this->hasReachedEndOfFile) {
             do {
                 $utf8EncodedLineData = $this->getNextUTF8EncodedLine();
-                $lineData = $this->globalFunctionsHelper->str_getcsv($utf8EncodedLineData, $this->fieldDelimiter, $this->fieldEnclosure);
-           } while ($lineData === false || ($lineData !== null && $this->isEmptyLine($lineData)));
+                if ($utf8EncodedLineData !== false) {
+                    $lineData = $this->globalFunctionsHelper->str_getcsv($utf8EncodedLineData, $this->fieldDelimiter, $this->fieldEnclosure);
+                }
+                $hasNowReachedEndOfFile = $this->globalFunctionsHelper->feof($this->filePointer);
+            } while (($lineData === false && !$hasNowReachedEndOfFile) || $this->isEmptyLine($lineData));
 
-            if ($lineData !== false && $lineData !== null) {
+            if ($lineData !== false) {
                 $this->rowDataBuffer = $lineData;
                 $this->numReadRows++;
+            } else {
+                // If we reach this point, it means end of file was reached.
+                // This happens when the last lines are empty lines.
+                $this->hasReachedEndOfFile = $hasNowReachedEndOfFile;
             }
         }
     }
@@ -128,19 +138,36 @@ class RowIterator implements IteratorInterface
      * Returns the next line, converted if necessary to UTF-8.
      * Neither fgets nor fgetcsv don't work with non UTF-8 data... so we need to do some things manually.
      *
-     * @return string The next line for the current file pointer, encoded in UTF-8
+     * @return string|false The next line for the current file pointer, encoded in UTF-8 or FALSE if nothing to read
      * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
      */
     protected function getNextUTF8EncodedLine()
     {
         // Read until the EOL delimiter or EOF is reached. The delimiter's encoding needs to match the CSV's encoding.
-        $encodedEOLDelimiter = $this->encodingHelper->attemptConversionFromUTF8("\n", $this->encoding);
+        $encodedEOLDelimiter = $this->getEncodedEOLDelimiter();
         $encodedLineData = $this->globalFunctionsHelper->stream_get_line($this->filePointer, 0, $encodedEOLDelimiter);
 
-        // Once the line has been read, it can be converted to UTF-8
-        $utf8EncodedLineData = $this->encodingHelper->attemptConversionToUTF8($encodedLineData, $this->encoding);
+        // If the line could have been read, it can be converted to UTF-8
+        $utf8EncodedLineData = ($encodedLineData !== false) ?
+            $this->encodingHelper->attemptConversionToUTF8($encodedLineData, $this->encoding) :
+            false;
 
         return $utf8EncodedLineData;
+    }
+
+    /**
+     * Returns the end of line delimiter, encoded using the same encoding as the CSV.
+     * The return value is cached.
+     *
+     * @return string
+     */
+    protected function getEncodedEOLDelimiter()
+    {
+        if (!isset($this->encodedEOLDelimiter)) {
+            $this->encodedEOLDelimiter = $this->encodingHelper->attemptConversionFromUTF8("\n", $this->encoding);
+        }
+
+        return $this->encodedEOLDelimiter;
     }
 
     /**
@@ -149,7 +176,7 @@ class RowIterator implements IteratorInterface
      */
     protected function isEmptyLine($lineData)
     {
-        return (count($lineData) === 1 && $lineData[0] === null);
+        return (is_array($lineData) && count($lineData) === 1 && $lineData[0] === null);
     }
 
     /**

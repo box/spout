@@ -168,6 +168,18 @@ class GlobalFunctionsHelper
     }
 
     /**
+     * Wrapper around global function feof()
+     * @see feof()
+     *
+     * @param resource
+     * @return bool
+     */
+    public function feof($handle)
+    {
+        return feof($handle);
+    }
+
+    /**
      * Wrapper around global function is_readable()
      * @see is_readable()
      *
