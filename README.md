@@ -65,7 +65,7 @@ $reader = ReaderFactory::create(Type::CSV);
 $reader->open($filePath);
 
 foreach ($reader->getSheetIterator() as $sheet) {
-    foreach ($reader->getRowIterator() as $row) {
+    foreach ($sheet->getRowIterator() as $row) {
         // do stuff
     }
 }
@@ -83,7 +83,7 @@ $reader = ReaderFactory::create(Type::XLSX);
 $reader->open($filePath);
 
 foreach ($reader->getSheetIterator() as $sheet) {
-    foreach ($reader->getRowIterator() as $row) {
+    foreach ($sheet->getRowIterator() as $row) {
         // do stuff
     }
 }
