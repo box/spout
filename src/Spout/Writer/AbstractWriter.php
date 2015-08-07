@@ -5,6 +5,7 @@ namespace Box\Spout\Writer;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
+use Box\Spout\Writer\Style\StyleBuilder;
 
 /**
  * Class AbstractWriter
@@ -26,6 +27,12 @@ abstract class AbstractWriter implements WriterInterface
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
+    /** @var Style\Style Style to be applied to the next written row(s) */
+    protected $rowStyle;
+
+    /** @var Style\Style Default row style. Each writer can have its own default style */
+    protected $defaultRowStyle;
+
     /** @var string Content-Type value for the header - to be defined by child class */
     protected static $headerContentType;
 
@@ -39,13 +46,13 @@ abstract class AbstractWriter implements WriterInterface
 
     /**
      * Adds data to the currently openned writer.
-     * The data must be UTF-8 encoded.
      *
      * @param  array $dataRow Array containing data to be streamed.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param Style\Style $style Style to be applied to the written row
      * @return void
      */
-    abstract protected function addRowToWriter(array $dataRow);
+    abstract protected function addRowToWriter(array $dataRow, $style);
 
     /**
      * Closes the streamer, preventing any additional writing.
@@ -55,7 +62,16 @@ abstract class AbstractWriter implements WriterInterface
     abstract protected function closeWriter();
 
     /**
-     * @param $globalFunctionsHelper
+     *
+     */
+    public function __construct()
+    {
+        $this->defaultRowStyle = $this->getDefaultRowStyle();
+        $this->resetRowStyleToDefault();
+    }
+
+    /**
+     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      * @return AbstractWriter
      */
     public function setGlobalFunctionsHelper($globalFunctionsHelper)
@@ -138,7 +154,6 @@ abstract class AbstractWriter implements WriterInterface
 
     /**
      * Write given data to the output. New data will be appended to end of stream.
-     * The data must be UTF-8 encoded.
      *
      * @param  array $dataRow Array containing data to be streamed.
      *                        If empty, no data is added (i.e. not even as a blank row)
@@ -153,7 +168,7 @@ abstract class AbstractWriter implements WriterInterface
         if ($this->isWriterOpened) {
             // empty $dataRow should not add an empty line
             if (!empty($dataRow)) {
-                $this->addRowToWriter($dataRow);
+                $this->addRowToWriter($dataRow, $this->rowStyle);
             }
         } else {
             throw new WriterNotOpenedException('The writer needs to be opened before adding row.');
@@ -163,8 +178,31 @@ abstract class AbstractWriter implements WriterInterface
     }
 
     /**
+     * Write given data to the output and apply the given style.
+     * @see addRow
+     *
+     * @param array $dataRow Array of array containing data to be streamed.
+     * @param Style\Style $style Style to be applied to the row.
+     * @return AbstractWriter
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
+     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     */
+    public function addRowWithStyle(array $dataRow, $style)
+    {
+        if (!$style instanceof Style\Style) {
+            throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
+        }
+
+        $this->setRowStyle($style);
+        $this->addRow($dataRow);
+        $this->resetRowStyleToDefault();
+
+        return $this;
+    }
+
+    /**
      * Write given data to the output. New data will be appended to end of stream.
-     * The data must be UTF-8 encoded.
      *
      * @param  array $dataRows Array of array containing data to be streamed.
      *                         If a row is empty, it won't be added (i.e. not even as a blank row)
@@ -191,6 +229,64 @@ abstract class AbstractWriter implements WriterInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Write given data to the output and apply the given style.
+     * @see addRows
+     *
+     * @param array $dataRows Array of array containing data to be streamed.
+     * @param Style\Style $style Style to be applied to the rows.
+     * @return AbstractWriter
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
+     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     */
+    public function addRowsWithStyle(array $dataRows, $style)
+    {
+        if (!$style instanceof Style\Style) {
+            throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
+        }
+
+        $this->setRowStyle($style);
+        $this->addRows($dataRows);
+        $this->resetRowStyleToDefault();
+
+        return $this;
+    }
+
+    /**
+     * Returns the default style to be applied to rows.
+     * Can be overriden by children to have a custom style.
+     *
+     * @return Style\Style
+     */
+    protected function getDefaultRowStyle()
+    {
+        return (new StyleBuilder())->build();
+    }
+
+    /**
+     * Sets the style to be applied to the next written rows
+     * until it is changed or reset.
+     *
+     * @param Style\Style $style
+     * @return void
+     */
+    private function setRowStyle($style)
+    {
+        // Merge given style with the default one to inherit custom properties
+        $this->rowStyle = $style->mergeWith($this->defaultRowStyle);
+    }
+
+    /**
+     * Resets the style to be applied to the next written rows.
+     *
+     * @return void
+     */
+    private function resetRowStyleToDefault()
+    {
+        $this->rowStyle = $this->defaultRowStyle;
     }
 
     /**

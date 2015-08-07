@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Writer\AbstractWriter;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
+use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Writer\XLSX\Internal\Workbook;
 
 /**
@@ -14,6 +15,10 @@ use Box\Spout\Writer\XLSX\Internal\Workbook;
  */
 class Writer extends AbstractWriter
 {
+    /** Default style font values */
+    const DEFAULT_FONT_SIZE = 12;
+    const DEFAULT_FONT_NAME = 'Calibri';
+
     /** @var string Content-Type value for the header */
     protected static $headerContentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
@@ -74,7 +79,7 @@ class Writer extends AbstractWriter
     {
         if (!$this->book) {
             $tempFolder = ($this->tempFolder) ? : sys_get_temp_dir();
-            $this->book = new Workbook($tempFolder, $this->shouldUseInlineStrings, $this->shouldCreateNewSheetsAutomatically);
+            $this->book = new Workbook($tempFolder, $this->shouldUseInlineStrings, $this->shouldCreateNewSheetsAutomatically, $this->defaultRowStyle);
             $this->book->addNewSheetAndMakeItCurrent();
         }
     }
@@ -161,14 +166,28 @@ class Writer extends AbstractWriter
      *
      * @param array $dataRow Array containing data to be written.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row.
      * @return void
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the book is not created yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    protected function addRowToWriter(array $dataRow)
+    protected function addRowToWriter(array $dataRow, $style)
     {
         $this->throwIfBookIsNotAvailable();
-        $this->book->addRowToCurrentWorksheet($dataRow);
+        $this->book->addRowToCurrentWorksheet($dataRow, $style);
+    }
+
+    /**
+     * Returns the default style to be applied to rows.
+     *
+     * @return \Box\Spout\Writer\Style\Style
+     */
+    protected function getDefaultRowStyle()
+    {
+        return (new StyleBuilder())
+            ->setFontSize(self::DEFAULT_FONT_SIZE)
+            ->setFontName(self::DEFAULT_FONT_NAME)
+            ->build();
     }
 
     /**

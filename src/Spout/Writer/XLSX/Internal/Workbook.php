@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\XLSX\Internal;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
 use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
+use Box\Spout\Writer\XLSX\Helper\StyleHelper;
 use Box\Spout\Writer\XLSX\Sheet;
 
 /**
@@ -34,25 +35,36 @@ class Workbook
     /** @var \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper Helper to write shared strings */
     protected $sharedStringsHelper;
 
+    /** @var \Box\Spout\Writer\XLSX\Helper\StyleHelper Helper to apply styles */
+    protected $styleHelper;
+
     /** @var Worksheet[] Array containing the workbook's sheets */
     protected $worksheets = [];
 
     /** @var Worksheet The worksheet where data will be written to */
     protected $currentWorksheet;
 
+    protected $styles = [];
+
+
+
+
     /**
      * @param string $tempFolder
      * @param bool $shouldUseInlineStrings
      * @param bool $shouldCreateNewSheetsAutomatically
+     * @param \Box\Spout\Writer\Style\Style $defaultRowStyle
      * @throws \Box\Spout\Common\Exception\IOException If unable to create at least one of the base folders
      */
-    public function __construct($tempFolder, $shouldUseInlineStrings, $shouldCreateNewSheetsAutomatically)
+    public function __construct($tempFolder, $shouldUseInlineStrings, $shouldCreateNewSheetsAutomatically, $defaultRowStyle)
     {
         $this->shouldUseInlineStrings = $shouldUseInlineStrings;
         $this->shouldCreateNewSheetsAutomatically = $shouldCreateNewSheetsAutomatically;
 
         $this->fileSystemHelper = new FileSystemHelper($tempFolder);
         $this->fileSystemHelper->createBaseFilesAndFolders();
+
+        $this->styleHelper = new StyleHelper($defaultRowStyle);
 
         // This helper will be shared by all sheets
         $xlFolder = $this->fileSystemHelper->getXlFolder();
@@ -164,11 +176,12 @@ class Workbook
      *
      * @param array $dataRow Array containing data to be written.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row.
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If trying to create a new sheet and unable to open the sheet for writing
      * @throws \Box\Spout\Writer\Exception\WriterException If unable to write data
      */
-    public function addRowToCurrentWorksheet($dataRow)
+    public function addRowToCurrentWorksheet($dataRow, $style)
     {
         $currentWorksheet = $this->getCurrentWorksheet();
         $hasReachedMaxRows = $this->hasCurrentWorkseetReachedMaxRows();
@@ -178,12 +191,15 @@ class Workbook
             // ... continue writing in a new sheet if option set
             if ($this->shouldCreateNewSheetsAutomatically) {
                 $currentWorksheet = $this->addNewSheetAndMakeItCurrent();
-                $currentWorksheet->addRow($dataRow);
+
+                $registeredStyle = $this->styleHelper->registerStyle($style);
+                $currentWorksheet->addRow($dataRow, $registeredStyle);
             } else {
                 // otherwise, do nothing as the data won't be read anyways
             }
         } else {
-            $currentWorksheet->addRow($dataRow);
+            $registeredStyle = $this->styleHelper->registerStyle($style);
+            $currentWorksheet->addRow($dataRow, $registeredStyle);
         }
     }
 
@@ -217,6 +233,7 @@ class Workbook
             ->createContentTypesFile($this->worksheets)
             ->createWorkbookFile($this->worksheets)
             ->createWorkbookRelsFile($this->worksheets)
+            ->createStylesFile($this->styleHelper)
             ->zipRootFolderAndCopyToStream($finalFilePointer);
 
         $this->cleanupTempFolder();

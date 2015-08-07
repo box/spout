@@ -38,7 +38,7 @@ EOD;
     /** @var Resource Pointer to the sheet data file (e.g. xl/worksheets/sheet1.xml) */
     protected $sheetFilePointer;
 
-    /** @var int */
+    /** @var int Index of the last written row */
     protected $lastWrittenRowIndex = 0;
 
     /**
@@ -118,11 +118,12 @@ EOD;
      *
      * @param array $dataRow Array containing data to be written.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row. NULL means use default style.
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
      */
-    public function addRow($dataRow)
+    public function addRow($dataRow, $style)
     {
         $cellNumber = 0;
         $rowIndex = $this->lastWrittenRowIndex + 1;
@@ -133,6 +134,7 @@ EOD;
         foreach($dataRow as $cellValue) {
             $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
             $data .= '            <c r="' . $columnIndex . $rowIndex . '"';
+            $data .= ' s="' . $style->getId() . '"';
 
             if (CellHelper::isNonEmptyString($cellValue)) {
                 if ($this->shouldUseInlineStrings) {
