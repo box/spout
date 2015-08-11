@@ -160,7 +160,7 @@ class Workbook
         $worksheetFound = null;
 
         foreach ($this->worksheets as $worksheet) {
-            if ($worksheet->getExternalSheet() == $sheet) {
+            if ($worksheet->getExternalSheet() === $sheet) {
                 $worksheetFound = $worksheet;
                 break;
             }
