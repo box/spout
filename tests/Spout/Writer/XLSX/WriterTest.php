@@ -9,7 +9,7 @@ use Box\Spout\Writer\WriterFactory;
 /**
  * Class XLSXTest
  *
- * @package Box\Spout\Writer
+ * @package Box\Spout\Writer\XLSX
  */
 class WriterTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,8 +26,6 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $writer = WriterFactory::create(Type::XLSX);
         @$writer->openToFile($filePath);
-        $writer->addRow(['xlsx--11', 'xlsx--12']);
-        $writer->close();
     }
 
     /**
@@ -37,17 +35,15 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $writer = WriterFactory::create(Type::XLSX);
         $writer->addRow(['xlsx--11', 'xlsx--12']);
-        $writer->close();
     }
 
     /**
      * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
      */
-    public function testAddRowShouldThrowExceptionIfCallAddRowsBeforeOpeningWriter()
+    public function testAddRowShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::XLSX);
         $writer->addRows([['xlsx--11', 'xlsx--12']]);
-        $writer->close();
     }
 
     /**

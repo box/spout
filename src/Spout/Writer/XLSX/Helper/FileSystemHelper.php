@@ -26,6 +26,7 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
     const CONTENT_TYPES_XML_FILE_NAME = '[Content_Types].xml';
     const WORKBOOK_XML_FILE_NAME = 'workbook.xml';
     const WORKBOOK_RELS_XML_FILE_NAME = 'workbook.xml.rels';
+    const STYLES_XML_FILE_NAME = 'styles.xml';
 
     /** @var string Path to the root folder inside the temp folder where the files to create the XLSX will be stored */
     protected $rootFolder;
@@ -256,6 +257,7 @@ EOD;
     }
 
     $contentTypesXmlFileContents .= <<<EOD
+    <Override ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml" PartName="/xl/styles.xml"/>
     <Override ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml" PartName="/xl/sharedStrings.xml"/>
     <Override ContentType="application/vnd.openxmlformats-package.core-properties+xml" PartName="/docProps/core.xml"/>
     <Override ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml" PartName="/docProps/app.xml"/>
@@ -312,6 +314,7 @@ EOD;
         $workbookRelsXmlFileContents = <<<EOD
 <?xml version="1.0" encoding="UTF-8"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+    <Relationship Id="rIdStyles" Target="styles.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"/>
     <Relationship Id="rIdSharedStrings" Target="sharedStrings.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings"/>
 
 EOD;
@@ -325,6 +328,20 @@ EOD;
         $workbookRelsXmlFileContents .= '</Relationships>';
 
         $this->createFileWithContents($this->xlRelsFolder, self::WORKBOOK_RELS_XML_FILE_NAME, $workbookRelsXmlFileContents);
+
+        return $this;
+    }
+
+    /**
+     * Creates the "styles.xml" file under the "xl" folder
+     *
+     * @param StyleHelper $styleHelper
+     * @return FileSystemHelper
+     */
+    public function createStylesFile($styleHelper)
+    {
+        $stylesXmlFileContents = $styleHelper->getStylesXMLFileContent();
+        $this->createFileWithContents($this->xlFolder, self::STYLES_XML_FILE_NAME, $stylesXmlFileContents);
 
         return $this;
     }

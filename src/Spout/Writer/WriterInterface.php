@@ -41,6 +41,19 @@ interface WriterInterface
     public function addRow(array $dataRow);
 
     /**
+     * Write given data to the output and apply the given style.
+     * @see addRow
+     *
+     * @param array $dataRow Array of array containing data to be streamed.
+     * @param Style\Style $style Style to be applied to the row.
+     * @return WriterInterface
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
+     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     */
+    public function addRowWithStyle(array $dataRow, $style);
+
+    /**
      * Write given data to the output. New data will be appended to end of stream.
      *
      * @param  array $dataRows Array of array containing data to be streamed.
@@ -54,6 +67,19 @@ interface WriterInterface
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
     public function addRows(array $dataRows);
+
+    /**
+     * Write given data to the output and apply the given style.
+     * @see addRows
+     *
+     * @param array $dataRows Array of array containing data to be streamed.
+     * @param Style\Style $style Style to be applied to the rows.
+     * @return WriterInterface
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
+     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
+     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     */
+    public function addRowsWithStyle(array $dataRows, $style);
 
     /**
      * Closes the writer. This will close the streamer as well, preventing new data
