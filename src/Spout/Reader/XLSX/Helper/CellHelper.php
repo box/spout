@@ -71,7 +71,7 @@ class CellHelper
         {
             $currentColumnIndex = ord($single_cell_index) - $capitalAAsciiValue;
 
-            if ($columnLength == 1) {
+            if ($columnLength === 1) {
                 $columnIndex += $currentColumnIndex;
             } else {
                 $columnIndex += pow($step, ($columnLength - 1)) * ($currentColumnIndex + 1);

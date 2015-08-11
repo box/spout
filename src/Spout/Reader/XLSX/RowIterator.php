@@ -142,7 +142,7 @@ class RowIterator implements IteratorInterface
 
         try {
             while ($this->xmlReader->read()) {
-                if ($this->xmlReader->nodeType == XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_DIMENSION) {
+                if ($this->xmlReader->nodeType === XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_DIMENSION) {
                     // Read dimensions of the sheet
                     $dimensionRef = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_REF); // returns 'A1:M13' for instance (or 'A1' for empty sheet)
                     if (preg_match('/[A-Z\d]+:([A-Z\d]+)/', $dimensionRef, $matches)) {
@@ -150,7 +150,7 @@ class RowIterator implements IteratorInterface
                         $this->numColumns = CellHelper::getColumnIndexFromCellIndex($lastCellIndex) + 1;
                     }
 
-                } else if ($this->xmlReader->nodeType == XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_ROW) {
+                } else if ($this->xmlReader->nodeType === XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_ROW) {
                     // Start of the row description
                     $isInsideRowTag = true;
 
@@ -163,7 +163,7 @@ class RowIterator implements IteratorInterface
                     }
                     $rowData = ($numberOfColumnsForRow !== 0) ? array_fill(0, $numberOfColumnsForRow, '') : [];
 
-                } else if ($isInsideRowTag && $this->xmlReader->nodeType == XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_CELL) {
+                } else if ($isInsideRowTag && $this->xmlReader->nodeType === XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_CELL) {
                     // Start of a cell description
                     $currentCellIndex = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_CELL_INDEX);
                     $currentColumnIndex = CellHelper::getColumnIndexFromCellIndex($currentCellIndex);
@@ -171,14 +171,14 @@ class RowIterator implements IteratorInterface
                     $node = $this->xmlReader->expand();
                     $rowData[$currentColumnIndex] = $this->getCellValue($node);
 
-                } else if ($this->xmlReader->nodeType == XMLReader::END_ELEMENT && $this->xmlReader->name === self::XML_NODE_ROW) {
+                } else if ($this->xmlReader->nodeType === XMLReader::END_ELEMENT && $this->xmlReader->name === self::XML_NODE_ROW) {
                     // End of the row description
                     // If needed, we fill the empty cells
                     $rowData = ($this->numColumns !== 0) ? $rowData : CellHelper::fillMissingArrayIndexes($rowData);
                     $this->numReadRows++;
                     break;
 
-                } else if ($this->xmlReader->nodeType == XMLReader::END_ELEMENT && $this->xmlReader->name === self::XML_NODE_WORKSHEET) {
+                } else if ($this->xmlReader->nodeType === XMLReader::END_ELEMENT && $this->xmlReader->name === self::XML_NODE_WORKSHEET) {
                     // The closing "</worksheet>" marks the end of the file
                     $this->hasReachedEndOfFile = true;
                 }
