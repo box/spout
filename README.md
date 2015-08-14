@@ -145,6 +145,41 @@ The writer always generate CSV files encoded in UTF-8, with a BOM.
 
 ### Configuring the XLSX writer
 
+#### Row styling
+
+It is possible to apply some formatting options to a row. Spout supports fonts as well as alignment styles.
+
+```php
+use Box\Spout\Common\Type;
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Writer\Style\StyleBuilder;
+
+$style = (new StyleBuilder())
+           ->setFontBold()
+           ->setFontSize(15)
+           ->setShouldWrapText()
+           ->build();
+           
+$writer = WriterFactory::create(Type::XLSX);
+$writer->openToFile($filePath);
+
+$writer->addRowWithStyle($singleRow, $style); // style will only be applied to this row
+$writer->addRow($otherSingleRow); // no style will be applied
+$writer->addRowsWithStyle($multipleRows, $style); // style will be applied to all given rows
+
+$writer->close();
+```
+
+Unfortunately, Spout does not support all the possible formatting options yet. But you can find the most important ones:
+* Bold - `StyleBuilder::setFontBold()`
+* Italic - `StyleBuilder::setFontItalic()`
+* Underline - `StyleBuilder::setFontUnderline()`
+* Strikethrough - `StyleBuilder::setFontStrikeThrough()`
+* Font name - `StyleBuilder::setFontName($fontName)`
+* Font size - `StyleBuilder::setFontSize($fontSize)`
+* Wrap text - `StyleBuilder::setShouldWrapText()`
+
+
 #### Strings storage
 
 XLSX files support different ways to store the string values:
