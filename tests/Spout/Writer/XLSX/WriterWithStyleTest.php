@@ -106,7 +106,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             ->setFontBold()
             ->setFontItalic()
             ->setFontUnderline()
-            ->setFontStrikeThrough()
+            ->setFontStrikethrough()
             ->build();
         $style2 = (new StyleBuilder())
             ->setFontSize(15)

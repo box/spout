@@ -117,7 +117,7 @@ EOD;
             if ($style->isFontUnderline()) {
                 $content .= '            <u/>' . PHP_EOL;
             }
-            if ($style->isFontStrikeThrough()) {
+            if ($style->isFontStrikethrough()) {
                 $content .= '            <strike/>' . PHP_EOL;
             }
 
