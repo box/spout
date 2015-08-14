@@ -33,9 +33,9 @@ class Style
     protected $hasSetFontUnderline = false;
 
     /** @var bool Whether the font should be struck through */
-    protected $fontStrikeThrough = false;
+    protected $fontStrikethrough = false;
     /** @var bool Whether the strikethrough property was set */
-    protected $hasSetFontStrikeThrough = false;
+    protected $hasSetFontStrikethrough = false;
 
     /** @var int Font size */
     protected $fontSize = self::DEFAULT_FONT_SIZE;
@@ -133,18 +133,18 @@ class Style
     /**
      * @return boolean
      */
-    public function isFontStrikeThrough()
+    public function isFontStrikethrough()
     {
-        return $this->fontStrikeThrough;
+        return $this->fontStrikethrough;
     }
 
     /**
      * @return Style
      */
-    public function setFontStrikeThrough()
+    public function setFontStrikethrough()
     {
-        $this->fontStrikeThrough = true;
-        $this->hasSetFontStrikeThrough = true;
+        $this->fontStrikethrough = true;
+        $this->hasSetFontStrikethrough = true;
         $this->shouldApplyFont = true;
         return $this;
     }
@@ -259,8 +259,8 @@ class Style
         if (!$this->hasSetFontUnderline && $baseStyle->isFontUnderline()) {
             $mergedStyle->setFontUnderline();
         }
-        if (!$this->hasSetFontStrikeThrough && $baseStyle->isFontStrikeThrough()) {
-            $mergedStyle->setFontStrikeThrough();
+        if (!$this->hasSetFontStrikethrough && $baseStyle->isFontStrikethrough()) {
+            $mergedStyle->setFontStrikethrough();
         }
         if (!$this->hasSetFontSize && $baseStyle->getFontSize() !== self::DEFAULT_FONT_SIZE) {
             $mergedStyle->setFontSize($baseStyle->getFontSize());

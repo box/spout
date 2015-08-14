@@ -59,9 +59,9 @@ class StyleBuilder
      *
      * @return StyleBuilder
      */
-    public function setFontStrikeThrough()
+    public function setFontStrikethrough()
     {
-        $this->style->setFontStrikeThrough();
+        $this->style->setFontStrikethrough();
         return $this;
     }
 

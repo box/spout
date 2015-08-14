@@ -71,14 +71,14 @@ class StyleTest extends \PHPUnit_Framework_TestCase
     public function testMergeWithShouldPreferCurrentStylePropertyIfSetOnCurrentButNotOnBase()
     {
         $baseStyle = (new StyleBuilder())->build();
-        $currentStyle = (new StyleBuilder())->setFontItalic()->setFontStrikeThrough()->build();
+        $currentStyle = (new StyleBuilder())->setFontItalic()->setFontStrikethrough()->build();
         $mergedStyle = $currentStyle->mergeWith($baseStyle);
 
         $this->assertFalse($baseStyle->isFontItalic());
-        $this->assertFalse($baseStyle->isFontStrikeThrough());
+        $this->assertFalse($baseStyle->isFontStrikethrough());
 
         $this->assertTrue($mergedStyle->isFontItalic());
-        $this->assertTrue($mergedStyle->isFontStrikeThrough());
+        $this->assertTrue($mergedStyle->isFontStrikethrough());
     }
 
     /**
@@ -89,7 +89,7 @@ class StyleTest extends \PHPUnit_Framework_TestCase
         $baseStyle = (new StyleBuilder())
             ->setFontItalic()
             ->setFontUnderline()
-            ->setFontStrikeThrough()
+            ->setFontStrikethrough()
             ->setShouldWrapText()
             ->build();
         $currentStyle = (new StyleBuilder())->build();
