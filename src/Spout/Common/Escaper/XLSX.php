@@ -13,6 +13,9 @@ class XLSX implements EscaperInterface
     /** @var string[] Control characters to be escaped */
     protected $controlCharactersEscapingMap;
 
+    /**
+     *
+     */
     public function __construct()
     {
         $this->controlCharactersEscapingMap = $this->getControlCharactersEscapingMap();

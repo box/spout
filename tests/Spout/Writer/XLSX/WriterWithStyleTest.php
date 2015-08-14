@@ -207,6 +207,25 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testAddRowWithStyleShouldApplyWrapTextIfCellContainsNewLine()
+    {
+        $fileName = 'test_add_row_with_style_should_apply_wrap_text_if_new_lines.xlsx';
+        $dataRows = [
+            ["xlsx--11\nxlsx--11"],
+            ['xlsx--21'],
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName, $this->defaultStyle);
+
+        $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
+        $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
+        $this->assertEquals(1, $xfElement->getAttribute('applyAlignment'));
+        $this->assertFirstChildHasAttributeEquals('1', $xfElement, 'alignment', 'wrapText');
+    }
+
+    /**
      * @param array $allRows
      * @param string $fileName
      * @param \Box\Spout\Writer\Style\Style $style

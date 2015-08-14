@@ -44,11 +44,6 @@ class Workbook
     /** @var Worksheet The worksheet where data will be written to */
     protected $currentWorksheet;
 
-    protected $styles = [];
-
-
-
-
     /**
      * @param string $tempFolder
      * @param bool $shouldUseInlineStrings
@@ -192,13 +187,15 @@ class Workbook
             if ($this->shouldCreateNewSheetsAutomatically) {
                 $currentWorksheet = $this->addNewSheetAndMakeItCurrent();
 
-                $registeredStyle = $this->styleHelper->registerStyle($style);
+                $updatedStyle = $this->styleHelper->applyExtraStylesIfNeeded($style, $dataRow);
+                $registeredStyle = $this->styleHelper->registerStyle($updatedStyle);
                 $currentWorksheet->addRow($dataRow, $registeredStyle);
             } else {
                 // otherwise, do nothing as the data won't be read anyways
             }
         } else {
-            $registeredStyle = $this->styleHelper->registerStyle($style);
+            $updatedStyle = $this->styleHelper->applyExtraStylesIfNeeded($style, $dataRow);
+            $registeredStyle = $this->styleHelper->registerStyle($updatedStyle);
             $currentWorksheet->addRow($dataRow, $registeredStyle);
         }
     }

@@ -159,7 +159,7 @@ $style = (new StyleBuilder())
            ->setFontSize(15)
            ->setShouldWrapText()
            ->build();
-           
+
 $writer = WriterFactory::create(Type::XLSX);
 $writer->openToFile($filePath);
 
