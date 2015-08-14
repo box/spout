@@ -171,13 +171,16 @@ $writer->close();
 ```
 
 Unfortunately, Spout does not support all the possible formatting options yet. But you can find the most important ones:
-* Bold - `StyleBuilder::setFontBold()`
-* Italic - `StyleBuilder::setFontItalic()`
-* Underline - `StyleBuilder::setFontUnderline()`
-* Strikethrough - `StyleBuilder::setFontStrikeThrough()`
-* Font name - `StyleBuilder::setFontName($fontName)`
-* Font size - `StyleBuilder::setFontSize($fontSize)`
-* Wrap text - `StyleBuilder::setShouldWrapText()`
+
+Category  | Property      | API
+----------|---------------|---------------------------------------
+Font      | Bold          | `StyleBuilder::setFontBold()`
+          | Italic        | `StyleBuilder::setFontItalic()`
+          | Underline     | `StyleBuilder::setFontUnderline()`
+          | Strikethrough | `StyleBuilder::setFontStrikethrough()`
+          | Font name     | `StyleBuilder::setFontName('Arial')`
+          | Font size     | `StyleBuilder::setFontSize(14)`
+Alignment | Wrap text     | `StyleBuilder::setShouldWrapText()`
 
 
 #### Strings storage
