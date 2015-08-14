@@ -56,4 +56,34 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $registeredStyle1->getId());
         $this->assertEquals(1, $registeredStyle2->getId());
     }
+
+    /**
+     * @return void
+     */
+    public function testApplyExtraStylesIfNeededShouldApplyWrapTextIfCellContainsNewLine()
+    {
+        $style = clone $this->defaultStyle;
+        $styleHelper = new StyleHelper($this->defaultStyle);
+
+        $this->assertFalse($style->shouldWrapText());
+
+        $updatedStyle = $styleHelper->applyExtraStylesIfNeeded($style, [12, 'single line', "multi\nlines", null]);
+
+        $this->assertTrue($updatedStyle->shouldWrapText());
+    }
+
+    /**
+     * @return void
+     */
+    public function testApplyExtraStylesIfNeededShouldDoNothingIfWrapTextAlreadyApplied()
+    {
+        $style = (new StyleBuilder())->setShouldWrapText()->build();
+        $styleHelper = new StyleHelper($this->defaultStyle);
+
+        $this->assertTrue($style->shouldWrapText());
+
+        $updatedStyle = $styleHelper->applyExtraStylesIfNeeded($style, ["multi\nlines"]);
+
+        $this->assertTrue($updatedStyle->shouldWrapText());
+    }
 }
