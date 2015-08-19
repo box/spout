@@ -7,6 +7,10 @@ php:
   - 7.0
   - hhvm
 
+cache:
+  directories:
+    - $HOME/.composer/cache
+
 install:
   - composer install --no-interaction --prefer-source
 
