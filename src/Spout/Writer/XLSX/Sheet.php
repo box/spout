@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\XLSX;
 
+use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Exception\InvalidSheetNameException;
 
 /**
@@ -18,7 +19,7 @@ class Sheet
     const MAX_LENGTH_SHEET_NAME = 31;
 
     /** @var array Invalid characters that cannot be contained in the sheet name */
-    private static $INVALID_CHARACTERS_IN_SHEET_NAME = ['\\', '/', '?', '*', '[', ']'];
+    private static $INVALID_CHARACTERS_IN_SHEET_NAME = ['\\', '/', '?', '*', ':', '[', ']'];
 
     /** @var array Associative array [SHEET_INDEX] => [SHEET_NAME] keeping track of sheets' name to enforce uniqueness */
     protected static $SHEETS_NAME_USED = [];
@@ -29,12 +30,16 @@ class Sheet
     /** @var string Name of the sheet */
     protected $name;
 
+    /** @var \Box\Spout\Common\Helper\StringHelper */
+    protected $stringHelper;
+
     /**
      * @param int $sheetIndex Index of the sheet, based on order of creation (zero-based)
      */
     public function __construct($sheetIndex)
     {
         $this->index = $sheetIndex;
+        $this->stringHelper = new StringHelper();
         $this->setName(self::DEFAULT_SHEET_NAME_PREFIX . ($sheetIndex + 1));
     }
 
@@ -58,7 +63,7 @@ class Sheet
      * Sets the name of the sheet. Note that Excel has some restrictions on the name:
      *  - it should not be blank
      *  - it should not exceed 31 characters
-     *  - it should not contain these characters: \ / ? * [ or ]
+     *  - it should not contain these characters: \ / ? * : [ or ]
      *  - it should be unique
      *
      * @param string $name Name of the sheet
@@ -71,7 +76,7 @@ class Sheet
             $errorMessage = "The sheet's name is invalid. It did not meet at least one of these requirements:\n";
             $errorMessage .= " - It should not be blank\n";
             $errorMessage .= " - It should not exceed 31 characters\n";
-            $errorMessage .= " - It should not contain these characters: \\ / ? * [ or ]\n";
+            $errorMessage .= " - It should not contain these characters: \\ / ? * : [ or ]\n";
             $errorMessage .= " - It should be unique";
             throw new InvalidSheetNameException($errorMessage);
         }
@@ -95,42 +100,15 @@ class Sheet
             return false;
         }
 
-        $nameLength = $this->getStringLength($name);
-        $hasValidLength = ($nameLength > 0 && $nameLength <= self::MAX_LENGTH_SHEET_NAME);
-        $containsInvalidCharacters = $this->doesContainInvalidCharacters($name);
-        $isNameUnique = $this->isNameUnique($name);
+        $nameLength = $this->stringHelper->getStringLength($name);
 
-        return ($hasValidLength && !$containsInvalidCharacters && $isNameUnique);
-    }
-
-    /**
-     * Returns the length of the given string.
-     * It uses the multi-bytes function is available.
-     * @see strlen
-     * @see mb_strlen
-     *
-     * @param string $string
-     * @return int
-     */
-    protected function getStringLength($string)
-    {
-        return extension_loaded('mbstring') ? mb_strlen($string) : strlen($string);
-    }
-
-    /**
-     * Returns the position of the given character/substring in the given string.
-     * It uses the multi-bytes function is available.
-     * @see strpos
-     * @see mb_strpos
-     *
-     * @param string $string Haystack
-     * @param string $char Needle
-     * @return int Index of the char in the string if found (started at 0) or -1 if not found
-     */
-    protected function getCharPosition($string, $char)
-    {
-        $position = extension_loaded('mbstring') ? mb_strpos($string, $char) : strpos($string, $char);
-        return ($position !== false) ? $position : -1;
+        return (
+            $nameLength > 0 &&
+            $nameLength <= self::MAX_LENGTH_SHEET_NAME &&
+            !$this->doesContainInvalidCharacters($name) &&
+            $this->isNameUnique($name) &&
+            !$this->doesStartOrEndWithSingleQuote($name)
+        );
     }
 
     /**
@@ -142,13 +120,21 @@ class Sheet
      */
     protected function doesContainInvalidCharacters($name)
     {
-        foreach (self::$INVALID_CHARACTERS_IN_SHEET_NAME as $invalidCharacter) {
-            if ($this->getCharPosition($name, $invalidCharacter) !== -1) {
-                return true;
-            }
-        }
+        return (str_replace(self::$INVALID_CHARACTERS_IN_SHEET_NAME, '', $name) !== $name);
+    }
 
-        return false;
+    /**
+     * Returns whether the given name starts or ends with a single quote
+     *
+     * @param string $name
+     * @return bool TRUE if the name starts or ends with a single quote, FALSE otherwise.
+     */
+    protected function doesStartOrEndWithSingleQuote($name)
+    {
+        $startsWithSingleQuote = ($this->stringHelper->getCharFirstOccurrencePosition('\'', $name) === 0);
+        $endsWithSingleQuote = ($this->stringHelper->getCharLastOccurrencePosition('\'', $name) === ($this->stringHelper->getStringLength($name) - 1));
+
+        return ($startsWithSingleQuote || $endsWithSingleQuote);
     }
 
     /**

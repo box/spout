@@ -264,10 +264,11 @@ $sheetName = $sheet->setName('My custom name');
 ``` 
 
 > Please note that Excel has some restrictions on the sheet's name:
-> * it should not exceed 31 characters
-> * it should not contain these characters: \ / ? * [ or ]
-> * it should not be blank
-> * it should be unique
+> * it must not be blank
+> * it must not exceed 31 characters
+> * it must not contain these characters: \ / ? * : [ or ]
+> * it must not start or end with a single quote
+> * it must be unique
 >
 > Handling these restrictions is the developer's responsibility. Spout does not try to automatically change the sheet's name, as one may rely on this name to be exactly what was passed in.
 
