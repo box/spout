@@ -180,10 +180,10 @@ EOD;
      */
     protected function createCoreXmlFile()
     {
-        $createdDate = (new \DateTime())->format('c');
+        $createdDate = (new \DateTime())->format(\DateTime::W3C);
         $coreXmlFileContents = <<<EOD
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <dcterms:created xsi:type="dcterms:W3CDTF">$createdDate</dcterms:created>
     <dcterms:modified xsi:type="dcterms:W3CDTF">$createdDate</dcterms:modified>
     <cp:revision>0</cp:revision>
