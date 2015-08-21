@@ -199,6 +199,11 @@ $writer->setShouldUseInlineStrings(true); // default (and recommended) value
 $writer->setShouldUseInlineStrings(false); // will use shared strings
 ```
 
+> ##### Note on Apple Numbers and iOS support
+>
+> Apple's products (Numbers and the iOS previewer) don't support inline strings and display empty cells instead. Therefore, if these platforms need to be supported, make sure to use shared strings! 
+
+
 #### New sheet creation
 
 It is also possible to change the behavior of the writer when the maximum number of rows (1,048,576) have been written in the current sheet:
