@@ -65,8 +65,11 @@ class SheetTest extends \PHPUnit_Framework_TestCase
             ['Illegal /'],
             ['Illegal ?'],
             ['Illegal *'],
+            ['Illegal :'],
             ['Illegal ['],
             ['Illegal ]'],
+            ['\'Illegal start'],
+            ['Illegal end\''],
         ];
     }
 
