@@ -12,6 +12,7 @@ class Style
 {
     /** Default font values */
     const DEFAULT_FONT_SIZE = 11;
+    const DEFAULT_FONT_COLOR = Color::BLACK;
     const DEFAULT_FONT_NAME = 'Arial';
 
     /** @var int|null Style ID */
@@ -41,6 +42,11 @@ class Style
     protected $fontSize = self::DEFAULT_FONT_SIZE;
     /** @var bool Whether the font size property was set */
     protected $hasSetFontSize = false;
+
+    /** @var string Font color */
+    protected $fontColor = self::DEFAULT_FONT_COLOR;
+    /** @var bool Whether the font color property was set */
+    protected $hasSetFontColor = false;
 
     /** @var string Font name */
     protected $fontName = self::DEFAULT_FONT_NAME;
@@ -172,6 +178,28 @@ class Style
     /**
      * @return string
      */
+    public function getFontColor()
+    {
+        return $this->fontColor;
+    }
+
+    /**
+     * Sets the font color.
+     *
+     * @param string $fontColor ARGB color (@see Color)
+     * @return Style
+     */
+    public function setFontColor($fontColor)
+    {
+        $this->fontColor = $fontColor;
+        $this->hasSetFontColor = true;
+        $this->shouldApplyFont = true;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getFontName()
     {
         return $this->fontName;
@@ -264,6 +292,9 @@ class Style
         }
         if (!$this->hasSetFontSize && $baseStyle->getFontSize() !== self::DEFAULT_FONT_SIZE) {
             $mergedStyle->setFontSize($baseStyle->getFontSize());
+        }
+        if (!$this->hasSetFontSize && $baseStyle->getFontColor() !== self::DEFAULT_FONT_COLOR) {
+            $mergedStyle->setFontColor($baseStyle->getFontColor());
         }
         if (!$this->hasSetFontName && $baseStyle->getFontName() !== self::DEFAULT_FONT_NAME) {
             $mergedStyle->setFontName($baseStyle->getFontName());
