@@ -150,8 +150,13 @@ EOD;
     {
         $content = '    <fonts count="' . count($this->styleIdToStyleMappingTable) . '">' . PHP_EOL;
 
+        /** @var \Box\Spout\Writer\Style\Style $style */
         foreach ($this->styleIdToStyleMappingTable as $style) {
             $content .= '        <font>' . PHP_EOL;
+
+            $content .= '            <sz val="' . $style->getFontSize() . '"/>' . PHP_EOL;
+            $content .= '            <color rgb="' . $style->getFontColor() . '"/>' . PHP_EOL;
+            $content .= '            <name val="' . $style->getFontName() . '"/>' . PHP_EOL;
 
             if ($style->isFontBold()) {
                 $content .= '            <b/>' . PHP_EOL;
@@ -166,8 +171,6 @@ EOD;
                 $content .= '            <strike/>' . PHP_EOL;
             }
 
-            $content .= '            <sz val="' . $style->getFontSize() . '"/>' . PHP_EOL;
-            $content .= '            <name val="' . $style->getFontName() . '"/>' . PHP_EOL;
             $content .= '        </font>' . PHP_EOL;
         }
 

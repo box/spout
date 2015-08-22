@@ -4,6 +4,8 @@ namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Style\Color;
+use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Writer\WriterFactory;
 
@@ -110,6 +112,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             ->build();
         $style2 = (new StyleBuilder())
             ->setFontSize(15)
+            ->setFontColor(Color::RED)
             ->setFontName('Arial')
             ->build();
 
@@ -123,24 +126,27 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         // First font should be the default one
         $defaultFontElement = $fontElements->item(0);
-        $this->assertChildrenNumEquals(2, $defaultFontElement, 'The default font should only have 2 properties.');
+        $this->assertChildrenNumEquals(3, $defaultFontElement, 'The default font should only have 3 properties.');
         $this->assertFirstChildHasAttributeEquals((string) Writer::DEFAULT_FONT_SIZE, $defaultFontElement, 'sz', 'val');
+        $this->assertFirstChildHasAttributeEquals(Style::DEFAULT_FONT_COLOR, $defaultFontElement, 'color', 'rgb');
         $this->assertFirstChildHasAttributeEquals(Writer::DEFAULT_FONT_NAME, $defaultFontElement, 'name', 'val');
 
         // Second font should contain data from the first created style
         $secondFontElement = $fontElements->item(1);
-        $this->assertChildrenNumEquals(6, $secondFontElement, 'The font should only have 6 properties (4 custom styles + 2 default styles).');
+        $this->assertChildrenNumEquals(7, $secondFontElement, 'The font should only have 7 properties (4 custom styles + 3 default styles).');
         $this->assertChildExists($secondFontElement, 'b');
         $this->assertChildExists($secondFontElement, 'i');
         $this->assertChildExists($secondFontElement, 'u');
         $this->assertChildExists($secondFontElement, 'strike');
         $this->assertFirstChildHasAttributeEquals((string) Writer::DEFAULT_FONT_SIZE, $secondFontElement, 'sz', 'val');
+        $this->assertFirstChildHasAttributeEquals(Style::DEFAULT_FONT_COLOR, $secondFontElement, 'color', 'rgb');
         $this->assertFirstChildHasAttributeEquals(Writer::DEFAULT_FONT_NAME, $secondFontElement, 'name', 'val');
 
         // Third font should contain data from the second created style
         $thirdFontElement = $fontElements->item(2);
-        $this->assertChildrenNumEquals(2, $thirdFontElement, 'The font should only have 2 properties.');
+        $this->assertChildrenNumEquals(3, $thirdFontElement, 'The font should only have 3 properties.');
         $this->assertFirstChildHasAttributeEquals('15', $thirdFontElement, 'sz', 'val');
+        $this->assertFirstChildHasAttributeEquals(Color::RED, $thirdFontElement, 'color', 'rgb');
         $this->assertFirstChildHasAttributeEquals('Arial', $thirdFontElement, 'name', 'val');
     }
 

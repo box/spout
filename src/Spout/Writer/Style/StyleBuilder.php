@@ -78,6 +78,18 @@ class StyleBuilder
     }
 
     /**
+     * Sets the font color.
+     *
+     * @param string $fontColor ARGB color (@see Color)
+     * @return StyleBuilder
+     */
+    public function setFontColor($fontColor)
+    {
+        $this->style->setFontColor($fontColor);
+        return $this;
+    }
+
+    /**
      * Sets the font name.
      *
      * @param string $fontName Name of the font to use
