@@ -338,6 +338,8 @@ So the larger the file would be, the more memory would be consumed, preventing y
 
 Need to contact us directly? Email oss@box.com and be sure to include the name of this project in the subject.
 
+You can also ask questions, submit new features ideas or discuss about Spout in the chat room:<br>
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/box/spout?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Copyright and License
 
