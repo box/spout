@@ -154,6 +154,7 @@ It is possible to apply some formatting options to a row. Spout supports fonts a
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\Style\Color;
 
 $style = (new StyleBuilder())
            ->setFontBold()
