@@ -182,8 +182,7 @@ Font      | Bold          | `StyleBuilder::setFontBold()`
           | Strikethrough | `StyleBuilder::setFontStrikethrough()`
           | Font name     | `StyleBuilder::setFontName('Arial')`
           | Font size     | `StyleBuilder::setFontSize(14)`
-          | Font color    | `StyleBuilder::setFontSize(Color::BLUE)`
-          |               | `StyleBuilder::setFontSize(Color::rgb(0, 128, 255))`
+          | Font color    | `StyleBuilder::setFontSize(Color::BLUE)`<br>`StyleBuilder::setFontSize(Color::rgb(0, 128, 255))`
 Alignment | Wrap text     | `StyleBuilder::setShouldWrapText()`
 
 
