@@ -47,6 +47,51 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Box\Spout\Writer\Exception\WriterAlreadyOpenedException
+     */
+    public function testSetTempFolderShouldThrowExceptionIfCalledAfterOpeningWriter()
+    {
+        $fileName = 'file_that_wont_be_written.xlsx';
+        $filePath = $this->getGeneratedResourcePath($fileName);
+
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
+        $writer = WriterFactory::create(Type::XLSX);
+        $writer->openToFile($filePath);
+
+        $writer->setTempFolder('');
+    }
+
+    /**
+     * @expectedException \Box\Spout\Writer\Exception\WriterAlreadyOpenedException
+     */
+    public function testSetShouldUseInlineStringsShouldThrowExceptionIfCalledAfterOpeningWriter()
+    {
+        $fileName = 'file_that_wont_be_written.xlsx';
+        $filePath = $this->getGeneratedResourcePath($fileName);
+
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
+        $writer = WriterFactory::create(Type::XLSX);
+        $writer->openToFile($filePath);
+
+        $writer->setShouldUseInlineStrings(true);
+    }
+
+    /**
+     * @expectedException \Box\Spout\Writer\Exception\WriterAlreadyOpenedException
+     */
+    public function testsetShouldCreateNewSheetsAutomaticallyShouldThrowExceptionIfCalledAfterOpeningWriter()
+    {
+        $fileName = 'file_that_wont_be_written.xlsx';
+        $filePath = $this->getGeneratedResourcePath($fileName);
+
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
+        $writer = WriterFactory::create(Type::XLSX);
+        $writer->openToFile($filePath);
+
+        $writer->setShouldCreateNewSheetsAutomatically(true);
+    }
+
+    /**
      * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
      */
     public function testAddRowShouldThrowExceptionIfUnsupportedDataTypePassedIn()
