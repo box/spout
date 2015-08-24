@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Writer\AbstractWriter;
+use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Writer\XLSX\Internal\Workbook;
@@ -38,35 +39,65 @@ class Writer extends AbstractWriter
     protected $highestRowIndex = 0;
 
     /**
+     * Sets a custom temporary folder for creating intermediate files/folders.
+     * This must be set before opening the writer.
+     *
      * @param string $tempFolder Temporary folder where the files to create the XLSX will be stored
      * @return Writer
+     * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
      */
     public function setTempFolder($tempFolder)
     {
+        $this->throwIfWriterAlreadyOpened();
+
         $this->tempFolder = $tempFolder;
         return $this;
     }
 
     /**
      * Use inline string to be more memory efficient. If set to false, it will use shared strings.
+     * This must be set before opening the writer.
      *
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
      * @return Writer
+     * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
      */
     public function setShouldUseInlineStrings($shouldUseInlineStrings)
     {
+        $this->throwIfWriterAlreadyOpened();
+
         $this->shouldUseInlineStrings = $shouldUseInlineStrings;
         return $this;
     }
 
     /**
+     * Sets whether new sheets should be automatically created when the max rows limit per sheet is reached.
+     * This must be set before opening the writer.
+     *
      * @param bool $shouldCreateNewSheetsAutomatically Whether new sheets should be automatically created when the max rows limit per sheet is reached
      * @return Writer
+     * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
      */
     public function setShouldCreateNewSheetsAutomatically($shouldCreateNewSheetsAutomatically)
     {
+        $this->throwIfWriterAlreadyOpened();
+
         $this->shouldCreateNewSheetsAutomatically = $shouldCreateNewSheetsAutomatically;
         return $this;
+    }
+
+    /**
+     * Checks if the writer has already been opened, since some actions must be done before it gets opened.
+     * Throws an exception if already opened.
+     *
+     * @return void
+     * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened and must not be.
+     */
+    protected function throwIfWriterAlreadyOpened()
+    {
+        if ($this->isWriterOpened) {
+            throw new WriterAlreadyOpenedException('Writer must be configured before opening it.');
+        }
     }
 
     /**
