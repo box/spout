@@ -143,7 +143,9 @@ EOD;
                     $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
                     $data .= ' t="s"><v>' . $sharedStringId . '</v></c>' . PHP_EOL;
                 }
-            } else if (CellHelper::isNumeric($cellValue) || CellHelper::isBoolean($cellValue)) {
+            } else if (CellHelper::isBoolean($cellValue)) {
+                $data .= ' t="b"><v>' . $cellValue . '</v></c>' . PHP_EOL;
+            } else if (CellHelper::isNumeric($cellValue)) {
                 $data .= '><v>' . $cellValue . '</v></c>' . PHP_EOL;
             } else if (empty($cellValue)) {
                 $data .= '/>' . PHP_EOL;
