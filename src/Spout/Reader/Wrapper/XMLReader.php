@@ -105,6 +105,22 @@ class XMLReader extends \XMLReader
     }
 
     /**
+     * Read until the element with the given name is found, or the end of the file.
+     *
+     * @param string $nodeName Name of the node to find
+     * @return bool TRUE on success or FALSE on failure
+     * @throws \Box\Spout\Reader\Exception\XMLProcessingException If an error/warning occurred
+     */
+    public function readUntilNodeFound($nodeName)
+    {
+        while (($wasReadSuccessful = $this->read()) && ($this->nodeType !== \XMLReader::ELEMENT || $this->name !== $nodeName)) {
+            // do nothing
+        }
+
+        return $wasReadSuccessful;
+    }
+
+    /**
      * Move cursor to next node skipping all subtrees
      * @see \XMLReader::next
      *

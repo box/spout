@@ -48,6 +48,7 @@ EOD;
         $header = self::SHARED_STRINGS_XML_FILE_FIRST_PART_HEADER . ' ' . self::DEFAULT_STRINGS_COUNT_PART . '>' . PHP_EOL;
         fwrite($this->sharedStringsFilePointer, $header);
 
+        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $this->stringsEscaper = new \Box\Spout\Common\Escaper\XLSX();
     }
 

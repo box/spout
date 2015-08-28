@@ -79,6 +79,7 @@ class SharedStringsHelper
     {
         $xmlReader = new XMLReader();
         $sharedStringIndex = 0;
+        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $escaper = new \Box\Spout\Common\Escaper\XLSX();
 
         $sharedStringsFilePath = $this->getSharedStringsFilePath();
@@ -90,9 +91,7 @@ class SharedStringsHelper
             $sharedStringsUniqueCount = $this->getSharedStringsUniqueCount($xmlReader);
             $this->cachingStrategy = $this->getBestSharedStringsCachingStrategy($sharedStringsUniqueCount);
 
-            while ($xmlReader->read() && $xmlReader->name !== 'si') {
-                // do nothing until a 'si' tag is reached
-            }
+            $xmlReader->readUntilNodeFound('si');
 
             while ($xmlReader->name === 'si') {
                 $node = $this->getSimpleXmlElementNodeFromXMLReader($xmlReader);

@@ -2,9 +2,7 @@
 
 namespace Box\Spout\Writer\XLSX;
 
-use Box\Spout\Writer\AbstractWriter;
-use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
-use Box\Spout\Writer\Exception\WriterNotOpenedException;
+use Box\Spout\Writer\AbstractMultiSheetsWriter;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Writer\XLSX\Internal\Workbook;
 
@@ -14,7 +12,7 @@ use Box\Spout\Writer\XLSX\Internal\Workbook;
  *
  * @package Box\Spout\Writer\XLSX
  */
-class Writer extends AbstractWriter
+class Writer extends AbstractMultiSheetsWriter
 {
     /** Default style font values */
     const DEFAULT_FONT_SIZE = 12;
@@ -35,9 +33,6 @@ class Writer extends AbstractWriter
     /** @var Internal\Workbook The workbook for the XLSX file */
     protected $book;
 
-    /** @var int */
-    protected $highestRowIndex = 0;
-
     /**
      * Sets a custom temporary folder for creating intermediate files/folders.
      * This must be set before opening the writer.
@@ -48,7 +43,7 @@ class Writer extends AbstractWriter
      */
     public function setTempFolder($tempFolder)
     {
-        $this->throwIfWriterAlreadyOpened();
+        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
         $this->tempFolder = $tempFolder;
         return $this;
@@ -64,7 +59,7 @@ class Writer extends AbstractWriter
      */
     public function setShouldUseInlineStrings($shouldUseInlineStrings)
     {
-        $this->throwIfWriterAlreadyOpened();
+        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
         $this->shouldUseInlineStrings = $shouldUseInlineStrings;
         return $this;
@@ -80,24 +75,10 @@ class Writer extends AbstractWriter
      */
     public function setShouldCreateNewSheetsAutomatically($shouldCreateNewSheetsAutomatically)
     {
-        $this->throwIfWriterAlreadyOpened();
+        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
         $this->shouldCreateNewSheetsAutomatically = $shouldCreateNewSheetsAutomatically;
         return $this;
-    }
-
-    /**
-     * Checks if the writer has already been opened, since some actions must be done before it gets opened.
-     * Throws an exception if already opened.
-     *
-     * @return void
-     * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened and must not be.
-     */
-    protected function throwIfWriterAlreadyOpened()
-    {
-        if ($this->isWriterOpened) {
-            throw new WriterAlreadyOpenedException('Writer must be configured before opening it.');
-        }
     }
 
     /**
@@ -116,78 +97,11 @@ class Writer extends AbstractWriter
     }
 
     /**
-     * Returns all the workbook's sheets
-     *
-     * @return Sheet[] All the workbook's sheets
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
+     * @return Internal\Workbook The workbook representing the file to be written
      */
-    public function getSheets()
+    protected function getWorkbook()
     {
-        $this->throwIfBookIsNotAvailable();
-
-        $externalSheets = [];
-        $worksheets = $this->book->getWorksheets();
-
-        /** @var Internal\Worksheet $worksheet */
-        foreach ($worksheets as $worksheet) {
-            $externalSheets[] = $worksheet->getExternalSheet();
-        }
-
-        return $externalSheets;
-    }
-
-    /**
-     * Creates a new sheet and make it the current sheet. The data will now be written to this sheet.
-     *
-     * @return Sheet The created sheet
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
-     */
-    public function addNewSheetAndMakeItCurrent()
-    {
-        $this->throwIfBookIsNotAvailable();
-        $worksheet = $this->book->addNewSheetAndMakeItCurrent();
-
-        return $worksheet->getExternalSheet();
-    }
-
-    /**
-     * Returns the current sheet
-     *
-     * @return Sheet The current sheet
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
-     */
-    public function getCurrentSheet()
-    {
-        $this->throwIfBookIsNotAvailable();
-        return $this->book->getCurrentWorksheet()->getExternalSheet();
-    }
-
-    /**
-     * Sets the given sheet as the current one. New data will be written to this sheet.
-     * The writing will resume where it stopped (i.e. data won't be truncated).
-     *
-     * @param Sheet $sheet The sheet to set as current
-     * @return void
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
-     * @throws \Box\Spout\Writer\Exception\SheetNotFoundException If the given sheet does not exist in the workbook
-     */
-    public function setCurrentSheet($sheet)
-    {
-        $this->throwIfBookIsNotAvailable();
-        $this->book->setCurrentSheet($sheet);
-    }
-
-    /**
-     * Checks if the book has been created. Throws an exception if not created yet.
-     *
-     * @return void
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the book is not created yet
-     */
-    protected function throwIfBookIsNotAvailable()
-    {
-        if (!$this->book) {
-            throw new WriterNotOpenedException('The writer must be opened before performing this action.');
-        }
+        return $this->book;
     }
 
     /**

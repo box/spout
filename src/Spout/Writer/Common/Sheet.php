@@ -1,15 +1,15 @@
 <?php
 
-namespace Box\Spout\Writer\XLSX;
+namespace Box\Spout\Writer\Common;
 
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Exception\InvalidSheetNameException;
 
 /**
  * Class Sheet
- * External representation of a worksheet within a XLSX file
+ * External representation of a worksheet within a ODS file
  *
- * @package Box\Spout\Writer\XLSX
+ * @package Box\Spout\Writer\Common
  */
 class Sheet
 {

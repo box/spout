@@ -7,7 +7,7 @@ use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\WriterFactory;
 
 /**
- * Class XLSXTest
+ * Class WriterTest
  *
  * @package Box\Spout\Writer\XLSX
  */
@@ -169,7 +169,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowShouldWriteGivenDataToTwoSheetUsingInlineStrings()
+    public function testAddRowShouldWriteGivenDataToTwoSheetsUsingInlineStrings()
     {
         $fileName = 'test_add_row_should_write_given_data_to_two_sheets_using_inline_strings.xlsx';
         $dataRows = [
@@ -212,7 +212,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowShouldWriteGivenDataToTwoSheetUsingSharedStrings()
+    public function testAddRowShouldWriteGivenDataToTwoSheetsUsingSharedStrings()
     {
         $fileName = 'test_add_row_should_write_given_data_to_two_sheets_using_shared_strings.xlsx';
         $dataRows = [
