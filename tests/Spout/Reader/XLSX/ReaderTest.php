@@ -173,12 +173,13 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testReadShouldSkipEmptyRows()
     {
-        $allRows = $this->getAllRowsForFile('sheet_with_empty_rows.xlsx');
+        $allRows = $this->getAllRowsForFile('sheet_with_empty_row.xlsx');
 
         $this->assertEquals(2, count($allRows), 'There should be only 2 rows, because the empty row is skipped');
 
         $expectedRows = [
             ['s1--A1', 's1--B1', 's1--C1', 's1--D1', 's1--E1'],
+            // skipped row here
             ['s1--A3', 's1--B3', 's1--C3', 's1--D3', 's1--E3'],
         ];
         $this->assertEquals($expectedRows, $allRows);

@@ -77,6 +77,7 @@ class RowIterator implements IteratorInterface
         $this->sharedStringsHelper = $sharedStringsHelper;
 
         $this->xmlReader = new XMLReader();
+
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $this->escaper = new \Box\Spout\Common\Escaper\XLSX();
     }
@@ -143,7 +144,7 @@ class RowIterator implements IteratorInterface
 
         try {
             while ($this->xmlReader->read()) {
-                if ($this->xmlReader->nodeType === XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_DIMENSION) {
+                if ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_DIMENSION)) {
                     // Read dimensions of the sheet
                     $dimensionRef = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_REF); // returns 'A1:M13' for instance (or 'A1' for empty sheet)
                     if (preg_match('/[A-Z\d]+:([A-Z\d]+)/', $dimensionRef, $matches)) {
@@ -151,7 +152,7 @@ class RowIterator implements IteratorInterface
                         $this->numColumns = CellHelper::getColumnIndexFromCellIndex($lastCellIndex) + 1;
                     }
 
-                } else if ($this->xmlReader->nodeType === XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_ROW) {
+                } else if ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_ROW)) {
                     // Start of the row description
                     $isInsideRowTag = true;
 
@@ -164,7 +165,7 @@ class RowIterator implements IteratorInterface
                     }
                     $rowData = ($numberOfColumnsForRow !== 0) ? array_fill(0, $numberOfColumnsForRow, '') : [];
 
-                } else if ($isInsideRowTag && $this->xmlReader->nodeType === XMLReader::ELEMENT && $this->xmlReader->name === self::XML_NODE_CELL) {
+                } else if ($isInsideRowTag && $this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL)) {
                     // Start of a cell description
                     $currentCellIndex = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_CELL_INDEX);
                     $currentColumnIndex = CellHelper::getColumnIndexFromCellIndex($currentCellIndex);
@@ -172,16 +173,17 @@ class RowIterator implements IteratorInterface
                     $node = $this->xmlReader->expand();
                     $rowData[$currentColumnIndex] = $this->getCellValue($node);
 
-                } else if ($this->xmlReader->nodeType === XMLReader::END_ELEMENT && $this->xmlReader->name === self::XML_NODE_ROW) {
+                } else if ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_ROW)) {
                     // End of the row description
                     // If needed, we fill the empty cells
                     $rowData = ($this->numColumns !== 0) ? $rowData : CellHelper::fillMissingArrayIndexes($rowData);
                     $this->numReadRows++;
                     break;
 
-                } else if ($this->xmlReader->nodeType === XMLReader::END_ELEMENT && $this->xmlReader->name === self::XML_NODE_WORKSHEET) {
+                } else if ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_WORKSHEET)) {
                     // The closing "</worksheet>" marks the end of the file
                     $this->hasReachedEndOfFile = true;
+                    break;
                 }
             }
 
@@ -190,6 +192,40 @@ class RowIterator implements IteratorInterface
         }
 
         $this->rowDataBuffer = $rowData;
+    }
+
+    /**
+     * Returns the (unescaped) correctly marshalled, cell value associated to the given XML node.
+     *
+     * @param \DOMNode $node
+     * @return string|int|float|bool|\DateTime|null The value associated with the cell (null when the cell has an error)
+     */
+    protected function getCellValue($node)
+    {
+        // Default cell type is "n"
+        $cellType = $node->getAttribute(self::XML_ATTRIBUTE_TYPE) ?: self::CELL_TYPE_NUMERIC;
+        $vNodeValue = $this->getVNodeValue($node);
+
+        if (($vNodeValue === '') && ($cellType !== self::CELL_TYPE_INLINE_STRING)) {
+            return $vNodeValue;
+        }
+
+        switch ($cellType) {
+            case self::CELL_TYPE_INLINE_STRING:
+                return $this->formatInlineStringCellValue($node);
+            case self::CELL_TYPE_SHARED_STRING:
+                return $this->formatSharedStringCellValue($vNodeValue);
+            case self::CELL_TYPE_STR:
+                return $this->formatStrCellValue($vNodeValue);
+            case self::CELL_TYPE_BOOLEAN:
+                return $this->formatBooleanCellValue($vNodeValue);
+            case self::CELL_TYPE_NUMERIC:
+                return $this->formatNumericCellValue($vNodeValue);
+            case self::CELL_TYPE_DATE:
+                return $this->formatDateCellValue($vNodeValue);
+            default:
+                return null;
+        }
     }
 
     /**
@@ -203,10 +239,7 @@ class RowIterator implements IteratorInterface
         // for cell types having a "v" tag containing the value.
         // if not, the returned value should be empty string.
         $vNode = $node->getElementsByTagName(self::XML_NODE_VALUE)->item(0);
-        if ($vNode !== null) {
-            return $vNode->nodeValue;
-        }
-        return "";
+        return ($vNode !== null) ? $vNode->nodeValue : '';
     }
 
     /**
@@ -293,40 +326,6 @@ class RowIterator implements IteratorInterface
             return $cellValue;
         } catch (\Exception $e) {
             return null;
-        }
-    }
-
-    /**
-     * Returns the (unescaped) correctly marshalled, cell value associated to the given XML node.
-     *
-     * @param \DOMNode $node
-     * @return string|int|float|bool|\DateTime|null The value associated with the cell (null when the cell has an error)
-     */
-    protected function getCellValue($node)
-    {
-        // Default cell type is "n"
-        $cellType = $node->getAttribute(self::XML_ATTRIBUTE_TYPE) ?: self::CELL_TYPE_NUMERIC;
-        $vNodeValue = $this->getVNodeValue($node);
-
-        if (($vNodeValue === '') && ($cellType !== self::CELL_TYPE_INLINE_STRING)) {
-            return $vNodeValue;
-        }
-
-        switch ($cellType) {
-            case self::CELL_TYPE_INLINE_STRING:
-                return $this->formatInlineStringCellValue($node);
-            case self::CELL_TYPE_SHARED_STRING:
-                return $this->formatSharedStringCellValue($vNodeValue);
-            case self::CELL_TYPE_STR:
-                return $this->formatStrCellValue($vNodeValue);
-            case self::CELL_TYPE_BOOLEAN:
-                return $this->formatBooleanCellValue($vNodeValue);
-            case self::CELL_TYPE_NUMERIC:
-                return $this->formatNumericCellValue($vNodeValue);
-            case self::CELL_TYPE_DATE:
-                return $this->formatDateCellValue($vNodeValue);
-            default:
-                return null;
         }
     }
 

@@ -1,19 +1,23 @@
 <?php
 
-namespace Box\Spout\Reader\XLSX;
+namespace Box\Spout\Reader\ODS;
 
 use Box\Spout\Reader\SheetInterface;
+use Box\Spout\Reader\Wrapper\XMLReader;
 
 /**
  * Class Sheet
- * Represents a sheet within a XLSX file
+ * Represents a sheet within a ODS file
  *
- * @package Box\Spout\Reader\XLSX
+ * @package Box\Spout\Reader\ODS
  */
 class Sheet implements SheetInterface
 {
     /** @var RowIterator To iterate over sheet's rows */
     protected $rowIterator;
+
+    /** @var int ID of the sheet */
+    protected $id;
 
     /** @var int Index of the sheet, based on order of creation (zero-based) */
     protected $index;
@@ -22,15 +26,13 @@ class Sheet implements SheetInterface
     protected $name;
 
     /**
-     * @param string $filePath Path of the XLSX file being read
-     * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
-     * @param Helper\SharedStringsHelper Helper to work with shared strings
+     * @param XMLReader $xmlReader XML Reader, positioned on the "<table:table>" element
      * @param int $sheetIndex Index of the sheet, based on order of creation (zero-based)
      * @param string $sheetName Name of the sheet
      */
-    public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $sheetIndex, $sheetName)
+    public function __construct($xmlReader, $sheetIndex, $sheetName)
     {
-        $this->rowIterator = new RowIterator($filePath, $sheetDataXMLFilePath, $sharedStringsHelper);
+        $this->rowIterator = new RowIterator($xmlReader);
         $this->index = $sheetIndex;
         $this->name = $sheetName;
     }

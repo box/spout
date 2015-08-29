@@ -33,6 +33,9 @@ class ReaderFactory
             case Type::XLSX:
                 $reader = new XLSX\Reader();
                 break;
+            case Type::ODS:
+                $reader = new ODS\Reader();
+                break;
             default:
                 throw new UnsupportedTypeException('No readers supporting the given type: ' . $readerType);
         }
