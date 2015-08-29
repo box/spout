@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Common\Type;
+use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\Style;
@@ -96,7 +97,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldListAllUsedFontsInCreateStylesXmlFile()
+    public function testAddRowWithStyleShouldListAllUsedFontsInCreatedStylesXmlFile()
     {
         $fileName = 'test_add_row_with_style_should_list_all_used_fonts.xlsx';
         $dataRows = [
@@ -113,7 +114,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $style2 = (new StyleBuilder())
             ->setFontSize(15)
             ->setFontColor(Color::RED)
-            ->setFontName('Arial')
+            ->setFontName('Font')
             ->build();
 
         $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, [$style, $style2]);
@@ -128,7 +129,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $defaultFontElement = $fontElements->item(0);
         $this->assertChildrenNumEquals(3, $defaultFontElement, 'The default font should only have 3 properties.');
         $this->assertFirstChildHasAttributeEquals((string) Writer::DEFAULT_FONT_SIZE, $defaultFontElement, 'sz', 'val');
-        $this->assertFirstChildHasAttributeEquals(Style::DEFAULT_FONT_COLOR, $defaultFontElement, 'color', 'rgb');
+        $this->assertFirstChildHasAttributeEquals(Color::toARGB(Style::DEFAULT_FONT_COLOR), $defaultFontElement, 'color', 'rgb');
         $this->assertFirstChildHasAttributeEquals(Writer::DEFAULT_FONT_NAME, $defaultFontElement, 'name', 'val');
 
         // Second font should contain data from the first created style
@@ -139,34 +140,15 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $this->assertChildExists($secondFontElement, 'u');
         $this->assertChildExists($secondFontElement, 'strike');
         $this->assertFirstChildHasAttributeEquals((string) Writer::DEFAULT_FONT_SIZE, $secondFontElement, 'sz', 'val');
-        $this->assertFirstChildHasAttributeEquals(Style::DEFAULT_FONT_COLOR, $secondFontElement, 'color', 'rgb');
+        $this->assertFirstChildHasAttributeEquals(Color::toARGB(Style::DEFAULT_FONT_COLOR), $secondFontElement, 'color', 'rgb');
         $this->assertFirstChildHasAttributeEquals(Writer::DEFAULT_FONT_NAME, $secondFontElement, 'name', 'val');
 
         // Third font should contain data from the second created style
         $thirdFontElement = $fontElements->item(2);
         $this->assertChildrenNumEquals(3, $thirdFontElement, 'The font should only have 3 properties.');
         $this->assertFirstChildHasAttributeEquals('15', $thirdFontElement, 'sz', 'val');
-        $this->assertFirstChildHasAttributeEquals(Color::RED, $thirdFontElement, 'color', 'rgb');
-        $this->assertFirstChildHasAttributeEquals('Arial', $thirdFontElement, 'name', 'val');
-    }
-
-    /**
-     * @return void
-     */
-    public function testAddRowWithStyleShouldAddWrapTextAlignmentInfoInStylesXmlFileIfSpecified()
-    {
-        $fileName = 'test_add_row_with_style_should_add_wrap_text_alignment.xlsx';
-        $dataRows = [
-            ['xlsx--11', 'xlsx--12'],
-        ];
-        $style = (new StyleBuilder())->setShouldWrapText()->build();
-
-        $this->writeToXLSXFile($dataRows, $fileName,$style);
-
-        $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
-        $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
-        $this->assertEquals(1, $xfElement->getAttribute('applyAlignment'));
-        $this->assertFirstChildHasAttributeEquals('1', $xfElement, 'alignment', 'wrapText');
+        $this->assertFirstChildHasAttributeEquals(Color::toARGB(Color::RED), $thirdFontElement, 'color', 'rgb');
+        $this->assertFirstChildHasAttributeEquals('Font', $thirdFontElement, 'name', 'val');
     }
 
     /**
@@ -210,6 +192,25 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $cellDomElements = $this->getCellElementsFromSheetXmlFile($fileName);
         $this->assertEquals('1', $cellDomElements[0]->getAttribute('s'));
         $this->assertEquals('1', $cellDomElements[1]->getAttribute('s'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowWithStyleShouldAddWrapTextAlignmentInfoInStylesXmlFileIfSpecified()
+    {
+        $fileName = 'test_add_row_with_style_should_add_wrap_text_alignment.xlsx';
+        $dataRows = [
+            ['xlsx--11', 'xlsx--12'],
+        ];
+        $style = (new StyleBuilder())->setShouldWrapText()->build();
+
+        $this->writeToXLSXFile($dataRows, $fileName,$style);
+
+        $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
+        $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
+        $this->assertEquals(1, $xfElement->getAttribute('applyAlignment'));
+        $this->assertFirstChildHasAttributeEquals('1', $xfElement, 'alignment', 'wrapText');
     }
 
     /**
@@ -294,12 +295,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $pathToStylesXmlFile = $resourcePath . '#xl/styles.xml';
 
-        $xmlReader = new \XMLReader();
+        $xmlReader = new XMLReader();
         $xmlReader->open('zip://' . $pathToStylesXmlFile);
-
-        while ($xmlReader->read() && ($xmlReader->nodeType !== \XMLReader::ELEMENT || $xmlReader->name !== $section)) {
-            // do nothing
-        }
+        $xmlReader->readUntilNodeFound($section);
 
         return $xmlReader->expand();
     }

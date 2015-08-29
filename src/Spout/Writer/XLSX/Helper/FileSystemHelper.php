@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\XLSX\Helper;
 
+use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\XLSX\Internal\Worksheet;
 
 /**
@@ -284,6 +285,7 @@ EOD;
 
 EOD;
 
+        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $escaper = new \Box\Spout\Common\Escaper\XLSX();
 
         /** @var Worksheet $worksheet */
@@ -354,42 +356,10 @@ EOD;
      */
     public function zipRootFolderAndCopyToStream($streamPointer)
     {
-        $this->zipRootFolder();
-        $this->copyZipToStream($streamPointer);
+        $zipHelper = new ZipHelper();
+        $zipHelper->zipFolderAndCopyToStream($this->rootFolder, $streamPointer);
 
         // once the zip is copied, remove it
-        $this->deleteFile($this->getZipFilePath());
-    }
-
-    /**
-     * Zips the root folder
-     *
-     * @return void
-     */
-    protected function zipRootFolder()
-    {
-        $zipHelper = new ZipHelper();
-        $zipHelper->zipFolder($this->rootFolder, $this->getZipFilePath());
-    }
-
-    /**
-     * @return string Path of the zip file created from the root folder
-     */
-    protected function getZipFilePath()
-    {
-        return $this->rootFolder . '.zip';
-    }
-
-    /**
-     * Streams the contents of the zip into the given stream
-     *
-     * @param resource $pointer Pointer to the stream to copy the zip
-     * @return void
-     */
-    protected function copyZipToStream($pointer)
-    {
-        $zipFilePointer = fopen($this->getZipFilePath(), 'r');
-        stream_copy_to_stream($zipFilePointer, $pointer);
-        fclose($zipFilePointer);
+        $this->deleteFile($zipHelper->getZipFilePath($this->rootFolder));
     }
 }

@@ -126,6 +126,7 @@ class SheetHelper
                 $sheetId = (int) $sheetNode->getAttribute('sheetId');
                 $escapedSheetName = $sheetNode->getAttribute('name');
 
+                /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
                 $escaper = new \Box\Spout\Common\Escaper\XLSX();
                 $sheetName = $escaper->unescape($escapedSheetName);
             }

@@ -4,7 +4,8 @@ namespace Box\Spout\Writer\XLSX\Internal;
 
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Writer\XLSX\Helper\CellHelper;
+use Box\Spout\Writer\Common\Helper\CellHelper;
+use Box\Spout\Writer\Common\Internal\WorksheetInterface;
 
 /**
  * Class Worksheet
@@ -13,14 +14,14 @@ use Box\Spout\Writer\XLSX\Helper\CellHelper;
  *
  * @package Box\Spout\Writer\XLSX\Internal
  */
-class Worksheet
+class Worksheet implements WorksheetInterface
 {
     const SHEET_XML_FILE_HEADER = <<<EOD
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
 EOD;
 
-    /** @var \Box\Spout\Writer\XLSX\Sheet The "external" sheet */
+    /** @var \Box\Spout\Writer\Common\Sheet The "external" sheet */
     protected $externalSheet;
 
     /** @var string Path to the XML file that will contain the sheet data */
@@ -42,7 +43,7 @@ EOD;
     protected $lastWrittenRowIndex = 0;
 
     /**
-     * @param \Box\Spout\Writer\XLSX\Sheet $externalSheet The associated "external" sheet
+     * @param \Box\Spout\Writer\Common\Sheet $externalSheet The associated "external" sheet
      * @param string $worksheetFilesFolder Temporary folder where the files to create the XLSX will be stored
      * @param \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper $sharedStringsHelper Helper for shared strings
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
@@ -54,6 +55,7 @@ EOD;
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->shouldUseInlineStrings = $shouldUseInlineStrings;
 
+        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $this->stringsEscaper = new \Box\Spout\Common\Escaper\XLSX();
 
         $this->worksheetFilePath = $worksheetFilesFolder . '/' . strtolower($this->externalSheet->getName()) . '.xml';
@@ -76,7 +78,20 @@ EOD;
     }
 
     /**
-     * @return \Box\Spout\Writer\XLSX\Sheet The "external" sheet
+     * Checks if the book has been created. Throws an exception if not created yet.
+     *
+     * @return void
+     * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
+     */
+    protected function throwIfSheetFilePointerIsNotAvailable()
+    {
+        if (!$this->sheetFilePointer) {
+            throw new IOException('Unable to open sheet for writing.');
+        }
+    }
+
+    /**
+     * @return \Box\Spout\Writer\Common\Sheet The "external" sheet
      */
     public function getExternalSheet()
     {
@@ -98,19 +113,6 @@ EOD;
     {
         // sheet index is zero-based, while ID is 1-based
         return $this->externalSheet->getIndex() + 1;
-    }
-
-    /**
-     * Checks if the book has been created. Throws an exception if not created yet.
-     *
-     * @return void
-     * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
-     */
-    protected function throwIfSheetFilePointerIsNotAvailable()
-    {
-        if (!$this->sheetFilePointer) {
-            throw new IOException('Unable to open sheet for writing.');
-        }
     }
 
     /**

@@ -9,7 +9,7 @@ use Box\Spout\Common\Type;
 /**
  * Class WriterFactory
  * This factory is used to create writers, based on the type of the file to be read.
- * It supports CSV and XLSX formats.
+ * It supports CSV, XLSX and ODS formats.
  *
  * @package Box\Spout\Writer
  */
@@ -32,6 +32,9 @@ class WriterFactory
                 break;
             case Type::XLSX:
                 $writer = new XLSX\Writer();
+                break;
+            case Type::ODS:
+                $writer = new ODS\Writer();
                 break;
             default:
                 throw new UnsupportedTypeException('No writers supporting the given type: ' . $writerType);

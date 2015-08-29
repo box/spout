@@ -13,27 +13,26 @@ use Box\Spout\Writer\Exception\InvalidColorException;
 class Color
 {
     /** Standard colors - based on Office Online */
-    const BLACK = 'FF000000';
-    const WHITE = 'FFFFFFFF';
-    const RED = 'FFFF0000';
-    const DARK_RED = 'FFC00000';
-    const ORANGE = 'FFFFC000';
-    const YELLOW = 'FFFFFF00';
-    const LIGHT_GREEN = 'FF92D040';
-    const GREEN = 'FF00B050';
-    const LIGHT_BLUE = 'FF00B0E0';
-    const BLUE = 'FF0070C0';
-    const DARK_BLUE = 'FF002060';
-    const PURPLE = 'FF7030A0';
+    const BLACK = '000000';
+    const WHITE = 'FFFFFF';
+    const RED = 'FF0000';
+    const DARK_RED = 'C00000';
+    const ORANGE = 'FFC000';
+    const YELLOW = 'FFFF00';
+    const LIGHT_GREEN = '92D040';
+    const GREEN = '00B050';
+    const LIGHT_BLUE = '00B0E0';
+    const BLUE = '0070C0';
+    const DARK_BLUE = '002060';
+    const PURPLE = '7030A0';
 
     /**
-     * Returns an ARGB color from R, G and B values
-     * Alpha is assumed to always be 1
+     * Returns an RGB color from R, G and B values
      *
      * @param int $red Red component, 0 - 255
      * @param int $green Green component, 0 - 255
      * @param int $blue Blue component, 0 - 255
-     * @return string ARGB color
+     * @return string RGB color
      */
     public static function rgb($red, $green, $blue)
     {
@@ -42,7 +41,6 @@ class Color
         self::throwIfInvalidColorComponentValue($blue);
 
         return strtoupper(
-            'FF' .
             self::convertColorComponentToHex($red) .
             self::convertColorComponentToHex($green) .
             self::convertColorComponentToHex($blue)
@@ -71,6 +69,18 @@ class Color
      */
     protected static function convertColorComponentToHex($colorComponent)
     {
-        return str_pad(dechex($colorComponent), 2, '0', 0);
+        return str_pad(dechex($colorComponent), 2, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Returns the ARGB color of the given RGB color,
+     * assuming that alpha value is always 1.
+     *
+     * @param string $rgbColor RGB color like "FF08B2"
+     * @return string ARGB color
+     */
+    public static function toARGB($rgbColor)
+    {
+        return 'FF' . $rgbColor;
     }
 }

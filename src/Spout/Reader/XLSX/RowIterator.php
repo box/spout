@@ -77,6 +77,7 @@ class RowIterator implements IteratorInterface
         $this->sharedStringsHelper = $sharedStringsHelper;
 
         $this->xmlReader = new XMLReader();
+        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $this->escaper = new \Box\Spout\Common\Escaper\XLSX();
     }
 

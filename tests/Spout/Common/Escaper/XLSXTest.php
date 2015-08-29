@@ -34,6 +34,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
      */
     public function testEscape($stringToEscape, $expectedEscapedString)
     {
+        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $escaper = new \Box\Spout\Common\Escaper\XLSX();
         $escapedString = $escaper->escape($stringToEscape);
 
@@ -65,6 +66,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnescape($stringToUnescape, $expectedUnescapedString)
     {
+        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $escaper = new \Box\Spout\Common\Escaper\XLSX();
         $unescapedString = $escaper->unescape($stringToUnescape);
 

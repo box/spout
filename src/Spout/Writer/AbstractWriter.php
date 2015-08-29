@@ -4,6 +4,7 @@ namespace Box\Spout\Writer;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\InvalidArgumentException;
+use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\Style\StyleBuilder;
 
@@ -149,6 +150,21 @@ abstract class AbstractWriter implements WriterInterface
     {
         if (!$this->filePointer) {
             throw new IOException('File pointer has not be opened');
+        }
+    }
+
+    /**
+     * Checks if the writer has already been opened, since some actions must be done before it gets opened.
+     * Throws an exception if already opened.
+     *
+     * @param string $message Error message
+     * @return void
+     * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened and must not be.
+     */
+    protected function throwIfWriterAlreadyOpened($message)
+    {
+        if ($this->isWriterOpened) {
+            throw new WriterAlreadyOpenedException($message);
         }
     }
 

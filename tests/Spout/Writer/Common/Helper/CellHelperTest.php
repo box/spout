@@ -1,11 +1,11 @@
 <?php
 
-namespace Box\Spout\Writer\XLSX\Helper;
+namespace Box\Spout\Writer\Common\Helper;
 
 /**
  * Class CellHelperTest
  *
- * @package Box\Spout\Writer\XLSX\Helper
+ * @package Box\Spout\Writer\Common\Helper
  */
 class CellHelperTest extends \PHPUnit_Framework_TestCase
 {

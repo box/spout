@@ -1,15 +1,40 @@
 <?php
 
-namespace Box\Spout\Writer\XLSX\Helper;
+namespace Box\Spout\Writer\Common\Helper;
 
 /**
  * Class ZipHelper
  * This class provides helper functions to create zip files
  *
- * @package Box\Spout\Writer\XLSX\Helper
+ * @package Box\Spout\Writer\Common\Helper
  */
 class ZipHelper
 {
+    const ZIP_EXTENSION = '.zip';
+
+    /**
+     * Zips the root folder and streams the contents of the zip into the given stream
+     *
+     * @param string $folderPath Path to the folder to be zipped
+     * @param resource $streamPointer Pointer to the stream to copy the zip
+     * @return void
+     */
+    public function zipFolderAndCopyToStream($folderPath, $streamPointer)
+    {
+        $zipFilePath = $this->getZipFilePath($folderPath);
+        $this->zipFolder($folderPath, $zipFilePath);
+        $this->copyZipToStream($zipFilePath, $streamPointer);
+    }
+
+    /**
+     * @param string $folderPathToZip Path to the folder to be zipped
+     * @return string Path where the zip file of the given folder will be created
+     */
+    public function getZipFilePath($folderPathToZip)
+    {
+        return $folderPathToZip . self::ZIP_EXTENSION;
+    }
+
     /**
      * Zips the given folder
      *
@@ -58,5 +83,19 @@ class ZipHelper
     {
         $realPath = realpath($path);
         return str_replace(DIRECTORY_SEPARATOR, '/', $realPath);
+    }
+
+    /**
+     * Streams the contents of the zip file into the given stream
+     *
+     * @param string $zipFilePath Path to the zip file
+     * @param resource $pointer Pointer to the stream to copy the zip
+     * @return void
+     */
+    protected function copyZipToStream($zipFilePath, $pointer)
+    {
+        $zipFilePointer = fopen($zipFilePath, 'r');
+        stream_copy_to_stream($zipFilePointer, $pointer);
+        fclose($zipFilePointer);
     }
 }
