@@ -7,7 +7,6 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Helper\CellHelper;
 use Box\Spout\Writer\Common\Internal\WorksheetInterface;
-use Box\Spout\Writer\Common\Sheet;
 
 /**
  * Class Worksheet
@@ -126,7 +125,7 @@ class Worksheet implements WorksheetInterface
     /**
      * Adds data to the worksheet.
      *
-     * @param array $dataRow Array containing data to be written.
+     * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row. NULL means use default style.
      * @return void
@@ -135,36 +134,26 @@ class Worksheet implements WorksheetInterface
      */
     public function addRow($dataRow, $style)
     {
-        $this->maxNumColumns = max($this->maxNumColumns, count($dataRow));
         $styleIndex = ($style->getId() + 1); // 1-based
+        $cellsCount = count($dataRow);
+        $this->maxNumColumns = max($this->maxNumColumns, $cellsCount);
 
         $data = '    <table:table-row table:style-name="ro1">' . PHP_EOL;
 
-        foreach($dataRow as $cellValue) {
-            $data .= '        <table:table-cell table:style-name="ce' . $styleIndex . '"';
+        $currentCellIndex = 0;
+        $nextCellIndex = 1;
 
-            if (CellHelper::isNonEmptyString($cellValue)) {
-                $data .= ' office:value-type="string" calcext:value-type="string">' . PHP_EOL;
+        for ($i = 0; $i < $cellsCount; $i++) {
+            $currentCellValue = $dataRow[$currentCellIndex];
 
-                $cellValueLines = explode("\n", $cellValue);
-                foreach ($cellValueLines as $cellValueLine) {
-                    $data .= '            <text:p>' . $this->stringsEscaper->escape($cellValueLine) . '</text:p>' . PHP_EOL;
-                }
+            if (!array_key_exists($nextCellIndex, $dataRow) || $currentCellValue !== $dataRow[$nextCellIndex]) {
+                $numTimesValueRepeated = ($nextCellIndex - $currentCellIndex);
+                $data .= $this->getCellContent($currentCellValue, $styleIndex, $numTimesValueRepeated);
 
-                $data .= '        </table:table-cell>' . PHP_EOL;
-            } else if (CellHelper::isBoolean($cellValue)) {
-                $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:value="' . $cellValue . '">' . PHP_EOL;
-                $data .= '            <text:p>' . $cellValue . '</text:p>' . PHP_EOL;
-                $data .= '        </table:table-cell>' . PHP_EOL;
-            } else if (CellHelper::isNumeric($cellValue)) {
-                $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cellValue . '">' . PHP_EOL;
-                $data .= '            <text:p>' . $cellValue . '</text:p>' . PHP_EOL;
-                $data .= '        </table:table-cell>' . PHP_EOL;
-            } else if (empty($cellValue)) {
-                $data .= '/>' . PHP_EOL;
-            } else {
-                throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
+                $currentCellIndex = $nextCellIndex;
             }
+
+            $nextCellIndex++;
         }
 
         $data .= '    </table:table-row>' . PHP_EOL;
@@ -176,6 +165,49 @@ class Worksheet implements WorksheetInterface
 
         // only update the count if the write worked
         $this->lastWrittenRowIndex++;
+    }
+
+    /**
+     * Returns the cell XML content, given its value.
+     *
+     * @param mixed $cellValue The value to be written
+     * @param int $styleIndex Index of the used style
+     * @param int $numTimesValueRepeated Number of times the value is consecutively repeated
+     * @return string The cell XML content
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
+     */
+    protected function getCellContent($cellValue, $styleIndex, $numTimesValueRepeated)
+    {
+        $data = '        <table:table-cell table:style-name="ce' . $styleIndex . '"';
+
+        if ($numTimesValueRepeated !== 1) {
+            $data .= ' table:number-columns-repeated="' . $numTimesValueRepeated . '"';
+        }
+
+        if (CellHelper::isNonEmptyString($cellValue)) {
+            $data .= ' office:value-type="string" calcext:value-type="string">' . PHP_EOL;
+
+            $cellValueLines = explode("\n", $cellValue);
+            foreach ($cellValueLines as $cellValueLine) {
+                $data .= '            <text:p>' . $this->stringsEscaper->escape($cellValueLine) . '</text:p>' . PHP_EOL;
+            }
+
+            $data .= '        </table:table-cell>' . PHP_EOL;
+        } else if (CellHelper::isBoolean($cellValue)) {
+            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:value="' . $cellValue . '">' . PHP_EOL;
+            $data .= '            <text:p>' . $cellValue . '</text:p>' . PHP_EOL;
+            $data .= '        </table:table-cell>' . PHP_EOL;
+        } else if (CellHelper::isNumeric($cellValue)) {
+            $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cellValue . '">' . PHP_EOL;
+            $data .= '            <text:p>' . $cellValue . '</text:p>' . PHP_EOL;
+            $data .= '        </table:table-cell>' . PHP_EOL;
+        } else if (empty($cellValue)) {
+            $data .= '/>' . PHP_EOL;
+        } else {
+            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
+        }
+
+        return $data;
     }
 
     /**

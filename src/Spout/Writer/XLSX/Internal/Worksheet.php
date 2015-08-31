@@ -118,7 +118,7 @@ EOD;
     /**
      * Adds data to the worksheet.
      *
-     * @param array $dataRow Array containing data to be written.
+     * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row. NULL means use default style.
      * @return void

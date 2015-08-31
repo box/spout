@@ -196,6 +196,48 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return array
+     */
+    public function dataProviderForTestAddRowShouldUseNumberColumnsRepeatedForRepeatedValues()
+    {
+        return [
+            [['ods--11', 'ods--11', 'ods--11'], 1, 3],
+            [['', ''], 1, 2],
+            [[true, true, true, true], 1, 4],
+            [[1.1, 1.1], 1, 2],
+            [['foo', 'bar'], 2, 0],
+        ];
+    }
+    /**
+     * @dataProvider dataProviderForTestAddRowShouldUseNumberColumnsRepeatedForRepeatedValues
+     *
+     * @param array $dataRow
+     * @param int $expectedNumTableCells
+     * @param int $expectedNumColumnsRepeated
+     * @return void
+     */
+    public function testAddRowShouldUseNumberColumnsRepeatedForRepeatedValues($dataRow, $expectedNumTableCells, $expectedNumColumnsRepeated)
+    {
+        $fileName = 'test_add_row_should_use_number_columns_repeated.ods';
+        $this->writeToODSFile([$dataRow], $fileName);
+
+        $sheetXmlNode = $this->getSheetXmlNode($fileName, 1);
+        $tableCellNodes = $sheetXmlNode->getElementsByTagName('table-cell');
+
+        $this->assertEquals($expectedNumTableCells, $tableCellNodes->length);
+
+        if ($expectedNumTableCells === 1) {
+            $tableCellNode = $tableCellNodes->item(0);
+            $numColumnsRepeated = intval($tableCellNode->getAttribute('table:number-columns-repeated'));
+            $this->assertEquals($expectedNumColumnsRepeated, $numColumnsRepeated);
+        } else {
+            foreach ($tableCellNodes as $tableCellNode) {
+                $this->assertFalse($tableCellNode->hasAttribute('table:number-columns-repeated'));
+            }
+        }
+    }
+
+    /**
      * @return void
      */
     public function testAddRowShouldWriteGivenDataToTheCorrectSheet()
@@ -426,9 +468,31 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $fileName
      * @param int $sheetIndex
+     * @return \DOMNode
+     */
+    private function getSheetXmlNode($fileName, $sheetIndex)
+    {
+        $xmlReader = $this->moveReaderToCorrectTableNode($fileName, $sheetIndex);
+        return $xmlReader->expand();
+    }
+
+    /**
+     * @param string $fileName
+     * @param int $sheetIndex
      * @return string
      */
     private function getSheetXmlNodeAsString($fileName, $sheetIndex)
+    {
+        $xmlReader = $this->moveReaderToCorrectTableNode($fileName, $sheetIndex);
+        return $xmlReader->readOuterXml();
+    }
+
+    /**
+     * @param string $fileName
+     * @param int $sheetIndex
+     * @return XMLReader
+     */
+    private function moveReaderToCorrectTableNode($fileName, $sheetIndex)
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $pathToSheetFile = $resourcePath . '#content.xml';
@@ -441,6 +505,6 @@ class WriterTest extends \PHPUnit_Framework_TestCase
             $xmlReader->readUntilNodeFound('table:table');
         }
 
-        return $xmlReader->readOuterXml();
+        return $xmlReader;
     }
 }
