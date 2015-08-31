@@ -18,13 +18,6 @@ use Box\Spout\Writer\Common\Sheet;
  */
 class Worksheet implements WorksheetInterface
 {
-    /**
-     * @see https://wiki.openoffice.org/wiki/Documentation/FAQ/Calc/Miscellaneous/What's_the_maximum_number_of_rows_and_cells_for_a_spreadsheet_file%3f
-     * @see https://bz.apache.org/ooo/show_bug.cgi?id=30215
-     */
-    const MAX_NUM_ROWS_REPEATED = 1048576;
-    const MAX_NUM_COLUMNS_REPEATED = 1024;
-
     /** @var \Box\Spout\Writer\Common\Sheet The "external" sheet */
     protected $externalSheet;
 
@@ -37,8 +30,11 @@ class Worksheet implements WorksheetInterface
     /** @var \Box\Spout\Common\Helper\StringHelper To help with string manipulation */
     protected $stringHelper;
 
-    /** @var Resource Pointer to the sheet data file (e.g. xl/worksheets/sheet1.xml) */
+    /** @var Resource Pointer to the temporary sheet data file (e.g. worksheets-temp/sheet1.xml) */
     protected $sheetFilePointer;
+
+    /** @var int Maximum number of columns among all the written rows */
+    protected $maxNumColumns = 1;
 
     /** @var int Index of the last written row */
     protected $lastWrittenRowIndex = 0;
@@ -62,6 +58,8 @@ class Worksheet implements WorksheetInterface
 
     /**
      * Prepares the worksheet to accept data
+     * The XML file does not contain the "<table:table>" node as it contains the sheet's name
+     * which may change during the execution of the program. It will be added at the end.
      *
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
@@ -70,11 +68,6 @@ class Worksheet implements WorksheetInterface
     {
         $this->sheetFilePointer = fopen($this->worksheetFilePath, 'w');
         $this->throwIfSheetFilePointerIsNotAvailable();
-
-        // The XML file does not contain the "<table:table>" node as it contains the sheet's name
-        // which may change during the execution of the program. It will be added at the end.
-        $content = '    <table:table-column table:default-cell-style-name="ce1" table:number-columns-repeated="' . self::MAX_NUM_COLUMNS_REPEATED . '" table:style-name="co1"/>' . PHP_EOL;
-        fwrite($this->sheetFilePointer, $content);
     }
 
     /**
@@ -103,12 +96,15 @@ class Worksheet implements WorksheetInterface
      *
      * @return string <table> node as string
      */
-    public function getTableRootNodeAsString()
+    public function getTableElementStartAsString()
     {
         $escapedSheetName = $this->stringsEscaper->escape($this->externalSheet->getName());
         $tableStyleName = 'ta' . ($this->externalSheet->getIndex() + 1);
 
-        return '<table:table table:style-name="' . $tableStyleName . '" table:name="' . $escapedSheetName . '">';
+        $tableElement  = '<table:table table:style-name="' . $tableStyleName . '" table:name="' . $escapedSheetName . '">' . PHP_EOL;
+        $tableElement .= '    <table:table-column table:default-cell-style-name="ce1" table:style-name="co1" table:number-columns-repeated="' . $this->maxNumColumns . '"/>';
+
+        return $tableElement;
     }
 
     /**
@@ -139,7 +135,7 @@ class Worksheet implements WorksheetInterface
      */
     public function addRow($dataRow, $style)
     {
-        $numColumnsRepeated = self::MAX_NUM_COLUMNS_REPEATED;
+        $this->maxNumColumns = max($this->maxNumColumns, count($dataRow));
         $styleIndex = ($style->getId() + 1); // 1-based
 
         $data = '    <table:table-row table:style-name="ro1">' . PHP_EOL;
@@ -148,7 +144,7 @@ class Worksheet implements WorksheetInterface
             $data .= '        <table:table-cell table:style-name="ce' . $styleIndex . '"';
 
             if (CellHelper::isNonEmptyString($cellValue)) {
-                $data .= ' office:value-type="string">' . PHP_EOL;
+                $data .= ' office:value-type="string" calcext:value-type="string">' . PHP_EOL;
 
                 $cellValueLines = explode("\n", $cellValue);
                 foreach ($cellValueLines as $cellValueLine) {
@@ -157,11 +153,11 @@ class Worksheet implements WorksheetInterface
 
                 $data .= '        </table:table-cell>' . PHP_EOL;
             } else if (CellHelper::isBoolean($cellValue)) {
-                $data .= ' office:value-type="boolean" office:value="' . $cellValue . '">' . PHP_EOL;
+                $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:value="' . $cellValue . '">' . PHP_EOL;
                 $data .= '            <text:p>' . $cellValue . '</text:p>' . PHP_EOL;
                 $data .= '        </table:table-cell>' . PHP_EOL;
             } else if (CellHelper::isNumeric($cellValue)) {
-                $data .= ' office:value-type="float" office:value="' . $cellValue . '">' . PHP_EOL;
+                $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cellValue . '">' . PHP_EOL;
                 $data .= '            <text:p>' . $cellValue . '</text:p>' . PHP_EOL;
                 $data .= '        </table:table-cell>' . PHP_EOL;
             } else if (empty($cellValue)) {
@@ -169,12 +165,6 @@ class Worksheet implements WorksheetInterface
             } else {
                 throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
             }
-
-            $numColumnsRepeated--;
-        }
-
-        if ($numColumnsRepeated > 0) {
-            $data .= '        <table:table-cell table:number-columns-repeated="' . $numColumnsRepeated . '"/>' . PHP_EOL;
         }
 
         $data .= '    </table:table-row>' . PHP_EOL;
@@ -195,16 +185,6 @@ class Worksheet implements WorksheetInterface
      */
     public function close()
     {
-        $remainingRepeatedRows = self::MAX_NUM_ROWS_REPEATED - $this->lastWrittenRowIndex;
-
-        if ($remainingRepeatedRows > 0) {
-            $data = '    <table:table-row table:style-name="ro1" table:number-rows-repeated="' . $remainingRepeatedRows . '">' . PHP_EOL;
-            $data .= '        <table:table-cell table:number-columns-repeated="' . self::MAX_NUM_COLUMNS_REPEATED . '"/>' . PHP_EOL;
-            $data .= '    </table:table-row>' . PHP_EOL;
-
-            fwrite($this->sheetFilePointer, $data);
-        }
-
         fclose($this->sheetFilePointer);
     }
 }

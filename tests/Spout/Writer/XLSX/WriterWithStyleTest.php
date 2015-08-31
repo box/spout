@@ -114,7 +114,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $style2 = (new StyleBuilder())
             ->setFontSize(15)
             ->setFontColor(Color::RED)
-            ->setFontName('Font')
+            ->setFontName('Cambria')
             ->build();
 
         $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, [$style, $style2]);
@@ -148,7 +148,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $this->assertChildrenNumEquals(3, $thirdFontElement, 'The font should only have 3 properties.');
         $this->assertFirstChildHasAttributeEquals('15', $thirdFontElement, 'sz', 'val');
         $this->assertFirstChildHasAttributeEquals(Color::toARGB(Color::RED), $thirdFontElement, 'color', 'rgb');
-        $this->assertFirstChildHasAttributeEquals('Font', $thirdFontElement, 'name', 'val');
+        $this->assertFirstChildHasAttributeEquals('Cambria', $thirdFontElement, 'name', 'val');
     }
 
     /**
