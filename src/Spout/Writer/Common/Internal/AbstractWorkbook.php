@@ -135,7 +135,7 @@ abstract class AbstractWorkbook implements WorkbookInterface
      * If shouldCreateNewSheetsAutomatically option is set to true, it will handle pagination
      * with the creation of new worksheets if one worksheet has reached its maximum capicity.
      *
-     * @param array $dataRow Array containing data to be written.
+     * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row.
      * @return void
