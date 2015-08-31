@@ -114,7 +114,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $style2 = (new StyleBuilder())
             ->setFontSize(15)
             ->setFontColor(Color::RED)
-            ->setFontName('Font')
+            ->setFontName('Cambria')
             ->build();
 
         $this->writeToODSFileWithMultipleStyles($dataRows, $fileName, [$style, $style2]);
@@ -133,7 +133,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $customFont2Element = $cellStyleElements[2];
         $this->assertFirstChildHasAttributeEquals('15pt', $customFont2Element, 'text-properties', 'fo:font-size');
         $this->assertFirstChildHasAttributeEquals('#' . Color::RED, $customFont2Element, 'text-properties', 'fo:color');
-        $this->assertFirstChildHasAttributeEquals('Font', $customFont2Element, 'text-properties', 'style:font-name');
+        $this->assertFirstChildHasAttributeEquals('Cambria', $customFont2Element, 'text-properties', 'style:font-name');
     }
 
     /**
