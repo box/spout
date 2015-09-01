@@ -83,7 +83,7 @@ class SharedStringsHelper
         $escaper = new \Box\Spout\Common\Escaper\XLSX();
 
         $sharedStringsFilePath = $this->getSharedStringsFilePath();
-        if ($xmlReader->open($sharedStringsFilePath, null, LIBXML_NONET) === false) {
+        if ($xmlReader->open($sharedStringsFilePath) === false) {
             throw new IOException('Could not open "' . self::SHARED_STRINGS_XML_FILE_PATH . '".');
         }
 

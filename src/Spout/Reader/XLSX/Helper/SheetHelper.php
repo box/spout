@@ -101,7 +101,6 @@ class SheetHelper
      */
     protected function getSheetFromXML($sheetDataXMLFilePath, $sheetIndexZeroBased)
     {
-        $sheetId = $sheetIndexZeroBased + 1;
         $sheetName = $this->getDefaultSheetName($sheetDataXMLFilePath);
 
         /*
@@ -123,7 +122,6 @@ class SheetHelper
 
             if (count($sheetNodes) === 1) {
                 $sheetNode = $sheetNodes[0];
-                $sheetId = (int) $sheetNode->getAttribute('sheetId');
                 $escapedSheetName = $sheetNode->getAttribute('name');
 
                 /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
@@ -132,7 +130,7 @@ class SheetHelper
             }
         }
 
-        return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $sheetId, $sheetIndexZeroBased, $sheetName);
+        return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $sheetIndexZeroBased, $sheetName);
     }
 
     /**

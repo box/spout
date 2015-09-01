@@ -24,11 +24,9 @@ class SheetTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('CustomName1', $sheets[0]->getName());
         $this->assertEquals(0, $sheets[0]->getIndex());
-        $this->assertEquals(1, $sheets[0]->getId());
 
         $this->assertEquals('CustomName2', $sheets[1]->getName());
         $this->assertEquals(1, $sheets[1]->getIndex());
-        $this->assertEquals(2, $sheets[1]->getId());
     }
 
     /**

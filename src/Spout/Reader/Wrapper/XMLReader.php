@@ -138,4 +138,22 @@ class XMLReader extends \XMLReader
 
         return $wasNextSuccessful;
     }
+
+    /**
+     * @param string $nodeName
+     * @return bool Whether the XML Reader is currently positioned on the starting node with given name
+     */
+    public function isPositionedOnStartingNode($nodeName)
+    {
+        return ($this->nodeType === XMLReader::ELEMENT && $this->name === $nodeName);
+    }
+
+    /**
+     * @param string $nodeName
+     * @return bool Whether the XML Reader is currently positioned on the ending node with given name
+     */
+    public function isPositionedOnEndingNode($nodeName)
+    {
+        return ($this->nodeType === XMLReader::END_ELEMENT && $this->name === $nodeName);
+    }
 }
