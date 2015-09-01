@@ -23,7 +23,6 @@ class StyleHelper extends AbstractStyleHelper
         $content = <<<EOD
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
-
 EOD;
 
         $content .= $this->getFontsSectionContent();
@@ -47,33 +46,33 @@ EOD;
      */
     protected function getFontsSectionContent()
     {
-        $content = '    <fonts count="' . count($this->styleIdToStyleMappingTable) . '">' . PHP_EOL;
+        $content = '<fonts count="' . count($this->styleIdToStyleMappingTable) . '">';
 
         /** @var \Box\Spout\Writer\Style\Style $style */
         foreach ($this->getRegisteredStyles() as $style) {
-            $content .= '        <font>' . PHP_EOL;
+            $content .= '<font>';
 
-            $content .= '            <sz val="' . $style->getFontSize() . '"/>' . PHP_EOL;
-            $content .= '            <color rgb="' . Color::toARGB($style->getFontColor()) . '"/>' . PHP_EOL;
-            $content .= '            <name val="' . $style->getFontName() . '"/>' . PHP_EOL;
+            $content .= '<sz val="' . $style->getFontSize() . '"/>';
+            $content .= '<color rgb="' . Color::toARGB($style->getFontColor()) . '"/>';
+            $content .= '<name val="' . $style->getFontName() . '"/>';
 
             if ($style->isFontBold()) {
-                $content .= '            <b/>' . PHP_EOL;
+                $content .= '<b/>';
             }
             if ($style->isFontItalic()) {
-                $content .= '            <i/>' . PHP_EOL;
+                $content .= '<i/>';
             }
             if ($style->isFontUnderline()) {
-                $content .= '            <u/>' . PHP_EOL;
+                $content .= '<u/>';
             }
             if ($style->isFontStrikethrough()) {
-                $content .= '            <strike/>' . PHP_EOL;
+                $content .= '<strike/>';
             }
 
-            $content .= '        </font>' . PHP_EOL;
+            $content .= '</font>';
         }
 
-        $content .= '    </fonts>' . PHP_EOL;
+        $content .= '</fonts>';
 
         return $content;
     }
@@ -86,12 +85,11 @@ EOD;
     protected function getFillsSectionContent()
     {
         return <<<EOD
-    <fills count="1">
-        <fill>
-            <patternFill patternType="none"/>
-        </fill>
-    </fills>
-
+<fills count="1">
+    <fill>
+        <patternFill patternType="none"/>
+    </fill>
+</fills>
 EOD;
     }
 
@@ -103,16 +101,15 @@ EOD;
     protected function getBordersSectionContent()
     {
         return <<<EOD
-    <borders count="1">
-        <border>
-            <left/>
-            <right/>
-            <top/>
-            <bottom/>
-            <diagonal/>
-        </border>
-    </borders>
-
+<borders count="1">
+    <border>
+        <left/>
+        <right/>
+        <top/>
+        <bottom/>
+        <diagonal/>
+    </border>
+</borders>
 EOD;
     }
 
@@ -124,10 +121,9 @@ EOD;
     protected function getCellStyleXfsSectionContent()
     {
         return <<<EOD
-    <cellStyleXfs count="1">
-        <xf borderId="0" fillId="0" fontId="0" numFmtId="0"/>
-    </cellStyleXfs>
-
+<cellStyleXfs count="1">
+    <xf borderId="0" fillId="0" fontId="0" numFmtId="0"/>
+</cellStyleXfs>
 EOD;
     }
 
@@ -140,25 +136,25 @@ EOD;
     {
         $registeredStyles = $this->getRegisteredStyles();
 
-        $content = '    <cellXfs count="' . count($registeredStyles) . '">' . PHP_EOL;
+        $content = '<cellXfs count="' . count($registeredStyles) . '">';
 
         foreach ($registeredStyles as $style) {
-            $content .= '        <xf numFmtId="0" fontId="' . $style->getId() . '" fillId="0" borderId="0" xfId="0"';
+            $content .= '<xf numFmtId="0" fontId="' . $style->getId() . '" fillId="0" borderId="0" xfId="0"';
 
             if ($style->shouldApplyFont()) {
                 $content .= ' applyFont="1"';
             }
 
             if ($style->shouldWrapText()) {
-                $content .= ' applyAlignment="1">' . PHP_EOL;
-                $content .= '            <alignment wrapText="1"/>' . PHP_EOL;
-                $content .= '        </xf>' . PHP_EOL;
+                $content .= ' applyAlignment="1">';
+                $content .= '<alignment wrapText="1"/>';
+                $content .= '</xf>';
             } else {
-                $content .= '/>' . PHP_EOL;
+                $content .= '/>';
             }
         }
 
-        $content .= '    </cellXfs>' . PHP_EOL;
+        $content .= '</cellXfs>';
 
         return $content;
     }
@@ -171,10 +167,9 @@ EOD;
     protected function getCellStylesSectionContent()
     {
         return <<<EOD
-    <cellStyles count="1">
-        <cellStyle builtinId="0" name="Normal" xfId="0"/>
-    </cellStyles>
-
+<cellStyles count="1">
+    <cellStyle builtinId="0" name="Normal" xfId="0"/>
+</cellStyles>
 EOD;
     }
 }

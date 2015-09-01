@@ -249,12 +249,11 @@ EOD;
     <Default ContentType="application/xml" Extension="xml"/>
     <Default ContentType="application/vnd.openxmlformats-package.relationships+xml" Extension="rels"/>
     <Override ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml" PartName="/xl/workbook.xml"/>
-
 EOD;
 
     /** @var Worksheet $worksheet */
     foreach ($worksheets as $worksheet) {
-        $contentTypesXmlFileContents .= '    <Override ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml" PartName="/xl/worksheets/sheet' . $worksheet->getId() . '.xml"/>' . PHP_EOL;
+        $contentTypesXmlFileContents .= '<Override ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml" PartName="/xl/worksheets/sheet' . $worksheet->getId() . '.xml"/>';
     }
 
     $contentTypesXmlFileContents .= <<<EOD
@@ -282,7 +281,6 @@ EOD;
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
     <sheets>
-
 EOD;
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
@@ -292,7 +290,7 @@ EOD;
         foreach ($worksheets as $worksheet) {
             $worksheetName = $worksheet->getExternalSheet()->getName();
             $worksheetId = $worksheet->getId();
-            $workbookXmlFileContents .= '        <sheet name="' . $escaper->escape($worksheetName) . '" sheetId="' . $worksheetId . '" r:id="rIdSheet' . $worksheetId . '"/>' . PHP_EOL;
+            $workbookXmlFileContents .= '<sheet name="' . $escaper->escape($worksheetName) . '" sheetId="' . $worksheetId . '" r:id="rIdSheet' . $worksheetId . '"/>';
         }
 
         $workbookXmlFileContents .= <<<EOD
@@ -318,13 +316,12 @@ EOD;
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
     <Relationship Id="rIdStyles" Target="styles.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles"/>
     <Relationship Id="rIdSharedStrings" Target="sharedStrings.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings"/>
-
 EOD;
 
         /** @var Worksheet $worksheet */
         foreach ($worksheets as $worksheet) {
             $worksheetId = $worksheet->getId();
-            $workbookRelsXmlFileContents .= '    <Relationship Id="rIdSheet' . $worksheetId . '" Target="worksheets/sheet' . $worksheetId . '.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>' . PHP_EOL;
+            $workbookRelsXmlFileContents .= '<Relationship Id="rIdSheet' . $worksheetId . '" Target="worksheets/sheet' . $worksheetId . '.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet"/>';
         }
 
         $workbookRelsXmlFileContents .= '</Relationships>';

@@ -47,7 +47,6 @@ class StyleHelper extends AbstractStyleHelper
         $content = <<<EOD
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <office:document-styles office:version="1.2" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:msoxl="http://schemas.microsoft.com/office/excel/formula" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:xlink="http://www.w3.org/1999/xlink">
-
 EOD;
 
         $content .= $this->getFontFaceSectionContent();
@@ -69,11 +68,11 @@ EOD;
      */
     protected function getFontFaceSectionContent()
     {
-        $content = '<office:font-face-decls>' . PHP_EOL;
+        $content = '<office:font-face-decls>';
         foreach ($this->getUsedFonts() as $fontName) {
-            $content .= '    <style:font-face style:name="' . $fontName . '" svg:font-family="' . $fontName . '"/>' . PHP_EOL;
+            $content .= '<style:font-face style:name="' . $fontName . '" svg:font-family="' . $fontName . '"/>';
         }
-        $content .= '</office:font-face-decls>' . PHP_EOL;
+        $content .= '</office:font-face-decls>';
 
         return $content;
     }
@@ -99,7 +98,6 @@ EOD;
                                style:font-name="{$defaultStyle->getFontName()}" style:font-name-asian="{$defaultStyle->getFontName()}" style:font-name-complex="{$defaultStyle->getFontName()}"/>
     </style:style>
 </office:styles>
-
 EOD;
     }
 
@@ -111,20 +109,19 @@ EOD;
      */
     protected function getAutomaticStylesSectionContent($numWorksheets)
     {
-        $content = '<office:automatic-styles>' . PHP_EOL;
+        $content = '<office:automatic-styles>';
 
         for ($i = 1; $i <= $numWorksheets; $i++) {
             $content .= <<<EOD
-    <style:page-layout style:name="pm$i">
-        <style:page-layout-properties style:first-page-number="continue" style:print="objects charts drawings" style:table-centering="none"/>
-        <style:header-style/>
-        <style:footer-style/>
-    </style:page-layout>
-
+<style:page-layout style:name="pm$i">
+    <style:page-layout-properties style:first-page-number="continue" style:print="objects charts drawings" style:table-centering="none"/>
+    <style:header-style/>
+    <style:footer-style/>
+</style:page-layout>
 EOD;
         }
 
-        $content .= '</office:automatic-styles>' . PHP_EOL;
+        $content .= '</office:automatic-styles>';
 
         return $content;
     }
@@ -137,21 +134,20 @@ EOD;
      */
     protected function getMasterStylesSectionContent($numWorksheets)
     {
-        $content = '<office:master-styles>' . PHP_EOL;
+        $content = '<office:master-styles>';
 
         for ($i = 1; $i <= $numWorksheets; $i++) {
             $content .= <<<EOD
-    <style:master-page style:name="mp$i" style:page-layout-name="pm$i">
-        <style:header/>
-        <style:header-left style:display="false"/>
-        <style:footer/>
-        <style:footer-left style:display="false"/>
-    </style:master-page>
-
+<style:master-page style:name="mp$i" style:page-layout-name="pm$i">
+    <style:header/>
+    <style:header-left style:display="false"/>
+    <style:footer/>
+    <style:footer-left style:display="false"/>
+</style:master-page>
 EOD;
         }
 
-        $content .= '</office:master-styles>' . PHP_EOL;
+        $content .= '</office:master-styles>';
 
         return $content;
     }
@@ -164,11 +160,11 @@ EOD;
      */
     public function getContentXmlFontFaceSectionContent()
     {
-        $content = '<office:font-face-decls>' . PHP_EOL;
+        $content = '<office:font-face-decls>';
         foreach ($this->getUsedFonts() as $fontName) {
-            $content .= '    <style:font-face style:name="' . $fontName . '" svg:font-family="' . $fontName . '"/>' . PHP_EOL;
+            $content .= '<style:font-face style:name="' . $fontName . '" svg:font-family="' . $fontName . '"/>';
         }
-        $content .= '</office:font-face-decls>' . PHP_EOL;
+        $content .= '</office:font-face-decls>';
 
         return $content;
     }
@@ -181,32 +177,30 @@ EOD;
      */
     public function getContentXmlAutomaticStylesSectionContent($numWorksheets)
     {
-        $content = '<office:automatic-styles>' . PHP_EOL;
+        $content = '<office:automatic-styles>';
 
         foreach ($this->getRegisteredStyles() as $style) {
             $content .= $this->getStyleSectionContent($style);
         }
 
         $content .= <<<EOD
-    <style:style style:family="table-column" style:name="co1">
-        <style:table-column-properties fo:break-before="auto"/>
-    </style:style>
-    <style:style style:family="table-row" style:name="ro1">
-        <style:table-row-properties fo:break-before="auto" style:row-height="15pt" style:use-optimal-row-height="true"/>
-    </style:style>
-
+<style:style style:family="table-column" style:name="co1">
+    <style:table-column-properties fo:break-before="auto"/>
+</style:style>
+<style:style style:family="table-row" style:name="ro1">
+    <style:table-row-properties fo:break-before="auto" style:row-height="15pt" style:use-optimal-row-height="true"/>
+</style:style>
 EOD;
 
         for ($i = 1; $i <= $numWorksheets; $i++) {
             $content .= <<<EOD
-    <style:style style:family="table" style:master-page-name="mp$i" style:name="ta$i">
-        <style:table-properties style:writing-mode="lr-tb" table:display="true"/>
-    </style:style>
-
+<style:style style:family="table" style:master-page-name="mp$i" style:name="ta$i">
+    <style:table-properties style:writing-mode="lr-tb" table:display="true"/>
+</style:style>
 EOD;
         }
 
-        $content .= '</office:automatic-styles>' . PHP_EOL;
+        $content .= '</office:automatic-styles>';
 
         return $content;
     }
@@ -222,10 +216,10 @@ EOD;
         $defaultStyle = $this->getDefaultStyle();
         $styleIndex = $style->getId() + 1; // 1-based
 
-        $content = '    <style:style style:data-style-name="N0" style:family="table-cell" style:name="ce' . $styleIndex . '" style:parent-style-name="Default">' . PHP_EOL;
+        $content = '<style:style style:data-style-name="N0" style:family="table-cell" style:name="ce' . $styleIndex . '" style:parent-style-name="Default">';
 
         if ($style->shouldApplyFont()) {
-            $content .= '        <style:text-properties';
+            $content .= '<style:text-properties';
 
             $fontColor = $style->getFontColor();
             if ($fontColor !== $defaultStyle->getFontColor()) {
@@ -255,14 +249,14 @@ EOD;
                 $content .= ' style:text-line-through-style="solid"';
             }
 
-            $content .= '/>' . PHP_EOL;
+            $content .= '/>';
         }
 
         if ($style->shouldWrapText()) {
-            $content .= '        <style:table-cell-properties fo:wrap-option="wrap" style:vertical-align="automatic"/>' . PHP_EOL;
+            $content .= '<style:table-cell-properties fo:wrap-option="wrap" style:vertical-align="automatic"/>';
         }
 
-        $content .= '    </style:style>' . PHP_EOL;
+        $content .= '</style:style>';
 
         return $content;
     }

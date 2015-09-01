@@ -45,7 +45,7 @@ EOD;
         $this->throwIfSharedStringsFilePointerIsNotAvailable();
 
         // the headers is split into different parts so that we can fseek and put in the correct count and uniqueCount later
-        $header = self::SHARED_STRINGS_XML_FILE_FIRST_PART_HEADER . ' ' . self::DEFAULT_STRINGS_COUNT_PART . '>' . PHP_EOL;
+        $header = self::SHARED_STRINGS_XML_FILE_FIRST_PART_HEADER . ' ' . self::DEFAULT_STRINGS_COUNT_PART . '>';
         fwrite($this->sharedStringsFilePointer, $header);
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
@@ -74,7 +74,7 @@ EOD;
      */
     public function writeString($string)
     {
-        fwrite($this->sharedStringsFilePointer, '    <si><t xml:space="preserve">' . $this->stringsEscaper->escape($string) . '</t></si>' . PHP_EOL);
+        fwrite($this->sharedStringsFilePointer, '<si><t xml:space="preserve">' . $this->stringsEscaper->escape($string) . '</t></si>');
         $this->numSharedStrings++;
 
         // Shared string ID is zero-based
