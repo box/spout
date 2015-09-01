@@ -139,7 +139,6 @@ class RowIterator implements IteratorInterface
      */
     public function next()
     {
-        $isInsideRowTag = false;
         $rowData = [];
 
         try {
@@ -154,7 +153,6 @@ class RowIterator implements IteratorInterface
 
                 } else if ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_ROW)) {
                     // Start of the row description
-                    $isInsideRowTag = true;
 
                     // Read spans info if present
                     $numberOfColumnsForRow = $this->numColumns;
@@ -165,7 +163,7 @@ class RowIterator implements IteratorInterface
                     }
                     $rowData = ($numberOfColumnsForRow !== 0) ? array_fill(0, $numberOfColumnsForRow, '') : [];
 
-                } else if ($isInsideRowTag && $this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL)) {
+                } else if ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL)) {
                     // Start of a cell description
                     $currentCellIndex = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_CELL_INDEX);
                     $currentColumnIndex = CellHelper::getColumnIndexFromCellIndex($currentCellIndex);
