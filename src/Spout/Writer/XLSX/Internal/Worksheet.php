@@ -73,8 +73,8 @@ EOD;
         $this->sheetFilePointer = fopen($this->worksheetFilePath, 'w');
         $this->throwIfSheetFilePointerIsNotAvailable();
 
-        fwrite($this->sheetFilePointer, self::SHEET_XML_FILE_HEADER . PHP_EOL);
-        fwrite($this->sheetFilePointer, '    <sheetData>' . PHP_EOL);
+        fwrite($this->sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        fwrite($this->sheetFilePointer, '<sheetData>');
     }
 
     /**
@@ -131,26 +131,26 @@ EOD;
         $rowIndex = $this->lastWrittenRowIndex + 1;
         $numCells = count($dataRow);
 
-        $data = '        <row r="' . $rowIndex . '" spans="1:' . $numCells . '">' . PHP_EOL;
+        $data = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
         foreach($dataRow as $cellValue) {
             $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
-            $data .= '            <c r="' . $columnIndex . $rowIndex . '"';
+            $data .= '<c r="' . $columnIndex . $rowIndex . '"';
             $data .= ' s="' . $style->getId() . '"';
 
             if (CellHelper::isNonEmptyString($cellValue)) {
                 if ($this->shouldUseInlineStrings) {
-                    $data .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>' . PHP_EOL;
+                    $data .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
                 } else {
                     $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
-                    $data .= ' t="s"><v>' . $sharedStringId . '</v></c>' . PHP_EOL;
+                    $data .= ' t="s"><v>' . $sharedStringId . '</v></c>';
                 }
             } else if (CellHelper::isBoolean($cellValue)) {
-                $data .= ' t="b"><v>' . $cellValue . '</v></c>' . PHP_EOL;
+                $data .= ' t="b"><v>' . $cellValue . '</v></c>';
             } else if (CellHelper::isNumeric($cellValue)) {
-                $data .= '><v>' . $cellValue . '</v></c>' . PHP_EOL;
+                $data .= '><v>' . $cellValue . '</v></c>';
             } else if (empty($cellValue)) {
-                $data .= '/>' . PHP_EOL;
+                $data .= '/>';
             } else {
                 throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
             }
@@ -158,7 +158,7 @@ EOD;
             $cellNumber++;
         }
 
-        $data .= '        </row>' . PHP_EOL;
+        $data .= '</row>';
 
         $wasWriteSuccessful = fwrite($this->sheetFilePointer, $data);
         if ($wasWriteSuccessful === false) {
@@ -176,7 +176,7 @@ EOD;
      */
     public function close()
     {
-        fwrite($this->sheetFilePointer, '    </sheetData>' . PHP_EOL);
+        fwrite($this->sheetFilePointer, '</sheetData>');
         fwrite($this->sheetFilePointer, '</worksheet>');
         fclose($this->sheetFilePointer);
     }

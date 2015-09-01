@@ -100,8 +100,8 @@ class Worksheet implements WorksheetInterface
         $escapedSheetName = $this->stringsEscaper->escape($this->externalSheet->getName());
         $tableStyleName = 'ta' . ($this->externalSheet->getIndex() + 1);
 
-        $tableElement  = '<table:table table:style-name="' . $tableStyleName . '" table:name="' . $escapedSheetName . '">' . PHP_EOL;
-        $tableElement .= '    <table:table-column table:default-cell-style-name="ce1" table:style-name="co1" table:number-columns-repeated="' . $this->maxNumColumns . '"/>';
+        $tableElement  = '<table:table table:style-name="' . $tableStyleName . '" table:name="' . $escapedSheetName . '">';
+        $tableElement .= '<table:table-column table:default-cell-style-name="ce1" table:style-name="co1" table:number-columns-repeated="' . $this->maxNumColumns . '"/>';
 
         return $tableElement;
     }
@@ -138,7 +138,7 @@ class Worksheet implements WorksheetInterface
         $cellsCount = count($dataRow);
         $this->maxNumColumns = max($this->maxNumColumns, $cellsCount);
 
-        $data = '    <table:table-row table:style-name="ro1">' . PHP_EOL;
+        $data = '<table:table-row table:style-name="ro1">';
 
         $currentCellIndex = 0;
         $nextCellIndex = 1;
@@ -156,7 +156,7 @@ class Worksheet implements WorksheetInterface
             $nextCellIndex++;
         }
 
-        $data .= '    </table:table-row>' . PHP_EOL;
+        $data .= '</table:table-row>';
 
         $wasWriteSuccessful = fwrite($this->sheetFilePointer, $data);
         if ($wasWriteSuccessful === false) {
@@ -178,31 +178,31 @@ class Worksheet implements WorksheetInterface
      */
     protected function getCellContent($cellValue, $styleIndex, $numTimesValueRepeated)
     {
-        $data = '        <table:table-cell table:style-name="ce' . $styleIndex . '"';
+        $data = '<table:table-cell table:style-name="ce' . $styleIndex . '"';
 
         if ($numTimesValueRepeated !== 1) {
             $data .= ' table:number-columns-repeated="' . $numTimesValueRepeated . '"';
         }
 
         if (CellHelper::isNonEmptyString($cellValue)) {
-            $data .= ' office:value-type="string" calcext:value-type="string">' . PHP_EOL;
+            $data .= ' office:value-type="string" calcext:value-type="string">';
 
             $cellValueLines = explode("\n", $cellValue);
             foreach ($cellValueLines as $cellValueLine) {
-                $data .= '            <text:p>' . $this->stringsEscaper->escape($cellValueLine) . '</text:p>' . PHP_EOL;
+                $data .= '<text:p>' . $this->stringsEscaper->escape($cellValueLine) . '</text:p>';
             }
 
-            $data .= '        </table:table-cell>' . PHP_EOL;
+            $data .= '</table:table-cell>';
         } else if (CellHelper::isBoolean($cellValue)) {
-            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:value="' . $cellValue . '">' . PHP_EOL;
-            $data .= '            <text:p>' . $cellValue . '</text:p>' . PHP_EOL;
-            $data .= '        </table:table-cell>' . PHP_EOL;
+            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:value="' . $cellValue . '">';
+            $data .= '<text:p>' . $cellValue . '</text:p>';
+            $data .= '</table:table-cell>';
         } else if (CellHelper::isNumeric($cellValue)) {
-            $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cellValue . '">' . PHP_EOL;
-            $data .= '            <text:p>' . $cellValue . '</text:p>' . PHP_EOL;
-            $data .= '        </table:table-cell>' . PHP_EOL;
+            $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cellValue . '">';
+            $data .= '<text:p>' . $cellValue . '</text:p>';
+            $data .= '</table:table-cell>';
         } else if (empty($cellValue)) {
-            $data .= '/>' . PHP_EOL;
+            $data .= '/>';
         } else {
             throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
         }
