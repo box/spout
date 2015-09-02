@@ -12,8 +12,13 @@ class CellValueFormatter
 {
     /** Definition of all possible cell types */
     const CELL_TYPE_STRING = 'string';
-    const CELL_TYPE_BOOLEAN = 'boolean';
     const CELL_TYPE_FLOAT = 'float';
+    const CELL_TYPE_BOOLEAN = 'boolean';
+    const CELL_TYPE_DATE = 'date';
+    const CELL_TYPE_TIME = 'time';
+    const CELL_TYPE_CURRENCY = 'currency';
+    const CELL_TYPE_PERCENTAGE = 'percentage';
+    const CELL_TYPE_VOID = 'void';
 
     /** Definition of XML nodes names used to parse data */
     const XML_NODE_P = 'p';
@@ -21,6 +26,11 @@ class CellValueFormatter
 
     /** Definition of XML attribute used to parse data */
     const XML_ATTRIBUTE_TYPE = 'office:value-type';
+    const XML_ATTRIBUTE_VALUE = 'office:value';
+    const XML_ATTRIBUTE_BOOLEAN_VALUE = 'office:boolean-value';
+    const XML_ATTRIBUTE_DATE_VALUE = 'office:date-value';
+    const XML_ATTRIBUTE_TIME_VALUE = 'office:time-value';
+    const XML_ATTRIBUTE_CURRENCY = 'office:currency';
     const XML_ATTRIBUTE_C = 'text:c';
 
     /** @var \Box\Spout\Common\Escaper\ODS Used to unescape XML data */
@@ -38,43 +48,34 @@ class CellValueFormatter
     /**
      * Returns the (unescaped) correctly marshalled, cell value associated to the given XML node.
      * @TODO Add other types !!
+     * @see http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#refTable13
      *
      * @param \DOMNode $node
-     * @return string|int|float|bool The value associated with the cell (or empty string if cell's type is undefined)
+     * @return string|int|float|bool|\DateTime|\DateInterval|null The value associated with the cell, empty string if cell's type is void/undefined, null on error
      */
     public function extractAndFormatNodeValue($node)
     {
         $cellType = $node->getAttribute(self::XML_ATTRIBUTE_TYPE);
-        $pNodeValue = $this->getFirstPNodeValue($node);
 
         switch ($cellType) {
             case self::CELL_TYPE_STRING:
                 return $this->formatStringCellValue($node);
             case self::CELL_TYPE_FLOAT:
-                return $this->formatFloatCellValue($pNodeValue);
+                return $this->formatFloatCellValue($node);
             case self::CELL_TYPE_BOOLEAN:
-                return $this->formatBooleanCellValue($pNodeValue);
+                return $this->formatBooleanCellValue($node);
+            case self::CELL_TYPE_DATE:
+                return $this->formatDateCellValue($node);
+            case self::CELL_TYPE_TIME:
+                return $this->formatTimeCellValue($node);
+            case self::CELL_TYPE_CURRENCY:
+                return $this->formatCurrencyCellValue($node);
+            case self::CELL_TYPE_PERCENTAGE:
+                return $this->formatPercentageCellValue($node);
+            case self::CELL_TYPE_VOID:
             default:
                 return '';
         }
-    }
-
-    /**
-     * Returns the value of the first "<text:p>" node within the given node.
-     *
-     * @param \DOMNode $node
-     * @return string Value for the first "<text:p>" node or empty string if no "<text:p>" found
-     */
-    protected function getFirstPNodeValue($node)
-    {
-        $nodeValue = '';
-        $pNodes = $node->getElementsByTagName(self::XML_NODE_P);
-
-        if ($pNodes->length > 0) {
-            $nodeValue = $pNodes->item(0)->nodeValue;
-        }
-
-        return $nodeValue;
     }
 
     /**
@@ -110,27 +111,87 @@ class CellValueFormatter
     }
 
     /**
-     * Returns the cell Numeric value from string of nodeValue.
+     * Returns the cell Numeric value from the given node.
      *
-     * @param string $pNodeValue
+     * @param \DOMNode $node
      * @return int|float The value associated with the cell
      */
-    protected function formatFloatCellValue($pNodeValue)
+    protected function formatFloatCellValue($node)
     {
-        $cellValue = is_int($pNodeValue) ? intval($pNodeValue) : floatval($pNodeValue);
+        $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_VALUE);
+        $cellValue = is_int($nodeValue) ? intval($nodeValue) : floatval($nodeValue);
         return $cellValue;
     }
 
     /**
-     * Returns the cell Boolean value from a specific node's Value.
+     * Returns the cell Boolean value from the given node.
      *
-     * @param string $pNodeValue
+     * @param \DOMNode $node
      * @return bool The value associated with the cell
      */
-    protected function formatBooleanCellValue($pNodeValue)
+    protected function formatBooleanCellValue($node)
     {
+        $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_BOOLEAN_VALUE);
         // !! is similar to boolval()
-        $cellValue = !!$pNodeValue;
+        $cellValue = !!$nodeValue;
         return $cellValue;
+    }
+
+    /**
+     * Returns the cell Date value from the given node.
+     *
+     * @param \DOMNode $node
+     * @return \DateTime|null The value associated with the cell or NULL if invalid date value
+     */
+    protected function formatDateCellValue($node)
+    {
+        try {
+            $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_DATE_VALUE);
+            return new \DateTime($nodeValue);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the cell Time value from the given node.
+     *
+     * @param \DOMNode $node
+     * @return \DateInterval|null The value associated with the cell or NULL if invalid time value
+     */
+    protected function formatTimeCellValue($node)
+    {
+        try {
+            $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_TIME_VALUE);
+            return new \DateInterval($nodeValue);
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the cell Currency value from the given node.
+     *
+     * @param \DOMNode $node
+     * @return string The value associated with the cell (e.g. "100 USD" or "9.99 EUR")
+     */
+    protected function formatCurrencyCellValue($node)
+    {
+        $value = $node->getAttribute(self::XML_ATTRIBUTE_VALUE);
+        $currency = $node->getAttribute(self::XML_ATTRIBUTE_CURRENCY);
+
+        return "$value $currency";
+    }
+
+    /**
+     * Returns the cell Percentage value from the given node.
+     *
+     * @param \DOMNode $node
+     * @return int|float The value associated with the cell
+     */
+    protected function formatPercentageCellValue($node)
+    {
+        // percentages are formatted like floats
+        return $this->formatFloatCellValue($node);
     }
 }

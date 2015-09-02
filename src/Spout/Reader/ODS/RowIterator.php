@@ -174,7 +174,7 @@ class RowIterator implements IteratorInterface
      * Returns the (unescaped) correctly marshalled, cell value associated to the given XML node.
      *
      * @param \DOMNode $node
-     * @return string|int|float|bool The value associated with the cell (or empty string if cell's type is undefined)
+     * @return string|int|float|bool|\DateTime|\DateInterval|null The value associated with the cell, empty string if cell's type is void/undefined, null on error
      */
     protected function getCellValue($node)
     {
