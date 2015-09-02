@@ -18,7 +18,7 @@ class Workbook extends AbstractWorkbook
 {
     /**
      * Maximum number of rows a ODS sheet can contain
-     * @see http://office.microsoft.com/en-us/excel-help/excel-specifications-and-limits-HP010073849.aspx
+     * @see https://ask.libreoffice.org/en/question/8631/upper-limit-to-number-of-rows-in-calc/
      */
     protected static $maxRowsPerWorksheet = 1048576;
 

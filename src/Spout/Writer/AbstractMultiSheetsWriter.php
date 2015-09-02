@@ -16,7 +16,7 @@ abstract class AbstractMultiSheetsWriter extends AbstractWriter
     protected $shouldCreateNewSheetsAutomatically = true;
 
     /**
-     * @return Common\WorkbookInterface The workbook representing the file to be written
+     * @return Common\Internal\WorkbookInterface The workbook representing the file to be written
      */
     abstract protected function getWorkbook();
 
@@ -49,7 +49,7 @@ abstract class AbstractMultiSheetsWriter extends AbstractWriter
         $externalSheets = [];
         $worksheets = $this->getWorkbook()->getWorksheets();
 
-        /** @var Common\WorksheetInterface $worksheet */
+        /** @var Common\Internal\WorksheetInterface $worksheet */
         foreach ($worksheets as $worksheet) {
             $externalSheets[] = $worksheet->getExternalSheet();
         }
