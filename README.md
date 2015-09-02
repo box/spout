@@ -7,7 +7,7 @@
 [![Total Downloads](https://poser.pugx.org/box/spout/downloads)](https://packagist.org/packages/box/spout)
 [![License](https://poser.pugx.org/box/spout/license)](https://packagist.org/packages/box/spout)
 
-Spout is a PHP library to read and write CSV and XLSX files, in a fast and scalable way.
+Spout is a PHP library to read and write spreadsheet files (CSV, XLSX and ODS), in a fast and scalable way.
 Contrary to other file readers or writers, it is capable of processing very large files while keeping the memory usage really low (less than 10MB).
 
 Join the community and come discuss about Spout: [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/box/spout?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
@@ -56,71 +56,51 @@ require_once '[PATH/TO]/src/Spout/Autoloader/autoload.php'; // don't forget to c
 
 ### Reader
 
-#### How to read a CSV file?
+Regardless of the file type, the interface to read a file is always the same:
 
 ```php
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Common\Type;
 
-$reader = ReaderFactory::create(Type::CSV);
+$reader = ReaderFactory::create(Type::CSV); // for CSV files
+//$reader = ReaderFactory::create(Type::XLSX); // for XLSX files
+//$reader = ReaderFactory::create(Type::ODS); // for ODS files
+
 $reader->open($filePath);
 
 foreach ($reader->getSheetIterator() as $sheet) {
     foreach ($sheet->getRowIterator() as $row) {
-        // do stuff
+        // do stuff with the row
     }
 }
 
 $reader->close();
 ```
 
-#### How to read a XLSX file?
-
-```php
-use Box\Spout\Reader\ReaderFactory;
-use Box\Spout\Common\Type;
-
-$reader = ReaderFactory::create(Type::XLSX);
-$reader->open($filePath);
-
-foreach ($reader->getSheetIterator() as $sheet) {
-    foreach ($sheet->getRowIterator() as $row) {
-        // do stuff
-    }
-}
-
-$reader->close();
-```
-
-If there are multiple sheets in the file, the reader will read through all of them sequentially.
+If there are multiple sheets in the file, the reader will read all of them sequentially.
 
 ### Writer
 
-### How to create a CSV file?
+As with the reader, there is one common interface to write data to a file:
 
 ```php
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Common\Type;
 
-$writer = WriterFactory::create(Type::CSV);
+$writer = WriterFactory::create(Type::CSV); // for CSV files
+//$writer = WriterFactory::create(Type::XLSX); // for XLSX files
+//$writer = WriterFactory::create(Type::ODS); // for ODS files
+
 $writer->openToFile($filePath); // write data to a file or to a PHP stream
+//$writer->openToBrowser($fileName); // stream data directly to the browser
+
 $writer->addRow($singleRow); // add a row at a time
-$writer->close();
-```
-
-### How to create a XLSX file?
-
-```php
-use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Common\Type;
-
-$writer = WriterFactory::create(Type::XLSX);
-$writer->openToBrowser($fileName); // stream data directly to the browser
 $writer->addRows($multipleRows); // add multiple rows at a time
+
 $writer->close();
 ```
 
-For XLSX files, the number of rows per sheet is limited to 1,048,576 (see [Office OpenXML specs](http://office.microsoft.com/en-us/excel-help/excel-specifications-and-limits-HP010073849.aspx)). By default, once this limit is reached, the writer will automatically create a new sheet and continue writing data into it.
+For XLSX and ODS files, the number of rows per sheet is limited to 1,048,576. By default, once this limit is reached, the writer will automatically create a new sheet and continue writing data into it.
 
 
 ## Advanced usage
@@ -144,7 +124,8 @@ $reader->setEncoding('UTF-16LE');
 
 The writer always generate CSV files encoded in UTF-8, with a BOM.
 
-### Configuring the XLSX writer
+
+### Configuring the XLSX and ODS writers
 
 #### Row styling
 
@@ -187,7 +168,30 @@ Font      | Bold          | `StyleBuilder::setFontBold()`
 Alignment | Wrap text     | `StyleBuilder::setShouldWrapText()`
 
 
-#### Strings storage
+#### New sheet creation
+
+It is also possible to change the behavior of the writer when the maximum number of rows (1,048,576) have been written in the current sheet:
+```php
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
+
+$writer = WriterFactory::create(Type::ODS);
+$writer->setShouldCreateNewSheetsAutomatically(true); // default value
+$writer->setShouldCreateNewSheetsAutomatically(false); // will stop writing new data when limit is reached
+```
+
+#### Using custom temporary folder
+
+Processing XLSX and ODS files require temporary files to be created. By default, Spout will use the system default temporary folder (as returned by `sys_get_temp_dir()`). It is possible to override this by explicitly setting it on the reader or writer:
+```php
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
+
+$writer = WriterFactory::create(Type::XLSX);
+$writer->setTempFolder($customTempFolderPath);
+```
+
+#### Strings storage (XLSX writer)
 
 XLSX files support different ways to store the string values:
 * Shared strings are meant to optimize file size by separating strings from the sheet representation and ignoring strings duplicates (if a string is used three times, only one string will be stored)
@@ -205,36 +209,12 @@ $writer->setShouldUseInlineStrings(false); // will use shared strings
 
 > ##### Note on Apple Numbers and iOS support
 >
-> Apple's products (Numbers and the iOS previewer) don't support inline strings and display empty cells instead. Therefore, if these platforms need to be supported, make sure to use shared strings! 
+> Apple's products (Numbers and the iOS previewer) don't support inline strings and display empty cells instead. Therefore, if these platforms need to be supported, make sure to use shared strings!
 
 
-#### New sheet creation
+### Playing with sheets
 
-It is also possible to change the behavior of the writer when the maximum number of rows (1,048,576) have been written in the current sheet:
-```php
-use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Common\Type;
-
-$writer = WriterFactory::create(Type::XLSX);
-$writer->setShouldCreateNewSheetsAutomatically(true); // default value
-$writer->setShouldCreateNewSheetsAutomatically(false); // will stop writing new data when limit is reached
-```
-
-#### Using custom temporary folder
-
-Processing XLSX files require temporary files to be created. By default, Spout will use the system default temporary folder (as returned by sys_get_temp_dir()). It is possible to override this by explicitly setting it on the reader or writer:
-```php
-use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Common\Type;
-
-$writer = WriterFactory::create(Type::XLSX);
-$writer->setTempFolder($customTempFolderPath);
-```
-
-### Playing with XLSX sheets
-
-When creating a XLSX file, it is possible to control in which sheet the data will be written to.
-At any point, you can retrieve the current sheet and set the current sheet:
+When creating a XLSX or ODS file, it is possible to control which sheet the data will be written into. At any time, you can retrieve or set the current sheet:
 ```php
 $firstSheet = $writer->getCurrentSheet();
 $writer->addRow($rowForSheet1); // writes the row to the first sheet
@@ -264,7 +244,7 @@ $sheetName = $sheet->getName();
 
 // Customizing the sheet name when writing
 $sheet = $writer->getCurrentSheet();
-$sheetName = $sheet->setName('My custom name');
+$sheet->setName('My custom name');
 ``` 
 
 > Please note that Excel has some restrictions on the sheet's name:
@@ -296,8 +276,8 @@ $writer->setTempFolder($customTempFolderPath)
 
 ## Running tests
 
-On the `master` branch, only unit and functional tests are included. The performance requires very large files and have been excluded.
-If you just want to check that everything is working as expected, executing the tests of the master branch is enough.
+On the `master` branch, only unit and functional tests are included. The performance tests require very large files and have been excluded.
+If you just want to check that everything is working as expected, executing the tests of the `master` branch is enough.
 
 If you want to run performance tests, you will need to checkout the `perf-tests` branch. Multiple test suites can then be run, depending on the expected output:
 
@@ -320,13 +300,15 @@ Same goes with reading. Only one row at a time is stored in memory. A special te
 
 Here are a few numbers regarding the performance of Spout:
 
-|                                  | 2,000 rows (6,000 cells) | 200,000 rows (600,000 cells) | 2,000,000 rows (6,000,000 cells) |
-| :------------------------------- | :----------------------: | :--------------------------: | :------------------------------: |
-| Read CSV                         | < 1 second               | 4 seconds                    | 2-3 minutes                      |
-| Write CSV                        | < 1 second               | 2 seconds                    | 2-3 minutes                      |
-| Read XLSX (using inline strings) | < 1 second               | 35-40 seconds                | 18-20 minutes                    |
-| Read XLSX (using shared strings) | 1 second                 | 1-2 minutes                  | 35-40 minutes                    |
-| Write XLSX                       | 1 second                 | 20-25 seconds                | 8-10 minutes                     |
+| Type | Action                        | 2,000 rows (6,000 cells) | 200,000 rows (600,000 cells) | 2,000,000 rows (6,000,000 cells) |
+|------|-------------------------------|--------------------------|------------------------------|----------------------------------|
+| CSV  | Read                          | < 1 second               | 4 seconds                    | 2-3 minutes                      |
+|      | Write                         | < 1 second               | 2 seconds                    | 2-3 minutes                      |
+| XLSX | Read<br>*inline&nbsp;strings* | < 1 second               | 35-40 seconds                | 18-20 minutes                    |
+|      | Read<br>*shared&nbsp;strings* | 1 second                 | 1-2 minutes                  | 35-40 minutes                    |
+|      | Write                         | 1 second                 | 20-25 seconds                | 8-10 minutes                     |
+| ODS  | Read                          | 1 second                 | 1-2 minutes                  | 5-6 minutes                      |
+|      | Write                         | < 1 second               | 35-40 seconds                | 5-6 minutes                      |
 
 #### Does Spout support charts or formulas?
 
