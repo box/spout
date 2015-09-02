@@ -165,7 +165,7 @@ class CellValueFormatter
      * Returns a cell's PHP Date value, associated to the given stored nodeValue.
      *
      * @param string $nodeValue
-     * @return \DateTime|null The value associated with the cell (null when the cell has an error)
+     * @return \DateTime|null The value associated with the cell or NULL if invalid date value
      */
     protected function formatDateCellValue($nodeValue)
     {

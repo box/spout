@@ -143,6 +143,9 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testReadShouldSupportAllCellTypes()
     {
+        $utcTz = new \DateTimeZone('UTC');
+        $honoluluTz = new \DateTimeZone('Pacific/Honolulu'); // UTC-10
+
         $allRows = $this->getAllRowsForFile('sheet_with_all_cell_types.ods');
 
         $expectedRows = [
@@ -150,6 +153,11 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
                 'ods--11', 'ods--12',
                 true, false,
                 0, 10.43,
+                new \DateTime('1987-11-29T00:00:00', $utcTz), new \DateTime('1987-11-29T13:37:00', $utcTz),
+                new \DateTime('1987-11-29T13:37:00', $utcTz), new \DateTime('1987-11-29T13:37:00', $honoluluTz),
+                new \DateInterval('PT13H37M00S'),
+                0, 0.42,
+                '42 USD', '9.99 EUR',
                 '',
             ],
         ];
@@ -163,6 +171,15 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     {
         $allRows = $this->getAllRowsForFile('sheet_with_undefined_value_type.ods');
         $this->assertEquals([['ods--11', '', 'ods--13']], $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadShouldReturnNullOnInvalidDateOrTime()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_invalid_date_time.ods');
+        $this->assertEquals([[null, null]], $allRows);
     }
 
     /**

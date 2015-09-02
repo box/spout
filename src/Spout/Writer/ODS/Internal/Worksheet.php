@@ -194,7 +194,7 @@ class Worksheet implements WorksheetInterface
 
             $data .= '</table:table-cell>';
         } else if (CellHelper::isBoolean($cellValue)) {
-            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:value="' . $cellValue . '">';
+            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:boolean-value="' . $cellValue . '">';
             $data .= '<text:p>' . $cellValue . '</text:p>';
             $data .= '</table:table-cell>';
         } else if (CellHelper::isNumeric($cellValue)) {
