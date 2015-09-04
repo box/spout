@@ -27,9 +27,6 @@ class Writer extends AbstractMultiSheetsWriter
     /** @var bool Whether inline or shared strings should be used - inline string is more memory efficient */
     protected $shouldUseInlineStrings = true;
 
-    /** @var bool Whether new sheets should be automatically created when the max rows limit per sheet is reached */
-    protected $shouldCreateNewSheetsAutomatically = true;
-
     /** @var Internal\Workbook The workbook for the XLSX file */
     protected $book;
 
@@ -62,22 +59,6 @@ class Writer extends AbstractMultiSheetsWriter
         $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
         $this->shouldUseInlineStrings = $shouldUseInlineStrings;
-        return $this;
-    }
-
-    /**
-     * Sets whether new sheets should be automatically created when the max rows limit per sheet is reached.
-     * This must be set before opening the writer.
-     *
-     * @param bool $shouldCreateNewSheetsAutomatically Whether new sheets should be automatically created when the max rows limit per sheet is reached
-     * @return Writer
-     * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
-     */
-    public function setShouldCreateNewSheetsAutomatically($shouldCreateNewSheetsAutomatically)
-    {
-        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
-
-        $this->shouldCreateNewSheetsAutomatically = $shouldCreateNewSheetsAutomatically;
         return $this;
     }
 
