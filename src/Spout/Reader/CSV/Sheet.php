@@ -27,6 +27,7 @@ class Sheet implements SheetInterface
     }
 
     /**
+     * @api
      * @return RowIterator
      */
     public function getRowIterator()

@@ -34,6 +34,7 @@ class Writer extends AbstractMultiSheetsWriter
      * Sets a custom temporary folder for creating intermediate files/folders.
      * This must be set before opening the writer.
      *
+     * @api
      * @param string $tempFolder Temporary folder where the files to create the XLSX will be stored
      * @return Writer
      * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
@@ -50,6 +51,7 @@ class Writer extends AbstractMultiSheetsWriter
      * Use inline string to be more memory efficient. If set to false, it will use shared strings.
      * This must be set before opening the writer.
      *
+     * @api
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
      * @return Writer
      * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
