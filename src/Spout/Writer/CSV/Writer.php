@@ -32,6 +32,7 @@ class Writer extends AbstractWriter
     /**
      * Sets the field delimiter for the CSV
      *
+     * @api
      * @param string $fieldDelimiter Character that delimits fields
      * @return Writer
      */
@@ -44,6 +45,7 @@ class Writer extends AbstractWriter
     /**
      * Sets the field enclosure for the CSV
      *
+     * @api
      * @param string $fieldEnclosure Character that enclose fields
      * @return Writer
      */

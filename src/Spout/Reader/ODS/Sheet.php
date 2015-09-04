@@ -38,6 +38,7 @@ class Sheet implements SheetInterface
     }
 
     /**
+     * @api
      * @return RowIterator
      */
     public function getRowIterator()
@@ -46,6 +47,7 @@ class Sheet implements SheetInterface
     }
 
     /**
+     * @api
      * @return int Index of the sheet, based on order of creation (zero-based)
      */
     public function getIndex()
@@ -54,6 +56,7 @@ class Sheet implements SheetInterface
     }
 
     /**
+     * @api
      * @return string Name of the sheet
      */
     public function getName()

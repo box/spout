@@ -44,6 +44,7 @@ class Sheet
     }
 
     /**
+     * @api
      * @return int Index of the sheet, based on order of creation (zero-based)
      */
     public function getIndex()
@@ -52,6 +53,7 @@ class Sheet
     }
 
     /**
+     * @api
      * @return string Name of the sheet
      */
     public function getName()
@@ -66,6 +68,7 @@ class Sheet
      *  - it should not contain these characters: \ / ? * : [ or ]
      *  - it should be unique
      *
+     * @api
      * @param string $name Name of the sheet
      * @return Sheet
      * @throws \Box\Spout\Writer\Exception\InvalidSheetNameException If the sheet's name is invalid.

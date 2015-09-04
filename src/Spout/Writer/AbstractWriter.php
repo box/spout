@@ -85,6 +85,7 @@ abstract class AbstractWriter implements WriterInterface
      * Inits the writer and opens it to accept data.
      * By using this method, the data will be written to a file.
      *
+     * @api
      * @param  string $outputFilePath Path of the output file that will contain the data
      * @return AbstractWriter
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened or if the given path is not writable
@@ -108,6 +109,7 @@ abstract class AbstractWriter implements WriterInterface
      *
      * @codeCoverageIgnore
      *
+     * @api
      * @param  string $outputFileName Name of the output file that will contain the data. If a path is passed in, only the file name will be kept
      * @return AbstractWriter
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened
@@ -174,7 +176,7 @@ abstract class AbstractWriter implements WriterInterface
      * @param  array $dataRow Array containing data to be streamed.
      *                        If empty, no data is added (i.e. not even as a blank row)
      *                        Example: $dataRow = ['data1', 1234, null, '', 'data5', false];
-     *
+     * @api
      * @return AbstractWriter
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
@@ -197,6 +199,7 @@ abstract class AbstractWriter implements WriterInterface
      * Write given data to the output and apply the given style.
      * @see addRow
      *
+     * @api
      * @param array $dataRow Array of array containing data to be streamed.
      * @param Style\Style $style Style to be applied to the row.
      * @return AbstractWriter
@@ -220,13 +223,13 @@ abstract class AbstractWriter implements WriterInterface
     /**
      * Write given data to the output. New data will be appended to end of stream.
      *
+     * @api
      * @param  array $dataRows Array of array containing data to be streamed.
      *                         If a row is empty, it won't be added (i.e. not even as a blank row)
      *                         Example: $dataRows = [
      *                             ['data11', 12, , '', 'data13'],
      *                             ['data21', 'data22', null, false],
      *                         ];
-     *
      * @return AbstractWriter
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
@@ -251,6 +254,7 @@ abstract class AbstractWriter implements WriterInterface
      * Write given data to the output and apply the given style.
      * @see addRows
      *
+     * @api
      * @param array $dataRows Array of array containing data to be streamed.
      * @param Style\Style $style Style to be applied to the rows.
      * @return AbstractWriter
@@ -309,6 +313,7 @@ abstract class AbstractWriter implements WriterInterface
      * Closes the writer. This will close the streamer as well, preventing new data
      * to be written to the file.
      *
+     * @api
      * @return void
      */
     public function close()
