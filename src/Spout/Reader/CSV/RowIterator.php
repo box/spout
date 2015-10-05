@@ -111,26 +111,28 @@ class RowIterator implements IteratorInterface
      */
     public function next()
     {
-        $lineData = false;
         $this->hasReachedEndOfFile = $this->globalFunctionsHelper->feof($this->filePointer);
 
-        if (!$this->hasReachedEndOfFile) {
-            do {
-                $utf8EncodedLineData = $this->getNextUTF8EncodedLine();
-                if ($utf8EncodedLineData !== false) {
-                    $lineData = $this->globalFunctionsHelper->str_getcsv($utf8EncodedLineData, $this->fieldDelimiter, $this->fieldEnclosure);
-                }
-                $hasNowReachedEndOfFile = $this->globalFunctionsHelper->feof($this->filePointer);
-            } while (($lineData === false && !$hasNowReachedEndOfFile) || $this->isEmptyLine($lineData));
+        if ($this->hasReachedEndOfFile) {
+            return;
+        }
 
-            if ($lineData !== false) {
-                $this->rowDataBuffer = $lineData;
-                $this->numReadRows++;
-            } else {
-                // If we reach this point, it means end of file was reached.
-                // This happens when the last lines are empty lines.
-                $this->hasReachedEndOfFile = $hasNowReachedEndOfFile;
+        do {
+            $lineData = false;
+            $utf8EncodedLineData = $this->getNextUTF8EncodedLine();
+            if ($utf8EncodedLineData !== false) {
+                $lineData = $this->globalFunctionsHelper->str_getcsv($utf8EncodedLineData, $this->fieldDelimiter, $this->fieldEnclosure);
             }
+            $hasNowReachedEndOfFile = $this->globalFunctionsHelper->feof($this->filePointer);
+        } while (($lineData === false && !$hasNowReachedEndOfFile) || $this->isEmptyLine($lineData));
+
+        if ($lineData !== false) {
+            $this->rowDataBuffer = $lineData;
+            $this->numReadRows++;
+        } else {
+            // If we reach this point, it means end of file was reached.
+            // This happens when the last lines are empty lines.
+            $this->hasReachedEndOfFile = $hasNowReachedEndOfFile;
         }
     }
 
