@@ -143,6 +143,29 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return array
+     */
+    public function dataProviderForTestReadShouldReadEmptyFile()
+    {
+        return [
+            ['csv_empty.csv'],
+            ['csv_all_lines_empty.csv'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForTestReadShouldReadEmptyFile
+     *
+     * @param string $fileName
+     * @return void
+     */
+    public function testReadShouldReadEmptyFile($fileName)
+    {
+        $allRows = $this->getAllRowsForFile($fileName);
+        $this->assertEquals([], $allRows);
+    }
+
+    /**
      * @return void
      */
     public function testReadShouldHaveTheRightNumberOfCells()
