@@ -50,11 +50,11 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
         $style = (new StyleBuilder())->setFontBold()->build();
 
         $styleHelper = new StyleHelper($this->defaultStyle);
-        $registeredStyle1 = $styleHelper->registerStyle($style);
-        $registeredStyle2 = $styleHelper->registerStyle($style);
+        $registeredStyles = $styleHelper->registerStyle($style);
+        $registeredStyles = $styleHelper->registerStyle($style);
 
-        $this->assertEquals(1, $registeredStyle1->getId());
-        $this->assertEquals(1, $registeredStyle2->getId());
+        $this->assertEquals(1, $registeredStyles[0]->getId());
+        $this->assertEquals(1, $registeredStyles[0]->getId());
     }
 
     /**
