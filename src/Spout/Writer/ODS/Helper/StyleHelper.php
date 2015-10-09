@@ -24,8 +24,11 @@ class StyleHelper extends AbstractStyleHelper
      */
     public function registerStyle($style)
     {
-        $this->usedFontsSet[$style->getFontName()] = true;
-        return parent::registerStyle($style);
+        $styles = is_array($style) ? $style : [$style];
+        foreach ($styles as $style ) {
+            $this->usedFontsSet[$style->getFontName()] = true;
+        }
+        return parent::registerStyle($styles);
     }
 
     /**

@@ -134,7 +134,9 @@ class Worksheet implements WorksheetInterface
      */
     public function addRow($dataRow, $style)
     {
-        $styleIndex = ($style->getId() + 1); // 1-based
+        if (!is_array($style)) {
+            $styleIndex = ($style->getId() + 1); // 1-based
+        }
         $cellsCount = count($dataRow);
         $this->maxNumColumns = max($this->maxNumColumns, $cellsCount);
 
@@ -145,6 +147,10 @@ class Worksheet implements WorksheetInterface
 
         for ($i = 0; $i < $cellsCount; $i++) {
             $currentCellValue = $dataRow[$currentCellIndex];
+
+            if (is_array($style)) {
+                $styleIndex = 1 + (isset($style[$i]) ? $style[$i]->getId() : $style[0]->getId());
+            }
 
             if (!array_key_exists($nextCellIndex, $dataRow) || $currentCellValue !== $dataRow[$nextCellIndex]) {
                 $numTimesValueRepeated = ($nextCellIndex - $currentCellIndex);

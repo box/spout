@@ -34,17 +34,22 @@ abstract class AbstractStyleHelper
      */
     public function registerStyle($style)
     {
-        $serializedStyle = $style->serialize();
+        $return = [];
+        $styles = is_array($style) ? $style : [$style];
 
-        if (!$this->hasStyleAlreadyBeenRegistered($style)) {
-            $nextStyleId = count($this->serializedStyleToStyleIdMappingTable);
-            $style->setId($nextStyleId);
+        foreach ($styles as $style) {
+            $serializedStyle = $style->serialize();
 
-            $this->serializedStyleToStyleIdMappingTable[$serializedStyle] = $nextStyleId;
-            $this->styleIdToStyleMappingTable[$nextStyleId] = $style;
+            if (!$this->hasStyleAlreadyBeenRegistered($style)) {
+                $nextStyleId = count($this->serializedStyleToStyleIdMappingTable);
+                $style->setId($nextStyleId);
+                $this->serializedStyleToStyleIdMappingTable[$serializedStyle] = $nextStyleId;
+                $this->styleIdToStyleMappingTable[$nextStyleId] = $style;
+            }
+            $return[] = $this->getStyleFromSerializedStyle($serializedStyle);
         }
 
-        return $this->getStyleFromSerializedStyle($serializedStyle);
+        return $return;
     }
 
     /**
@@ -120,13 +125,19 @@ abstract class AbstractStyleHelper
     protected function applyWrapTextIfCellContainsNewLine($style, $dataRow)
     {
         // if the "wrap text" option is already set, no-op
-        if ($style->shouldWrapText()) {
+        if (!is_array($style) && $style->shouldWrapText()) {
             return $style;
         }
 
-        foreach ($dataRow as $cell) {
+        foreach ($dataRow as $index => $cell) {
             if (is_string($cell) && strpos($cell, "\n") !== false) {
-                $style->setShouldWrapText();
+                // if the "wrap text" option is already set, no-op
+                if (!is_array($style)) {
+                    $style->setShouldWrapText();
+                   break;
+                } else if (!$style[$index]->shouldWrapText()) {
+                    $style[$index]->setShouldWrapText();
+                }
                 break;
             }
         }
