@@ -34,7 +34,7 @@ abstract class AbstractStyleHelper
      */
     public function registerStyle($style)
     {
-        $return = [];
+
         $styles = is_array($style) ? $style : [$style];
 
         foreach ($styles as $style) {
@@ -43,10 +43,15 @@ abstract class AbstractStyleHelper
             if (!$this->hasStyleAlreadyBeenRegistered($style)) {
                 $nextStyleId = count($this->serializedStyleToStyleIdMappingTable);
                 $style->setId($nextStyleId);
+
                 $this->serializedStyleToStyleIdMappingTable[$serializedStyle] = $nextStyleId;
                 $this->styleIdToStyleMappingTable[$nextStyleId] = $style;
             }
-            $return[] = $this->getStyleFromSerializedStyle($serializedStyle);
+        }
+
+        $return = [];
+        foreach ($this->serializedStyleToStyleIdMappingTable as $serializedStyle => $styleId) {
+            $return[$styleId] = $this->styleIdToStyleMappingTable[$styleId];
         }
 
         return $return;
