@@ -53,8 +53,9 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
         $registeredStyles = $styleHelper->registerStyle($style);
         $registeredStyles = $styleHelper->registerStyle($style);
 
-        $this->assertEquals(1, $registeredStyles[0]->getId());
-        $this->assertEquals(1, $registeredStyles[0]->getId());
+        $this->assertEquals(1, $registeredStyles[1]->getId());
+        $this->assertEquals(1, $registeredStyles[1]->getId());
+        $this->assertEquals(2, count($registeredStyles));
     }
 
     /**
