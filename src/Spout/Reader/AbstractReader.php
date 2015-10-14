@@ -72,7 +72,9 @@ abstract class AbstractReader implements ReaderInterface
         }
 
         try {
-            $this->openReader($filePath);
+            // Need to use realpath to fix "Can't open file" on some Windows setup
+            $fileRealPath = realpath($filePath);
+            $this->openReader($fileRealPath);
             $this->isStreamOpened = true;
         } catch (\Exception $exception) {
             throw new IOException("Could not open $filePath for reading! ({$exception->getMessage()})");

@@ -26,18 +26,43 @@ class XMLReader extends \XMLReader
     public function open($URI, $encoding = null, $options = 0)
     {
         $wasOpenSuccessful = false;
+        $realPathURI = $this->convertURIToUseRealPath($URI);
 
         // HHVM does not check if file exists within zip file
         // @link https://github.com/facebook/hhvm/issues/5779
-        if ($this->isRunningHHVM() && $this->isZipStream($URI)) {
-            if ($this->fileExistsWithinZip($URI)) {
-                $wasOpenSuccessful = parent::open($URI, $encoding, $options|LIBXML_NONET);
+        if ($this->isRunningHHVM() && $this->isZipStream($realPathURI)) {
+            if ($this->fileExistsWithinZip($realPathURI)) {
+                $wasOpenSuccessful = parent::open($realPathURI, $encoding, $options|LIBXML_NONET);
             }
         } else {
-            $wasOpenSuccessful = parent::open($URI, $encoding, $options|LIBXML_NONET);
+            $wasOpenSuccessful = parent::open($realPathURI, $encoding, $options|LIBXML_NONET);
         }
 
         return $wasOpenSuccessful;
+    }
+
+    /**
+     * Updates the given URI to use a real path.
+     * This is to avoid issues on some Windows setup.
+     *
+     * @param string $URI URI
+     * @return string The URI using a real path
+     */
+    protected function convertURIToUseRealPath($URI)
+    {
+        $realPathURI = $URI;
+
+        if ($this->isZipStream($URI)) {
+            if (preg_match('/zip:\/\/(.*)#(.*)/', $URI, $matches)) {
+                $documentPath = $matches[1];
+                $documentInsideZipPath = $matches[2];
+                $realPathURI = 'zip://' . realpath($documentPath) . '#' . $documentInsideZipPath;
+            }
+        } else {
+            $realPathURI = realpath($URI);
+        }
+
+        return $realPathURI;
     }
 
     /**
