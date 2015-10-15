@@ -164,7 +164,43 @@ class GlobalFunctionsHelper
      */
     public function file_get_contents($filePath)
     {
-        return file_get_contents($filePath);
+        $realFilePath = $this->convertToUseRealPath($filePath);
+        return file_get_contents($realFilePath);
+    }
+
+    /**
+     * Updates the given file path to use a real path.
+     * This is to avoid issues on some Windows setup.
+     *
+     * @param string $filePath File path
+     * @return string The file path using a real path
+     */
+    protected function convertToUseRealPath($filePath)
+    {
+        $realFilePath = $filePath;
+
+        if ($this->isZipStream($filePath)) {
+            if (preg_match('/zip:\/\/(.*)#(.*)/', $filePath, $matches)) {
+                $documentPath = $matches[1];
+                $documentInsideZipPath = $matches[2];
+                $realFilePath = 'zip://' . realpath($documentPath) . '#' . $documentInsideZipPath;
+            }
+        } else {
+            $realFilePath = realpath($filePath);
+        }
+
+        return $realFilePath;
+    }
+
+    /**
+     * Returns whether the given path is a zip stream.
+     *
+     * @param string $path Path pointing to a document
+     * @return bool TRUE if path is a zip stream, FALSE otherwise
+     */
+    protected function isZipStream($path)
+    {
+        return (strpos($path, 'zip://') === 0);
     }
 
     /**

@@ -10,13 +10,13 @@ namespace Box\Spout;
 trait TestUsingResource {
 
     /** @var string Path to the test resources folder */
-    private $resourcesPath = 'tests/resources/';
+    private $resourcesPath = 'tests/resources';
 
     /** @var string Path to the test generated resources folder */
-    private $generatedResourcesPath = 'tests/resources/generated/';
+    private $generatedResourcesPath = 'tests/resources/generated';
 
     /** @var string Path to the test resources folder, that does not have writing permissions */
-    private $generatedUnwritableResourcesPath = 'tests/resources/generated/unwritable/';
+    private $generatedUnwritableResourcesPath = 'tests/resources/generated/unwritable';
 
     /**
      * @param string $resourceName
@@ -25,7 +25,7 @@ trait TestUsingResource {
     protected function getResourcePath($resourceName)
     {
         $resourceType = pathinfo($resourceName, PATHINFO_EXTENSION);
-        $resourcePath = $this->resourcesPath . strtolower($resourceType) . '/' . $resourceName;
+        $resourcePath = realpath($this->resourcesPath) . '/' . strtolower($resourceType) . '/' . $resourceName;
 
         return (file_exists($resourcePath) ? $resourcePath : null);
     }
@@ -37,7 +37,7 @@ trait TestUsingResource {
     protected function getGeneratedResourcePath($resourceName)
     {
         $resourceType = pathinfo($resourceName, PATHINFO_EXTENSION);
-        $generatedResourcePath = $this->generatedResourcesPath . strtolower($resourceType) . '/' . $resourceName;
+        $generatedResourcePath = realpath($this->generatedResourcesPath) . '/' . strtolower($resourceType) . '/' . $resourceName;
 
         return $generatedResourcePath;
     }
@@ -49,7 +49,7 @@ trait TestUsingResource {
     protected function createGeneratedFolderIfNeeded($resourceName)
     {
         $resourceType = pathinfo($resourceName, PATHINFO_EXTENSION);
-        $generatedResourcePathForType = $this->generatedResourcesPath . strtolower($resourceType);
+        $generatedResourcePathForType = $this->generatedResourcesPath . '/' . strtolower($resourceType);
 
         if (!file_exists($generatedResourcePathForType)) {
             mkdir($generatedResourcePathForType, 0777, true);
@@ -62,7 +62,7 @@ trait TestUsingResource {
      */
     protected function getGeneratedUnwritableResourcePath($resourceName)
     {
-        return $this->generatedUnwritableResourcesPath . $resourceName;
+        return realpath($this->generatedUnwritableResourcesPath) . '/' . $resourceName;
     }
 
     /**

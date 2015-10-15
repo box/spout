@@ -163,4 +163,39 @@ class XMLReaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedResult, $isZipStream);
     }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForTestConvertURIToUseRealPath()
+    {
+        $tempFolder = realpath(sys_get_temp_dir());
+
+        return [
+            ['/../../../' . $tempFolder . '/test.xlsx', $tempFolder . '/test.xlsx'],
+            [$tempFolder . '/test.xlsx', $tempFolder . '/test.xlsx'],
+            ['zip://' . $tempFolder . '/test.xlsx#test.xml', 'zip://' . $tempFolder . '/test.xlsx#test.xml'],
+            ['zip:///../../../' . $tempFolder . '/test.xlsx#test.xml', 'zip://' . $tempFolder . '/test.xlsx#test.xml'],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForTestConvertURIToUseRealPath
+     *
+     * @param string $URI
+     * @param string $expectedConvertedURI
+     * @return void
+     */
+    public function testConvertURIToUseRealPath($URI, $expectedConvertedURI)
+    {
+        $tempFolder = sys_get_temp_dir();
+        touch($tempFolder . '/test.xlsx');
+
+        $xmlReader = new XMLReader();
+        $convertedURI = \ReflectionHelper::callMethodOnObject($xmlReader, 'convertURIToUseRealPath', $URI);
+
+        $this->assertEquals($expectedConvertedURI, $convertedURI);
+
+        unlink($tempFolder . '/test.xlsx');
+    }
 }
