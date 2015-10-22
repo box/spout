@@ -13,6 +13,12 @@ use Box\Spout\Common\Helper\EncodingHelper;
  */
 class RowIterator implements IteratorInterface
 {
+    /**
+     * If no value is given to stream_get_line(), it defaults to 8192 (which may be too low).
+     * Alignement with other functions like fgets() is discussed here: https://bugs.php.net/bug.php?id=48421
+     */
+    const MAX_READ_BYTES_PER_LINE = 32768;
+
     /** @var resource Pointer to the CSV file to read */
     protected $filePointer;
 
@@ -147,7 +153,7 @@ class RowIterator implements IteratorInterface
     {
         // Read until the EOL delimiter or EOF is reached. The delimiter's encoding needs to match the CSV's encoding.
         $encodedEOLDelimiter = $this->getEncodedEOLDelimiter();
-        $encodedLineData = $this->globalFunctionsHelper->stream_get_line($this->filePointer, 0, $encodedEOLDelimiter);
+        $encodedLineData = $this->globalFunctionsHelper->stream_get_line($this->filePointer, self::MAX_READ_BYTES_PER_LINE, $encodedEOLDelimiter);
 
         // If the line could have been read, it can be converted to UTF-8
         $utf8EncodedLineData = ($encodedLineData !== false) ?
