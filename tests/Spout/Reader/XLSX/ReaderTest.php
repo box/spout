@@ -116,6 +116,52 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportNumericTimestampFormattedDifferentlyAsDate()
+    {
+        // make sure dates are always created with the same timezone
+        date_default_timezone_set('UTC');
+
+        $allRows = $this->getAllRowsForFile('sheet_with_same_numeric_value_date_formatted_differently.xlsx');
+
+        $expectedDate = \DateTime::createFromFormat('Y-m-d H:i:s', '2015-01-01 00:00:00');
+        $expectedRows = [
+            array_fill(0, 10, $expectedDate),
+            array_fill(0, 10, $expectedDate),
+            array_fill(0, 10, $expectedDate),
+            array_merge(array_fill(0, 7, $expectedDate), ['', '', '']),
+        ];
+
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadShouldSupportDifferentDatesAsNumericTimestamp()
+    {
+        // make sure dates are always created with the same timezone
+        date_default_timezone_set('UTC');
+
+        $allRows = $this->getAllRowsForFile('sheet_with_different_numeric_value_dates.xlsx');
+
+        $expectedRows = [
+            [
+                \DateTime::createFromFormat('Y-m-d H:i:s', '2015-09-01 00:00:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '2015-09-02 00:00:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '2015-09-01 22:23:00'),
+            ],
+            [
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-02-28 23:59:59'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-03-01 00:00:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-02-28 11:00:00'), // 1900-02-29 should be converted to 1900-02-28
+            ]
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldKeepEmptyCellsAtTheEndIfDimensionsSpecified()
     {
         $allRows = $this->getAllRowsForFile('sheet_without_dimensions_but_spans_and_empty_cells.xlsx');
