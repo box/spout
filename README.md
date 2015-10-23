@@ -62,8 +62,8 @@ Regardless of the file type, the interface to read a file is always the same:
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Common\Type;
 
-$reader = ReaderFactory::create(Type::CSV); // for CSV files
-//$reader = ReaderFactory::create(Type::XLSX); // for XLSX files
+$reader = ReaderFactory::create(Type::XLSX); // for XLSX files
+//$reader = ReaderFactory::create(Type::CSV); // for CSV files
 //$reader = ReaderFactory::create(Type::ODS); // for ODS files
 
 $reader->open($filePath);
@@ -87,8 +87,8 @@ As with the reader, there is one common interface to write data to a file:
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Common\Type;
 
-$writer = WriterFactory::create(Type::CSV); // for CSV files
-//$writer = WriterFactory::create(Type::XLSX); // for XLSX files
+$writer = WriterFactory::create(Type::XLSX); // for XLSX files
+//$writer = WriterFactory::create(Type::CSV); // for CSV files
 //$writer = WriterFactory::create(Type::ODS); // for ODS files
 
 $writer->openToFile($filePath); // write data to a file or to a PHP stream
