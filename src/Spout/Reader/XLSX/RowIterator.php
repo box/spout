@@ -8,6 +8,7 @@ use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Helper\CellHelper;
 use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
+use Box\Spout\Reader\XLSX\Helper\StyleHelper;
 
 /**
  * Class RowIterator
@@ -39,6 +40,9 @@ class RowIterator implements IteratorInterface
     /** @var Helper\CellValueFormatter Helper to format cell values */
     protected $cellValueFormatter;
 
+    /** @var Helper\StyleHelper $styleHelper Helper to work with styles */
+    protected $styleHelper;
+
     /** @var int Number of read rows */
     protected $numReadRows = 0;
 
@@ -62,7 +66,9 @@ class RowIterator implements IteratorInterface
         $this->sheetDataXMLFilePath = $this->normalizeSheetDataXMLFilePath($sheetDataXMLFilePath);
 
         $this->xmlReader = new XMLReader();
-        $this->cellValueFormatter = new CellValueFormatter($sharedStringsHelper);
+
+        $this->styleHelper = new StyleHelper($filePath);
+        $this->cellValueFormatter = new CellValueFormatter($sharedStringsHelper, $this->styleHelper);
     }
 
     /**

@@ -152,6 +152,22 @@ class SimpleXMLElement
     }
 
     /**
+     * Returns the immediate children.
+     *
+     * @return array The children
+     */
+    public function children()
+    {
+        $children = [];
+
+        foreach ($this->simpleXMLElement->children() as $child) {
+            $children[] = $this->wrapSimpleXMLElement($child);
+        }
+
+        return $children;
+    }
+
+    /**
      * @return string
      */
     public function __toString()
