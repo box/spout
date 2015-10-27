@@ -18,16 +18,9 @@ Join the community and come discuss about Spout: [![Gitter](https://badges.gitte
 
 Spout can be installed directly from [Composer](https://getcomposer.org/).
 
-Add "box/spout" as a dependency in your project's composer.json file:
-```json
-"require": {
-    "box/spout": "~2.0"
-}
+Run the following command:
 ```
-
-Then run the install command from Composer:
-```
-php composer.phar install
+$ composer require box/spout
 ```
 
 ### Manual installation
