@@ -12,7 +12,7 @@ use Box\Spout\Reader\IteratorInterface;
  */
 class SheetIterator implements IteratorInterface
 {
-    /** @var Sheet The CSV unique "sheet" */
+    /** @var \Box\Spout\Reader\CSV\Sheet The CSV unique "sheet" */
     protected $sheet;
 
     /** @var bool Whether the unique "sheet" has already been read */
@@ -67,7 +67,7 @@ class SheetIterator implements IteratorInterface
      * Return the current element
      * @link http://php.net/manual/en/iterator.current.php
      *
-     * @return Sheet
+     * @return \Box\Spout\Reader\CSV\Sheet
      */
     public function current()
     {

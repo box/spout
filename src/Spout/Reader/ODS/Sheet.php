@@ -13,7 +13,7 @@ use Box\Spout\Reader\Wrapper\XMLReader;
  */
 class Sheet implements SheetInterface
 {
-    /** @var RowIterator To iterate over sheet's rows */
+    /** @var \Box\Spout\Reader\ODS\RowIterator To iterate over sheet's rows */
     protected $rowIterator;
 
     /** @var int ID of the sheet */
@@ -39,7 +39,7 @@ class Sheet implements SheetInterface
 
     /**
      * @api
-     * @return RowIterator
+     * @return \Box\Spout\Reader\ODS\RowIterator
      */
     public function getRowIterator()
     {

@@ -14,7 +14,7 @@ use Box\Spout\Reader\Exception\NoSheetsFoundException;
  */
 class SheetIterator implements IteratorInterface
 {
-    /** @var Sheet[] The list of sheet present in the file */
+    /** @var \Box\Spout\Reader\XLSX\Sheet[] The list of sheet present in the file */
     protected $sheets;
 
     /** @var int The index of the sheet being read (zero-based) */
@@ -79,7 +79,7 @@ class SheetIterator implements IteratorInterface
      * Return the current element
      * @link http://php.net/manual/en/iterator.current.php
      *
-     * @return Sheet
+     * @return \Box\Spout\Reader\XLSX\Sheet
      */
     public function current()
     {
