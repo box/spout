@@ -209,11 +209,15 @@ abstract class AbstractWriter implements WriterInterface
      */
     public function addRowWithStyle(array $dataRow, $style)
     {
-        if (!$style instanceof Style\Style) {
-            throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
+        $styles = is_array($style) ? $style : [$style];
+
+        foreach ($styles as $style) {
+            if (!$style instanceof Style\Style) {
+                throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
+            }
         }
 
-        $this->setRowStyle($style);
+        $this->setRowStyle($styles);
         $this->addRow($dataRow);
         $this->resetRowStyleToDefault();
 
@@ -230,6 +234,7 @@ abstract class AbstractWriter implements WriterInterface
      *                             ['data11', 12, , '', 'data13'],
      *                             ['data21', 'data22', null, false],
      *                         ];
+     *
      * @return AbstractWriter
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
@@ -264,11 +269,15 @@ abstract class AbstractWriter implements WriterInterface
      */
     public function addRowsWithStyle(array $dataRows, $style)
     {
-        if (!$style instanceof Style\Style) {
-            throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
+        $styles = is_array($style) ? $style : [$style];
+
+        foreach ($styles as $style) {
+            if (!$style instanceof Style\Style) {
+                throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
+            }
         }
 
-        $this->setRowStyle($style);
+        $this->setRowStyle($styles);
         $this->addRows($dataRows);
         $this->resetRowStyleToDefault();
 
@@ -296,7 +305,11 @@ abstract class AbstractWriter implements WriterInterface
     private function setRowStyle($style)
     {
         // Merge given style with the default one to inherit custom properties
-        $this->rowStyle = $style->mergeWith($this->defaultRowStyle);
+        $this->rowStyle = [];
+        $styles = is_array($style) ? $style : [$style];
+        foreach($styles as $style) {
+            $this->rowStyle[] = $style->mergeWith($this->defaultRowStyle);
+        }
     }
 
     /**

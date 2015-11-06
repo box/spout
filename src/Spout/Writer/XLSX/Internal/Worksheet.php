@@ -133,10 +133,16 @@ EOD;
 
         $data = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
-        foreach($dataRow as $cellValue) {
+        if (!is_array($style)) {
+            $style = [$style];
+        }
+
+        foreach($dataRow as $index => $cellValue) {
+            $styleIndex = isset($style[$index]) ? $style[$index]->getId() : $style[0]->getId();
+
             $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
             $data .= '<c r="' . $columnIndex . $rowIndex . '"';
-            $data .= ' s="' . $style->getId() . '"';
+            $data .= ' s="' . $styleIndex . '"';
 
             if (CellHelper::isNonEmptyString($cellValue)) {
                 if ($this->shouldUseInlineStrings) {
