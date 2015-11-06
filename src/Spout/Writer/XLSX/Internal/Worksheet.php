@@ -133,28 +133,26 @@ EOD;
 
         $data = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
-        foreach($dataRow as $cellValue) {
-            $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
-            $data .= '<c r="' . $columnIndex . $rowIndex . '"';
-            $data .= ' s="' . $style->getId() . '"';
-
-            if (CellHelper::isNonEmptyString($cellValue)) {
-                if ($this->shouldUseInlineStrings) {
-                    $data .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
+        foreach ($dataRow as $cellValue) {
+            if (!empty($cellValue)) {
+                $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
+                $data .= '<c r="' . $columnIndex . $rowIndex . '"';
+                $data .= ' s="' . $style->getId() . '"';
+                if (CellHelper::isNonEmptyString($cellValue)) {
+                    if ($this->shouldUseInlineStrings) {
+                        $data .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
+                    } else {
+                        $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
+                        $data .= ' t="s"><v>' . $sharedStringId . '</v></c>';
+                    }
+                } else if (CellHelper::isBoolean($cellValue)) {
+                    $data .= ' t="b"><v>' . $cellValue . '</v></c>';
+                } else if (CellHelper::isNumeric($cellValue)) {
+                    $data .= '><v>' . $cellValue . '</v></c>';
                 } else {
-                    $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
-                    $data .= ' t="s"><v>' . $sharedStringId . '</v></c>';
+                    throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
                 }
-            } else if (CellHelper::isBoolean($cellValue)) {
-                $data .= ' t="b"><v>' . $cellValue . '</v></c>';
-            } else if (CellHelper::isNumeric($cellValue)) {
-                $data .= '><v>' . $cellValue . '</v></c>';
-            } else if (empty($cellValue)) {
-                $data .= '/>';
-            } else {
-                throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
             }
-
             $cellNumber++;
         }
 
