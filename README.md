@@ -18,16 +18,9 @@ Join the community and come discuss about Spout: [![Gitter](https://badges.gitte
 
 Spout can be installed directly from [Composer](https://getcomposer.org/).
 
-Add "box/spout" as a dependency in your project's composer.json file:
-```json
-"require": {
-    "box/spout": "~2.0"
-}
+Run the following command:
 ```
-
-Then run the install command from Composer:
-```
-php composer.phar install
+$ composer require box/spout
 ```
 
 ### Manual installation
@@ -62,8 +55,8 @@ Regardless of the file type, the interface to read a file is always the same:
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Common\Type;
 
-$reader = ReaderFactory::create(Type::CSV); // for CSV files
-//$reader = ReaderFactory::create(Type::XLSX); // for XLSX files
+$reader = ReaderFactory::create(Type::XLSX); // for XLSX files
+//$reader = ReaderFactory::create(Type::CSV); // for CSV files
 //$reader = ReaderFactory::create(Type::ODS); // for ODS files
 
 $reader->open($filePath);
@@ -87,8 +80,8 @@ As with the reader, there is one common interface to write data to a file:
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Common\Type;
 
-$writer = WriterFactory::create(Type::CSV); // for CSV files
-//$writer = WriterFactory::create(Type::XLSX); // for XLSX files
+$writer = WriterFactory::create(Type::XLSX); // for XLSX files
+//$writer = WriterFactory::create(Type::CSV); // for CSV files
 //$writer = WriterFactory::create(Type::ODS); // for ODS files
 
 $writer->openToFile($filePath); // write data to a file or to a PHP stream

@@ -25,19 +25,35 @@ class CellValueFormatter
 
     /** Definition of XML attributes used to parse data */
     const XML_ATTRIBUTE_TYPE = 't';
+    const XML_ATTRIBUTE_STYLE_ID = 's';
+
+    /** Constants used for date formatting */
+    const NUM_DAYS_FROM_JAN_1_1900_TO_JAN_1_1970 = 25569; // actually 25567 but accommodating for an Excel bug with some bisextile years
+    const NUM_SECONDS_IN_ONE_DAY = 86400;
+
+    /**
+     * February 29th, 1900 is NOT a leap year but Excel thinks it is...
+     * @see https://en.wikipedia.org/wiki/Year_1900_problem#Microsoft_Excel
+     */
+    const ERRONEOUS_EXCEL_LEAP_YEAR_DAY = 60;
 
     /** @var SharedStringsHelper Helper to work with shared strings */
     protected $sharedStringsHelper;
+
+    /** @var StyleHelper Helper to work with styles */
+    protected $styleHelper;
 
     /** @var \Box\Spout\Common\Escaper\XLSX Used to unescape XML data */
     protected $escaper;
 
     /**
      * @param SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
+     * @param StyleHelper $styleHelper Helper to work with styles
      */
-    public function __construct($sharedStringsHelper)
+    public function __construct($sharedStringsHelper, $styleHelper)
     {
         $this->sharedStringsHelper = $sharedStringsHelper;
+        $this->styleHelper = $styleHelper;
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $this->escaper = new \Box\Spout\Common\Escaper\XLSX();
@@ -53,6 +69,7 @@ class CellValueFormatter
     {
         // Default cell type is "n"
         $cellType = $node->getAttribute(self::XML_ATTRIBUTE_TYPE) ?: self::CELL_TYPE_NUMERIC;
+        $cellStyleId = intval($node->getAttribute(self::XML_ATTRIBUTE_STYLE_ID));
         $vNodeValue = $this->getVNodeValue($node);
 
         if (($vNodeValue === '') && ($cellType !== self::CELL_TYPE_INLINE_STRING)) {
@@ -69,7 +86,7 @@ class CellValueFormatter
             case self::CELL_TYPE_BOOLEAN:
                 return $this->formatBooleanCellValue($vNodeValue);
             case self::CELL_TYPE_NUMERIC:
-                return $this->formatNumericCellValue($vNodeValue);
+                return $this->formatNumericCellValue($vNodeValue, $cellStyleId);
             case self::CELL_TYPE_DATE:
                 return $this->formatDateCellValue($vNodeValue);
             default:
@@ -138,14 +155,49 @@ class CellValueFormatter
 
     /**
      * Returns the cell Numeric value from string of nodeValue.
+     * The value can also represent a timestamp and a DateTime will be returned.
      *
      * @param string $nodeValue
-     * @return int|float The value associated with the cell
+     * @param int $cellStyleId 0 being the default style
+     * @return int|float|\DateTime|null The value associated with the cell
      */
-    protected function formatNumericCellValue($nodeValue)
+    protected function formatNumericCellValue($nodeValue, $cellStyleId)
     {
-        $cellValue = is_int($nodeValue) ? intval($nodeValue) : floatval($nodeValue);
-        return $cellValue;
+        // Numeric values can represent numbers as well as timestamps.
+        // We need to look at the style of the cell to determine whether it is one or the other.
+        $shouldFormatAsDate = $this->styleHelper->shouldFormatNumericValueAsDate($cellStyleId);
+
+        if ($shouldFormatAsDate) {
+            return $this->formatExcelTimestampValue(floatval($nodeValue));
+        } else {
+            return is_int($nodeValue) ? intval($nodeValue) : floatval($nodeValue);
+        }
+    }
+
+    /**
+     * Returns a cell's PHP Date value, associated to the given timestamp.
+     * NOTE: The timestamp is a float representing the number of days since January 1st, 1900.
+     *
+     * @param float $nodeValue
+     * @return \DateTime|null The value associated with the cell or NULL if invalid date value
+     */
+    protected function formatExcelTimestampValue($nodeValue)
+    {
+        $numDaysSince1970Jan1 = $nodeValue - self::NUM_DAYS_FROM_JAN_1_1900_TO_JAN_1_1970;
+
+        // Fix for the erroneous leap year in Excel
+        if ($nodeValue < self::ERRONEOUS_EXCEL_LEAP_YEAR_DAY) {
+            $numDaysSince1970Jan1++;
+        }
+
+        $unixTimestamp = round($numDaysSince1970Jan1 * self::NUM_SECONDS_IN_ONE_DAY);
+
+        try {
+            $cellValue = (new \DateTime())->setTimestamp($unixTimestamp);
+            return $cellValue;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**

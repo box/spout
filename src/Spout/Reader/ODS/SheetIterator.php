@@ -102,7 +102,7 @@ class SheetIterator implements IteratorInterface
      * Return the current element
      * @link http://php.net/manual/en/iterator.current.php
      *
-     * @return Sheet
+     * @return \Box\Spout\Reader\ODS\Sheet
      */
     public function current()
     {
