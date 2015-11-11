@@ -131,36 +131,38 @@ EOD;
         $rowIndex = $this->lastWrittenRowIndex + 1;
         $numCells = count($dataRow);
 
-        $data = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
+        $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
         foreach($dataRow as $cellValue) {
             $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
-            $data .= '<c r="' . $columnIndex . $rowIndex . '"';
-            $data .= ' s="' . $style->getId() . '"';
+            $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
+            $cellXML .= ' s="' . $style->getId() . '"';
 
             if (CellHelper::isNonEmptyString($cellValue)) {
                 if ($this->shouldUseInlineStrings) {
-                    $data .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
+                    $cellXML .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
                 } else {
                     $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
-                    $data .= ' t="s"><v>' . $sharedStringId . '</v></c>';
+                    $cellXML .= ' t="s"><v>' . $sharedStringId . '</v></c>';
                 }
             } else if (CellHelper::isBoolean($cellValue)) {
-                $data .= ' t="b"><v>' . $cellValue . '</v></c>';
+                $cellXML .= ' t="b"><v>' . $cellValue . '</v></c>';
             } else if (CellHelper::isNumeric($cellValue)) {
-                $data .= '><v>' . $cellValue . '</v></c>';
+                $cellXML .= '><v>' . $cellValue . '</v></c>';
             } else if (empty($cellValue)) {
-                $data .= '/>';
+                // don't write empty cells (not appending to $cellXML is the right behavior!)
+                $cellXML = '';
             } else {
                 throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
             }
 
+            $rowXML .= $cellXML;
             $cellNumber++;
         }
 
-        $data .= '</row>';
+        $rowXML .= '</row>';
 
-        $wasWriteSuccessful = fwrite($this->sheetFilePointer, $data);
+        $wasWriteSuccessful = fwrite($this->sheetFilePointer, $rowXML);
         if ($wasWriteSuccessful === false) {
             throw new IOException("Unable to write data in {$this->worksheetFilePath}");
         }
