@@ -146,7 +146,8 @@ class Worksheet implements WorksheetInterface
         for ($i = 0; $i < $cellsCount; $i++) {
             $currentCellValue = $dataRow[$currentCellIndex];
 
-            if (!array_key_exists($nextCellIndex, $dataRow) || $currentCellValue !== $dataRow[$nextCellIndex]) {
+            // Using isset here because it is way faster than array_key_exists...
+            if (!isset($dataRow[$nextCellIndex]) || $currentCellValue !== $dataRow[$nextCellIndex]) {
                 $numTimesValueRepeated = ($nextCellIndex - $currentCellIndex);
                 $data .= $this->getCellContent($currentCellValue, $styleIndex, $numTimesValueRepeated);
 
