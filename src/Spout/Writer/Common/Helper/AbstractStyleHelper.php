@@ -56,7 +56,9 @@ abstract class AbstractStyleHelper
     protected function hasStyleAlreadyBeenRegistered($style)
     {
         $serializedStyle = $style->serialize();
-        return array_key_exists($serializedStyle, $this->serializedStyleToStyleIdMappingTable);
+
+        // Using isset here because it is way faster than array_key_exists...
+        return isset($this->serializedStyleToStyleIdMappingTable[$serializedStyle]);
     }
 
     /**

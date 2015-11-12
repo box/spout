@@ -10,6 +10,9 @@ namespace Box\Spout\Writer\Common\Helper;
  */
 class CellHelper
 {
+    /** @var array Cache containing the mapping column index => cell index */
+    private static $columnIndexToCellIndexCache = [];
+
     /**
      * Returns the cell index (base 26) associated to the base 10 column index.
      * Excel uses A to Z letters for column indexing, where A is the 1st column,
@@ -21,18 +24,26 @@ class CellHelper
      */
     public static function getCellIndexFromColumnIndex($columnIndex)
     {
-        $cellIndex = '';
-        $capitalAAsciiValue = ord('A');
+        $originalColumnIndex = $columnIndex;
 
-        do {
-            $modulus = $columnIndex % 26;
-            $cellIndex = chr($capitalAAsciiValue + $modulus) . $cellIndex;
+        // Using isset here because it is way faster than array_key_exists...
+        if (!isset(self::$columnIndexToCellIndexCache[$originalColumnIndex])) {
+            $cellIndex = '';
+            $capitalAAsciiValue = ord('A');
 
-            // substracting 1 because it's zero-based
-            $columnIndex = intval($columnIndex / 26) - 1;
-        } while ($columnIndex >= 0);
+            do {
+                $modulus = $columnIndex % 26;
+                $cellIndex = chr($capitalAAsciiValue + $modulus) . $cellIndex;
 
-        return $cellIndex;
+                // substracting 1 because it's zero-based
+                $columnIndex = intval($columnIndex / 26) - 1;
+
+            } while ($columnIndex >= 0);
+
+            self::$columnIndexToCellIndexCache[$originalColumnIndex] = $cellIndex;
+        }
+
+        return self::$columnIndexToCellIndexCache[$originalColumnIndex];
     }
 
     /**

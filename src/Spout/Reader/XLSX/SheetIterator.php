@@ -67,7 +67,8 @@ class SheetIterator implements IteratorInterface
      */
     public function next()
     {
-        if (array_key_exists($this->currentSheetIndex, $this->sheets)) {
+        // Using isset here because it is way faster than array_key_exists...
+        if (isset($this->sheets[$this->currentSheetIndex])) {
             $currentSheet = $this->sheets[$this->currentSheetIndex];
             $currentSheet->getRowIterator()->end();
 

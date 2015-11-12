@@ -143,7 +143,9 @@ class FileBasedStrategy implements CachingStrategyInterface
         }
 
         $sharedString = null;
-        if (array_key_exists($indexInFile, $this->inMemoryTempFileContents)) {
+
+        // Using isset here because it is way faster than array_key_exists...
+        if (isset($this->inMemoryTempFileContents[$indexInFile])) {
             $escapedSharedString = $this->inMemoryTempFileContents[$indexInFile];
             $sharedString = $this->unescapeLineFeed($escapedSharedString);
         }

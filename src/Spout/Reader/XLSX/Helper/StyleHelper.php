@@ -148,7 +148,8 @@ class StyleHelper
 
         // Default style (0) does not format numeric values as timestamps. Only custom styles do.
         // Also if the style ID does not exist in the styles.xml file, format as numeric value.
-        if ($styleId === self::DEFAULT_STYLE_ID || !array_key_exists($styleId, $stylesAttributes)) {
+        // Using isset here because it is way faster than array_key_exists...
+        if ($styleId === self::DEFAULT_STYLE_ID || !isset($stylesAttributes[$styleId])) {
             return false;
         }
 
@@ -193,7 +194,8 @@ class StyleHelper
     {
         $customNumberFormats = $this->getCustomNumberFormats();
 
-        if (!array_key_exists($numFmtId, $customNumberFormats)) {
+        // Using isset here because it is way faster than array_key_exists...
+        if (!isset($customNumberFormats[$numFmtId])) {
             return false;
         }
 
