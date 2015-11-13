@@ -2,7 +2,7 @@
 
 [![Latest Stable Version](https://poser.pugx.org/box/spout/v/stable)](https://packagist.org/packages/box/spout)
 [![Project Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
-[![Build Status](https://travis-ci.org/box/spout.svg?branch=master)](http://travis-ci.org/box/spout)
+[![Build Status](https://travis-ci.org/box/spout.svg?branch=master)](https://travis-ci.org/box/spout)
 [![Code Coverage](https://scrutinizer-ci.com/g/box/spout/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/box/spout/?branch=master)
 [![Total Downloads](https://poser.pugx.org/box/spout/downloads)](https://packagist.org/packages/box/spout)
 [![License](https://poser.pugx.org/box/spout/license)](https://packagist.org/packages/box/spout)
@@ -275,10 +275,12 @@ If you just want to check that everything is working as expected, executing the 
 If you want to run performance tests, you will need to checkout the `perf-tests` branch. Multiple test suites can then be run, depending on the expected output:
 
 * `phpunit` - runs the whole test suite (unit + functional + performance tests)
-* `phpunit --testuite no-perf-tests` - only runs the unit and functional tests
-* `phpunit --testuite perf-tests` - only runs the performance tests
+* `phpunit --exclude-group perf-tests` - only runs the unit and functional tests
+* `phpunit --group perf-tests` - only runs the performance tests
 
-For information, the performance tests take about one hour to run (processing 2 million rows files is not a quick thing).
+For information, the performance tests take about 30 minutes to run (processing 1 million rows files is not a quick thing).
+
+> Performance tests status: [![Build Status](https://travis-ci.org/box/spout.svg?branch=perf-tests)](https://travis-ci.org/box/spout)
 
 
 ## Frequently Asked Questions
