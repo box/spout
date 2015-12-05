@@ -103,14 +103,12 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
     protected function createManifestFile()
     {
         $manifestXmlFileContents = <<<EOD
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.2">
     <manifest:file-entry manifest:full-path="/" manifest:media-type="application/vnd.oasis.opendocument.spreadsheet"/>
     <manifest:file-entry manifest:full-path="styles.xml" manifest:media-type="text/xml"/>
     <manifest:file-entry manifest:full-path="content.xml" manifest:media-type="text/xml"/>
     <manifest:file-entry manifest:full-path="meta.xml" manifest:media-type="text/xml"/>
-    <manifest:file-entry manifest:full-path="mimetype" manifest:media-type="text/plain"/>
-    <manifest:file-entry manifest:full-path="META-INF/manifest.xml" manifest:media-type="text/xml"/>
 </manifest:manifest>
 EOD;
 
@@ -265,10 +263,17 @@ EOD;
      */
     public function zipRootFolderAndCopyToStream($streamPointer)
     {
-        $zipHelper = new ZipHelper();
-        $zipHelper->zipFolderAndCopyToStream($this->rootFolder, $streamPointer);
+        $zipHelper = new ZipHelper($this->rootFolder);
+
+        // In order to have the file's mime type detected properly, files need to be added
+        // to the zip file in a particular order.
+        // @see http://www.jejik.com/articles/2010/03/how_to_correctly_create_odf_documents_using_zip/
+        $zipHelper->addUncompressedFileToArchive($this->rootFolder, self::MIMETYPE_FILE_NAME);
+
+        $zipHelper->addFolderToArchive($this->rootFolder, ZipHelper::EXISTING_FILES_SKIP);
+        $zipHelper->closeArchiveAndCopyToStream($streamPointer);
 
         // once the zip is copied, remove it
-        $this->deleteFile($zipHelper->getZipFilePath($this->rootFolder));
+        $this->deleteFile($zipHelper->getZipFilePath());
     }
 }

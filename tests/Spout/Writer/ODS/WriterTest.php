@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\ODS;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\WriterFactory;
 
 /**
@@ -366,6 +367,30 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertValueWasWrittenToSheet($fileName, 1, 'I have');
         $this->assertValueWasWrittenToSheet($fileName, 1, 'a dream');
+    }
+
+    /**
+     * @return void
+     */
+    public function testGeneratedFileShouldHaveTheCorrectMimeType()
+    {
+        // Only PHP7+ gives the correct mime type since it requires adding
+        // uncompressed files to the final archive (which support was added in PHP7)
+        if (!ZipHelper::canChooseCompressionMethod()) {
+            $this->markTestSkipped(
+                'The PHP version used does not support setting the compression method of archived files,
+                resulting in the mime type to be detected incorrectly.'
+            );
+        }
+
+        $fileName = 'test_mime_type.ods';
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $dataRow = ['foo'];
+
+        $this->writeToODSFile([$dataRow], $fileName);
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $this->assertEquals('application/vnd.oasis.opendocument.spreadsheet', $finfo->file($resourcePath));
     }
 
     /**
