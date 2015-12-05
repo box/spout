@@ -386,6 +386,21 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testGeneratedFileShouldHaveTheCorrectMimeType()
+    {
+        $fileName = 'test_mime_type.xlsx';
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $dataRows = [['foo']];
+
+        $this->writeToXLSXFile($dataRows, $fileName);
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $this->assertEquals('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $finfo->file($resourcePath));
+    }
+
+    /**
      * @param array $allRows
      * @param string $fileName
      * @param bool $shouldUseInlineStrings
