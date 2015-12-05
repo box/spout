@@ -11,6 +11,7 @@ namespace Box\Spout\Writer\Common\Helper;
 class ZipHelper
 {
     const ZIP_EXTENSION = '.zip';
+    const CONTENT_TYPES_XML_FILE_NAME = '[Content_Types].xml';
 
     /**
      * Zips the root folder and streams the contents of the zip into the given stream
@@ -61,7 +62,12 @@ class ZipHelper
         $folderRealPath = $this->getNormalizedRealPath($folderPath) . '/';
         $itemIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($folderPath, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST);
 
-        foreach ($itemIterator as $itemInfo) {
+        // In order to have the file's mime type detected properly, items need to be
+        // sorted in a particular order...
+        $itemsInfo = iterator_to_array($itemIterator);
+        usort($itemsInfo, [$this, 'sortItemsForCorrectMimeTypeDetection']);
+
+        foreach ($itemsInfo as $itemInfo) {
             $itemRealPath = $this->getNormalizedRealPath($itemInfo->getPathname());
             $itemLocalPath = str_replace($folderRealPath, '', $itemRealPath);
 
@@ -70,6 +76,29 @@ class ZipHelper
             } else if ($itemInfo->isDir()) {
                 $zip->addEmptyDir($itemLocalPath);
             }
+        }
+    }
+
+    /**
+     * On order to have the file's mime type detected properly, files need to be added
+     * to the zip file in a particular order.
+     * [Content_Types].xml and files located in "xl" folder should be zipped first.
+     *
+     * @param \SplFileInfo $itemInfo1 First item to compare
+     * @param \SplFileInfo $itemInfo2 Second item to compare
+     * @return int
+     */
+    protected function sortItemsForCorrectMimeTypeDetection($itemInfo1, $itemInfo2)
+    {
+        // Have the "[Content_Types].xml" file be first
+        if ($itemInfo1->getFilename() === self::CONTENT_TYPES_XML_FILE_NAME) {
+            return -1;
+        } else if ($itemInfo2->getFilename() === self::CONTENT_TYPES_XML_FILE_NAME) {
+            return 1;
+        } else {
+            // Then make sure the files in the "xl" folder will go next
+            // by sorting items in reverse alphabetical order
+            return strcmp($itemInfo2->getRealPath(), $itemInfo1->getRealPath());
         }
     }
 
