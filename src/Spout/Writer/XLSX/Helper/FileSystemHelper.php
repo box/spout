@@ -353,10 +353,19 @@ EOD;
      */
     public function zipRootFolderAndCopyToStream($streamPointer)
     {
-        $zipHelper = new ZipHelper();
-        $zipHelper->zipFolderAndCopyToStream($this->rootFolder, $streamPointer);
+        $zipHelper = new ZipHelper($this->rootFolder);
+
+        // In order to have the file's mime type detected properly, files need to be added
+        // to the zip file in a particular order.
+        // "[Content_Types].xml" then at least 2 files located in "xl" folder should be zipped first.
+        $zipHelper->addFileToArchive($this->rootFolder, self::CONTENT_TYPES_XML_FILE_NAME);
+        $zipHelper->addFileToArchive($this->rootFolder, self::XL_FOLDER_NAME . '/' . self::WORKBOOK_XML_FILE_NAME);
+        $zipHelper->addFileToArchive($this->rootFolder, self::XL_FOLDER_NAME . '/' . self::STYLES_XML_FILE_NAME);
+
+        $zipHelper->addFolderToArchive($this->rootFolder, ZipHelper::EXISTING_FILES_SKIP);
+        $zipHelper->closeArchiveAndCopyToStream($streamPointer);
 
         // once the zip is copied, remove it
-        $this->deleteFile($zipHelper->getZipFilePath($this->rootFolder));
+        $this->deleteFile($zipHelper->getZipFilePath());
     }
 }
