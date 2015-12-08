@@ -293,7 +293,7 @@ class Style
         if (!$this->hasSetFontSize && $baseStyle->getFontSize() !== self::DEFAULT_FONT_SIZE) {
             $mergedStyle->setFontSize($baseStyle->getFontSize());
         }
-        if (!$this->hasSetFontSize && $baseStyle->getFontColor() !== self::DEFAULT_FONT_COLOR) {
+        if (!$this->hasSetFontColor && $baseStyle->getFontColor() !== self::DEFAULT_FONT_COLOR) {
             $mergedStyle->setFontColor($baseStyle->getFontColor());
         }
         if (!$this->hasSetFontName && $baseStyle->getFontName() !== self::DEFAULT_FONT_NAME) {
