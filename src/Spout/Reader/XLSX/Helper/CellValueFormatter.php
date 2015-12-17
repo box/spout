@@ -28,7 +28,6 @@ class CellValueFormatter
     const XML_ATTRIBUTE_STYLE_ID = 's';
 
     /** Constants used for date formatting */
-    const NUM_DAYS_FROM_JAN_1_1900_TO_JAN_1_1970 = 25569; // actually 25567 but accommodating for an Excel bug with some bisextile years
     const NUM_SECONDS_IN_ONE_DAY = 86400;
 
     /**
@@ -183,17 +182,26 @@ class CellValueFormatter
      */
     protected function formatExcelTimestampValue($nodeValue)
     {
-        $numDaysSince1970Jan1 = $nodeValue - self::NUM_DAYS_FROM_JAN_1_1900_TO_JAN_1_1970;
-
         // Fix for the erroneous leap year in Excel
-        if ($nodeValue < self::ERRONEOUS_EXCEL_LEAP_YEAR_DAY) {
-            $numDaysSince1970Jan1++;
+        if (ceil($nodeValue) > self::ERRONEOUS_EXCEL_LEAP_YEAR_DAY) {
+            --$nodeValue;
         }
 
-        $unixTimestamp = round($numDaysSince1970Jan1 * self::NUM_SECONDS_IN_ONE_DAY);
+        // The value 1.0 represents 1900-01-01. Numbers below 1.0 are not valid Excel dates.
+        if ($nodeValue < 1.0) {
+            return null;
+        }
+
+        // Do not use any unix timestamps for calculation to prevent
+        // issues with numbers exceeding 2^31.
+        $secondsRemainder = fmod($nodeValue, 1) * self::NUM_SECONDS_IN_ONE_DAY;
+        $secondsRemainder = round($secondsRemainder, 0);
 
         try {
-            $cellValue = (new \DateTime())->setTimestamp($unixTimestamp);
+            $cellValue = \DateTime::createFromFormat('|Y-m-d', '1899-12-31');
+            $cellValue->modify('+' . intval($nodeValue) . 'days');
+            $cellValue->modify('+' . $secondsRemainder . 'seconds');
+
             return $cellValue;
         } catch (\Exception $e) {
             return null;
