@@ -98,6 +98,8 @@ For XLSX and ODS files, the number of rows per sheet is limited to 1,048,576. By
 
 ## Advanced usage
 
+If you are looking for  how to perform some common, more advanced tasks with Spout, please take a look at the [Wiki](https://github.com/box/spout/wiki). It contains code snippets, ready to be used.
+
 ### Configuring the CSV reader and writer
 
 It is possible to configure both the CSV reader and writer to specify the field separator as well as the field enclosure:
