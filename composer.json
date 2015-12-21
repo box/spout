@@ -29,5 +29,11 @@
         "psr-4": {
             "Box\\Spout\\": "src/Spout"
         }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.4.x-dev"
+        }
     }
+
 }
