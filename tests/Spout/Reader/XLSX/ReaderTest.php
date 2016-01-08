@@ -76,6 +76,28 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportSheetsDefinitionInRandomOrder()
+    {
+        $allRows = $this->getAllRowsForFile('two_sheets_with_sheets_definition_in_reverse_order.xlsx');
+
+        $expectedRows = [
+            ['s1 - A1', 's1 - B1', 's1 - C1', 's1 - D1', 's1 - E1'],
+            ['s1 - A2', 's1 - B2', 's1 - C2', 's1 - D2', 's1 - E2'],
+            ['s1 - A3', 's1 - B3', 's1 - C3', 's1 - D3', 's1 - E3'],
+            ['s1 - A4', 's1 - B4', 's1 - C4', 's1 - D4', 's1 - E4'],
+            ['s1 - A5', 's1 - B5', 's1 - C5', 's1 - D5', 's1 - E5'],
+            ['s2 - A1', 's2 - B1', 's2 - C1', 's2 - D1', 's2 - E1'],
+            ['s2 - A2', 's2 - B2', 's2 - C2', 's2 - D2', 's2 - E2'],
+            ['s2 - A3', 's2 - B3', 's2 - C3', 's2 - D3', 's2 - E3'],
+            ['s2 - A4', 's2 - B4', 's2 - C4', 's2 - D4', 's2 - E4'],
+            ['s2 - A5', 's2 - B5', 's2 - C5', 's2 - D5', 's2 - E5'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldSupportFilesWithoutSharedStringsFile()
     {
         $allRows = $this->getAllRowsForFile('sheet_with_no_shared_strings_file.xlsx');

@@ -19,7 +19,7 @@ class Sheet implements SheetInterface
     /** @var int ID of the sheet */
     protected $id;
 
-    /** @var int Index of the sheet, based on order of creation (zero-based) */
+    /** @var int Index of the sheet, based on order in the workbook (zero-based) */
     protected $index;
 
     /** @var string Name of the sheet */
@@ -27,7 +27,7 @@ class Sheet implements SheetInterface
 
     /**
      * @param XMLReader $xmlReader XML Reader, positioned on the "<table:table>" element
-     * @param int $sheetIndex Index of the sheet, based on order of creation (zero-based)
+     * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $sheetName Name of the sheet
      */
     public function __construct($xmlReader, $sheetIndex, $sheetName)
@@ -48,7 +48,7 @@ class Sheet implements SheetInterface
 
     /**
      * @api
-     * @return int Index of the sheet, based on order of creation (zero-based)
+     * @return int Index of the sheet, based on order in the workbook (zero-based)
      */
     public function getIndex()
     {
