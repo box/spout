@@ -13,9 +13,6 @@ use Box\Spout\Reader\XLSX\Sheet;
  */
 class SheetHelper
 {
-    /** Extension for XML files */
-    const XML_EXTENSION = '.xml';
-
     /** Paths of XML files relative to the XLSX file root */
     const CONTENT_TYPES_XML_FILE_PATH = '[Content_Types].xml';
     const WORKBOOK_XML_RELS_FILE_PATH = 'xl/_rels/workbook.xml.rels';
@@ -79,8 +76,14 @@ class SheetHelper
             $sheetNode = $sheetNodes[$i];
             $sheetDataXMLFilePath = $sheetNode->getAttribute('PartName');
 
-            $sheets[] = $this->getSheetFromXML($sheetDataXMLFilePath, $i);
+            $sheets[] = $this->getSheetFromXML($sheetDataXMLFilePath);
         }
+
+        // make sure the sheets are sorted by index
+        // (as the sheets are not necessarily in this order in the XML file)
+        usort($sheets, function ($sheet1, $sheet2) {
+            return ($sheet1->getIndex() - $sheet2->getIndex());
+        });
 
         return $sheets;
     }
@@ -91,58 +94,35 @@ class SheetHelper
      * Then we look at "xl/worbook.xml" to find the sheet entry associated to the found ID.
      * The entry contains the ID and name of the sheet.
      *
-     * If this piece of data can't be found by parsing the different XML files, the ID will default
-     * to the sheet index, based on order in [Content_Types].xml. Similarly, the sheet's name will
-     * default to the data sheet XML file name ("xl/worksheets/sheet2.xml" => "sheet2").
-     *
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
-     * @param int $sheetIndexZeroBased Index of the sheet, based on order in [Content_Types].xml (zero-based)
      * @return \Box\Spout\Reader\XLSX\Sheet Sheet instance
      */
-    protected function getSheetFromXML($sheetDataXMLFilePath, $sheetIndexZeroBased)
+    protected function getSheetFromXML($sheetDataXMLFilePath)
     {
-        $sheetName = $this->getDefaultSheetName($sheetDataXMLFilePath);
-
-        /*
-         * In [Content_Types].xml, the path is "/xl/worksheets/sheet1.xml"
-         * In workbook.xml.rels, it is only "worksheets/sheet1.xml"
-         */
+        // In [Content_Types].xml, the path is "/xl/worksheets/sheet1.xml"
+        // In workbook.xml.rels, it is only "worksheets/sheet1.xml"
         $sheetDataXMLFilePathInWorkbookXMLRels = ltrim($sheetDataXMLFilePath, '/xl/');
 
         // find the node associated to the given file path
         $workbookXMLResElement = $this->getWorkbookXMLRelsAsXMLElement();
         $relationshipNodes = $workbookXMLResElement->xpath('//ns:Relationship[@Target="' . $sheetDataXMLFilePathInWorkbookXMLRels . '"]');
+        $relationshipNode = $relationshipNodes[0];
 
-        if (count($relationshipNodes) === 1) {
-            $relationshipNode = $relationshipNodes[0];
-            $sheetId = $relationshipNode->getAttribute('Id');
+        $relationshipSheetId = $relationshipNode->getAttribute('Id');
 
-            $workbookXMLElement = $this->getWorkbookXMLAsXMLElement();
-            $sheetNodes = $workbookXMLElement->xpath('//ns:sheet[@r:id="' . $sheetId . '"]');
+        $workbookXMLElement = $this->getWorkbookXMLAsXMLElement();
+        $sheetNodes = $workbookXMLElement->xpath('//ns:sheet[@r:id="' . $relationshipSheetId . '"]');
+        $sheetNode = $sheetNodes[0];
 
-            if (count($sheetNodes) === 1) {
-                $sheetNode = $sheetNodes[0];
-                $escapedSheetName = $sheetNode->getAttribute('name');
+        $escapedSheetName = $sheetNode->getAttribute('name');
+        $sheetIdOneBased = $sheetNode->getAttribute('sheetId');
+        $sheetIndexZeroBased = $sheetIdOneBased - 1;
 
-                /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-                $escaper = new \Box\Spout\Common\Escaper\XLSX();
-                $sheetName = $escaper->unescape($escapedSheetName);
-            }
-        }
+        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
+        $escaper = new \Box\Spout\Common\Escaper\XLSX();
+        $sheetName = $escaper->unescape($escapedSheetName);
 
         return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $sheetIndexZeroBased, $sheetName);
-    }
-
-    /**
-     * Returns the default name of the sheet whose data is located
-     * at the given path.
-     *
-     * @param string $sheetDataXMLFilePath Path of the sheet data XML file
-     * @return string The default sheet name
-     */
-    protected function getDefaultSheetName($sheetDataXMLFilePath)
-    {
-        return $this->globalFunctionsHelper->basename($sheetDataXMLFilePath, self::XML_EXTENSION);
     }
 
     /**

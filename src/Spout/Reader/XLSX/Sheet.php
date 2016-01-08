@@ -15,7 +15,7 @@ class Sheet implements SheetInterface
     /** @var \Box\Spout\Reader\XLSX\RowIterator To iterate over sheet's rows */
     protected $rowIterator;
 
-    /** @var int Index of the sheet, based on order of creation (zero-based) */
+    /** @var int Index of the sheet, based on order in the workbook (zero-based) */
     protected $index;
 
     /** @var string Name of the sheet */
@@ -25,7 +25,7 @@ class Sheet implements SheetInterface
      * @param string $filePath Path of the XLSX file being read
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
      * @param Helper\SharedStringsHelper Helper to work with shared strings
-     * @param int $sheetIndex Index of the sheet, based on order of creation (zero-based)
+     * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $sheetName Name of the sheet
      */
     public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $sheetIndex, $sheetName)
@@ -46,7 +46,7 @@ class Sheet implements SheetInterface
 
     /**
      * @api
-     * @return int Index of the sheet, based on order of creation (zero-based)
+     * @return int Index of the sheet, based on order in the workbook (zero-based)
      */
     public function getIndex()
     {

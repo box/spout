@@ -24,7 +24,7 @@ class Sheet
     /** @var array Associative array [SHEET_INDEX] => [SHEET_NAME] keeping track of sheets' name to enforce uniqueness */
     protected static $SHEETS_NAME_USED = [];
 
-    /** @var int Index of the sheet, based on order of creation (zero-based) */
+    /** @var int Index of the sheet, based on order in the workbook (zero-based) */
     protected $index;
 
     /** @var string Name of the sheet */
@@ -34,7 +34,7 @@ class Sheet
     protected $stringHelper;
 
     /**
-     * @param int $sheetIndex Index of the sheet, based on order of creation (zero-based)
+     * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      */
     public function __construct($sheetIndex)
     {
@@ -45,7 +45,7 @@ class Sheet
 
     /**
      * @api
-     * @return int Index of the sheet, based on order of creation (zero-based)
+     * @return int Index of the sheet, based on order in the workbook (zero-based)
      */
     public function getIndex()
     {
