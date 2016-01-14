@@ -47,7 +47,6 @@ class CellValueFormatter
 
     /**
      * Returns the (unescaped) correctly marshalled, cell value associated to the given XML node.
-     * @TODO Add other types !!
      * @see http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#refTable13
      *
      * @param \DOMNode $node
@@ -119,7 +118,8 @@ class CellValueFormatter
     protected function formatFloatCellValue($node)
     {
         $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_VALUE);
-        $cellValue = is_int($nodeValue) ? intval($nodeValue) : floatval($nodeValue);
+        $nodeIntValue = intval($nodeValue);
+        $cellValue = ($nodeIntValue == $nodeValue) ? $nodeIntValue : floatval($nodeValue);
         return $cellValue;
     }
 
