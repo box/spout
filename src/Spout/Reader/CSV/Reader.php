@@ -75,7 +75,7 @@ class Reader extends AbstractReader
      * Sets the EOL for the CSV.
      * Needs to be called before opening the reader.
      *
-     * @param string $fieldEnclosure Character that enclose fields
+     * @param string $endOfLineCharacter used to properly get lines from the CSV file.
      * @return Reader
      */
     public function setEndOfLineCharacter($endOfLineCharacter)

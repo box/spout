@@ -59,13 +59,13 @@ class RowIterator implements IteratorInterface
      * @param string $encoding Encoding of the CSV file to be read
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $EOLDelimiter, $globalFunctionsHelper)
+    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $endOfLineDelimiter, $globalFunctionsHelper)
     {
         $this->filePointer = $filePointer;
         $this->fieldDelimiter = $fieldDelimiter;
         $this->fieldEnclosure = $fieldEnclosure;
         $this->encoding = $encoding;
-        $this->inputEOLDelimiter = $EOLDelimiter;
+        $this->inputEOLDelimiter = $endOfLineDelimiter;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
 
         $this->encodingHelper = new EncodingHelper($globalFunctionsHelper);
