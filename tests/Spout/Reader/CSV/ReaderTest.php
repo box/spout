@@ -377,4 +377,50 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         return $allRows;
     }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForTestReadCustomEOL()
+    {
+        return [
+            ['csv_with_CR_EOL.csv', "\r"],
+            ['csv_standard.csv', "\n"],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForTestReadCustomEOL
+     *
+     * @param string $fileName
+     * @param string $customEOL
+     * @return void
+     */
+    public function testReadCustomEOLs($fileName, $customEOL)
+    {
+        $allRows = [];
+        $resourcePath = $this->getResourcePath($fileName);
+
+        /** @var \Box\Spout\Reader\CSV\Reader $reader */
+        $reader = ReaderFactory::create(Type::CSV);
+        $reader
+            ->setEndOfLineCharacter($customEOL)
+            ->open($resourcePath);
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                $allRows[] = $row;
+            }
+        }
+
+        $reader->close();
+
+        $expectedRows = [
+            ['csv--11', 'csv--12', 'csv--13'],
+            ['csv--21', 'csv--22', 'csv--23'],
+            ['csv--31', 'csv--32', 'csv--33'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
 }
