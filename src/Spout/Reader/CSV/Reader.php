@@ -29,6 +29,9 @@ class Reader extends AbstractReader
     /** @var string Encoding of the CSV file to be read */
     protected $encoding = EncodingHelper::ENCODING_UTF8;
 
+    /** @var string Defines the End of line */
+    protected $endOfLineCharacter = "\n";    
+
     /**
      * Sets the field delimiter for the CSV.
      * Needs to be called before opening the reader.
@@ -69,6 +72,19 @@ class Reader extends AbstractReader
     }
 
     /**
+     * Sets the EOL for the CSV.
+     * Needs to be called before opening the reader.
+     *
+     * @param string $endOfLineCharacter used to properly get lines from the CSV file.
+     * @return Reader
+     */
+    public function setEndOfLineCharacter($endOfLineCharacter)
+    {
+        $this->endOfLineCharacter = $endOfLineCharacter;
+        return $this;
+    }  
+
+    /**
      * Opens the file at the given path to make it ready to be read.
      * If setEncoding() was not called, it assumes that the file is encoded in UTF-8.
      *
@@ -88,6 +104,7 @@ class Reader extends AbstractReader
             $this->fieldDelimiter,
             $this->fieldEnclosure,
             $this->encoding,
+            $this->endOfLineCharacter,
             $this->globalFunctionsHelper
         );
     }

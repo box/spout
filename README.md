@@ -110,6 +110,7 @@ use Box\Spout\Common\Type;
 $reader = ReaderFactory::create(Type::CSV);
 $reader->setFieldDelimiter('|');
 $reader->setFieldEnclosure('@');
+$reader->setEndOfLineCharacter("\r");
 ```
 
 Additionally, if you need to read non UTF-8 files, you can specify the encoding of your file this way:

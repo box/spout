@@ -49,6 +49,9 @@ class RowIterator implements IteratorInterface
     /** @var string End of line delimiter, encoded using the same encoding as the CSV */
     protected $encodedEOLDelimiter;
 
+    /** @var string End of line delimiter, given by the user as input. */
+    protected $inputEOLDelimiter;
+
     /**
      * @param resource $filePointer Pointer to the CSV file to read
      * @param string $fieldDelimiter Character that delimits fields
@@ -56,12 +59,13 @@ class RowIterator implements IteratorInterface
      * @param string $encoding Encoding of the CSV file to be read
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $globalFunctionsHelper)
+    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $endOfLineDelimiter, $globalFunctionsHelper)
     {
         $this->filePointer = $filePointer;
         $this->fieldDelimiter = $fieldDelimiter;
         $this->fieldEnclosure = $fieldEnclosure;
         $this->encoding = $encoding;
+        $this->inputEOLDelimiter = $endOfLineDelimiter;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
 
         $this->encodingHelper = new EncodingHelper($globalFunctionsHelper);
@@ -172,7 +176,7 @@ class RowIterator implements IteratorInterface
     protected function getEncodedEOLDelimiter()
     {
         if (!isset($this->encodedEOLDelimiter)) {
-            $this->encodedEOLDelimiter = $this->encodingHelper->attemptConversionFromUTF8("\n", $this->encoding);
+            $this->encodedEOLDelimiter = $this->encodingHelper->attemptConversionFromUTF8($this->inputEOLDelimiter, $this->encoding);
         }
 
         return $this->encodedEOLDelimiter;
