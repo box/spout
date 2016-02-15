@@ -146,7 +146,11 @@ EOD;
                     $cellXML .= ' t="s"><v>' . $sharedStringId . '</v></c>';
                 }
             } else if (CellHelper::isBoolean($cellValue)) {
-                $cellXML .= ' t="b"><v>' . $cellValue . '</v></c>';
+                if ($cellValue === true) {
+                    $cellXML .= ' t="b"><v>1</v></c>';
+                } else {
+                    $cellXML .= ' t="b"><v>0</v></c>';
+                }
             } else if (CellHelper::isNumeric($cellValue)) {
                 $cellXML .= '><v>' . $cellValue . '</v></c>';
             } else if (empty($cellValue)) {
