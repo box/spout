@@ -20,7 +20,7 @@ class WriterFactory
      *
      * @api
      * @param  string $writerType Type of the writer to instantiate
-     * @return WriterInterface
+     * @return CSV\Writer | XLSX\Writer | ODS\Writer
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      */
     public static function create($writerType)
