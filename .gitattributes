@@ -1,0 +1,11 @@
+# Ignore all test and documentation for archive
+/tests              export-ignore
+/.editorconfig      export-ignore
+/.gitattributes     export-ignore
+/.gitignore         export-ignore
+/.scrutinizer.yml   export-ignore
+/.travis.yml        export-ignore
+/composer.lock      export-ignore
+/CONTRIBUTING.md    export-ignore
+/logo.png           export-ignore
+/phpunit.xml        export-ignore
