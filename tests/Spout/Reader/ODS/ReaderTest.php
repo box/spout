@@ -388,6 +388,38 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * https://github.com/box/spout/issues/184
+     * @return void
+     */
+    public function testReadShouldInludeRowsWithZerosOnly()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_zeros_in_row.ods');
+
+        $expectedRows = [
+            ['A', 'B', 'C'],
+            ['1', '2', '3'],
+            ['0', '0', '0']
+        ];
+        $this->assertEquals($expectedRows, $allRows, 'There should be only 3 rows, because zeros (0) are valid values');
+    }
+
+    /**
+     * https://github.com/box/spout/issues/184
+     * @return void
+     */
+    public function testReadShouldCreateOutputEmptyCellPreserved()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_empty_cells.ods');
+
+        $expectedRows = [
+            ['A', 'B', 'C'],
+            ['0', '', ''],
+            ['1', '1', '']
+        ];
+        $this->assertEquals($expectedRows, $allRows, 'There should be 3 rows, with equal length');
+    }
+
+    /**
      * @param string $fileName
      * @return array All the read rows the given file
      */
