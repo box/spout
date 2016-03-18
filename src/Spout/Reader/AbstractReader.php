@@ -20,6 +20,13 @@ abstract class AbstractReader implements ReaderInterface
     protected $globalFunctionsHelper;
 
     /**
+     * Returns whether stream wrappers are supported
+     *
+     * @return bool
+     */
+    abstract protected function doesSupportStreamWrapper();
+
+    /**
      * Opens the file at the given file path to make it ready to be read
      *
      * @param  string $filePath Path of the file to be read
@@ -62,6 +69,10 @@ abstract class AbstractReader implements ReaderInterface
      */
     public function open($filePath)
     {
+        if ($this->isStreamWrapper($filePath) && (!$this->doesSupportStreamWrapper() || !$this->isSupportedStreamWrapper($filePath))) {
+            throw new IOException("Could not open $filePath for reading! Stream wrapper used is not supported for this type of file.");
+        }
+
         if (!$this->isPhpStream($filePath)) {
             // we skip the checks if the provided file path points to a PHP stream
             if (!$this->globalFunctionsHelper->file_exists($filePath)) {
@@ -72,13 +83,73 @@ abstract class AbstractReader implements ReaderInterface
         }
 
         try {
-            // Need to use realpath to fix "Can't open file" on some Windows setup
-            $fileRealPath = realpath($filePath);
+            $fileRealPath = $this->getFileRealPath($filePath);
             $this->openReader($fileRealPath);
             $this->isStreamOpened = true;
         } catch (\Exception $exception) {
             throw new IOException("Could not open $filePath for reading! ({$exception->getMessage()})");
         }
+    }
+
+    /**
+     * Returns the real path of the given path.
+     * If the given path is a valid stream wrapper, returns the path unchanged.
+     *
+     * @param string $filePath
+     * @return string
+     */
+    protected function getFileRealPath($filePath)
+    {
+        if ($this->isSupportedStreamWrapper($filePath)) {
+            return $filePath;
+        }
+
+        // Need to use realpath to fix "Can't open file" on some Windows setup
+        return realpath($filePath);
+    }
+
+    /**
+     * Returns the scheme of the custom stream wrapper, if the path indicates a stream wrapper is used.
+     * For example, php://temp => php, s3://path/to/file => s3...
+     *
+     * @param string $filePath Path of the file to be read
+     * @return string|null The stream wrapper scheme or NULL if not a stream wrapper
+     */
+    protected function getStreamWrapperScheme($filePath)
+    {
+        $streamScheme = null;
+        if (preg_match('/^(\w+):\/\//', $filePath, $matches)) {
+            $streamScheme = $matches[1];
+        }
+        return $streamScheme;
+    }
+
+    /**
+     * Checks if the given path is an unsupported stream wrapper
+     * (like local path, php://temp, mystream://foo/bar...).
+     *
+     * @param string $filePath Path of the file to be read
+     * @return bool Whether the given path is an unsupported stream wrapper
+     */
+    protected function isStreamWrapper($filePath)
+    {
+        return ($this->getStreamWrapperScheme($filePath) !== null);
+    }
+
+    /**
+     * Checks if the given path is an supported stream wrapper
+     * (like php://temp, mystream://foo/bar...).
+     * If the given path is a local path, returns true.
+     *
+     * @param string $filePath Path of the file to be read
+     * @return bool Whether the given path is an supported stream wrapper
+     */
+    protected function isSupportedStreamWrapper($filePath)
+    {
+        $streamScheme = $this->getStreamWrapperScheme($filePath);
+        return ($streamScheme !== null) ?
+            in_array($streamScheme, $this->globalFunctionsHelper->stream_get_wrappers()) :
+            true;
     }
 
     /**
@@ -89,7 +160,8 @@ abstract class AbstractReader implements ReaderInterface
      */
     protected function isPhpStream($filePath)
     {
-        return (strpos($filePath, 'php://') === 0);
+        $streamScheme = $this->getStreamWrapperScheme($filePath);
+        return ($streamScheme === 'php');
     }
 
     /**

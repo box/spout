@@ -281,6 +281,17 @@ class GlobalFunctionsHelper
     }
 
     /**
+     * Wrapper around global function stream_get_wrappers()
+     * @see stream_get_wrappers()
+     *
+     * @return array
+     */
+    public function stream_get_wrappers()
+    {
+        return stream_get_wrappers();
+    }
+
+    /**
      * Wrapper around global function stream_get_line()
      * @see stream_get_line()
      *

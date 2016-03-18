@@ -364,6 +364,30 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Box\Spout\Common\Exception\IOException
+     *
+     * @return void
+     */
+    public function testReadWithUnsupportedCustomStreamWrapper()
+    {
+        /** @var \Box\Spout\Reader\ODS\Reader $reader */
+        $reader = ReaderFactory::create(Type::ODS);
+        $reader->open('unsupported://foobar');
+    }
+
+    /**
+     * @expectedException \Box\Spout\Common\Exception\IOException
+     *
+     * @return void
+     */
+    public function testReadWithSupportedCustomStreamWrapper()
+    {
+        /** @var \Box\Spout\Reader\ODS\Reader $reader */
+        $reader = ReaderFactory::create(Type::ODS);
+        $reader->open('php://memory');
+    }
+
+    /**
      * @param string $fileName
      * @return array All the read rows the given file
      */

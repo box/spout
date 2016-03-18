@@ -423,4 +423,50 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedRows, $allRows);
     }
 
+    /**
+     * @return void
+     */
+    public function testReadCustomStreamWrapper()
+    {
+        $allRows = [];
+        $resourcePath = 'spout://csv_standard';
+
+        // register stream wrapper
+        stream_wrapper_register('spout', SpoutTestStream::CLASS_NAME);
+
+        /** @var \Box\Spout\Reader\CSV\Reader $reader */
+        $reader = ReaderFactory::create(Type::CSV);
+        $reader->open($resourcePath);
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                $allRows[] = $row;
+            }
+        }
+
+        $reader->close();
+
+        $expectedRows = [
+            ['csv--11', 'csv--12', 'csv--13'],
+            ['csv--21', 'csv--22', 'csv--23'],
+            ['csv--31', 'csv--32', 'csv--33'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+
+        // cleanup
+        stream_wrapper_unregister('spout');
+    }
+
+    /**
+     * @expectedException \Box\Spout\Common\Exception\IOException
+     *
+     * @return void
+     */
+    public function testReadWithUnsupportedCustomStreamWrapper()
+    {
+        /** @var \Box\Spout\Reader\CSV\Reader $reader */
+        $reader = ReaderFactory::create(Type::CSV);
+        $reader->open('unsupported://foobar');
+    }
+
 }
