@@ -30,7 +30,7 @@ class Reader extends AbstractReader
     protected $encoding = EncodingHelper::ENCODING_UTF8;
 
     /** @var string Defines the End of line */
-    protected $endOfLineCharacter = "\n";    
+    protected $endOfLineCharacter = "\n";
 
     /**
      * Sets the field delimiter for the CSV.
@@ -82,7 +82,17 @@ class Reader extends AbstractReader
     {
         $this->endOfLineCharacter = $endOfLineCharacter;
         return $this;
-    }  
+    }
+
+    /**
+     * Returns whether stream wrappers are supported
+     *
+     * @return bool
+     */
+    protected function doesSupportStreamWrapper()
+    {
+        return true;
+    }
 
     /**
      * Opens the file at the given path to make it ready to be read.

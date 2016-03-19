@@ -38,6 +38,16 @@ class Reader extends AbstractReader
     }
 
     /**
+     * Returns whether stream wrappers are supported
+     *
+     * @return bool
+     */
+    protected function doesSupportStreamWrapper()
+    {
+        return false;
+    }
+
+    /**
      * Opens the file at the given file path to make it ready to be read.
      * It also parses the sharedStrings.xml file to get all the shared strings available in memory
      * and fetches all the available sheets.
