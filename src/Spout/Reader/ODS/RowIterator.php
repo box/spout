@@ -20,6 +20,7 @@ class RowIterator implements IteratorInterface
     const XML_NODE_TABLE = 'table:table';
     const XML_NODE_ROW = 'table:table-row';
     const XML_NODE_CELL = 'table:table-cell';
+    const MAX_COLUMNS_EXCEL = 16384;
 
     /** Definition of XML attribute used to parse data */
     const XML_ATTRIBUTE_NUM_COLUMNS_REPEATED = 'table:number-columns-repeated';
@@ -127,22 +128,23 @@ class RowIterator implements IteratorInterface
 
                 } else if ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_ROW)) {
                     // End of the row description
-                    $isEmptyRow = ($numCellsRead <= 1 && empty($cellValue));
+                    $isEmptyRow = ($numCellsRead <= 1 && $this->isEmptyCellValue($cellValue));
                     if ($isEmptyRow) {
                         // skip empty rows
                         $this->next();
                         return;
                     }
 
-                    // Only add value if the last read cell is not empty or does not need to repeat cell values.
+                    // Only add the value if the last read cell is not a trailing empty cell repeater in Excel.
+                    // The current count of read columns is determined by counting the values in $rowData.
                     // This is to avoid creating a lot of empty cells, as Excel adds a last empty "<table:table-cell>"
                     // with a number-columns-repeated value equals to the number of (supported columns - used columns).
-                    // In Excel, the number of supported columns is 16384, but we don't want to returns rows with always 16384 cells.
-                    if (!empty($cellValue) || $numColumnsRepeated === 1) {
+                    // In Excel, the number of supported columns is 16384, but we don't want to returns rows with
+                    // always 16384 cells.
+                    if ((count($rowData) + $numColumnsRepeated) !== self::MAX_COLUMNS_EXCEL) {
                         for ($i = 0; $i < $numColumnsRepeated; $i++) {
                             $rowData[] = $cellValue;
                         }
-
                         $this->numReadRows++;
                     }
                     break;
@@ -179,6 +181,17 @@ class RowIterator implements IteratorInterface
     protected function getCellValue($node)
     {
         return $this->cellValueFormatter->extractAndFormatNodeValue($node);
+    }
+
+    /**
+     * empty() replacement that honours 0 as a valid value
+     *
+     * @param $value The cell value
+     * @return bool
+     */
+    protected function isEmptyCellValue($value)
+    {
+        return (!isset($value) || trim($value) === '');
     }
 
     /**
