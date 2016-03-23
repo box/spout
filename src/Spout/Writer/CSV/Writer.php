@@ -96,10 +96,6 @@ class Writer extends AbstractWriter
      */
     protected function closeWriter()
     {
-        if ($this->filePointer) {
-            $this->globalFunctionsHelper->fclose($this->filePointer);
-        }
-
         $this->lastWrittenRowIndex = 0;
     }
 }

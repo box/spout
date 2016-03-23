@@ -319,6 +319,11 @@ abstract class AbstractWriter implements WriterInterface
     public function close()
     {
         $this->closeWriter();
+
+        if (is_resource($this->filePointer)) {
+            $this->globalFunctionsHelper->fclose($this->filePointer);
+        }
+
         $this->isWriterOpened = false;
     }
 }
