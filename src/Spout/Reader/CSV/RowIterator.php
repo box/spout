@@ -14,7 +14,7 @@ use Box\Spout\Common\Helper\EncodingHelper;
 class RowIterator implements IteratorInterface
 {
     /**
-     * If no value is given to stream_get_line(), it defaults to 8192 (which may be too low).
+     * If no value is given to fgetcsv(), it defaults to 8192 (which may be too low).
      * Alignement with other functions like fgets() is discussed here: https://bugs.php.net/bug.php?id=48421
      */
     const MAX_READ_BYTES_PER_LINE = 32768;
@@ -128,16 +128,12 @@ class RowIterator implements IteratorInterface
         }
 
         do {
-            $lineData = false;
-            $utf8EncodedLineData = $this->getNextUTF8EncodedLine();
-            if ($utf8EncodedLineData !== false) {
-                $lineData = $this->globalFunctionsHelper->str_getcsv($utf8EncodedLineData, $this->fieldDelimiter, $this->fieldEnclosure);
-            }
+            $rowData = $this->getNextUTF8EncodedRow();
             $hasNowReachedEndOfFile = $this->globalFunctionsHelper->feof($this->filePointer);
-        } while (($lineData === false && !$hasNowReachedEndOfFile) || $this->isEmptyLine($lineData));
+        } while (($rowData === false && !$hasNowReachedEndOfFile) || $this->isEmptyLine($rowData));
 
-        if ($lineData !== false) {
-            $this->rowDataBuffer = $lineData;
+        if ($rowData !== false) {
+            $this->rowDataBuffer = $rowData;
             $this->numReadRows++;
         } else {
             // If we reach this point, it means end of file was reached.
@@ -147,24 +143,39 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * Returns the next line, converted if necessary to UTF-8.
-     * Neither fgets nor fgetcsv don't work with non UTF-8 data... so we need to do some things manually.
+     * Returns the next row, converted if necessary to UTF-8.
+     * As fgetcsv() does not manage correctly encoding for non UTF-8 data,
+     * we remove manually whitespace with ltrim or rtrim (depending on the order of the bytes)
      *
-     * @return string|false The next line for the current file pointer, encoded in UTF-8 or FALSE if nothing to read
+     * @return array|false The row for the current file pointer, encoded in UTF-8 or FALSE if nothing to read
      * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
      */
-    protected function getNextUTF8EncodedLine()
+    protected function getNextUTF8EncodedRow()
     {
-        // Read until the EOL delimiter or EOF is reached. The delimiter's encoding needs to match the CSV's encoding.
-        $encodedEOLDelimiter = $this->getEncodedEOLDelimiter();
-        $encodedLineData = $this->globalFunctionsHelper->stream_get_line($this->filePointer, self::MAX_READ_BYTES_PER_LINE, $encodedEOLDelimiter);
+        $encodedRowData = fgetcsv($this->filePointer, self::MAX_READ_BYTES_PER_LINE, $this->fieldDelimiter, $this->fieldEnclosure);
+        if (false === $encodedRowData) {
+            return false;
+        }
 
-        // If the line could have been read, it can be converted to UTF-8
-        $utf8EncodedLineData = ($encodedLineData !== false) ?
-            $this->encodingHelper->attemptConversionToUTF8($encodedLineData, $this->encoding) :
-            false;
+        foreach ($encodedRowData as $cellIndex => $cellValue) {
+            switch($this->encoding) {
+                case EncodingHelper::ENCODING_UTF16_LE:
+                case EncodingHelper::ENCODING_UTF32_LE:
+                    // remove whitespace from the beginning of a string as fgetcsv() add extra whitespace when it try to explode non UTF-8 data
+                    $cellValue = ltrim($cellValue);
+                    break;
 
-        return $utf8EncodedLineData;
+                case EncodingHelper::ENCODING_UTF16_BE:
+                case EncodingHelper::ENCODING_UTF32_BE:
+                    // remove whitespace from the end of a string as fgetcsv() add extra whitespace when it try to explode non UTF-8 data
+                    $cellValue = rtrim($cellValue);
+                    break;
+            }
+
+            $encodedRowData[$cellIndex] = $this->encodingHelper->attemptConversionToUTF8($cellValue, $this->encoding);
+        }
+
+        return $encodedRowData;
     }
 
     /**

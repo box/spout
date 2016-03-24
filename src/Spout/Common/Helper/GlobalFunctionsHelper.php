@@ -292,35 +292,6 @@ class GlobalFunctionsHelper
     }
 
     /**
-     * Wrapper around global function stream_get_line()
-     * @see stream_get_line()
-     *
-     * @param resource $handle
-     * @param int $length
-     * @param string|void $ending
-     * @return string|bool
-     */
-    public function stream_get_line($handle, $length, $ending = null)
-    {
-        return stream_get_line($handle, $length, $ending);
-    }
-
-    /**
-     * Wrapper around global function str_getcsv()
-     * @see str_getcsv()
-     *
-     * @param string $input
-     * @param string|void $delimiter
-     * @param string|void $enclosure
-     * @param string|void $escape
-     * @return array
-     */
-    public function str_getcsv($input, $delimiter = null, $enclosure = null, $escape = null)
-    {
-        return str_getcsv($input, $delimiter, $enclosure, $escape);
-    }
-
-    /**
      * Wrapper around global function function_exists()
      * @see function_exists()
      *

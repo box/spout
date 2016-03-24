@@ -205,6 +205,15 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testReadShouldNotTruncateLineBreak()
+    {
+        $allRows = $this->getAllRowsForFile('csv_with_line_breaks.csv', ',');
+        $this->assertEquals("This is,\na comma", $allRows[0][0]);
+    }
+
+    /**
      * @return array
      */
     public function dataProviderForTestReadShouldSkipBom()

@@ -32,6 +32,9 @@ class Reader extends AbstractReader
     /** @var string Defines the End of line */
     protected $endOfLineCharacter = "\n";
 
+    /** @var string */
+    protected $autoDetectLineEndings;
+
     /**
      * Sets the field delimiter for the CSV.
      * Needs to be called before opening the reader.
@@ -104,6 +107,9 @@ class Reader extends AbstractReader
      */
     protected function openReader($filePath)
     {
+        $this->autoDetectLineEndings = ini_get('auto_detect_line_endings');
+        ini_set('auto_detect_line_endings', '1');
+
         $this->filePointer = $this->globalFunctionsHelper->fopen($filePath, 'r');
         if (!$this->filePointer) {
             throw new IOException("Could not open file $filePath for reading.");
@@ -140,5 +146,7 @@ class Reader extends AbstractReader
         if ($this->filePointer) {
             $this->globalFunctionsHelper->fclose($this->filePointer);
         }
+
+        ini_set('auto_detect_line_endings', $this->autoDetectLineEndings);
     }
 }
