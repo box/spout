@@ -123,4 +123,46 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedFormattedValue, $formattedValue);
         $this->assertEquals($expectedType, gettype($formattedValue));
     }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForTestFormatStringCellValue()
+    {
+        return [
+            ['A', 'A'],
+            [' A ', ' A '],
+            ["\n\tA\n\t", "\n\tA\n\t"],
+            [' ', ' '],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForTestFormatStringCellValue
+     *
+     * @param string $value
+     * @param string $expectedFormattedValue
+     * @return void
+     */
+    public function testFormatInlineStringCellValue($value, $expectedFormattedValue)
+    {
+        $nodeListMock = $this->getMockBuilder('DOMNodeList')->disableOriginalConstructor()->getMock();
+        $nodeListMock
+            ->expects($this->atLeastOnce())
+            ->method('item')
+            ->with(0)
+            ->will($this->returnValue((object)['nodeValue' => $value]));
+
+        $nodeMock = $this->getMockBuilder('DOMElement')->disableOriginalConstructor()->getMock();
+        $nodeMock
+            ->expects($this->atLeastOnce())
+            ->method('getElementsByTagName')
+            ->with(CellValueFormatter::XML_NODE_INLINE_STRING_VALUE)
+            ->will($this->returnValue($nodeListMock));
+
+        $formatter = new CellValueFormatter(null, null);
+        $formattedValue = \ReflectionHelper::callMethodOnObject($formatter, 'formatInlineStringCellValue', $nodeMock);
+
+        $this->assertEquals($expectedFormattedValue, $formattedValue);
+    }
 }

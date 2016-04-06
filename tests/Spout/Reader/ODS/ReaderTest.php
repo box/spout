@@ -420,6 +420,23 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * https://github.com/box/spout/issues/195
+     * @return void
+     */
+    public function testReaderShouldNotTrimCellValues()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_untrimmed_strings.ods');
+
+        $expectedRows = [
+            ['A'],
+            [' A '],
+            ["\n\tA\n\t"],
+        ];
+
+        $this->assertEquals($expectedRows, $allRows, 'Cell values should not be trimmed');
+    }
+
+    /**
      * @param string $fileName
      * @return array All the read rows the given file
      */

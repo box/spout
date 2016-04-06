@@ -385,6 +385,23 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * https://github.com/box/spout/issues/195
+     * @return void
+     */
+    public function testReaderShouldNotTrimCellValues()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_untrimmed_strings.csv');
+
+        $expectedRows = [
+            ['A'],
+            [' A '],
+            ["\n\tA\n\t"],
+        ];
+
+        $this->assertEquals($expectedRows, $allRows, 'Cell values should not be trimmed');
+    }
+
+    /**
      * @param string $fileName
      * @param string|void $fieldDelimiter
      * @param string|void $fieldEnclosure
