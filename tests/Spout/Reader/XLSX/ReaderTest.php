@@ -467,7 +467,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testReaderShouldNotTrimCellValues()
     {
-        $allRows = $this->getAllRowsForFile('sheet_with_untrimmed_strings.xlsx');
+        $allRows = $this->getAllRowsForFile('sheet_with_untrimmed_inline_strings.xlsx');
 
         $expectedRows = [
             ['A'],
