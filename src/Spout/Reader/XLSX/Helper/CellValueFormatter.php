@@ -118,8 +118,7 @@ class CellValueFormatter
         // inline strings are formatted this way:
         // <c r="A1" t="inlineStr"><is><t>[INLINE_STRING]</t></is></c>
         $tNode = $node->getElementsByTagName(self::XML_NODE_INLINE_STRING_VALUE)->item(0);
-        $escapedCellValue = trim($tNode->nodeValue);
-        $cellValue = $this->escaper->unescape($escapedCellValue);
+        $cellValue = $this->escaper->unescape($tNode->nodeValue);
         return $cellValue;
     }
 
