@@ -178,6 +178,10 @@ EOD;
      */
     public function close()
     {
+        if (!is_resource($this->sheetFilePointer)) {
+            return;
+        }
+
         fwrite($this->sheetFilePointer, '</sheetData>');
         fwrite($this->sheetFilePointer, '</worksheet>');
         fclose($this->sheetFilePointer);
