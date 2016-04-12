@@ -88,6 +88,10 @@ EOD;
      */
     public function close()
     {
+        if (!is_resource($this->sharedStringsFilePointer)) {
+            return;
+        }
+
         fwrite($this->sharedStringsFilePointer, '</sst>');
 
         // Replace the default strings count with the actual number of shared strings in the file header

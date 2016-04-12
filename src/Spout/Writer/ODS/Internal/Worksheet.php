@@ -218,6 +218,10 @@ class Worksheet implements WorksheetInterface
      */
     public function close()
     {
+        if (!is_resource($this->sheetFilePointer)) {
+            return;
+        }
+
         fclose($this->sheetFilePointer);
     }
 }
