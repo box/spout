@@ -121,6 +121,12 @@ class StyleBuilder
         return $this;
     }
 
+    public function setNumberFormat($format)
+    {
+        $this->style->setNumberFormat($format);
+        return $this;
+    }
+
     /**
      * Returns the configured style. The style is cached and can be reused.
      *

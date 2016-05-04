@@ -167,6 +167,11 @@ abstract class AbstractWorkbook implements WorkbookInterface
         }
     }
 
+    public function applyStyleToCurrentWorksheet($style) {
+        $updatedStyle = $styleHelper->applyExtraStylesIfNeeded($style, array());
+        $registeredStyle = $styleHelper->registerStyle($updatedStyle);
+    }
+
     /**
      * @return bool Whether the current worksheet has reached the maximum number of rows per sheet.
      */

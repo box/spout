@@ -64,6 +64,10 @@ class Writer extends AbstractMultiSheetsWriter
         return $this;
     }
 
+    public function registerStyle($style) {
+        $this->book->registerStyle($style);
+    }
+
     /**
      * Configures the write and sets the current sheet pointer to a new sheet.
      *

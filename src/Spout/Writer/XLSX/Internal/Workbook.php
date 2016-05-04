@@ -58,6 +58,10 @@ class Workbook extends AbstractWorkbook
         $this->sharedStringsHelper = new SharedStringsHelper($xlFolder);
     }
 
+    public function registerStyle($style) {
+        $this->styleHelper->registerStyle($style);
+    }
+
     /**
      * @return \Box\Spout\Writer\XLSX\Helper\StyleHelper Helper to apply styles to XLSX files
      */

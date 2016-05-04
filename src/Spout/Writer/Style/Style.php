@@ -61,6 +61,13 @@ class Style
     /** @var bool Whether the wrap text property was set */
     protected $hasSetWrapText = false;
 
+    /** @var string Custom number format */
+    protected $numberFormat = '';
+    /** @var boolean Whether specific number format has been set */
+    protected $hasSetNumberFormat = false;
+    /** @var integer Holds the number format id */
+    protected $numberFormatId = 0;
+
     /**
      * @return int|null
      */
@@ -242,6 +249,35 @@ class Style
     {
         return $this->shouldApplyFont;
     }
+
+    public function setNumberFormat($format)
+    {
+        $this->numberFormat = $format;
+        $this->hasSetNumberFormat = true;
+        return $this;
+    }
+
+    public function setNumberFormatId($id)
+    {
+        $this->numberFormatId = $id;
+    }
+
+
+    public function shouldApplyNumberFormat()
+    {
+        return $this->hasSetNumberFormat;
+    }
+
+    public function getNumberFormatId()
+    {
+        return $this->numberFormatId;
+    }
+
+    public function getNumberFormat()
+    {
+        return $this->numberFormat;
+    }
+
 
     /**
      * Serializes the style for future comparison with other styles.
