@@ -66,6 +66,10 @@ class Writer extends AbstractWriter
         $this->globalFunctionsHelper->fputs($this->filePointer, EncodingHelper::BOM_UTF8);
     }
 
+    public function registerStyle($style) {
+        return false;
+    }
+
     /**
      * Adds data to the currently opened writer.
      *

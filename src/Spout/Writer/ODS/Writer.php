@@ -61,6 +61,10 @@ class Writer extends AbstractMultiSheetsWriter
         return $this->book;
     }
 
+    public function registerStyle($style) {
+        return false;
+    }
+
     /**
      * Adds data to the currently opened writer.
      * If shouldCreateNewSheetsAutomatically option is set to true, it will handle pagination

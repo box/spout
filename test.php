@@ -5,7 +5,6 @@ include_once 'src/Spout/Autoloader/autoload.php';
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
-use Box\Spout\Writer\Style\Color;
 
 # UNIX_DATE = (EXCEL_DATE - 25569) * 86400              : Excel -> unix
 # EXCEL_DATE = 25569 + (UNIX_DATE / 86400)              : Unix -> excel
