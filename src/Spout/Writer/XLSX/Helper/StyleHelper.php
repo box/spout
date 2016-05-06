@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\XLSX\Helper;
 
 use Box\Spout\Writer\Common\Helper\AbstractStyleHelper;
 use Box\Spout\Writer\Style\Color;
+use Box\Spout\Writer\Style\Style;
 
 /**
  * Class StyleHelper
@@ -13,6 +14,64 @@ use Box\Spout\Writer\Style\Color;
  */
 class StyleHelper extends AbstractStyleHelper
 {
+    /**
+     * @var array
+     */
+    protected $registeredFills = [];
+
+    /**
+     * @var array [STYLE_ID] => [FILL_ID] maps a style to a fill declaration
+     */
+    protected $styleIdToFillMappingTable = [];
+
+    /**
+     * Excel preserves two default fills with index 0 and 1
+     * Since Excel is the dominant vendor - we play along here
+     *
+     * @var int The fill index counter for custom fills.
+     */
+    protected $fillIndex = 2;
+
+    /**
+     * XLSX specific operations on the registered styles
+     *
+     * @param \Box\Spout\Writer\Style\Style $style
+     * @return \Box\Spout\Writer\Style\Style
+     */
+    public function registerStyle($style)
+    {
+        $registeredStyle = parent::registerStyle($style);
+        $this->registerFill($registeredStyle);
+        return $registeredStyle;
+    }
+
+    /**
+     * Register a fill definition
+     *
+     * @param \Box\Spout\Writer\Style\Style $style
+     */
+    protected function registerFill($style)
+    {
+        $styleId = $style->getId();
+
+        // Currently - only solid backgrounds are supported
+        // so $backgroundColor is a scalar value (RGB Color)
+        $backgroundColor = $style->getBackgroundColor();
+
+        // We need to track the already registered background definitions
+        if (isset($backgroundColor) && !isset($this->registeredFills[$backgroundColor])) {
+            $this->registeredFills[$backgroundColor] = $styleId;
+        }
+
+        if (!isset($this->styleIdToFillMappingTable[$styleId])) {
+            // The fillId maps a style to a fill declaration
+            // When there is no background color definition - we default to 0
+            $fillId = $backgroundColor !== null ? $this->fillIndex++ : 0;
+            $this->styleIdToFillMappingTable[$styleId] = $fillId;
+        }
+    }
+
+
     /**
      * Returns the content of the "styles.xml" file, given a list of styles.
      *
@@ -84,13 +143,29 @@ EOD;
      */
     protected function getFillsSectionContent()
     {
-        return <<<EOD
-<fills count="1">
-    <fill>
-        <patternFill patternType="none"/>
-    </fill>
-</fills>
-EOD;
+        // Excel reserves two default fills
+        $fillsCount = count($this->registeredFills) + 2;
+        $content = sprintf('<fills count="%d">', $fillsCount);
+
+        $content .= '<fill><patternFill patternType="none"/></fill>';
+        $content .= '<fill><patternFill patternType="gray125"/></fill>';
+
+        // The other fills are actually registered by setting a background color
+        foreach ($this->registeredFills as $styleId) {
+
+            /** @var Style $style */
+            $style = $this->styleIdToStyleMappingTable[$styleId];
+
+            $backgroundColor = $style->getBackgroundColor();
+            $content .= sprintf(
+                '<fill><patternFill patternType="solid"><fgColor rgb="%s"/></patternFill></fill>',
+                $backgroundColor
+            );
+        }
+
+        $content .= '</fills>';
+
+        return $content;
     }
 
     /**
@@ -160,7 +235,11 @@ EOD;
         $content = '<cellXfs count="' . count($registeredStyles) . '">';
 
         foreach ($registeredStyles as $style) {
-            $content .= '<xf numFmtId="0" fontId="' . $style->getId() . '" fillId="0" borderId="' . $style->getId() . '" xfId="0"';
+
+            $styleId = $style->getId();
+            $fillId = $this->styleIdToFillMappingTable[$styleId];
+
+            $content .= '<xf numFmtId="0" fontId="' . $styleId . '" fillId="' . $fillId . '" borderId="' . $styleId . '" xfId="0"';
 
             if ($style->shouldApplyFont()) {
                 $content .= ' applyFont="1"';

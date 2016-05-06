@@ -133,7 +133,7 @@ $writer->setShouldAddBOM(false);
 
 #### Row styling
 
-It is possible to apply some formatting options to a row. Spout supports fonts, borders as well as alignment styles.
+It is possible to apply some formatting options to a row. Spout supports fonts, background, borders as well as alignment styles.
 
 ```php
 use Box\Spout\Common\Type;
@@ -146,6 +146,7 @@ $style = (new StyleBuilder())
            ->setFontSize(15)
            ->setFontColor(Color::BLUE)
            ->setShouldWrapText()
+           ->setBackgroundColor(Color::YELLOW)
            ->build();
 
 $writer = WriterFactory::create(Type::XLSX);

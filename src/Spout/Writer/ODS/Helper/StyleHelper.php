@@ -265,6 +265,11 @@ EOD;
             $content .= sprintf($borderProperty, implode(' ', $borders));
         }
 
+        if ($style->shouldApplyBackgroundColor()) {
+            $content .= sprintf('
+                <style:table-cell-properties fo:background-color="#%s"/>', $style->getBackgroundColor());
+        }
+
         $content .= '</style:style>';
 
         return $content;

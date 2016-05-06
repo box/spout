@@ -126,7 +126,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $fontElements = $fontsDomElement->getElementsByTagName('font');
         $this->assertEquals(3, $fontElements->length, 'There should be 3 associated "font" elements, including the default one.');
-
         // First font should be the default one
         $defaultFontElement = $fontElements->item(0);
         $this->assertChildrenNumEquals(3, $defaultFontElement, 'The default font should only have 3 properties.');
@@ -232,6 +231,34 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
         $this->assertEquals(1, $xfElement->getAttribute('applyAlignment'));
         $this->assertFirstChildHasAttributeEquals('1', $xfElement, 'alignment', 'wrapText');
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddBackgroundColor()
+    {
+        $fileName = 'test_add_background_color.xlsx';
+        $dataRows = [
+            ["BgColor"],
+        ];
+        $style = (new StyleBuilder())->setBackgroundColor(Color::WHITE)->build();
+        $this->writeToXLSXFile($dataRows, $fileName, $style);
+        $fillsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'fills');
+        $this->assertEquals(3, $fillsDomElement->getAttribute('count'), 'There should be 3 fills, including the 2 default ones');
+
+        $fillsElements = $fillsDomElement->getElementsByTagName('fill');
+
+        $thirdFillElement = $fillsElements->item(2); // Zero based
+        $fgColor = $thirdFillElement->getElementsByTagName('fgColor')->item(0)->getAttribute('rgb');
+
+        $this->assertEquals(Color::WHITE, $fgColor, 'The foreground color should equal white');
+
+        $styleXfsElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
+        $this->assertEquals(2, $styleXfsElements->getAttribute('count'), '2 cell xfs present - a default one and a custom one');
+
+        $customFillId = $styleXfsElements->lastChild->getAttribute('fillId');
+        $this->assertEquals(2, (int)$customFillId, 'The custom fill id should have the index 2');
     }
 
     /**
