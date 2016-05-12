@@ -201,6 +201,10 @@ class StyleHelper
 
         $customNumberFormat = $customNumberFormats[$numFmtId];
 
+        if ($customNumberFormat === 'General') {
+            return false;
+        }
+
         // Remove extra formatting (what's between [ ], the brackets should not be preceded by a "\")
         $pattern = '((?<!\\\)\[.+?(?<!\\\)\])';
         $customNumberFormat = preg_replace($pattern, '', $customNumberFormat);
