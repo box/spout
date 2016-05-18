@@ -437,6 +437,23 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * https://github.com/box/spout/issues/218
+     * @return void
+     */
+    public function testReaderShouldReadTextInHyperlinks()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_hyperlinks.ods');
+
+        $expectedRows = [
+            ['email', 'text'],
+            ['1@example.com', 'text'],
+            ['2@example.com', 'text and https://github.com/box/spout/issues/218 and text'],
+        ];
+
+        $this->assertEquals($expectedRows, $allRows, 'Text in hyperlinks should be read');
+    }
+
+    /**
      * @param string $fileName
      * @return array All the read rows the given file
      */
