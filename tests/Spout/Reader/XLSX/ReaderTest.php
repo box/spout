@@ -23,7 +23,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['/path/to/fake/file.xlsx'],
-            ['file_with_no_sheets_in_content_types.xlsx'],
+            ['file_with_no_sheets_in_workbook_xml.xlsx'],
             ['file_with_sheet_xml_not_matching_content_types.xlsx'],
             ['file_corrupted.xlsx'],
         ];
