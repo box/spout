@@ -62,6 +62,16 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testShouldFormatNumericValueAsDateWithGeneralFormat()
+    {
+        $styleHelper = $this->getStyleHelperMock([[], ['applyNumberFormat' => true, 'numFmtId' => 0]]);
+        $shouldFormatAsDate = $styleHelper->shouldFormatNumericValueAsDate(1);
+        $this->assertFalse($shouldFormatAsDate);
+    }
+
+    /**
+     * @return void
+     */
     public function testShouldFormatNumericValueAsDateWithBuiltinDateFormats()
     {
         $builtinNumFmtIdsForDate = [14, 15, 16, 17, 18, 19, 20, 21, 22, 45, 46, 47];
