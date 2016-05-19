@@ -67,11 +67,29 @@ class Writer extends AbstractMultiSheetsWriter
         return $this;
     }
 
+    /**
+     * Clear all column width specification
+     * @return Writer
+     */
     public function clearColumnWidth() {
-        $this->cellwidths = array();
+
+        $this->columnwidths = array();
+
+        if( $this->book )
+            $this->book->_setColumnWidth( $this->columnwidths );
+
+        return $this;
     }
 
+    /**
+     * Add a width definition for the next sheet that will be generated
+     * @param number $width column width
+     * @param number $min   column position ( A=1 ) where this width should take effect
+     * @param number $max   end of range where width take effect ( default to min )
+     * @return Writer
+     */
     public function setColumnsWidth($width, $min, $max = null) {
+
         if( $max === null )
             $max = $min;
 
@@ -80,6 +98,11 @@ class Writer extends AbstractMultiSheetsWriter
             'min' => $min,
             'max' => $max
         );
+
+        if( $this->book )
+            $this->book->_setColumnWidth( $this->columnwidths );
+
+        return $this;
     }
 
     /**

@@ -60,7 +60,7 @@ class Workbook extends AbstractWorkbook
         $xlFolder = $this->fileSystemHelper->getXlFolder();
         $this->sharedStringsHelper = new SharedStringsHelper($xlFolder);
 
-        $this->columnwidths = $columnwidths
+        $this->columnwidths = $columnwidths;
     }
 
     /**
