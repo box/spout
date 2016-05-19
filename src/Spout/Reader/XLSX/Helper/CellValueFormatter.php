@@ -189,7 +189,17 @@ class CellValueFormatter
 
         // The value 1.0 represents 1900-01-01. Numbers below 1.0 are not valid Excel dates.
         if ($nodeValue < 1.0) {
-            return null;
+            // treat this value as time-only cell
+            $time = round($nodeValue * 86400);
+            $hours = round($time / 3600);
+            $minutes = round($time / 60) - ($hours * 60);
+            $seconds = round($time) - ($hours * 3600) - ($minutes * 60);
+
+            // the date part is not important here
+            $dateObj = date_create('1-Jan-2000');
+            $dateObj->setTime($hours,$minutes,$seconds);
+
+            return $dateObj; 
         }
 
         // Do not use any unix timestamps for calculation to prevent
