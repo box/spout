@@ -35,6 +35,9 @@ class Workbook extends AbstractWorkbook
     /** @var \Box\Spout\Writer\XLSX\Helper\StyleHelper Helper to apply styles */
     protected $styleHelper;
 
+    /** @var array contain column width information */
+    protected $columnwidths = array();
+
     /**
      * @param string $tempFolder
      * @param bool $shouldUseInlineStrings
@@ -42,7 +45,7 @@ class Workbook extends AbstractWorkbook
      * @param \Box\Spout\Writer\Style\Style $defaultRowStyle
      * @throws \Box\Spout\Common\Exception\IOException If unable to create at least one of the base folders
      */
-    public function __construct($tempFolder, $shouldUseInlineStrings, $shouldCreateNewSheetsAutomatically, $defaultRowStyle)
+    public function __construct($tempFolder, $shouldUseInlineStrings, $shouldCreateNewSheetsAutomatically, $defaultRowStyle, $columnwidths)
     {
         parent::__construct($shouldCreateNewSheetsAutomatically, $defaultRowStyle);
 
@@ -56,6 +59,8 @@ class Workbook extends AbstractWorkbook
         // This helper will be shared by all sheets
         $xlFolder = $this->fileSystemHelper->getXlFolder();
         $this->sharedStringsHelper = new SharedStringsHelper($xlFolder);
+
+        $this->columnwidths = $columnwidths
     }
 
     /**
@@ -86,10 +91,20 @@ class Workbook extends AbstractWorkbook
         $sheet = new Sheet($newSheetIndex);
 
         $worksheetFilesFolder = $this->fileSystemHelper->getXlWorksheetsFolder();
-        $worksheet = new Worksheet($sheet, $worksheetFilesFolder, $this->sharedStringsHelper, $this->shouldUseInlineStrings);
+        $worksheet = new Worksheet($sheet, $worksheetFilesFolder, $this->sharedStringsHelper, $this->shouldUseInlineStrings, $this->columnwidths);
         $this->worksheets[] = $worksheet;
 
         return $worksheet;
+    }
+
+    /**
+     * Set column width for sheet that will be created
+     * should only be called from the writer
+     * 
+     * @param array $columnwidths
+     */
+    public function _setColumnWidth( $columnwidths ) {
+        $this->columnwidths = $columnwidths;
     }
 
     /**

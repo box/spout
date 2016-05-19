@@ -49,7 +49,7 @@ EOD;
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
-    public function __construct($externalSheet, $worksheetFilesFolder, $sharedStringsHelper, $shouldUseInlineStrings)
+    public function __construct($externalSheet, $worksheetFilesFolder, $sharedStringsHelper, $shouldUseInlineStrings, $columnwidths)
     {
         $this->externalSheet = $externalSheet;
         $this->sharedStringsHelper = $sharedStringsHelper;
@@ -59,7 +59,7 @@ EOD;
         $this->stringsEscaper = new \Box\Spout\Common\Escaper\XLSX();
 
         $this->worksheetFilePath = $worksheetFilesFolder . '/' . strtolower($this->externalSheet->getName()) . '.xml';
-        $this->startSheet();
+        $this->startSheet( $columnwidths );
     }
 
     /**
@@ -68,12 +68,24 @@ EOD;
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
-    protected function startSheet()
+    protected function startSheet( $columnwidths = null )
     {
         $this->sheetFilePointer = fopen($this->worksheetFilePath, 'w');
         $this->throwIfSheetFilePointerIsNotAvailable();
 
         fwrite($this->sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        
+        if( !empty($columnwidths) ) {
+            foreach( $columnwidths as $c ) {
+                fwrite($this->sheetFilePointer, 
+                    '<cols><col min="' . $c['min'] .
+                    '" max="' . $c['max'] .
+                    '" width="' . $c['width'] .
+                    '" customWidth="1"/></cols>'
+                );
+            }
+        }
+
         fwrite($this->sheetFilePointer, '<sheetData>');
     }
 
