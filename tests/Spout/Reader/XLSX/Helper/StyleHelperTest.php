@@ -121,6 +121,7 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
             ['m/d/yyyy;@', true],
             ['[$-409]m/d/yy\--h:mm;@', true],
             ['GENERAL', false],
+            ['General', false],
             ['\ma\yb\e', false],
             ['[Red]foo;', false],
         ];
