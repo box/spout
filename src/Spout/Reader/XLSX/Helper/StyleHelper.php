@@ -171,9 +171,21 @@ class StyleHelper
     protected function doesNumFmtIdIndicateDate($numFmtId)
     {
         return (
-            $this->isNumFmtIdBuiltInDateFormat($numFmtId) ||
-            $this->isNumFmtIdCustomDateFormat($numFmtId)
+            !$this->doesNumFmtIdIndicateGeneralFormat($numFmtId) &&
+            (
+                $this->isNumFmtIdBuiltInDateFormat($numFmtId) ||
+                $this->isNumFmtIdCustomDateFormat($numFmtId)
+            )
         );
+    }
+
+    /**
+     * @param int $numFmtId
+     * @return bool Whether the number format ID indicates the "General" format (0 by convention)
+     */
+    protected function doesNumFmtIdIndicateGeneralFormat($numFmtId)
+    {
+        return ($numFmtId === 0);
     }
 
     /**
