@@ -184,6 +184,28 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportDifferentTimesAsNumericTimestamp()
+    {
+        // make sure dates are always created with the same timezone
+        date_default_timezone_set('UTC');
+
+        $allRows = $this->getAllRowsForFile('sheet_with_different_numeric_value_times.xlsx');
+
+        $expectedRows = [
+            [
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 00:00:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 11:29:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 23:29:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 01:42:25'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 13:42:25'),
+            ]
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldKeepEmptyCellsAtTheEndIfDimensionsSpecified()
     {
         $allRows = $this->getAllRowsForFile('sheet_without_dimensions_but_spans_and_empty_cells.xlsx');

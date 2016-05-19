@@ -29,6 +29,8 @@ class CellValueFormatter
 
     /** Constants used for date formatting */
     const NUM_SECONDS_IN_ONE_DAY = 86400;
+    const NUM_SECONDS_IN_ONE_HOUR = 3600;
+    const NUM_SECONDS_IN_ONE_MINUTE = 60;
 
     /**
      * February 29th, 1900 is NOT a leap year but Excel thinks it is...
@@ -176,6 +178,7 @@ class CellValueFormatter
     /**
      * Returns a cell's PHP Date value, associated to the given timestamp.
      * NOTE: The timestamp is a float representing the number of days since January 1st, 1900.
+     * NOTE: The timestamp can also represent a time, if it is a value between 0 and 1.
      *
      * @param float $nodeValue
      * @return \DateTime|null The value associated with the cell or NULL if invalid date value
@@ -187,22 +190,59 @@ class CellValueFormatter
             --$nodeValue;
         }
 
-        // The value 1.0 represents 1900-01-01. Numbers below 1.0 are not valid Excel dates.
-        if ($nodeValue < 1.0) {
+        if ($nodeValue >= 1) {
+            // Values greater than 1 represent "dates". The value 1.0 representing the "base" date: 1900-01-01.
+            return $this->formatExcelTimestampValueAsDateValue($nodeValue);
+        } else if ($nodeValue >= 0) {
+            // Values between 0 and 1 represent "times".
+            return $this->formatExcelTimestampValueAsTimeValue($nodeValue);
+        } else {
+            // invalid date
             return null;
         }
+    }
 
+    /**
+     * Returns a cell's PHP DateTime value, associated to the given timestamp.
+     * Only the time value matters. The date part is set to Jan 1st, 1900 (base Excel date).
+     *
+     * @param float $nodeValue
+     * @return \DateTime The value associated with the cell
+     */
+    protected function formatExcelTimestampValueAsTimeValue($nodeValue)
+    {
+        $time = round($nodeValue * self::NUM_SECONDS_IN_ONE_DAY);
+        $hours = floor($time / self::NUM_SECONDS_IN_ONE_HOUR);
+        $minutes = floor($time / self::NUM_SECONDS_IN_ONE_MINUTE) - ($hours * self::NUM_SECONDS_IN_ONE_MINUTE);
+        $seconds = $time - ($hours * self::NUM_SECONDS_IN_ONE_HOUR) - ($minutes * self::NUM_SECONDS_IN_ONE_MINUTE);
+
+        // using the base Excel date (Jan 1st, 1900) - not relevant here
+        $dateObj = new \DateTime('1900-01-01');
+        $dateObj->setTime($hours, $minutes, $seconds);
+
+        return $dateObj;
+    }
+
+    /**
+     * Returns a cell's PHP Date value, associated to the given timestamp.
+     * NOTE: The timestamp is a float representing the number of days since January 1st, 1900.
+     *
+     * @param float $nodeValue
+     * @return \DateTime|null The value associated with the cell or NULL if invalid date value
+     */
+    protected function formatExcelTimestampValueAsDateValue($nodeValue)
+    {
         // Do not use any unix timestamps for calculation to prevent
         // issues with numbers exceeding 2^31.
         $secondsRemainder = fmod($nodeValue, 1) * self::NUM_SECONDS_IN_ONE_DAY;
         $secondsRemainder = round($secondsRemainder, 0);
 
         try {
-            $cellValue = \DateTime::createFromFormat('|Y-m-d', '1899-12-31');
-            $cellValue->modify('+' . intval($nodeValue) . 'days');
-            $cellValue->modify('+' . $secondsRemainder . 'seconds');
+            $dateObj = \DateTime::createFromFormat('|Y-m-d', '1899-12-31');
+            $dateObj->modify('+' . intval($nodeValue) . 'days');
+            $dateObj->modify('+' . $secondsRemainder . 'seconds');
 
-            return $cellValue;
+            return $dateObj;
         } catch (\Exception $e) {
             return null;
         }
