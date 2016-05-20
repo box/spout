@@ -206,6 +206,21 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportFormatDatesAndTimesIfSpecified()
+    {
+        $shouldFormatDates = true;
+        $allRows = $this->getAllRowsForFile('sheet_with_dates_and_times.xlsx', $shouldFormatDates);
+
+        $expectedRows = [
+            ['1/13/2016', '01/13/2016', '13-Jan-16', 'Wednesday January 13, 16', 'Today is 1/13/2016'],
+            ['4:43:25', '04:43', '4:43', '4:43:25 AM', '4:43:25 PM'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldKeepEmptyCellsAtTheEndIfDimensionsSpecified()
     {
         $allRows = $this->getAllRowsForFile('sheet_without_dimensions_but_spans_and_empty_cells.xlsx');
@@ -503,14 +518,16 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $fileName
+     * @param bool|void $shouldFormatDates
      * @return array All the read rows the given file
      */
-    private function getAllRowsForFile($fileName)
+    private function getAllRowsForFile($fileName, $shouldFormatDates = false)
     {
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
         $reader = ReaderFactory::create(Type::XLSX);
+        $reader->setShouldFormatDates($shouldFormatDates);
         $reader->open($resourcePath);
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {

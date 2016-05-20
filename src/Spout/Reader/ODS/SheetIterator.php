@@ -22,6 +22,9 @@ class SheetIterator implements IteratorInterface
     /** @var string $filePath Path of the file to be read */
     protected $filePath;
 
+    /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
+    protected $shouldFormatDates;
+
     /** @var XMLReader The XMLReader object that will help read sheet's XML data */
     protected $xmlReader;
 
@@ -36,11 +39,13 @@ class SheetIterator implements IteratorInterface
 
     /**
      * @param string $filePath Path of the file to be read
+     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
      * @throws \Box\Spout\Reader\Exception\NoSheetsFoundException If there are no sheets in the file
      */
-    public function __construct($filePath)
+    public function __construct($filePath, $shouldFormatDates)
     {
         $this->filePath = $filePath;
+        $this->shouldFormatDates = $shouldFormatDates;
         $this->xmlReader = new XMLReader();
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
@@ -109,7 +114,7 @@ class SheetIterator implements IteratorInterface
         $escapedSheetName = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_TABLE_NAME);
         $sheetName = $this->escaper->unescape($escapedSheetName);
 
-        return new Sheet($this->xmlReader, $sheetName, $this->currentSheetIndex);
+        return new Sheet($this->xmlReader, $this->shouldFormatDates, $sheetName, $this->currentSheetIndex);
     }
 
     /**

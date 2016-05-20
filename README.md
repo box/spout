@@ -121,7 +121,7 @@ $reader->setEncoding('UTF-16LE');
 The writer always generate CSV files encoded in UTF-8, with a BOM.
 
 
-### Configuring the XLSX and ODS writers
+### Configuring the XLSX and ODS readers and writers
 
 #### Row styling
 
@@ -162,7 +162,6 @@ Font      | Bold          | `StyleBuilder::setFontBold()`
           | Font size     | `StyleBuilder::setFontSize(14)`
           | Font color    | `StyleBuilder::setFontColor(Color::BLUE)`<br>`StyleBuilder::setFontColor(Color::rgb(0, 128, 255))`
 Alignment | Wrap text     | `StyleBuilder::setShouldWrapText()`
-
 
 #### New sheet creation
 
@@ -207,6 +206,20 @@ $writer->setShouldUseInlineStrings(false); // will use shared strings
 >
 > Apple's products (Numbers and the iOS previewer) don't support inline strings and display empty cells instead. Therefore, if these platforms need to be supported, make sure to use shared strings!
 
+
+#### Date/Time formatting
+
+When reading a spreadsheet containing dates or times, Spout returns the values by default as DateTime objects.
+It is possible to change this behavior and have a formatted date returned instead (e.g. "2016-11-29 1:22 AM"). The format of the date corresponds to what is specified in the spreadsheet.
+ 
+```php
+use Box\Spout\Reader\ReaderFactory;
+use Box\Spout\Common\Type;
+
+$reader = ReaderFactory::create(Type::XLSX);
+$reader->setShouldFormatDates(false); // default value
+$reader->setShouldFormatDates(true); // will return formatted dates
+```
 
 ### Playing with sheets
 
