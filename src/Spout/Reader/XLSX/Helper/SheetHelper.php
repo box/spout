@@ -30,6 +30,9 @@ class SheetHelper
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
+    /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
+    protected $shouldFormatDates;
+
     /** @var \Box\Spout\Reader\Wrapper\SimpleXMLElement XML element representing the workbook.xml.rels file */
     protected $workbookXMLRelsAsXMLElement;
 
@@ -40,12 +43,14 @@ class SheetHelper
      * @param string $filePath Path of the XLSX file being read
      * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
+     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
      */
-    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper)
+    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper, $shouldFormatDates)
     {
         $this->filePath = $filePath;
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
+        $this->shouldFormatDates = $shouldFormatDates;
     }
 
     /**
@@ -103,7 +108,7 @@ class SheetHelper
         // In [Content_Types].xml, the path is "/xl/worksheets/sheet1.xml"
         $sheetDataXMLFilePath = '/xl/' . $relationshipNode->getAttribute('Target');
 
-        return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $sheetIndexZeroBased, $sheetName);
+        return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $this->shouldFormatDates, $sheetIndexZeroBased, $sheetName);
     }
 
     /**

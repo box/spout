@@ -59,8 +59,9 @@ class RowIterator implements IteratorInterface
      * @param string $filePath Path of the XLSX file being read
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
      * @param Helper\SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
+     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
      */
-    public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper)
+    public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $shouldFormatDates)
     {
         $this->filePath = $filePath;
         $this->sheetDataXMLFilePath = $this->normalizeSheetDataXMLFilePath($sheetDataXMLFilePath);
@@ -68,7 +69,7 @@ class RowIterator implements IteratorInterface
         $this->xmlReader = new XMLReader();
 
         $this->styleHelper = new StyleHelper($filePath);
-        $this->cellValueFormatter = new CellValueFormatter($sharedStringsHelper, $this->styleHelper);
+        $this->cellValueFormatter = new CellValueFormatter($sharedStringsHelper, $this->styleHelper, $shouldFormatDates);
     }
 
     /**

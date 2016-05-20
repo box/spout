@@ -71,7 +71,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->with(123)
             ->will($this->returnValue(true));
 
-        $formatter = new CellValueFormatter(null, $styleHelperMock);
+        $formatter = new CellValueFormatter(null, $styleHelperMock, false);
         $result = $formatter->extractAndFormatNodeValue($nodeMock);
 
         if ($expectedDateAsString === null) {
@@ -120,7 +120,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->method('shouldFormatNumericValueAsDate')
             ->will($this->returnValue(false));
 
-        $formatter = new CellValueFormatter(null, $styleHelperMock);
+        $formatter = new CellValueFormatter(null, $styleHelperMock, false);
         $formattedValue = \ReflectionHelper::callMethodOnObject($formatter, 'formatNumericCellValue', $value, 0);
 
         $this->assertEquals($expectedFormattedValue, $formattedValue);
@@ -163,7 +163,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->with(CellValueFormatter::XML_NODE_INLINE_STRING_VALUE)
             ->will($this->returnValue($nodeListMock));
 
-        $formatter = new CellValueFormatter(null, null);
+        $formatter = new CellValueFormatter(null, null, false);
         $formattedValue = \ReflectionHelper::callMethodOnObject($formatter, 'formatInlineStringCellValue', $nodeMock);
 
         $this->assertEquals($expectedFormattedValue, $formattedValue);
