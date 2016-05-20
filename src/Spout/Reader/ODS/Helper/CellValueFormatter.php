@@ -23,6 +23,7 @@ class CellValueFormatter
     /** Definition of XML nodes names used to parse data */
     const XML_NODE_P = 'p';
     const XML_NODE_S = 'text:s';
+    const XML_NODE_A = 'text:a';
 
     /** Definition of XML attribute used to parse data */
     const XML_ATTRIBUTE_TYPE = 'office:value-type';
@@ -98,6 +99,8 @@ class CellValueFormatter
                     $spaceAttribute = $childNode->getAttribute(self::XML_ATTRIBUTE_C);
                     $numSpaces = (!empty($spaceAttribute)) ? intval($spaceAttribute) : 1;
                     $currentPValue .= str_repeat(' ', $numSpaces);
+                } else if ($childNode->nodeName === self::XML_NODE_A) {
+                    $currentPValue .= $childNode->nodeValue;
                 }
             }
 
