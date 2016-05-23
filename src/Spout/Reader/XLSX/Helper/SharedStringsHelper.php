@@ -100,11 +100,16 @@ class SharedStringsHelper
                 // removes nodes that should not be read, like the pronunciation of the Kanji characters
                 $cleanNode = $this->removeSuperfluousTextNodes($node);
 
-                // find all text nodes 't'; there can be multiple if the cell contains formatting
+                // find all text nodes "t"; there can be multiple if the cell contains formatting
                 $textNodes = $cleanNode->xpath('//ns:t');
 
                 $textValue = '';
-                foreach ($textNodes as $textNode) {
+                foreach ($textNodes as $nodeIndex => $textNode) {
+                    if ($nodeIndex !== 0) {
+                        // add a space between each "t" node
+                        $textValue .= ' ';
+                    }
+
                     if ($this->shouldPreserveWhitespace($textNode)) {
                         $textValue .= $textNode->__toString();
                     } else {
@@ -200,6 +205,8 @@ class SharedStringsHelper
     {
         $tagsToRemove = [
             'rPh', // Pronunciation of the text
+            'pPr', // Paragraph Properties / Previous Paragraph Properties
+            'rPr', // Run Properties for the Paragraph Mark / Previous Run Properties for the Paragraph Mark
         ];
 
         foreach ($tagsToRemove as $tagToRemove) {
