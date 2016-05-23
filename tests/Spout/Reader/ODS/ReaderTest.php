@@ -167,6 +167,21 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportFormatDatesAndTimesIfSpecified()
+    {
+        $shouldFormatDates = true;
+        $allRows = $this->getAllRowsForFile('sheet_with_dates_and_times.ods', $shouldFormatDates);
+
+        $expectedRows = [
+            ['05/19/2016', '5/19/16', '05/19/2016 16:39:00', '05/19/16 04:39 PM', '5/19/2016'],
+            ['11:29', '13:23:45', '01:23:45', '01:23:45 AM', '01:23:45 PM'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldReturnEmptyStringOnUndefinedCellType()
     {
         $allRows = $this->getAllRowsForFile('sheet_with_undefined_value_type.ods');
@@ -437,15 +452,34 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * https://github.com/box/spout/issues/218
+     * @return void
+     */
+    public function testReaderShouldReadTextInHyperlinks()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_hyperlinks.ods');
+
+        $expectedRows = [
+            ['email', 'text'],
+            ['1@example.com', 'text'],
+            ['2@example.com', 'text and https://github.com/box/spout/issues/218 and text'],
+        ];
+
+        $this->assertEquals($expectedRows, $allRows, 'Text in hyperlinks should be read');
+    }
+
+    /**
      * @param string $fileName
+     * @param bool|void $shouldFormatDates
      * @return array All the read rows the given file
      */
-    private function getAllRowsForFile($fileName)
+    private function getAllRowsForFile($fileName, $shouldFormatDates = false)
     {
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
         $reader = ReaderFactory::create(Type::ODS);
+        $reader->setShouldFormatDates($shouldFormatDates);
         $reader->open($resourcePath);
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {

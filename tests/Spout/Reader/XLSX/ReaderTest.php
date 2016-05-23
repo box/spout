@@ -23,7 +23,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['/path/to/fake/file.xlsx'],
-            ['file_with_no_sheets_in_content_types.xlsx'],
+            ['file_with_no_sheets_in_workbook_xml.xlsx'],
             ['file_with_sheet_xml_not_matching_content_types.xlsx'],
             ['file_corrupted.xlsx'],
         ];
@@ -177,6 +177,43 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
                 \DateTime::createFromFormat('Y-m-d H:i:s', '1900-03-01 00:00:00'),
                 \DateTime::createFromFormat('Y-m-d H:i:s', '1900-02-28 11:00:00'), // 1900-02-29 should be converted to 1900-02-28
             ]
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadShouldSupportDifferentTimesAsNumericTimestamp()
+    {
+        // make sure dates are always created with the same timezone
+        date_default_timezone_set('UTC');
+
+        $allRows = $this->getAllRowsForFile('sheet_with_different_numeric_value_times.xlsx');
+
+        $expectedRows = [
+            [
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 00:00:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 11:29:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 23:29:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 01:42:25'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 13:42:25'),
+            ]
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadShouldSupportFormatDatesAndTimesIfSpecified()
+    {
+        $shouldFormatDates = true;
+        $allRows = $this->getAllRowsForFile('sheet_with_dates_and_times.xlsx', $shouldFormatDates);
+
+        $expectedRows = [
+            ['1/13/2016', '01/13/2016', '13-Jan-16', 'Wednesday January 13, 16', 'Today is 1/13/2016'],
+            ['4:43:25', '04:43', '4:43', '4:43:25 AM', '4:43:25 PM'],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }
@@ -481,14 +518,16 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $fileName
+     * @param bool|void $shouldFormatDates
      * @return array All the read rows the given file
      */
-    private function getAllRowsForFile($fileName)
+    private function getAllRowsForFile($fileName, $shouldFormatDates = false)
     {
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
         $reader = ReaderFactory::create(Type::XLSX);
+        $reader->setShouldFormatDates($shouldFormatDates);
         $reader->open($resourcePath);
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {

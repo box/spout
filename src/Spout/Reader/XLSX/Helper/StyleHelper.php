@@ -30,6 +30,25 @@ class StyleHelper
     /** By convention, default style ID is 0 */
     const DEFAULT_STYLE_ID = 0;
 
+    /**
+     * @see https://msdn.microsoft.com/en-us/library/ff529597(v=office.12).aspx
+     * @var array Mapping between built-in numFmtId and the associated format - for dates only
+     */
+    protected static $builtinNumFmtIdToNumFormatMapping = [
+        14 => 'm/d/yyyy', // @NOTE: ECMA spec is 'mm-dd-yy'
+        15 => 'd-mmm-yy',
+        16 => 'd-mmm',
+        17 => 'mmm-yy',
+        18 => 'h:mm AM/PM',
+        19 => 'h:mm:ss AM/PM',
+        20 => 'h:mm',
+        21 => 'h:mm:ss',
+        22 => 'm/d/yyyy h:mm', // @NOTE: ECMA spec is 'm/d/yy h:mm',
+        45 => 'mm:ss',
+        46 => '[h]:mm:ss',
+        47 => 'mm:ss.0',  // @NOTE: ECMA spec is 'mmss.0',
+    ];
+
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
@@ -171,9 +190,21 @@ class StyleHelper
     protected function doesNumFmtIdIndicateDate($numFmtId)
     {
         return (
-            $this->isNumFmtIdBuiltInDateFormat($numFmtId) ||
-            $this->isNumFmtIdCustomDateFormat($numFmtId)
+            !$this->doesNumFmtIdIndicateGeneralFormat($numFmtId) &&
+            (
+                $this->isNumFmtIdBuiltInDateFormat($numFmtId) ||
+                $this->isNumFmtIdCustomDateFormat($numFmtId)
+            )
         );
+    }
+
+    /**
+     * @param int $numFmtId
+     * @return bool Whether the number format ID indicates the "General" format (0 by convention)
+     */
+    protected function doesNumFmtIdIndicateGeneralFormat($numFmtId)
+    {
+        return ($numFmtId === 0);
     }
 
     /**
@@ -182,7 +213,7 @@ class StyleHelper
      */
     protected function isNumFmtIdBuiltInDateFormat($numFmtId)
     {
-        $builtInDateFormatIds = [14, 15, 16, 17, 18, 19, 20, 21, 22, 45, 46, 47];
+        $builtInDateFormatIds = array_keys(self::$builtinNumFmtIdToNumFormatMapping);
         return in_array($numFmtId, $builtInDateFormatIds);
     }
 
@@ -222,5 +253,28 @@ class StyleHelper
         }
 
         return $hasFoundDateFormatCharacter;
+    }
+
+    /**
+     * Returns the format as defined in "styles.xml" of the given style.
+     * NOTE: It is assumed that the style DOES have a number format associated to it.
+     *
+     * @param int $styleId Zero-based style ID
+     * @return string The number format associated with the given style
+     */
+    public function getNumberFormat($styleId)
+    {
+        $stylesAttributes = $this->getStylesAttributes();
+        $styleAttributes = $stylesAttributes[$styleId];
+        $numFmtId = $styleAttributes[self::XML_ATTRIBUTE_NUM_FMT_ID];
+
+        if ($this->isNumFmtIdBuiltInDateFormat($numFmtId)) {
+            $numberFormat = self::$builtinNumFmtIdToNumFormatMapping[$numFmtId];
+        } else {
+            $customNumberFormats = $this->getCustomNumberFormats();
+            $numberFormat = $customNumberFormats[$numFmtId];
+        }
+
+        return $numberFormat;
     }
 }

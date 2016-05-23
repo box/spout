@@ -14,17 +14,12 @@ use Box\Spout\Reader\XLSX\Sheet;
 class SheetHelper
 {
     /** Paths of XML files relative to the XLSX file root */
-    const CONTENT_TYPES_XML_FILE_PATH = '[Content_Types].xml';
     const WORKBOOK_XML_RELS_FILE_PATH = 'xl/_rels/workbook.xml.rels';
     const WORKBOOK_XML_FILE_PATH = 'xl/workbook.xml';
 
     /** Namespaces for the XML files */
-    const MAIN_NAMESPACE_FOR_CONTENT_TYPES_XML = 'http://schemas.openxmlformats.org/package/2006/content-types';
     const MAIN_NAMESPACE_FOR_WORKBOOK_XML_RELS = 'http://schemas.openxmlformats.org/package/2006/relationships';
     const MAIN_NAMESPACE_FOR_WORKBOOK_XML = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
-
-    /** Value of the Override attribute used in [Content_Types].xml to define sheets */
-    const OVERRIDE_CONTENT_TYPES_ATTRIBUTE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml';
 
     /** @var string Path of the XLSX file being read */
     protected $filePath;
@@ -34,6 +29,9 @@ class SheetHelper
 
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
+
+    /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
+    protected $shouldFormatDates;
 
     /** @var \Box\Spout\Reader\Wrapper\SimpleXMLElement XML element representing the workbook.xml.rels file */
     protected $workbookXMLRelsAsXMLElement;
@@ -45,12 +43,14 @@ class SheetHelper
      * @param string $filePath Path of the XLSX file being read
      * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
+     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
      */
-    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper)
+    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper, $shouldFormatDates)
     {
         $this->filePath = $filePath;
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
+        $this->shouldFormatDates = $shouldFormatDates;
     }
 
     /**
@@ -63,66 +63,52 @@ class SheetHelper
     {
         $sheets = [];
 
-        $contentTypesAsXMLElement = $this->getFileAsXMLElementWithNamespace(
-            self::CONTENT_TYPES_XML_FILE_PATH,
-            self::MAIN_NAMESPACE_FOR_CONTENT_TYPES_XML
-        );
+        // Starting from "workbook.xml" as this file is the source of truth for the sheets order
+        $workbookXMLElement = $this->getWorkbookXMLAsXMLElement();
+        $sheetNodes = $workbookXMLElement->xpath('//ns:sheet');
 
-        // find all nodes defining a sheet
-        $sheetNodes = $contentTypesAsXMLElement->xpath('//ns:Override[@ContentType="' . self::OVERRIDE_CONTENT_TYPES_ATTRIBUTE . '"]');
-        $numSheetNodes = count($sheetNodes);
-
-        for ($i = 0; $i < $numSheetNodes; $i++) {
-            $sheetNode = $sheetNodes[$i];
-            $sheetDataXMLFilePath = $sheetNode->getAttribute('PartName');
-
-            $sheets[] = $this->getSheetFromXML($sheetDataXMLFilePath);
+        foreach ($sheetNodes as $sheetIndex => $sheetNode) {
+            $sheets[] = $this->getSheetFromSheetXMLNode($sheetNode, $sheetIndex);
         }
-
-        // make sure the sheets are sorted by index
-        // (as the sheets are not necessarily in this order in the XML file)
-        usort($sheets, function ($sheet1, $sheet2) {
-            return ($sheet1->getIndex() - $sheet2->getIndex());
-        });
 
         return $sheets;
     }
 
     /**
-     * Returns an instance of a sheet, given the path of its data XML file.
-     * We first look at "xl/_rels/workbook.xml.rels" to find the relationship ID of the sheet.
-     * Then we look at "xl/worbook.xml" to find the sheet entry associated to the found ID.
-     * The entry contains the ID and name of the sheet.
+     * Returns an instance of a sheet, given the XML node describing the sheet - from "workbook.xml".
+     * We can find the XML file path describing the sheet inside "workbook.xml.res", by mapping with the sheet ID
+     * ("r:id" in "workbook.xml", "Id" in "workbook.xml.res").
      *
-     * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
+     * @param \Box\Spout\Reader\Wrapper\SimpleXMLElement $sheetNode XML Node describing the sheet, as defined in "workbook.xml"
+     * @param int $sheetIndexZeroBased Index of the sheet, based on order of appearance in the workbook (zero-based)
      * @return \Box\Spout\Reader\XLSX\Sheet Sheet instance
      */
-    protected function getSheetFromXML($sheetDataXMLFilePath)
+    protected function getSheetFromSheetXMLNode($sheetNode, $sheetIndexZeroBased)
     {
-        // In [Content_Types].xml, the path is "/xl/worksheets/sheet1.xml"
-        // In workbook.xml.rels, it is only "worksheets/sheet1.xml"
-        $sheetDataXMLFilePathInWorkbookXMLRels = ltrim($sheetDataXMLFilePath, '/xl/');
-
-        // find the node associated to the given file path
-        $workbookXMLResElement = $this->getWorkbookXMLRelsAsXMLElement();
-        $relationshipNodes = $workbookXMLResElement->xpath('//ns:Relationship[@Target="' . $sheetDataXMLFilePathInWorkbookXMLRels . '"]');
-        $relationshipNode = $relationshipNodes[0];
-
-        $relationshipSheetId = $relationshipNode->getAttribute('Id');
-
-        $workbookXMLElement = $this->getWorkbookXMLAsXMLElement();
-        $sheetNodes = $workbookXMLElement->xpath('//ns:sheet[@r:id="' . $relationshipSheetId . '"]');
-        $sheetNode = $sheetNodes[0];
+        // To retrieve namespaced attributes, some versions of LibXML will accept prefixing the attribute
+        // with the namespace directly (tested on LibXML 2.9.3). For older versions (tested on LibXML 2.7.8),
+        // attributes need to be retrieved without the namespace hint.
+        $sheetId = $sheetNode->getAttribute('r:id');
+        if ($sheetId === null) {
+            $sheetId = $sheetNode->getAttribute('id');
+        }
 
         $escapedSheetName = $sheetNode->getAttribute('name');
-        $sheetIdOneBased = $sheetNode->getAttribute('sheetId');
-        $sheetIndexZeroBased = $sheetIdOneBased - 1;
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $escaper = new \Box\Spout\Common\Escaper\XLSX();
         $sheetName = $escaper->unescape($escapedSheetName);
 
-        return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $sheetIndexZeroBased, $sheetName);
+        // find the file path of the sheet, by looking at the "workbook.xml.res" file
+        $workbookXMLResElement = $this->getWorkbookXMLRelsAsXMLElement();
+        $relationshipNodes = $workbookXMLResElement->xpath('//ns:Relationship[@Id="' . $sheetId . '"]');
+        $relationshipNode = $relationshipNodes[0];
+
+        // In workbook.xml.rels, it is only "worksheets/sheet1.xml"
+        // In [Content_Types].xml, the path is "/xl/worksheets/sheet1.xml"
+        $sheetDataXMLFilePath = '/xl/' . $relationshipNode->getAttribute('Target');
+
+        return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $this->shouldFormatDates, $sheetIndexZeroBased, $sheetName);
     }
 
     /**
