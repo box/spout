@@ -8,7 +8,7 @@
 [![License](https://poser.pugx.org/box/spout/license)](https://packagist.org/packages/box/spout)
 
 Spout is a PHP library to read and write spreadsheet files (CSV, XLSX and ODS), in a fast and scalable way.
-Contrary to other file readers or writers, it is capable of processing very large files while keeping the memory usage really low (less than 10MB).
+Contrary to other file readers or writers, it is capable of processing very large files while keeping the memory usage really low (less than 3MB).
 
 Join the community and come discuss about Spout: [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/box/spout?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
@@ -301,7 +301,7 @@ For information, the performance tests take about 30 minutes to run (processing 
 
 ## Frequently Asked Questions
 
-#### How can Spout handle such large data sets and still use less than 10MB of memory?
+#### How can Spout handle such large data sets and still use less than 3MB of memory?
 
 When writing data, Spout is streaming the data to files, one or few lines at a time. That means that it only keeps in memory the few rows that it needs to write. Once written, the memory is freed.
 
