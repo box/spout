@@ -77,6 +77,20 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testWriteShouldSupportAssociativeArrays()
+    {
+        $allRows = [
+            ['foo' => 'csv--11', 'bar' => 'csv--12'],
+        ];
+        $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_from_associative_arrays.csv');
+        $writtenContent = $this->trimWrittenContent($writtenContent);
+
+        $this->assertEquals('csv--11,csv--12', $writtenContent, 'Values from associative arrays should be written');
+    }
+
+    /**
+     * @return void
+     */
     public function testWriteShouldSupportNullValues()
     {
         $allRows = [
