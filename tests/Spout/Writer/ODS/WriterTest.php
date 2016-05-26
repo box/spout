@@ -23,7 +23,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldThrowExceptionIfCannotOpenAFileForWriting()
     {
         $fileName = 'file_that_wont_be_written.ods';
-        $this->createUnwritableFolderIfNeeded($fileName);
+        $this->createUnwritableFolderIfNeeded();
         $filePath = $this->getGeneratedUnwritableResourcePath($fileName);
 
         $writer = WriterFactory::create(Type::ODS);
@@ -173,6 +173,25 @@ class WriterTest extends \PHPUnit_Framework_TestCase
                 foreach ($dataRow as $cellValue) {
                     $this->assertValueWasWritten($fileName, $cellValue);
                 }
+            }
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldSupportAssociativeArrays()
+    {
+        $fileName = 'test_add_row_should_support_associative_arrays.ods';
+        $dataRows = [
+            ['foo' => 'ods--11', 'bar' => 'ods--12'],
+        ];
+
+        $this->writeToODSFile($dataRows, $fileName);
+
+        foreach ($dataRows as $dataRow) {
+            foreach ($dataRow as $cellValue) {
+                $this->assertValueWasWritten($fileName, $cellValue);
             }
         }
     }

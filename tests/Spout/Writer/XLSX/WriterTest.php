@@ -21,7 +21,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldThrowExceptionIfCannotOpenAFileForWriting()
     {
         $fileName = 'file_that_wont_be_written.xlsx';
-        $this->createUnwritableFolderIfNeeded($fileName);
+        $this->createUnwritableFolderIfNeeded();
         $filePath = $this->getGeneratedUnwritableResourcePath($fileName);
 
         $writer = WriterFactory::create(Type::XLSX);
@@ -228,6 +228,25 @@ class WriterTest extends \PHPUnit_Framework_TestCase
                 foreach ($dataRow as $cellValue) {
                     $this->assertSharedStringWasWritten($fileName, $cellValue);
                 }
+            }
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldSupportAssociativeArrays()
+    {
+        $fileName = 'test_add_row_should_support_associative_arrays.xlsx';
+        $dataRows = [
+            ['foo' => 'xlsx--11', 'bar' => 'xlsx--12'],
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = true);
+
+        foreach ($dataRows as $dataRow) {
+            foreach ($dataRow as $cellValue) {
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cellValue);
             }
         }
     }
