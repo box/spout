@@ -4,6 +4,7 @@ namespace Box\Spout\Reader\XLSX\Helper;
 
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Sheet;
+use Box\Spout\Reader\ReaderOptions;
 
 /**
  * Class SheetHelper
@@ -26,21 +27,21 @@ class SheetHelper
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
-    protected $shouldFormatDates;
+    /** @var \Box\Spout\Reader\ReaderOptions */
+    protected $readerOptions;
 
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
-     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param \Box\Spout\Reader\ReaderOptions $readerOptions
      */
-    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper, $shouldFormatDates)
+    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper, ReaderOptions $readerOptions)
     {
         $this->filePath = $filePath;
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
-        $this->shouldFormatDates = $shouldFormatDates;
+        $this->readerOptions = $readerOptions;
     }
 
     /**
@@ -92,7 +93,7 @@ class SheetHelper
 
         $sheetDataXMLFilePath = $this->getSheetDataXMLFilePathForSheetId($sheetId);
 
-        return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $this->shouldFormatDates, $sheetIndexZeroBased, $sheetName);
+        return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $this->readerOptions, $sheetIndexZeroBased, $sheetName);
     }
 
     /**

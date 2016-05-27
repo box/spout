@@ -137,6 +137,24 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedRows, $allRows);
     }
 
+    /**
+     * @dataProvider dataProviderForTestReadWithFilesGeneratedByExternalSoftwares
+     *
+     * @param bool $skipLastEmptyValues
+     * @param string $fileName
+     * @return void
+     */
+    public function testReadWithFilesGeneratedByExternalSoftwareAndEmptyRowsPreserved($fileName, $skipLastEmptyValues)
+    {
+        $reader = ReaderFactory::create(Type::ODS);
+        $reader->setShouldPreserveEmptyRows(true);
+        $allRows = $this->getAllRowsForFile($fileName, $reader);
+
+        foreach ($allRows as $index => $row) {
+// :TODO: write useful test
+//            $this->assertCount($expectedColumns, $row);
+        }
+    }
 
     /**
      * @return void
@@ -169,8 +187,10 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testReadShouldSupportFormatDatesAndTimesIfSpecified()
     {
-        $shouldFormatDates = true;
-        $allRows = $this->getAllRowsForFile('sheet_with_dates_and_times.ods', $shouldFormatDates);
+        $reader = ReaderFactory::create(Type::ODS);
+        $reader->setShouldFormatDates(true);
+
+        $allRows = $this->getAllRowsForFile('sheet_with_dates_and_times.ods', $reader);
 
         $expectedRows = [
             ['05/19/2016', '5/19/16', '05/19/2016 16:39:00', '05/19/16 04:39 PM', '5/19/2016'],
@@ -213,13 +233,48 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testReadShouldSkipEmptyRow()
     {
-        $allRows = $this->getAllRowsForFile('sheet_with_empty_row.ods');
+        $allRows = $this->getAllRowsForFirstSheet('sheet_with_empty_row.ods');
         $this->assertEquals(2, count($allRows), 'There should be only 2 rows, because the empty row is skipped');
 
         $expectedRows = [
-            ['ods--11', 'ods--12', 'ods--13'],
+            1 => ['ods--11', 'ods--12', 'ods--13'],
             // row skipped here
-            ['ods--21', 'ods--22', 'ods--23'],
+            3 => ['ods--21', 'ods--22', 'ods--23'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadShouldPreserveEmptyRow()
+    {
+        $reader = ReaderFactory::create(Type::ODS);
+        $reader->setShouldPreserveEmptyRows(true);
+        $allRows = $this->getAllRowsForFirstSheet('sheet_with_empty_row.ods', $reader);
+
+        $expectedRows = [
+            1 => ['ods--11', 'ods--12', 'ods--13'],
+            2 => ['', '', ''],
+            3 => ['ods--21', 'ods--22', 'ods--23'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadShouldPreserveConsecutiveEmptyRows()
+    {
+        $reader = ReaderFactory::create(Type::ODS);
+        $reader->setShouldPreserveEmptyRows(true);
+        $allRows = $this->getAllRowsForFirstSheet('sheet_with_consecutive_empty_rows.ods', $reader);
+
+        $expectedRows = [
+            1 => ['First'],
+            2 => [''],
+            3 => [''],
+            4 => ['Second'],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }
@@ -241,6 +296,29 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([$expectedRow], $allRows);
     }
 
+    /**
+     * @return void
+     */
+    public function testReadShouldHandleRepeatedRows()
+    {
+        $expectedRows = [
+            1 => ['First'],
+            2 => ['First'],
+            3 => ['First'],
+            4 => ['Second'],
+            5 => ['Third'],
+            6 => ['Third'],
+        ];
+
+        $reader = ReaderFactory::create(Type::ODS);
+        $reader->setShouldPreserveEmptyRows(false);
+        $allRows = $this->getAllRowsForFirstSheet('sheet_with_repeated_rows.ods', $reader);
+        $this->assertEquals($expectedRows, $allRows);
+
+        $reader->setShouldPreserveEmptyRows(true);
+        $allRows = $this->getAllRowsForFirstSheet('sheet_with_repeated_rows.ods', $reader);
+        $this->assertEquals($expectedRows, $allRows);
+    }
 
     /**
      * @NOTE: The LIBXML_NOENT is used to ACTUALLY substitute entities (and should therefore not be used)
@@ -484,22 +562,49 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $fileName
-     * @param bool|void $shouldFormatDates
-     * @return array All the read rows the given file
+     * @param Reader $reader
+     * @return array
      */
-    private function getAllRowsForFile($fileName, $shouldFormatDates = false)
+    private function getAllRowsForFile($fileName, Reader $reader = null)
     {
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
-        $reader = ReaderFactory::create(Type::ODS);
-        $reader->setShouldFormatDates($shouldFormatDates);
+        if (!$reader) {
+            $reader = ReaderFactory::create(Type::ODS);
+        }
+
         $reader->open($resourcePath);
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
-            foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                $allRows[] = $row;
-            }
+            $allRows = array_merge($allRows, iterator_to_array($sheet->getRowIterator(), false));
+        }
+
+        $reader->close();
+
+        return $allRows;
+    }
+
+
+    /**
+     * @param string $fileName
+     * @param Reader $reader
+     * @return array
+     */
+    private function getAllRowsForFirstSheet($fileName, Reader $reader = null)
+    {
+        $allRows = [];
+        $resourcePath = $this->getResourcePath($fileName);
+
+        if (!$reader) {
+            $reader = ReaderFactory::create(Type::ODS);
+        }
+
+        $reader->open($resourcePath);
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            $allRows = iterator_to_array($sheet->getRowIterator(), true);
+            break;
         }
 
         $reader->close();

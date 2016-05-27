@@ -5,6 +5,7 @@ namespace Box\Spout\Reader\XLSX;
 use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Reader\XLSX\Helper\SheetHelper;
 use Box\Spout\Reader\Exception\NoSheetsFoundException;
+use Box\Spout\Reader\ReaderOptions;
 
 /**
  * Class SheetIterator
@@ -24,13 +25,13 @@ class SheetIterator implements IteratorInterface
      * @param string $filePath Path of the file to be read
      * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper $sharedStringsHelper
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
-     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param \Box\Spout\Reader\ReaderOptions $readerOptions
      * @throws \Box\Spout\Reader\Exception\NoSheetsFoundException If there are no sheets in the file
      */
-    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper, $shouldFormatDates)
+    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper, ReaderOptions $readerOptions)
     {
         // Fetch all available sheets
-        $sheetHelper = new SheetHelper($filePath, $sharedStringsHelper, $globalFunctionsHelper, $shouldFormatDates);
+        $sheetHelper = new SheetHelper($filePath, $sharedStringsHelper, $globalFunctionsHelper, $readerOptions);
         $this->sheets = $sheetHelper->getSheets();
 
         if (count($this->sheets) === 0) {

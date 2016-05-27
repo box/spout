@@ -9,6 +9,7 @@ use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Helper\CellHelper;
 use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
 use Box\Spout\Reader\XLSX\Helper\StyleHelper;
+use Box\Spout\Reader\ReaderOptions;
 
 /**
  * Class RowIterator
@@ -43,11 +44,11 @@ class RowIterator implements IteratorInterface
     /** @var Helper\StyleHelper $styleHelper Helper to work with styles */
     protected $styleHelper;
 
-    /** @var int Number of read rows */
-    protected $numReadRows = 0;
+    /** @var int Key for iterator */
+    protected $rowIndex = 0;
 
-    /** @var array|null Buffer used to store the row data, while checking if there are more rows to read */
-    protected $rowDataBuffer = null;
+    /** @var array Buffer used to store the row data, while checking if there are more rows to read */
+    protected $rowDataBuffer = [];
 
     /** @var bool Indicates whether all rows have been read */
     protected $hasReachedEndOfFile = false;
@@ -55,13 +56,16 @@ class RowIterator implements IteratorInterface
     /** @var int The number of columns the sheet has (0 meaning undefined) */
     protected $numColumns = 0;
 
+    /** @var \Box\Spout\Reader\ReaderOptions */
+    protected $readerOptions;
+
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
      * @param Helper\SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
-     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param \Box\Spout\Reader\ReaderOptions $readerOptions
      */
-    public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $shouldFormatDates)
+    public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, ReaderOptions $readerOptions)
     {
         $this->filePath = $filePath;
         $this->sheetDataXMLFilePath = $this->normalizeSheetDataXMLFilePath($sheetDataXMLFilePath);
@@ -69,7 +73,8 @@ class RowIterator implements IteratorInterface
         $this->xmlReader = new XMLReader();
 
         $this->styleHelper = new StyleHelper($filePath);
-        $this->cellValueFormatter = new CellValueFormatter($sharedStringsHelper, $this->styleHelper, $shouldFormatDates);
+        $this->readerOptions = $readerOptions;
+        $this->cellValueFormatter = new CellValueFormatter($sharedStringsHelper, $this->styleHelper, $readerOptions->shouldFormatDates());
     }
 
     /**
@@ -101,7 +106,7 @@ class RowIterator implements IteratorInterface
         }
 
         $this->numReadRows = 0;
-        $this->rowDataBuffer = null;
+        $this->rowDataBuffer = [];
         $this->hasReachedEndOfFile = false;
         $this->numColumns = 0;
 
@@ -131,6 +136,15 @@ class RowIterator implements IteratorInterface
     {
         $rowData = [];
 
+        if (count($this->rowDataBuffer) > 1) {
+            array_shift($this->rowDataBuffer);
+            $this->rowIndex++;
+
+            return;
+        } else {
+            $this->rowDataBuffer = [];
+        }
+
         try {
             while ($this->xmlReader->read()) {
                 if ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_DIMENSION)) {
@@ -141,8 +155,10 @@ class RowIterator implements IteratorInterface
                         $this->numColumns = CellHelper::getColumnIndexFromCellIndex($lastCellIndex) + 1;
                     }
 
-                } else if ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_ROW)) {
+                } elseif ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_ROW)) {
                     // Start of the row description
+                    $prevRowIndex = $this->rowIndex;
+                    $newRowIndex = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_CELL_INDEX);
 
                     // Read spans info if present
                     $numberOfColumnsForRow = $this->numColumns;
@@ -153,7 +169,15 @@ class RowIterator implements IteratorInterface
                     }
                     $rowData = ($numberOfColumnsForRow !== 0) ? array_fill(0, $numberOfColumnsForRow, '') : [];
 
-                } else if ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL)) {
+                    if ($this->readerOptions->shouldPreserveEmptyRows()) {
+                        for ($i = $prevRowIndex + 1; $i < $newRowIndex; ++$i) {
+                            $this->rowDataBuffer[] = $rowData; // fake empty rows
+                        }
+                    }
+
+                    $this->rowIndex = $newRowIndex - count($this->rowDataBuffer);
+
+                } elseif ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL)) {
                     // Start of a cell description
                     $currentCellIndex = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_CELL_INDEX);
                     $currentColumnIndex = CellHelper::getColumnIndexFromCellIndex($currentCellIndex);
@@ -161,14 +185,14 @@ class RowIterator implements IteratorInterface
                     $node = $this->xmlReader->expand();
                     $rowData[$currentColumnIndex] = $this->getCellValue($node);
 
-                } else if ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_ROW)) {
+                } elseif ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_ROW)) {
                     // End of the row description
                     // If needed, we fill the empty cells
                     $rowData = ($this->numColumns !== 0) ? $rowData : CellHelper::fillMissingArrayIndexes($rowData);
-                    $this->numReadRows++;
+
                     break;
 
-                } else if ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_WORKSHEET)) {
+                } elseif ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_WORKSHEET)) {
                     // The closing "</worksheet>" marks the end of the file
                     $this->hasReachedEndOfFile = true;
                     break;
@@ -179,7 +203,7 @@ class RowIterator implements IteratorInterface
             throw new IOException("The {$this->sheetDataXMLFilePath} file cannot be read. [{$exception->getMessage()}]");
         }
 
-        $this->rowDataBuffer = $rowData;
+        $this->rowDataBuffer[] = $rowData;
     }
 
     /**
@@ -201,7 +225,7 @@ class RowIterator implements IteratorInterface
      */
     public function current()
     {
-        return $this->rowDataBuffer;
+        return isset($this->rowDataBuffer[0]) ? $this->rowDataBuffer[0] : null;
     }
 
     /**
@@ -212,7 +236,7 @@ class RowIterator implements IteratorInterface
      */
     public function key()
     {
-        return $this->numReadRows;
+        return $this->rowIndex;
     }
 
 
