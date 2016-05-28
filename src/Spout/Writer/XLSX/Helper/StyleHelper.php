@@ -101,6 +101,7 @@ EOD;
     protected function getBordersSectionContent()
     {
         $content = '<borders count="' . count($this->styleIdToStyleMappingTable) . '">';
+
         /** @var \Box\Spout\Writer\Style\Style $style */
         foreach ($this->getRegisteredStyles() as $style) {
             $border = $style->getBorder();
@@ -115,7 +116,9 @@ EOD;
                 $content .= '<border><left/><right/><top/><bottom/><diagonal/></border>';
             }
         }
+
         $content .= '</borders>';
+
         return $content;
     }
 

@@ -1,10 +1,11 @@
 <?php
 
-namespace Box\Spout\Writer\Exception;
+namespace Box\Spout\Writer\Exception\Border;
 
+use Box\Spout\Writer\Exception\WriterException;
 use Box\Spout\Writer\Style\BorderPart;
 
-class InvalidBorderNameException extends WriterException
+class InvalidNameException extends WriterException
 {
 
     public function __construct($name)

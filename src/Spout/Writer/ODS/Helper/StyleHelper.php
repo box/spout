@@ -258,15 +258,14 @@ EOD;
         }
 
         if ($style->shouldApplyBorder()) {
-            $el = '<style:table-cell-properties %s />';
+            $borderProperty = '<style:table-cell-properties %s />';
             $borders = array_map(function (BorderPart $borderPart) {
                 return BorderHelper::serializeBorderPart($borderPart);
             }, $style->getBorder()->getParts());
-            $content .= sprintf($el, implode(' ', $borders));
+            $content .= sprintf($borderProperty, implode(' ', $borders));
         }
 
         $content .= '</style:style>';
-
 
         return $content;
     }

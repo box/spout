@@ -156,22 +156,19 @@ Adding borders to a row requires a ```Border``` object.
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
-use Box\Spout\Writer\Style\Border;
-use Box\Spout\Writer\Style\BorderPart;
+use Box\Spout\Writer\Style\BorderBuilder;
 
-$border = new Border();
-$border
-    ->addPart(new BorderPart(Border::BOTTOM, Border::STYLE_SOLID, Border::WIDTH_THICK, Color::ORANGE))
-    ->addPart(new BorderPart(Border::RIGHT, Border::STYLE_DASHED, BOrder::WIDTH_THIN, Color::GREEN));
+$border = (new BorderBuilder())
+            ->setBorderBottom(Border::STYLE_DASHED, Color::GREEN, Border::WIDTH_THIN)
+            ->build();
 
 $style = (new StyleBuilder())
-    ->setBorder($border)
-    ->build();
+            ->setBorder($border)
+            ->build();
 
-$writerXlsx = WriterFactory::create(Type::XLSX);
-$writerXlsx->openToFile('borders.xlsx');
-$writerXlsx->addRowsWithStyle($multipleRows, $style);
-$writerXlsx->close();
+$writer->addRowWithStyle(['Border Bottom Dashed Green Thin'], $style);
+
+$writer->close();
 
 ```
 

@@ -21,28 +21,27 @@ use Box\Spout\Writer\Style\Border;
  */
 class BorderHelper
 {
-
     /**
-     * ODS border attributes
+     * Width mappings
      *
      * @var array
      */
-    public static $odsStyleMap = [
-        Border::STYLE_SOLID.'%'.Border::WIDTH_THIN => '0.75pt solid',
-        Border::STYLE_SOLID.'%'.Border::WIDTH_MEDIUM => '1.75pt solid',
-        Border::STYLE_SOLID.'%'.Border::WIDTH_THICK => '2.5pt solid',
-        Border::STYLE_DOTTED.'%'.Border::WIDTH_THIN => '0.75pt dotted',
-        Border::STYLE_DOTTED.'%'.Border::WIDTH_MEDIUM => '1.75pt dotted',
-        Border::STYLE_DOTTED.'%'.Border::WIDTH_THICK => '2.5pt dotted',
-        Border::STYLE_DASHED.'%'.Border::WIDTH_THIN => '0.75pt dashed',
-        Border::STYLE_DASHED.'%'.Border::WIDTH_MEDIUM => '1.75pt dashed',
-        Border::STYLE_DASHED.'%'.Border::WIDTH_THICK => '2.5pt dashed',
-        Border::STYLE_DOUBLE.'%'.Border::WIDTH_THIN => '0.75pt double',
-        Border::STYLE_DOUBLE.'%'.Border::WIDTH_MEDIUM => '1.75pt double',
-        Border::STYLE_DOUBLE.'%'.Border::WIDTH_THICK => '2.5pt double',
-        Border::STYLE_NONE.'%'.Border::WIDTH_THIN => 'none',
-        Border::STYLE_NONE.'%'.Border::WIDTH_MEDIUM => 'none',
-        Border::STYLE_NONE.'%'.Border::WIDTH_THICK => 'none',
+    public static $widthMap = [
+        Border::WIDTH_THIN => '0.75pt',
+        Border::WIDTH_MEDIUM => '1.75pt',
+        Border::WIDTH_THICK => '2.5pt',
+    ];
+
+    /**
+     * Style mapping
+     *
+     * @var array
+     */
+    public static $styleMap = [
+        Border::STYLE_SOLID => 'solid',
+        Border::STYLE_DASHED => 'dashed',
+        Border::STYLE_DOTTED => 'dotted',
+        Border::STYLE_DOUBLE => 'double',
     ];
 
     /**
@@ -51,15 +50,19 @@ class BorderHelper
      */
     public static function serializeBorderPart(BorderPart $borderPart)
     {
-        $styleDef = $borderPart->getStyle() .'%' . $borderPart->getWidth();
-        $borderStyle = self::$odsStyleMap[$styleDef];
-        $colorEl = ($borderPart->getColor() && $borderPart->getStyle() !== Border::STYLE_NONE)
-            ? '#' . $borderPart->getColor() : '';
-        $partEl = sprintf(
-            'fo:border-%s="%s"',
-            $borderPart->getName(),
-            $borderStyle . ' ' .$colorEl
-        );
-        return $partEl;
+        $definition = 'fo:border-%s="%s"';
+
+        if ($borderPart->getStyle() === Border::STYLE_NONE) {
+            $borderPartDefinition = sprintf($definition, $borderPart->getName(), 'none');
+        } else {
+            $attributes = [
+                self::$widthMap[$borderPart->getWidth()],
+                self::$styleMap[$borderPart->getStyle()],
+                '#' . $borderPart->getColor(),
+            ];
+            $borderPartDefinition = sprintf($definition, $borderPart->getName(), implode(' ', $attributes));
+        }
+
+        return $borderPartDefinition;
     }
 }

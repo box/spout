@@ -2,6 +2,9 @@
 
 namespace Box\Spout\Writer\Style;
 
+/**
+ * Class Border
+ */
 class Border
 {
     const LEFT = 'left';

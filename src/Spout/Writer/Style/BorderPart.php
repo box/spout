@@ -2,10 +2,13 @@
 
 namespace Box\Spout\Writer\Style;
 
-use Box\Spout\Writer\Exception\InvalidBorderNameException;
-use Box\Spout\Writer\Exception\InvalidBorderStyleException;
-use Box\Spout\Writer\Exception\InvalidBorderWidthException;
+use Box\Spout\Writer\Exception\Border\InvalidNameException;
+use Box\Spout\Writer\Exception\Border\InvalidStyleException;
+use Box\Spout\Writer\Exception\Border\InvalidWidthException;
 
+/**
+ * Class BorderPart
+ */
 class BorderPart
 {
     /**
@@ -52,7 +55,7 @@ class BorderPart
     /**
      * @var array Allowed width constants for border parts.
      */
-    protected static $allowedWidth = [
+    protected static $allowedWidths = [
         'thin',
         'medium',
         'thick',
@@ -61,13 +64,13 @@ class BorderPart
     /**
      * @param string $name @see  BorderPart::allowedNames
      * @param string $style @see BorderPart::allowedStyles
-     * @param string $width @see BorderPart::allowedWidth
+     * @param string $width @see BorderPart::allowedWidths
      * @param string $color A RGB color code
-     * @throws InvalidBorderNameException
-     * @throws InvalidBorderStyleException
-     * @throws InvalidBorderWidthException
+     * @throws InvalidNameException
+     * @throws InvalidStyleException
+     * @throws InvalidWidthException
      */
-    public function __construct($name, $style = Border::STYLE_SOLID, $width = Border::WIDTH_MEDIUM, $color = Color::BLACK)
+    public function __construct($name, $style = Border::STYLE_SOLID, $color = Color::BLACK, $width = Border::WIDTH_MEDIUM)
     {
         $this->setName($name);
         $this->setStyle($style);
@@ -89,7 +92,7 @@ class BorderPart
     public function setName($name)
     {
         if (!in_array($name, self::$allowedNames)) {
-            throw new InvalidBorderNameException($name);
+            throw new InvalidNameException($name);
         }
         $this->name = $name;
     }
@@ -108,7 +111,7 @@ class BorderPart
     public function setStyle($style)
     {
         if (!in_array($style, self::$allowedStyles)) {
-            throw new InvalidBorderStyleException($style);
+            throw new InvalidStyleException($style);
         }
         $this->style = $style;
     }
@@ -142,8 +145,8 @@ class BorderPart
      */
     public function setWidth($width)
     {
-        if(!in_array($width, self::$allowedWidth)) {
-            throw new InvalidBorderWidthException($width);
+        if (!in_array($width, self::$allowedWidths)) {
+            throw new InvalidWidthException($width);
         }
         $this->width = $width;
     }
@@ -167,8 +170,8 @@ class BorderPart
     /**
      * @return array
      */
-    public static function getAllowedWidth()
+    public static function getAllowedWidths()
     {
-        return self::$allowedWidth;
+        return self::$allowedWidths;
     }
 }
