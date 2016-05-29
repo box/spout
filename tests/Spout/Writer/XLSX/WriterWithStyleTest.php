@@ -5,6 +5,8 @@ namespace Box\Spout\Writer\XLSX;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Style\Border;
+use Box\Spout\Writer\Style\BorderBuilder;
 use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\Style\StyleBuilder;
@@ -205,7 +207,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         ];
         $style = (new StyleBuilder())->setShouldWrapText()->build();
 
-        $this->writeToXLSXFile($dataRows, $fileName,$style);
+        $this->writeToXLSXFile($dataRows, $fileName, $style);
 
         $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
         $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
@@ -230,6 +232,40 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
         $this->assertEquals(1, $xfElement->getAttribute('applyAlignment'));
         $this->assertFirstChildHasAttributeEquals('1', $xfElement, 'alignment', 'wrapText');
+    }
+
+    /**
+     * @return void
+     */
+    public function testBorders()
+    {
+        $fileName = 'test_borders.xlsx';
+
+        $dataRows = [
+            ['row-with-border-bottom-green-thick-solid'],
+            ['row-without-border'],
+            ['row-with-border-top-red-thin-dashed'],
+        ];
+
+        $borderBottomGreenThickSolid = (new BorderBuilder())
+            ->setBorderBottom(Border::STYLE_SOLID, Color::GREEN, Border::WIDTH_THICK)->build();
+
+
+        $borderTopRedThinDashed = (new BorderBuilder())
+            ->setBorderTop(Border::STYLE_DASHED, Color::RED, Border::WIDTH_THIN)->build();
+
+        $styles =  [
+            (new StyleBuilder())->setBorder($borderBottomGreenThickSolid)->build(),
+            (new StyleBuilder())->build(),
+            (new StyleBuilder())->setBorder($borderTopRedThinDashed)->build(),
+        ];
+
+        $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, $styles);
+        $borderElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'borders');
+        $this->assertEquals(3, $borderElements->getAttribute('count'), '3 borders present');
+
+        $styleXfsElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
+        $this->assertEquals(3, $styleXfsElements->getAttribute('count'), '3 cell xfs present');
     }
 
     /**

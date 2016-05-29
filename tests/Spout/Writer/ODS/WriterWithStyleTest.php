@@ -5,6 +5,9 @@ namespace Box\Spout\Writer\ODS;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\ODS\Helper\BorderHelper;
+use Box\Spout\Writer\Style\Border;
+use Box\Spout\Writer\Style\BorderBuilder;
 use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\Style\StyleBuilder;
@@ -208,7 +211,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         ];
         $style = (new StyleBuilder())->setShouldWrapText()->build();
 
-        $this->writeToODSFile($dataRows, $fileName,$style);
+        $this->writeToODSFile($dataRows, $fileName, $style);
 
         $styleElements = $this->getCellStyleElementsFromContentXmlFile($fileName);
         $this->assertEquals(2, count($styleElements), 'There should be 2 styles (default and custom)');
@@ -235,6 +238,62 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $customStyleElement = $styleElements[1];
         $this->assertFirstChildHasAttributeEquals('wrap', $customStyleElement, 'table-cell-properties', 'fo:wrap-option');
     }
+
+    /**
+     * @return void
+     */
+    public function testBorders()
+    {
+        $fileName = 'test_borders.ods';
+
+        $dataRows = [
+            ['row-with-border-bottom-green-thick-solid'],
+            ['row-without-border'],
+            ['row-with-border-top-red-thin-dashed'],
+        ];
+
+        $borderBottomGreenThickSolid = (new BorderBuilder())
+            ->setBorderBottom(Border::STYLE_SOLID, Color::GREEN, Border::WIDTH_THICK)->build();
+
+
+        $borderTopRedThinDashed = (new BorderBuilder())
+            ->setBorderTop(Border::STYLE_DASHED, Color::RED, Border::WIDTH_THIN)->build();
+
+        $styles =  [
+            (new StyleBuilder())->setBorder($borderBottomGreenThickSolid)->build(),
+            (new StyleBuilder())->build(),
+            (new StyleBuilder())->setBorder($borderTopRedThinDashed)->build(),
+        ];
+
+        $this->writeToODSFileWithMultipleStyles($dataRows, $fileName, $styles);
+
+        $styleElements = $this->getCellStyleElementsFromContentXmlFile($fileName);
+        $this->assertEquals(3, count($styleElements), 'There should be 3 styles)');
+
+        $expectedFirst = sprintf(
+            '%s %s #%s',
+            BorderHelper::$widthMap[Border::WIDTH_THICK],
+            BorderHelper::$styleMap[Border::STYLE_SOLID],
+            Color::GREEN
+        );
+
+        $this->assertEquals($expectedFirst, $styleElements[1]
+            ->getElementsByTagName('table-cell-properties')
+            ->item(0)
+            ->getAttribute('fo:border-bottom'));
+
+        $expectedThird = sprintf(
+            '%s %s #%s',
+            BorderHelper::$widthMap[Border::WIDTH_THIN],
+            BorderHelper::$styleMap[Border::STYLE_DASHED],
+            Color::RED
+        );
+        $this->assertEquals($expectedThird, $styleElements[2]
+            ->getElementsByTagName('table-cell-properties')
+            ->item(0)
+            ->getAttribute('fo:border-top'));
+    }
+
 
     /**
      * @param array $allRows

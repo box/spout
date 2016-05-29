@@ -129,4 +129,32 @@ class StyleTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($currentStyle->serialize() === $mergedStyle->serialize());
     }
+
+    /**
+     * @return void
+     */
+    public function testStyleBuilderShouldApplyBorders()
+    {
+        $border = (new BorderBuilder())
+            ->setBorderBottom()
+            ->build();
+        $style = (new StyleBuilder())->setBorder($border)->build();
+        $this->assertTrue($style->shouldApplyBorder());
+    }
+
+    /**
+     * @return void
+     */
+    public function testStyleBuilderShouldMergeBorders()
+    {
+        $border = (new BorderBuilder())->setBorderBottom(Border::STYLE_DASHED, Color::RED, Border::WIDTH_THIN)->build();
+
+        $baseStyle = (new StyleBuilder())->setBorder($border)->build();
+        $currentStyle = (new StyleBuilder())->build();
+        $mergedStyle = $currentStyle->mergeWith($baseStyle);
+
+        $this->assertEquals(null, $currentStyle->getBorder(), 'Current style has no border');
+        $this->assertInstanceOf('Box\Spout\Writer\Style\Border', $baseStyle->getBorder(), 'Base style has a border');
+        $this->assertInstanceOf('Box\Spout\Writer\Style\Border', $mergedStyle->getBorder(), 'Merged style has a border');
+    }
 }
