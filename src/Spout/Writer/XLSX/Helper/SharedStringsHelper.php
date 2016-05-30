@@ -49,7 +49,7 @@ EOD;
         fwrite($this->sharedStringsFilePointer, $header);
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->stringsEscaper = new \Box\Spout\Common\Escaper\XLSX();
+        $this->stringsEscaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
     }
 
     /**
