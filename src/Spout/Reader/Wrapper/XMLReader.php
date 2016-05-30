@@ -138,9 +138,10 @@ class XMLReader extends \XMLReader
      */
     public function readUntilNodeFound($nodeName)
     {
-        while (($wasReadSuccessful = $this->read()) && ($this->nodeType !== \XMLReader::ELEMENT || $this->name !== $nodeName)) {
-            // do nothing
-        }
+        do {
+            $wasReadSuccessful = $this->read();
+            $isNotPositionedOnStartingNode = !$this->isPositionedOnStartingNode($nodeName);
+        } while ($wasReadSuccessful && $isNotPositionedOnStartingNode);
 
         return $wasReadSuccessful;
     }
@@ -170,7 +171,7 @@ class XMLReader extends \XMLReader
      */
     public function isPositionedOnStartingNode($nodeName)
     {
-        return ($this->nodeType === XMLReader::ELEMENT && $this->name === $nodeName);
+        return $this->isPositionedOnNode($nodeName, XMLReader::ELEMENT);
     }
 
     /**
@@ -179,6 +180,22 @@ class XMLReader extends \XMLReader
      */
     public function isPositionedOnEndingNode($nodeName)
     {
-        return ($this->nodeType === XMLReader::END_ELEMENT && $this->name === $nodeName);
+        return $this->isPositionedOnNode($nodeName, XMLReader::END_ELEMENT);
+    }
+
+    /**
+     * @param string $nodeName
+     * @param int $nodeType
+     * @return bool Whether the XML Reader is currently positioned on the node with given name and type
+     */
+    private function isPositionedOnNode($nodeName, $nodeType)
+    {
+        // In some cases, the node has a prefix (for instance, "<sheet>" can also be "<x:sheet>").
+        // So if the given node name does not have a prefix, we need to look at the unprefixed name ("localName").
+        // @see https://github.com/box/spout/issues/233
+        $hasPrefix = (strpos($nodeName, ':') !== false);
+        $currentNodeName = ($hasPrefix) ? $this->name : $this->localName;
+
+        return ($this->nodeType === $nodeType && $currentNodeName === $nodeName);
     }
 }

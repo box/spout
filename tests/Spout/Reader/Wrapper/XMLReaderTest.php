@@ -198,4 +198,37 @@ class XMLReaderTest extends \PHPUnit_Framework_TestCase
 
         unlink($tempFolder . '/test.xlsx');
     }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForTestIsPositionedOnStartingAndEndingNode()
+    {
+        return [
+            ['<test></test>'], // not prefixed
+            ['<x:test xmlns:x="foo"></x:test>'], // prefixed
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForTestIsPositionedOnStartingAndEndingNode
+     *
+     * @param string $testXML
+     * @return void
+     */
+    public function testIsPositionedOnStartingAndEndingNode($testXML)
+    {
+        $xmlReader = new XMLReader();
+        $xmlReader->XML($testXML);
+
+        // the first read moves the pointer to "<test>"
+        $xmlReader->read();
+        $this->assertTrue($xmlReader->isPositionedOnStartingNode('test'));
+        $this->assertFalse($xmlReader->isPositionedOnEndingNode('test'));
+
+        // the seconds read moves the pointer to "</test>"
+        $xmlReader->read();
+        $this->assertFalse($xmlReader->isPositionedOnStartingNode('test'));
+        $this->assertTrue($xmlReader->isPositionedOnEndingNode('test'));
+    }
 }
