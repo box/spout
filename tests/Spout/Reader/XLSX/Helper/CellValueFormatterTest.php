@@ -87,6 +87,10 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function dataProviderForTestFormatNumericCellValueWithNumbers()
     {
+        // Some test values exceed PHP_INT_MAX on 32-bit PHP. They are
+        // therefore converted to as doubles automatically by PHP.
+        $expectedBigNumberType = (PHP_INT_SIZE < 8 ? 'double' : 'integer');
+
         return [
             [42, 42, 'integer'],
             [42.5, 42.5, 'double'],
@@ -94,8 +98,8 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             [-42.5, -42.5, 'double'],
             ['42', 42, 'integer'],
             ['42.5', 42.5, 'double'],
-            [865640023012945, 865640023012945, 'integer'],
-            ['865640023012945', 865640023012945, 'integer'],
+            [865640023012945, 865640023012945, $expectedBigNumberType],
+            ['865640023012945', 865640023012945, $expectedBigNumberType],
             [865640023012945.5, 865640023012945.5, 'double'],
             ['865640023012945.5', 865640023012945.5, 'double'],
             [PHP_INT_MAX, PHP_INT_MAX, 'integer'],
