@@ -293,13 +293,16 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     private function getXmlSectionFromStylesXmlFile($fileName, $section)
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $pathToStylesXmlFile = $resourcePath . '#xl/styles.xml';
 
         $xmlReader = new XMLReader();
-        $xmlReader->open('zip://' . $pathToStylesXmlFile);
+        $xmlReader->openFileInZip($resourcePath, 'xl/styles.xml');
         $xmlReader->readUntilNodeFound($section);
 
-        return $xmlReader->expand();
+        $xmlSection = $xmlReader->expand();
+
+        $xmlReader->close();
+
+        return $xmlSection;
     }
 
     /**
@@ -311,16 +314,17 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $cellElements = [];
 
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $pathToStylesXmlFile = $resourcePath . '#xl/worksheets/sheet1.xml';
 
-        $xmlReader = new \XMLReader();
-        $xmlReader->open('zip://' . $pathToStylesXmlFile);
+        $xmlReader = new XMLReader();
+        $xmlReader->openFileInZip($resourcePath, 'xl/worksheets/sheet1.xml');
 
         while ($xmlReader->read()) {
-            if ($xmlReader->nodeType === \XMLReader::ELEMENT && $xmlReader->name === 'c') {
+            if ($xmlReader->isPositionedOnStartingNode('c')) {
                 $cellElements[] = $xmlReader->expand();
             }
         }
+
+        $xmlReader->close();
 
         return $cellElements;
     }

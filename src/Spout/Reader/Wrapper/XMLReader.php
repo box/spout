@@ -14,66 +14,44 @@ class XMLReader extends \XMLReader
 {
     use XMLInternalErrorsHelper;
 
+    const ZIP_WRAPPER = 'zip://';
+
     /**
-     * Set the URI containing the XML to parse
-     * @see \XMLReader::open
+     * Opens the XML Reader to read a file located inside a ZIP file.
      *
-     * @param string $URI URI pointing to the document
-   	 * @param string|null|void $encoding The document encoding
-   	 * @param int $options A bitmask of the LIBXML_* constants
+     * @param string $zipFilePath Path to the ZIP file
+     * @param string $fileInsideZipPath Relative or absolute path of the file inside the zip
      * @return bool TRUE on success or FALSE on failure
      */
-    public function open($URI, $encoding = null, $options = 0)
+    public function openFileInZip($zipFilePath, $fileInsideZipPath)
     {
         $wasOpenSuccessful = false;
-        $realPathURI = $this->convertURIToUseRealPath($URI);
+        $realPathURI = $this->getRealPathURIForFileInZip($zipFilePath, $fileInsideZipPath);
 
         // HHVM does not check if file exists within zip file
         // @link https://github.com/facebook/hhvm/issues/5779
-        if ($this->isRunningHHVM() && $this->isZipStream($realPathURI)) {
+        if ($this->isRunningHHVM()) {
             if ($this->fileExistsWithinZip($realPathURI)) {
-                $wasOpenSuccessful = parent::open($realPathURI, $encoding, $options|LIBXML_NONET);
+                $wasOpenSuccessful = $this->open($realPathURI, null, LIBXML_NONET);
             }
         } else {
-            $wasOpenSuccessful = parent::open($realPathURI, $encoding, $options|LIBXML_NONET);
+            $wasOpenSuccessful = $this->open($realPathURI, null, LIBXML_NONET);
         }
 
         return $wasOpenSuccessful;
     }
 
     /**
-     * Updates the given URI to use a real path.
-     * This is to avoid issues on some Windows setup.
+     * Returns the real path for the given path components.
+     * This is useful to avoid issues on some Windows setup.
      *
-     * @param string $URI URI
-     * @return string The URI using a real path
+     * @param string $zipFilePath Path to the ZIP file
+     * @param string $fileInsideZipPath Relative or absolute path of the file inside the zip
+     * @return string The real path URI
      */
-    protected function convertURIToUseRealPath($URI)
+    public function getRealPathURIForFileInZip($zipFilePath, $fileInsideZipPath)
     {
-        $realPathURI = $URI;
-
-        if ($this->isZipStream($URI)) {
-            if (preg_match('/zip:\/\/(.*)#(.*)/', $URI, $matches)) {
-                $documentPath = $matches[1];
-                $documentInsideZipPath = $matches[2];
-                $realPathURI = 'zip://' . realpath($documentPath) . '#' . $documentInsideZipPath;
-            }
-        } else {
-            $realPathURI = realpath($URI);
-        }
-
-        return $realPathURI;
-    }
-
-    /**
-     * Returns whether the given URI is a zip stream.
-     *
-     * @param string $URI URI pointing to a document
-     * @return bool TRUE if URI is a zip stream, FALSE otherwise
-     */
-    protected function isZipStream($URI)
-    {
-        return (strpos($URI, 'zip://') === 0);
+        return (self::ZIP_WRAPPER . realpath($zipFilePath) . '#' . $fileInsideZipPath);
     }
 
     /**

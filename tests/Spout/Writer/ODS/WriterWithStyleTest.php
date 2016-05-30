@@ -296,17 +296,18 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $cellElements = [];
 
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $pathToStylesXmlFile = $resourcePath . '#content.xml';
 
-        $xmlReader = new \XMLReader();
-        $xmlReader->open('zip://' . $pathToStylesXmlFile);
+        $xmlReader = new XMLReader();
+        $xmlReader->openFileInZip($resourcePath, 'content.xml');
 
         while ($xmlReader->read()) {
-            if ($xmlReader->nodeType === \XMLReader::ELEMENT && $xmlReader->name === 'table:table-cell' && $xmlReader->getAttribute('office:value-type') !== null) {
+            if ($xmlReader->isPositionedOnStartingNode('table:table-cell') && $xmlReader->getAttribute('office:value-type') !== null) {
                 $cellElements[] = $xmlReader->expand();
             }
         }
 
+        $xmlReader->close();
+        
         return $cellElements;
     }
 
@@ -319,17 +320,18 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $cellStyleElements = [];
 
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $pathToStylesXmlFile = $resourcePath . '#content.xml';
 
-        $xmlReader = new \XMLReader();
-        $xmlReader->open('zip://' . $pathToStylesXmlFile);
+        $xmlReader = new XMLReader();
+        $xmlReader->openFileInZip($resourcePath, 'content.xml');
 
         while ($xmlReader->read()) {
-            if ($xmlReader->nodeType === \XMLReader::ELEMENT && $xmlReader->name === 'style:style' && $xmlReader->getAttribute('style:family') === 'table-cell') {
+            if ($xmlReader->isPositionedOnStartingNode('style:style') && $xmlReader->getAttribute('style:family') === 'table-cell') {
                 $cellStyleElements[] = $xmlReader->expand();
             }
         }
 
+        $xmlReader->close();
+        
         return $cellStyleElements;
     }
 
@@ -341,10 +343,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     private function getXmlSectionFromStylesXmlFile($fileName, $section)
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $pathToStylesXmlFile = $resourcePath . '#styles.xml';
 
         $xmlReader = new XMLReader();
-        $xmlReader->open('zip://' . $pathToStylesXmlFile);
+        $xmlReader->openFileInZip($resourcePath, 'styles.xml');
         $xmlReader->readUntilNodeFound($section);
 
         return $xmlReader->expand();
