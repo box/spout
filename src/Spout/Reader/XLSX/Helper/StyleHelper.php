@@ -76,10 +76,9 @@ class StyleHelper
         $this->customNumberFormats = [];
         $this->stylesAttributes = [];
 
-        $stylesXmlFilePath = $this->filePath .'#' . self::STYLES_XML_FILE_PATH;
         $xmlReader = new XMLReader();
 
-        if ($xmlReader->open('zip://' . $stylesXmlFilePath)) {
+        if ($xmlReader->openFileInZip($this->filePath, self::STYLES_XML_FILE_PATH)) {
             while ($xmlReader->read()) {
                 if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_NUM_FMTS)) {
                     $numFmtsNode = new SimpleXMLElement($xmlReader->readOuterXml());

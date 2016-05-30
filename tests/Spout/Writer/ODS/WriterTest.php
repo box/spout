@@ -538,10 +538,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     private function moveReaderToCorrectTableNode($fileName, $sheetIndex)
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $pathToSheetFile = $resourcePath . '#content.xml';
 
         $xmlReader = new XMLReader();
-        $xmlReader->open('zip://' . $pathToSheetFile);
+        $xmlReader->openFileInZip($resourcePath, 'content.xml');
         $xmlReader->readUntilNodeFound('table:table');
 
         for ($i = 1; $i < $sheetIndex; $i++) {

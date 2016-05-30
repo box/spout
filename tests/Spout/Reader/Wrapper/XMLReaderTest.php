@@ -20,12 +20,11 @@ class XMLReaderTest extends \PHPUnit_Framework_TestCase
     public function testOpenShouldFailIfFileInsideZipDoesNotExist()
     {
         $resourcePath = $this->getResourcePath('one_sheet_with_inline_strings.xlsx');
-        $nonExistingXMLFilePath = 'zip://' . $resourcePath . '#path/to/fake/file.xml';
 
         $xmlReader = new XMLReader();
 
         // using "@" to prevent errors/warning to be displayed
-        $wasOpenSuccessful = @$xmlReader->open($nonExistingXMLFilePath);
+        $wasOpenSuccessful = @$xmlReader->openFileInZip($resourcePath, 'path/to/fake/file.xml');
 
         $this->assertTrue($wasOpenSuccessful === false);
     }
@@ -72,10 +71,9 @@ class XMLReaderTest extends \PHPUnit_Framework_TestCase
     public function testReadShouldThrowExceptionOnError()
     {
         $resourcePath = $this->getResourcePath('one_sheet_with_invalid_xml_characters.xlsx');
-        $sheetDataXMLFilePath = 'zip://' . $resourcePath . '#xl/worksheets/sheet1.xml';
 
         $xmlReader = new XMLReader();
-        if ($xmlReader->open($sheetDataXMLFilePath) === false) {
+        if ($xmlReader->openFileInZip($resourcePath, 'xl/worksheets/sheet1.xml') === false) {
             $this->fail();
         }
 
@@ -95,41 +93,11 @@ class XMLReaderTest extends \PHPUnit_Framework_TestCase
         // The sharedStrings.xml file in "attack_billion_laughs.xlsx" contains
         // a doctype element that causes read errors
         $resourcePath = $this->getResourcePath('attack_billion_laughs.xlsx');
-        $sheetDataXMLFilePath = 'zip://' . $resourcePath . '#xl/sharedStrings.xml';
 
         $xmlReader = new XMLReader();
-        if ($xmlReader->open($sheetDataXMLFilePath) !== false) {
+        if ($xmlReader->openFileInZip($resourcePath, 'xl/sharedStrings.xml') !== false) {
             @$xmlReader->next('sst');
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function dataProviderForTestIsZipStream()
-    {
-        return [
-            ['/absolute/path/to/file.xlsx', false],
-            ['relative/path/to/file.xlsx', false],
-            ['php://temp', false],
-            ['zip:///absolute/path/to/file.xlsx', true],
-            ['zip://relative/path/to/file.xlsx', true],
-        ];
-    }
-
-    /**
-     * @dataProvider dataProviderForTestIsZipStream
-     *
-     * @param string $URI
-     * @param bool $expectedResult
-     * @return void
-     */
-    public function testIsZipStream($URI, $expectedResult)
-    {
-        $xmlReader = new XMLReader();
-        $isZipStream = \ReflectionHelper::callMethodOnObject($xmlReader, 'isZipStream', $URI);
-
-        $this->assertEquals($expectedResult, $isZipStream);
     }
 
     /**
@@ -167,34 +135,34 @@ class XMLReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function dataProviderForTestConvertURIToUseRealPath()
+    public function dataProviderForTestGetRealPathURIForFileInZip()
     {
         $tempFolder = realpath(sys_get_temp_dir());
+        $expectedRealPathURI = 'zip://' . $tempFolder . '/test.xlsx#test.xml';
 
         return [
-            ['/../../../' . $tempFolder . '/test.xlsx', $tempFolder . '/test.xlsx'],
-            [$tempFolder . '/test.xlsx', $tempFolder . '/test.xlsx'],
-            ['zip://' . $tempFolder . '/test.xlsx#test.xml', 'zip://' . $tempFolder . '/test.xlsx#test.xml'],
-            ['zip:///../../../' . $tempFolder . '/test.xlsx#test.xml', 'zip://' . $tempFolder . '/test.xlsx#test.xml'],
+            [$tempFolder, "$tempFolder/test.xlsx", 'test.xml', $expectedRealPathURI],
+            [$tempFolder, "/../../../$tempFolder/test.xlsx", 'test.xml', $expectedRealPathURI],
         ];
     }
 
     /**
-     * @dataProvider dataProviderForTestConvertURIToUseRealPath
+     * @dataProvider dataProviderForTestGetRealPathURIForFileInZip
      *
-     * @param string $URI
-     * @param string $expectedConvertedURI
+     * @param string $tempFolder
+     * @param string $zipFilePath
+     * @param string $fileInsideZipPath
+     * @param string $expectedRealPathURI
      * @return void
      */
-    public function testConvertURIToUseRealPath($URI, $expectedConvertedURI)
+    public function testGetRealPathURIForFileInZip($tempFolder, $zipFilePath, $fileInsideZipPath, $expectedRealPathURI)
     {
-        $tempFolder = sys_get_temp_dir();
         touch($tempFolder . '/test.xlsx');
 
         $xmlReader = new XMLReader();
-        $convertedURI = \ReflectionHelper::callMethodOnObject($xmlReader, 'convertURIToUseRealPath', $URI);
+        $realPathURI = \ReflectionHelper::callMethodOnObject($xmlReader, 'getRealPathURIForFileInZip', $zipFilePath, $fileInsideZipPath);
 
-        $this->assertEquals($expectedConvertedURI, $convertedURI);
+        $this->assertEquals($expectedRealPathURI, $realPathURI);
 
         unlink($tempFolder . '/test.xlsx');
     }
@@ -230,5 +198,7 @@ class XMLReaderTest extends \PHPUnit_Framework_TestCase
         $xmlReader->read();
         $this->assertFalse($xmlReader->isPositionedOnStartingNode('test'));
         $this->assertTrue($xmlReader->isPositionedOnEndingNode('test'));
+
+        $xmlReader->close();
     }
 }

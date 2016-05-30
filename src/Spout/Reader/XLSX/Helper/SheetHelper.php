@@ -55,7 +55,7 @@ class SheetHelper
         $sheetIndex = 0;
 
         $xmlReader = new XMLReader();
-        if ($xmlReader->open('zip://' . $this->filePath . '#' . self::WORKBOOK_XML_FILE_PATH)) {
+        if ($xmlReader->openFileInZip($this->filePath, self::WORKBOOK_XML_FILE_PATH)) {
             while ($xmlReader->read()) {
                 if ($xmlReader->isPositionedOnStartingNode('sheet')) {
                     $sheets[] = $this->getSheetFromSheetXMLNode($xmlReader, $sheetIndex);
@@ -105,7 +105,7 @@ class SheetHelper
 
         // find the file path of the sheet, by looking at the "workbook.xml.res" file
         $xmlReader = new XMLReader();
-        if ($xmlReader->open('zip://' . $this->filePath . '#' . self::WORKBOOK_XML_RELS_FILE_PATH)) {
+        if ($xmlReader->openFileInZip($this->filePath, self::WORKBOOK_XML_RELS_FILE_PATH)) {
             while ($xmlReader->read()) {
                 if ($xmlReader->isPositionedOnStartingNode('Relationship')) {
                     $relationshipSheetId = $xmlReader->getAttribute('Id');
