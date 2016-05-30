@@ -48,7 +48,7 @@ class CellValueFormatter
         $this->shouldFormatDates = $shouldFormatDates;
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->escaper = new \Box\Spout\Common\Escaper\ODS();
+        $this->escaper = \Box\Spout\Common\Escaper\ODS::getInstance();
     }
 
     /**

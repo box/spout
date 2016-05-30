@@ -57,6 +57,7 @@ class RowIterator implements IteratorInterface
      * @param string $fieldDelimiter Character that delimits fields
      * @param string $fieldEnclosure Character that enclose fields
      * @param string $encoding Encoding of the CSV file to be read
+     * @param string $endOfLineDelimiter End of line delimiter
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
     public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $endOfLineDelimiter, $globalFunctionsHelper)

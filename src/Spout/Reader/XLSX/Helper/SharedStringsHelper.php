@@ -80,7 +80,7 @@ class SharedStringsHelper
         $xmlReader = new XMLReader();
         $sharedStringIndex = 0;
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $escaper = new \Box\Spout\Common\Escaper\XLSX();
+        $escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
 
         $sharedStringsFilePath = $this->getSharedStringsFilePath();
         if ($xmlReader->open($sharedStringsFilePath) === false) {

@@ -62,7 +62,7 @@ class CellValueFormatter
         $this->shouldFormatDates = $shouldFormatDates;
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->escaper = new \Box\Spout\Common\Escaper\XLSX();
+        $this->escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
     }
 
     /**
