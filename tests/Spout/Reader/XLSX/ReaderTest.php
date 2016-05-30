@@ -98,6 +98,23 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportPrefixedXMLFiles()
+    {
+        // The XML files of this spreadsheet are prefixed.
+        // For instance, they use "<x:sheet>" instead of "<sheet>", etc.
+        $allRows = $this->getAllRowsForFile('sheet_with_prefixed_xml_files.xlsx');
+
+        $expectedRows = [
+            ['s1 - A1', 's1 - B1', 's1 - C1'],
+            ['s1 - A2', 's1 - B2', 's1 - C2'],
+            ['s1 - A3', 's1 - B3', 's1 - C3'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldSupportFilesWithoutSharedStringsFile()
     {
         $allRows = $this->getAllRowsForFile('sheet_with_no_shared_strings_file.xlsx');
