@@ -2,6 +2,8 @@
 
 namespace Box\Spout\Common\Escaper;
 
+use Box\Spout\Common\Singleton;
+
 /**
  * Class XLSX
  * Provides functions to escape and unescape data for XLSX files
@@ -10,13 +12,15 @@ namespace Box\Spout\Common\Escaper;
  */
 class XLSX implements EscaperInterface
 {
+    use Singleton;
+
     /** @var string[] Control characters to be escaped */
     protected $controlCharactersEscapingMap;
 
     /**
-     *
+     * Initializes the singleton instance
      */
-    public function __construct()
+    protected function init()
     {
         $this->controlCharactersEscapingMap = $this->getControlCharactersEscapingMap();
     }

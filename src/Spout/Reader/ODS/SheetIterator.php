@@ -15,6 +15,8 @@ use Box\Spout\Reader\Wrapper\XMLReader;
  */
 class SheetIterator implements IteratorInterface
 {
+    const CONTENT_XML_FILE_PATH = 'content.xml';
+
     /** Definition of XML nodes name and attribute used to parse sheet data */
     const XML_NODE_TABLE = 'table:table';
     const XML_ATTRIBUTE_TABLE_NAME = 'table:name';
@@ -49,7 +51,7 @@ class SheetIterator implements IteratorInterface
         $this->xmlReader = new XMLReader();
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->escaper = new \Box\Spout\Common\Escaper\ODS();
+        $this->escaper = \Box\Spout\Common\Escaper\ODS::getInstance();
     }
 
     /**
@@ -63,8 +65,8 @@ class SheetIterator implements IteratorInterface
     {
         $this->xmlReader->close();
 
-        $contentXmlFilePath = $this->filePath . '#content.xml';
-        if ($this->xmlReader->open('zip://' . $contentXmlFilePath) === false) {
+        if ($this->xmlReader->openFileInZip($this->filePath, self::CONTENT_XML_FILE_PATH) === false) {
+            $contentXmlFilePath = $this->filePath . '#' . self::CONTENT_XML_FILE_PATH;
             throw new IOException("Could not open \"{$contentXmlFilePath}\".");
         }
 

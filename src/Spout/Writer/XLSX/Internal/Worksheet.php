@@ -56,7 +56,7 @@ EOD;
         $this->shouldUseInlineStrings = $shouldUseInlineStrings;
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->stringsEscaper = new \Box\Spout\Common\Escaper\XLSX();
+        $this->stringsEscaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
 
         $this->worksheetFilePath = $worksheetFilesFolder . '/' . strtolower($this->externalSheet->getName()) . '.xml';
         $this->startSheet();

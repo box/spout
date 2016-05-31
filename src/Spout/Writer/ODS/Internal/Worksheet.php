@@ -47,7 +47,7 @@ class Worksheet implements WorksheetInterface
     {
         $this->externalSheet = $externalSheet;
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->stringsEscaper = new \Box\Spout\Common\Escaper\ODS();
+        $this->stringsEscaper = \Box\Spout\Common\Escaper\ODS::getInstance();
         $this->worksheetFilePath = $worksheetFilesFolder . '/sheet' . $externalSheet->getIndex() . '.xml';
 
         $this->stringHelper = new StringHelper();
