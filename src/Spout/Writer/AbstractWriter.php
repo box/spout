@@ -238,7 +238,8 @@ abstract class AbstractWriter implements WriterInterface
     public function addRows(array $dataRows)
     {
         if (!empty($dataRows)) {
-            if (!is_array($dataRows[0])) {
+            $firstRow = reset($dataRows);
+            if (!is_array($firstRow)) {
                 throw new InvalidArgumentException('The input should be an array of arrays');
             }
 
