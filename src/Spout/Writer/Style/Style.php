@@ -56,6 +56,15 @@ class Style
     /** @var bool Whether specific font properties should be applied */
     protected $shouldApplyFont = false;
 
+    protected $verticalAlignment = 'center';
+    protected $horizontalAlignment = 'center';
+
+    protected $hasVerticalAlignment = false;
+    protected $hasHorizontalAlignment = false;
+
+    protected $shouldApplyVerticalAlignment = false;
+    protected $shouldApplyHorizontalAlignment = false;
+
     /** @var bool Whether the text should wrap in the cell (useful for long or multi-lines text) */
     protected $shouldWrapText = false;
     /** @var bool Whether the wrap text property was set */
@@ -276,6 +285,34 @@ class Style
     public function getNumberFormat()
     {
         return $this->numberFormat;
+    }
+
+    public function setVerticalAlignment($alignment) {
+        $this->verticalAlignment = $alignment;
+        $this->hasVerticalAlignment = true;
+        $this->shouldApplyVerticalAlignment = true;
+    }
+
+    public function setHorizontalAlignment($alignment) {
+        $this->horizontalAlignment = $alignment;
+        $this->hasHorizontalAlignment = true;
+        $this->shouldApplyHorizontalAlignment = true;
+    }
+
+    public function getVerticalAlignment() {
+        return $this->verticalAlignment;
+    }
+
+    public function getHorizontalAlignment() {
+        return $this->horizontalAlignment;
+    }
+
+    public function shouldApplyVerticalAlignment() {
+        return $this->shouldApplyVerticalAlignment;
+    }
+
+    public function shouldApplyHorizontalAlignment() {
+        return $this->shouldApplyHorizontalAlignment;
     }
 
 

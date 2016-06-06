@@ -175,10 +175,19 @@ EOD;
                 $content .= ' applyFont="1"';
             }
 
-            if ($style->shouldWrapText()) {
+            if ($style->shouldWrapText() || $style->shouldApplyVerticalAlignment() || $style->shouldApplyHorizontalAlignment()) {
                 $content .= ' applyAlignment="1">';
-                $content .= '<alignment wrapText="1"/>';
-                $content .= '</xf>';
+                $content .= '<alignment ';
+                if ($style->shouldWrapText()) {
+                    $content .= 'wrapText="1" ';
+                }
+                if ($style->shouldApplyVerticalAlignment()) {
+                    $content .= 'vertical="' . $style->getVerticalAlignment() . '" ';
+                }
+                if ($style->shouldApplyHorizontalAlignment()) {
+                    $content .= 'horizontal="' . $style->getHorizontalAlignment() . '" ';
+                }
+                $content .= '/></xf>';
             } else {
                 $content .= '/>';
             }
