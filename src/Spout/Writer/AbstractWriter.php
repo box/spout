@@ -121,6 +121,10 @@ abstract class AbstractWriter implements WriterInterface
         $this->filePointer = $this->globalFunctionsHelper->fopen('php://output', 'w');
         $this->throwIfFilePointerIsNotAvailable();
 
+        // Clear any previous output (otherwise the generated file will be corrupted)
+        // @see https://github.com/box/spout/issues/241
+        $this->globalFunctionsHelper->ob_end_clean();
+
         // Set headers
         $this->globalFunctionsHelper->header('Content-Type: ' . static::$headerContentType);
         $this->globalFunctionsHelper->header('Content-Disposition: attachment; filename="' . $this->outputFilePath . '"');
