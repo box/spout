@@ -15,10 +15,13 @@ tools:
     php_pdepend: true
     php_loc:
         enabled: true
-        excluded_dirs: [vendor, tests]
-    php_cpd:
+        filter:
+            paths: ['src']
+    php_cpd: false # Must be disabled to use php_sim instead
+    php_sim:
         enabled: true
-        excluded_dirs: [vendor, tests]
+        filter:
+            paths: ['src']
 
 build_failure_conditions:
     - 'project.metric("scrutinizer.quality", < 9)' # Code Quality Rating drops below 9
