@@ -16,7 +16,8 @@ tools:
     php_loc:
         enabled: true
         excluded_dirs: [vendor, tests]
-    php_cpd:
+    php_cpd: false # Must be disabled to use php_sim instead
+    php_sim:
         enabled: true
         excluded_dirs: [vendor, tests]
 
