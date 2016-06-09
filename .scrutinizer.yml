@@ -6,7 +6,7 @@ tools:
         timeout: 600 # Wait 10 minutes for results
         runs: 3 # Merge results for 5.4, 5.5 and 5.6 jobs
     php_mess_detector: true
-    php_code_sniffer: true
+    php_code_sniffer:
         config:
             standard: PSR4
         filter:
