@@ -469,6 +469,20 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testReaderShouldReadInlineFontFormattingAsText()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_inline_font_formatting.ods');
+
+        $expectedRows = [
+            ['I am a yellow bird']
+        ];
+
+        $this->assertEquals($expectedRows, $allRows, 'Text formatted inline should be read');
+    }
+
+    /**
      * @param string $fileName
      * @param bool|void $shouldFormatDates
      * @return array All the read rows the given file
