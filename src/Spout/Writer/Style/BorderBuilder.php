@@ -18,9 +18,9 @@ class BorderBuilder
     }
 
     /**
-     * @param string $style Border style @see BorderPart::allowedStyles
-     * @param string $color Border A RGB color code
-     * @param string $width Border width @see BorderPart::allowedWidths
+     * @param string|void $style Border style @see BorderPart::allowedStyles
+     * @param string|void $color Border A RGB color code
+     * @param string|void $width Border width @see BorderPart::allowedWidths
      * @return self
      */
     public function setBorderTop($style = Border::STYLE_SOLID, $color = Color::BLACK, $width = Border::WIDTH_THICK)
@@ -30,9 +30,9 @@ class BorderBuilder
     }
 
     /**
-     * @param string $style Border style @see BorderPart::allowedStyles
-     * @param string $color Border A RGB color code
-     * @param string $width Border width @see BorderPart::allowedWidths
+     * @param string|void $style Border style @see BorderPart::allowedStyles
+     * @param string|void $color Border A RGB color code
+     * @param string|void $width Border width @see BorderPart::allowedWidths
      * @return self
      */
     public function setBorderRight($style = Border::STYLE_SOLID, $color = Color::BLACK, $width = Border::WIDTH_THICK)
@@ -42,9 +42,9 @@ class BorderBuilder
     }
 
     /**
-     * @param string $style Border style @see BorderPart::allowedStyles
-     * @param string $color Border A RGB color code
-     * @param string $width Border width @see BorderPart::allowedWidths
+     * @param string|void $style Border style @see BorderPart::allowedStyles
+     * @param string|void $color Border A RGB color code
+     * @param string|void $width Border width @see BorderPart::allowedWidths
      * @return self
      */
     public function setBorderBottom($style = Border::STYLE_SOLID, $color = Color::BLACK, $width = Border::WIDTH_THICK)
@@ -54,9 +54,9 @@ class BorderBuilder
     }
 
     /**
-     * @param string $style Border style @see BorderPart::allowedStyles
-     * @param string $color Border A RGB color code
-     * @param string $width Border width @see BorderPart::allowedWidths
+     * @param string|void $style Border style @see BorderPart::allowedStyles
+     * @param string|void $color Border A RGB color code
+     * @param string|void $width Border width @see BorderPart::allowedWidths
      * @return self
      */
     public function setBorderLeft($style = Border::STYLE_SOLID, $color = Color::BLACK, $width = Border::WIDTH_THICK)

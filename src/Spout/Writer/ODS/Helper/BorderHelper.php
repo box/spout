@@ -26,7 +26,7 @@ class BorderHelper
      *
      * @var array
      */
-    public static $widthMap = [
+    protected static $widthMap = [
         Border::WIDTH_THIN => '0.75pt',
         Border::WIDTH_MEDIUM => '1.75pt',
         Border::WIDTH_THICK => '2.5pt',
@@ -37,7 +37,7 @@ class BorderHelper
      *
      * @var array
      */
-    public static $styleMap = [
+    protected static $styleMap = [
         Border::STYLE_SOLID => 'solid',
         Border::STYLE_DASHED => 'dashed',
         Border::STYLE_DOTTED => 'dotted',

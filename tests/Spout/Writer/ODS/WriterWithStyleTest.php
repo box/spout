@@ -268,30 +268,45 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $this->writeToODSFileWithMultipleStyles($dataRows, $fileName, $styles);
 
         $styleElements = $this->getCellStyleElementsFromContentXmlFile($fileName);
+
         $this->assertEquals(3, count($styleElements), 'There should be 3 styles)');
+
+        // Use reflection for protected members here
+        $widthMapReflection = new \ReflectionProperty('Box\Spout\Writer\ODS\Helper\BorderHelper', 'widthMap');
+        $widthMapReflection->setAccessible(true);
+        $widthMap = $widthMapReflection->getValue();
+
+        $styleMapReflection = new \ReflectionProperty('Box\Spout\Writer\ODS\Helper\BorderHelper', 'styleMap');
+        $styleMapReflection->setAccessible(true);
+        $styleMap = $styleMapReflection->getValue();
 
         $expectedFirst = sprintf(
             '%s %s #%s',
-            BorderHelper::$widthMap[Border::WIDTH_THICK],
-            BorderHelper::$styleMap[Border::STYLE_SOLID],
+            $widthMap[Border::WIDTH_THICK],
+            $styleMap[Border::STYLE_SOLID],
             Color::GREEN
         );
 
-        $this->assertEquals($expectedFirst, $styleElements[1]
+        $actualFirst = $styleElements[1]
             ->getElementsByTagName('table-cell-properties')
             ->item(0)
-            ->getAttribute('fo:border-bottom'));
+            ->getAttribute('fo:border-bottom');
+
+        $this->assertEquals($expectedFirst, $actualFirst);
 
         $expectedThird = sprintf(
             '%s %s #%s',
-            BorderHelper::$widthMap[Border::WIDTH_THIN],
-            BorderHelper::$styleMap[Border::STYLE_DASHED],
+            $widthMap[Border::WIDTH_THIN],
+            $styleMap[Border::STYLE_DASHED],
             Color::RED
         );
-        $this->assertEquals($expectedThird, $styleElements[2]
+
+        $actualThird = $styleElements[2]
             ->getElementsByTagName('table-cell-properties')
             ->item(0)
-            ->getAttribute('fo:border-top'));
+            ->getAttribute('fo:border-top');
+
+        $this->assertEquals($expectedThird, $actualThird);
     }
 
 

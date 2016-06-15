@@ -41,7 +41,7 @@ class BorderHelper
      */
     public static function serializeBorderPart(BorderPart $borderPart)
     {
-        $borderStyle = self::$xlsxStyleMap[$borderPart->getStyle()][$borderPart->getWidth()];
+        $borderStyle = self::getBorderStyle($borderPart);
 
         $colorEl = $borderPart->getColor() ? sprintf('<color rgb="%s"/>', $borderPart->getColor()) : '';
         $partEl = sprintf(
@@ -53,5 +53,16 @@ class BorderHelper
         );
 
         return $partEl . PHP_EOL;
+    }
+
+    /**
+     * Get the style definition from the style map
+     *
+     * @param BorderPart $borderPart
+     * @return string
+     */
+    protected static function getBorderStyle(BorderPart $borderPart)
+    {
+        return self::$xlsxStyleMap[$borderPart->getStyle()][$borderPart->getWidth()];
     }
 }

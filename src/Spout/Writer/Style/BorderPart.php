@@ -62,9 +62,9 @@ class BorderPart
     ];
 
     /**
-     * @param string $name @see  BorderPart::allowedNames
-     * @param string $style @see BorderPart::allowedStyles
-     * @param string $width @see BorderPart::allowedWidths
+     * @param string $name @see  BorderPart::$allowedNames
+     * @param string $style @see BorderPart::$allowedStyles
+     * @param string $width @see BorderPart::$allowedWidths
      * @param string $color A RGB color code
      * @throws InvalidNameException
      * @throws InvalidStyleException
@@ -87,7 +87,9 @@ class BorderPart
     }
 
     /**
-     * @param string $name
+     * @param string $name The name of the border part @see BorderPart::$allowedNames
+     * @throws InvalidNameException
+     * @return void
      */
     public function setName($name)
     {
@@ -106,7 +108,9 @@ class BorderPart
     }
 
     /**
-     * @param string $style
+     * @param string $style The style of the border part @see BorderPart::$allowedStyles
+     * @throws InvalidStyleException
+     * @return void
      */
     public function setStyle($style)
     {
@@ -125,7 +129,8 @@ class BorderPart
     }
 
     /**
-     * @param string $color
+     * @param string $color The color of the border part @see Color::rgb()
+     * @return void
      */
     public function setColor($color)
     {
@@ -141,7 +146,9 @@ class BorderPart
     }
 
     /**
-     * @param string $width
+     * @param string $width The width of the border part @see BorderPart::$allowedWidths
+     * @throws InvalidWidthException
+     * @return void
      */
     public function setWidth($width)
     {

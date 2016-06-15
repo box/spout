@@ -89,19 +89,17 @@ class BorderTest extends \PHPUnit_Framework_TestCase
     public function testAnyCombinationOfAllowedBorderPartsParams()
     {
         $color = Color::BLACK;
-        foreach(BorderPart::getAllowedNames() as $allowedName)
-        {
-            foreach(BorderPart::getAllowedStyles() as $allowedStyle)
-            {
-                foreach(BorderPart::getAllowedWidths() as $allowedWidth)
-                {
+        foreach (BorderPart::getAllowedNames() as $allowedName) {
+            foreach (BorderPart::getAllowedStyles() as $allowedStyle) {
+                foreach (BorderPart::getAllowedWidths() as $allowedWidth) {
                     $borderPart = new BorderPart($allowedName, $allowedStyle, $color, $allowedWidth);
                     $border = new Border();
                     $border->addPart($borderPart);
                     $this->assertEquals(1, count($border->getParts()));
 
-                    $part = $border->getParts()[$allowedName];
                     /** @var $part BorderPart */
+                    $part = $border->getParts()[$allowedName];
+
                     $this->assertEquals($allowedStyle, $part->getStyle());
                     $this->assertEquals($allowedWidth, $part->getWidth());
                     $this->assertEquals($color, $part->getColor());
@@ -110,3 +108,4 @@ class BorderTest extends \PHPUnit_Framework_TestCase
         }
     }
 }
+
