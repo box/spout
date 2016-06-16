@@ -159,7 +159,15 @@ class SharedStringsHelper
             $xmlReader->read();
         }
 
-        return intval($xmlReader->getAttribute('uniqueCount'));
+        $uniqueCount = $xmlReader->getAttribute('uniqueCount');
+
+        // some software do not add the "uniqueCount" attribute but only use the "count" one
+        // @see https://github.com/box/spout/issues/254
+        if ($uniqueCount === null) {
+            $uniqueCount = $xmlReader->getAttribute('count');
+        }
+
+        return intval($uniqueCount);
     }
 
     /**
