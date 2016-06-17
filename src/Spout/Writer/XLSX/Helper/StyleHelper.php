@@ -25,6 +25,7 @@ class StyleHelper extends AbstractStyleHelper
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 EOD;
 
+        $content .= $this->getNumberFormatSectionContent();
         $content .= $this->getFontsSectionContent();
         $content .= $this->getFillsSectionContent();
         $content .= $this->getBordersSectionContent();
@@ -36,6 +37,31 @@ EOD;
 </styleSheet>
 EOD;
 
+        return $content;
+    }
+
+    protected function getNumberFormatSectionContent() {
+        $formats = array();
+        $numberFormatCount = 0;
+        // This is the limit excel holds for the default number formats
+        $baseNumberFormatId = 163;
+
+        foreach($this->getRegisteredStyles() as $style) {
+            /* If this evals to false we should skip it since it isnt used */
+            if ($style->shouldApplyNumberFormat()) {
+                $numberFormatCount++;
+                $style->setNumberFormatId($baseNumberFormatId + $numberFormatCount);
+                $formats[] = '<numFmt numFmtId="'.$style->getNumberFormatId().'" formatCode="'.$style->getNumberFormat().'"/>';
+            }
+        }
+
+        if ($numberFormatCount == 0){
+            return '';
+        }
+
+        $content = '<numFmts count="'.$numberFormatCount.'">';
+        $content .= implode('', $formats);
+        $content .= '</numFmts>';
         return $content;
     }
 
@@ -139,16 +165,29 @@ EOD;
         $content = '<cellXfs count="' . count($registeredStyles) . '">';
 
         foreach ($registeredStyles as $style) {
-            $content .= '<xf numFmtId="0" fontId="' . $style->getId() . '" fillId="0" borderId="0" xfId="0"';
+            $content .= '<xf numFmtId="'.$style->getNumberFormatId().'" fontId="' . $style->getId() . '" fillId="0" borderId="0" xfId="0"';
+
+            if ($style->shouldApplyNumberFormat()) {
+                $content .= ' applyNumberFormat="1"';
+            }
 
             if ($style->shouldApplyFont()) {
                 $content .= ' applyFont="1"';
             }
 
-            if ($style->shouldWrapText()) {
+            if ($style->shouldWrapText() || $style->shouldApplyVerticalAlignment() || $style->shouldApplyHorizontalAlignment()) {
                 $content .= ' applyAlignment="1">';
-                $content .= '<alignment wrapText="1"/>';
-                $content .= '</xf>';
+                $content .= '<alignment ';
+                if ($style->shouldWrapText()) {
+                    $content .= 'wrapText="1" ';
+                }
+                if ($style->shouldApplyVerticalAlignment()) {
+                    $content .= 'vertical="' . $style->getVerticalAlignment() . '" ';
+                }
+                if ($style->shouldApplyHorizontalAlignment()) {
+                    $content .= 'horizontal="' . $style->getHorizontalAlignment() . '" ';
+                }
+                $content .= '/></xf>';
             } else {
                 $content .= '/>';
             }

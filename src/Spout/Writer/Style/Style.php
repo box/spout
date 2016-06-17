@@ -56,10 +56,26 @@ class Style
     /** @var bool Whether specific font properties should be applied */
     protected $shouldApplyFont = false;
 
+    protected $verticalAlignment = 'center';
+    protected $horizontalAlignment = 'center';
+
+    protected $hasVerticalAlignment = false;
+    protected $hasHorizontalAlignment = false;
+
+    protected $shouldApplyVerticalAlignment = false;
+    protected $shouldApplyHorizontalAlignment = false;
+
     /** @var bool Whether the text should wrap in the cell (useful for long or multi-lines text) */
     protected $shouldWrapText = false;
     /** @var bool Whether the wrap text property was set */
     protected $hasSetWrapText = false;
+
+    /** @var string Custom number format */
+    protected $numberFormat = '';
+    /** @var boolean Whether specific number format has been set */
+    protected $hasSetNumberFormat = false;
+    /** @var integer Holds the number format id */
+    protected $numberFormatId = 0;
 
     /**
      * @return int|null
@@ -242,6 +258,63 @@ class Style
     {
         return $this->shouldApplyFont;
     }
+
+    public function setNumberFormat($format)
+    {
+        $this->numberFormat = $format;
+        $this->hasSetNumberFormat = true;
+        return $this;
+    }
+
+    public function setNumberFormatId($id)
+    {
+        $this->numberFormatId = $id;
+    }
+
+
+    public function shouldApplyNumberFormat()
+    {
+        return $this->hasSetNumberFormat;
+    }
+
+    public function getNumberFormatId()
+    {
+        return $this->numberFormatId;
+    }
+
+    public function getNumberFormat()
+    {
+        return $this->numberFormat;
+    }
+
+    public function setVerticalAlignment($alignment) {
+        $this->verticalAlignment = $alignment;
+        $this->hasVerticalAlignment = true;
+        $this->shouldApplyVerticalAlignment = true;
+    }
+
+    public function setHorizontalAlignment($alignment) {
+        $this->horizontalAlignment = $alignment;
+        $this->hasHorizontalAlignment = true;
+        $this->shouldApplyHorizontalAlignment = true;
+    }
+
+    public function getVerticalAlignment() {
+        return $this->verticalAlignment;
+    }
+
+    public function getHorizontalAlignment() {
+        return $this->horizontalAlignment;
+    }
+
+    public function shouldApplyVerticalAlignment() {
+        return $this->shouldApplyVerticalAlignment;
+    }
+
+    public function shouldApplyHorizontalAlignment() {
+        return $this->shouldApplyHorizontalAlignment;
+    }
+
 
     /**
      * Serializes the style for future comparison with other styles.

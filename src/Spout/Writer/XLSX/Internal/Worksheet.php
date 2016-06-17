@@ -133,10 +133,18 @@ EOD;
 
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
-        foreach($dataRow as $cellValue) {
+        foreach($dataRow as $cell) {
+            if (is_array($cell)) {
+                $cellValue = $cell[0];
+                $cellStyle = $cell[1];
+            } else {
+                $cellValue = $cell;
+                $cellStyle = $style;
+            }
+
             $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
             $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
-            $cellXML .= ' s="' . $style->getId() . '"';
+            $cellXML .= ' s="' . $cellStyle->getId() . '"';
 
             if (CellHelper::isNonEmptyString($cellValue)) {
                 if ($this->shouldUseInlineStrings) {
