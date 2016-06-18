@@ -63,19 +63,19 @@ class BorderPart
 
     /**
      * @param string $name @see  BorderPart::$allowedNames
-     * @param string $style @see BorderPart::$allowedStyles
-     * @param string $width @see BorderPart::$allowedWidths
      * @param string $color A RGB color code
+     * @param string $width @see BorderPart::$allowedWidths
+     * @param string $style @see BorderPart::$allowedStyles
      * @throws InvalidNameException
      * @throws InvalidStyleException
      * @throws InvalidWidthException
      */
-    public function __construct($name, $style = Border::STYLE_SOLID, $color = Color::BLACK, $width = Border::WIDTH_MEDIUM)
+    public function __construct($name, $color = Color::BLACK, $width = Border::WIDTH_MEDIUM, $style = Border::STYLE_SOLID)
     {
         $this->setName($name);
-        $this->setStyle($style);
-        $this->setWidth($width);
         $this->setColor($color);
+        $this->setWidth($width);
+        $this->setStyle($style);
     }
 
     /**

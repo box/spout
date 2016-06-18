@@ -147,7 +147,7 @@ class StyleTest extends \PHPUnit_Framework_TestCase
      */
     public function testStyleBuilderShouldMergeBorders()
     {
-        $border = (new BorderBuilder())->setBorderBottom(Border::STYLE_DASHED, Color::RED, Border::WIDTH_THIN)->build();
+        $border = (new BorderBuilder())->setBorderBottom(Color::RED, Border::WIDTH_THIN, Border::STYLE_DASHED)->build();
 
         $baseStyle = (new StyleBuilder())->setBorder($border)->build();
         $currentStyle = (new StyleBuilder())->build();

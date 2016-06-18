@@ -154,19 +154,24 @@ Adding borders to a row requires a ```Border``` object.
 
 ```php
 use Box\Spout\Common\Type;
-use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\Style\Border;
 use Box\Spout\Writer\Style\BorderBuilder;
+use Box\Spout\Writer\Style\Color;
+use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\WriterFactory;
 
 $border = (new BorderBuilder())
-            ->setBorderBottom(Border::STYLE_DASHED, Color::GREEN, Border::WIDTH_THIN)
-            ->build();
+    ->setBorderBottom(Color::GREEN, Border::WIDTH_THIN, Border::STYLE_DASHED)
+    ->build();
 
 $style = (new StyleBuilder())
-            ->setBorder($border)
-            ->build();
+    ->setBorder($border)
+    ->build();
 
-$writer->addRowWithStyle(['Border Bottom Dashed Green Thin'], $style);
+$writer = WriterFactory::create(Type::ODS);
+$writer->openToFile(__DIR__ . '/borders.xlsx');
+
+$writer->addRowWithStyle(['Border Bottom Green Thin Dashed'], $style)
 
 $writer->close();
 

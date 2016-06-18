@@ -28,7 +28,7 @@ class BorderTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidBorderPartStyle()
     {
-        $invalidBorderPartStyle = new BorderPart(Border::LEFT, 'invalid');
+        $invalidBorderPartStyle = new BorderPart(Border::LEFT, Color::BLACK, Border::WIDTH_THIN, 'invalid');
     }
 
     /**
@@ -36,7 +36,7 @@ class BorderTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidBorderPartWidth()
     {
-        $invalidBorderPartStyle = new BorderPart(Border::LEFT, Border::STYLE_DASHED, Color::BLACK, 'invalid');
+        $invalidBorderPartStyle = new BorderPart(Border::LEFT, Color::BLACK, 'invalid', Border::STYLE_DASHED);
     }
 
     /**
@@ -92,7 +92,7 @@ class BorderTest extends \PHPUnit_Framework_TestCase
         foreach (BorderPart::getAllowedNames() as $allowedName) {
             foreach (BorderPart::getAllowedStyles() as $allowedStyle) {
                 foreach (BorderPart::getAllowedWidths() as $allowedWidth) {
-                    $borderPart = new BorderPart($allowedName, $allowedStyle, $color, $allowedWidth);
+                    $borderPart = new BorderPart($allowedName, $color, $allowedWidth, $allowedStyle);
                     $border = new Border();
                     $border->addPart($borderPart);
                     $this->assertEquals(1, count($border->getParts()));
@@ -108,4 +108,3 @@ class BorderTest extends \PHPUnit_Framework_TestCase
         }
     }
 }
-

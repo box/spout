@@ -253,11 +253,11 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         ];
 
         $borderBottomGreenThickSolid = (new BorderBuilder())
-            ->setBorderBottom(Border::STYLE_SOLID, Color::GREEN, Border::WIDTH_THICK)->build();
+            ->setBorderBottom(Color::GREEN, Border::WIDTH_THICK, Border::STYLE_SOLID)->build();
 
 
         $borderTopRedThinDashed = (new BorderBuilder())
-            ->setBorderTop(Border::STYLE_DASHED, Color::RED, Border::WIDTH_THIN)->build();
+            ->setBorderTop(Color::RED, Border::WIDTH_THIN, Border::STYLE_DASHED)->build();
 
         $styles =  [
             (new StyleBuilder())->setBorder($borderBottomGreenThickSolid)->build(),
@@ -272,13 +272,8 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, count($styleElements), 'There should be 3 styles)');
 
         // Use reflection for protected members here
-        $widthMapReflection = new \ReflectionProperty('Box\Spout\Writer\ODS\Helper\BorderHelper', 'widthMap');
-        $widthMapReflection->setAccessible(true);
-        $widthMap = $widthMapReflection->getValue();
-
-        $styleMapReflection = new \ReflectionProperty('Box\Spout\Writer\ODS\Helper\BorderHelper', 'styleMap');
-        $styleMapReflection->setAccessible(true);
-        $styleMap = $styleMapReflection->getValue();
+        $widthMap = \ReflectionHelper::getStaticValue('Box\Spout\Writer\ODS\Helper\BorderHelper', 'widthMap');
+        $styleMap = \ReflectionHelper::getStaticValue('Box\Spout\Writer\ODS\Helper\BorderHelper', 'styleMap');
 
         $expectedFirst = sprintf(
             '%s %s #%s',

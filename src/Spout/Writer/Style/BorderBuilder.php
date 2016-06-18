@@ -18,50 +18,50 @@ class BorderBuilder
     }
 
     /**
-     * @param string|void $style Border style @see BorderPart::allowedStyles
      * @param string|void $color Border A RGB color code
      * @param string|void $width Border width @see BorderPart::allowedWidths
-     * @return self
+     * @param string|void $style Border style @see BorderPart::allowedStyles
+     * @return BorderBuilder
      */
-    public function setBorderTop($style = Border::STYLE_SOLID, $color = Color::BLACK, $width = Border::WIDTH_THICK)
+    public function setBorderTop($color = Color::BLACK, $width = Border::WIDTH_MEDIUM, $style = Border::STYLE_SOLID)
     {
-        $this->border->addPart(new BorderPart(Border::TOP, $style, $color, $width));
+        $this->border->addPart(new BorderPart(Border::TOP, $color, $width, $style));
         return $this;
     }
 
     /**
-     * @param string|void $style Border style @see BorderPart::allowedStyles
      * @param string|void $color Border A RGB color code
      * @param string|void $width Border width @see BorderPart::allowedWidths
-     * @return self
+     * @param string|void $style Border style @see BorderPart::allowedStyles
+     * @return BorderBuilder
      */
-    public function setBorderRight($style = Border::STYLE_SOLID, $color = Color::BLACK, $width = Border::WIDTH_THICK)
+    public function setBorderRight($color = Color::BLACK, $width = Border::WIDTH_MEDIUM, $style = Border::STYLE_SOLID)
     {
-        $this->border->addPart(new BorderPart(Border::RIGHT, $style, $color, $width));
+        $this->border->addPart(new BorderPart(Border::RIGHT, $color, $width, $style));
         return $this;
     }
 
     /**
-     * @param string|void $style Border style @see BorderPart::allowedStyles
      * @param string|void $color Border A RGB color code
      * @param string|void $width Border width @see BorderPart::allowedWidths
-     * @return self
+     * @param string|void $style Border style @see BorderPart::allowedStyles
+     * @return BorderBuilder
      */
-    public function setBorderBottom($style = Border::STYLE_SOLID, $color = Color::BLACK, $width = Border::WIDTH_THICK)
+    public function setBorderBottom($color = Color::BLACK, $width = Border::WIDTH_MEDIUM, $style = Border::STYLE_SOLID)
     {
-        $this->border->addPart(new BorderPart(Border::BOTTOM, $style, $color, $width));
+        $this->border->addPart(new BorderPart(Border::BOTTOM, $color, $width, $style));
         return $this;
     }
 
     /**
-     * @param string|void $style Border style @see BorderPart::allowedStyles
      * @param string|void $color Border A RGB color code
      * @param string|void $width Border width @see BorderPart::allowedWidths
-     * @return self
+     * @param string|void $style Border style @see BorderPart::allowedStyles
+     * @return BorderBuilder
      */
-    public function setBorderLeft($style = Border::STYLE_SOLID, $color = Color::BLACK, $width = Border::WIDTH_THICK)
+    public function setBorderLeft($color = Color::BLACK, $width = Border::WIDTH_MEDIUM, $style = Border::STYLE_SOLID)
     {
-        $this->border->addPart(new BorderPart(Border::LEFT, $style, $color, $width));
+        $this->border->addPart(new BorderPart(Border::LEFT, $color, $width, $style));
         return $this;
     }
 
