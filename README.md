@@ -168,13 +168,12 @@ $style = (new StyleBuilder())
     ->setBorder($border)
     ->build();
 
-$writer = WriterFactory::create(Type::ODS);
-$writer->openToFile(__DIR__ . '/borders.xlsx');
+$writer = WriterFactory::create(Type::XLSX);
+$writer->openToFile($filePath);
 
 $writer->addRowWithStyle(['Border Bottom Green Thin Dashed'], $style)
 
 $writer->close();
-
 ```
 
 Unfortunately, Spout does not support all the possible formatting options yet. But you can find the most important ones:
