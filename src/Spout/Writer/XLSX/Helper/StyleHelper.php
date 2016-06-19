@@ -100,17 +100,29 @@ EOD;
      */
     protected function getBordersSectionContent()
     {
-        return <<<EOD
-<borders count="1">
-    <border>
-        <left/>
-        <right/>
-        <top/>
-        <bottom/>
-        <diagonal/>
-    </border>
-</borders>
-EOD;
+        $registeredStyles = $this->getRegisteredStyles();
+        $registeredStylesCount = count($registeredStyles);
+
+        $content = '<borders count="' . $registeredStylesCount . '">';
+
+        /** @var \Box\Spout\Writer\Style\Style $style */
+        foreach ($registeredStyles as $style) {
+            $border = $style->getBorder();
+            if ($border) {
+                $content .= '<border>';
+                foreach ($border->getParts() as $part) {
+                    /** @var $part \Box\Spout\Writer\Style\BorderPart */
+                    $content .= BorderHelper::serializeBorderPart($part);
+                }
+                $content .= '</border>';
+            } else {
+                $content .= '<border><left/><right/><top/><bottom/><diagonal/></border>';
+            }
+        }
+
+        $content .= '</borders>';
+
+        return $content;
     }
 
     /**
@@ -139,10 +151,14 @@ EOD;
         $content = '<cellXfs count="' . count($registeredStyles) . '">';
 
         foreach ($registeredStyles as $style) {
-            $content .= '<xf numFmtId="0" fontId="' . $style->getId() . '" fillId="0" borderId="0" xfId="0"';
+            $content .= '<xf numFmtId="0" fontId="' . $style->getId() . '" fillId="0" borderId="' . $style->getId() . '" xfId="0"';
 
             if ($style->shouldApplyFont()) {
                 $content .= ' applyFont="1"';
+            }
+
+            if ($style->shouldApplyBorder()) {
+                $content .= ' applyBorder="1"';
             }
 
             if ($style->shouldWrapText()) {

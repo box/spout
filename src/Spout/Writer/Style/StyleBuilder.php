@@ -122,6 +122,18 @@ class StyleBuilder
     }
 
     /**
+     * Set a border
+     *
+     * @param Border $border
+     * @return $this
+     */
+    public function setBorder(Border $border)
+    {
+        $this->style->setBorder($border);
+        return $this;
+    }
+
+    /**
      * Returns the configured style. The style is cached and can be reused.
      *
      * @api

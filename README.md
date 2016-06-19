@@ -125,7 +125,7 @@ The writer always generate CSV files encoded in UTF-8, with a BOM.
 
 #### Row styling
 
-It is possible to apply some formatting options to a row. Spout supports fonts as well as alignment styles.
+It is possible to apply some formatting options to a row. Spout supports fonts, borders as well as alignment styles.
 
 ```php
 use Box\Spout\Common\Type;
@@ -148,6 +148,33 @@ $writer->addRow($otherSingleRow); // no style will be applied
 $writer->addRowsWithStyle($multipleRows, $style); // style will be applied to all given rows
 
 $writer->close();
+```
+
+Adding borders to a row requires a ```Border``` object.
+
+```php
+use Box\Spout\Common\Type;
+use Box\Spout\Writer\Style\Border;
+use Box\Spout\Writer\Style\BorderBuilder;
+use Box\Spout\Writer\Style\Color;
+use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\WriterFactory;
+
+$border = (new BorderBuilder())
+    ->setBorderBottom(Color::GREEN, Border::WIDTH_THIN, Border::STYLE_DASHED)
+    ->build();
+
+$style = (new StyleBuilder())
+    ->setBorder($border)
+    ->build();
+
+$writer = WriterFactory::create(Type::ODS);
+$writer->openToFile(__DIR__ . '/borders.xlsx');
+
+$writer->addRowWithStyle(['Border Bottom Green Thin Dashed'], $style)
+
+$writer->close();
+
 ```
 
 Unfortunately, Spout does not support all the possible formatting options yet. But you can find the most important ones:
