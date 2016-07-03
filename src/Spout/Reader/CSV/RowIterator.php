@@ -153,7 +153,7 @@ class RowIterator implements IteratorInterface
      */
     protected function getNextUTF8EncodedRow()
     {
-        $encodedRowData = fgetcsv($this->filePointer, self::MAX_READ_BYTES_PER_LINE, $this->fieldDelimiter, $this->fieldEnclosure);
+        $encodedRowData = $this->globalFunctionsHelper->fgetcsv($this->filePointer, self::MAX_READ_BYTES_PER_LINE, $this->fieldDelimiter, $this->fieldEnclosure);
         if (false === $encodedRowData) {
             return false;
         }
