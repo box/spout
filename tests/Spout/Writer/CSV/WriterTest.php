@@ -77,6 +77,19 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testWriteShouldNotAddUtf8Bom()
+    {
+        $allRows = [
+            ['csv--11', 'csv--12'],
+        ];
+        $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_no_bom.csv', ',', '"', false);
+
+        $this->assertNotContains(EncodingHelper::BOM_UTF8, $writtenContent, 'The CSV file should not contain a UTF-8 BOM');
+    }
+
+    /**
+     * @return void
+     */
     public function testWriteShouldSupportAssociativeArrays()
     {
         $allRows = [
@@ -148,13 +161,14 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $allRows
+     * @param array  $allRows
      * @param string $fileName
      * @param string $fieldDelimiter
      * @param string $fieldEnclosure
+     * @param bool   $shouldAddBOM
      * @return null|string
      */
-    private function writeToCsvFileAndReturnWrittenContent($allRows, $fileName, $fieldDelimiter = ',', $fieldEnclosure = '"')
+    private function writeToCsvFileAndReturnWrittenContent($allRows, $fileName, $fieldDelimiter = ',', $fieldEnclosure = '"', $shouldAddBOM = true)
     {
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -162,6 +176,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::CSV);
         $writer->setFieldDelimiter($fieldDelimiter);
         $writer->setFieldEnclosure($fieldEnclosure);
+        $writer->setShouldAddBOM($shouldAddBOM);
 
         $writer->openToFile($resourcePath);
         $writer->addRows($allRows);
