@@ -118,7 +118,15 @@ Additionally, if you need to read non UTF-8 files, you can specify the encoding 
 $reader->setEncoding('UTF-16LE');
 ```
 
-The writer always generate CSV files encoded in UTF-8, with a BOM.
+By default, the writer generates CSV files encoded in UTF-8, with a BOM.
+It is however possible to not include the BOM:
+```php
+use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Common\Type;
+
+$writer = WriterFactory::create(Type::CSV);
+$writer->setShouldAddBOM(false);
+```
 
 
 ### Configuring the XLSX and ODS readers and writers
