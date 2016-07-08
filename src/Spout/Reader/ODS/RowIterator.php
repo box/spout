@@ -8,6 +8,7 @@ use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Reader\ODS\Helper\CellValueFormatter;
 use Box\Spout\Reader\Wrapper\XMLReader;
+use Box\Spout\Reader\ReaderOptions;
 
 /**
  * Class RowIterator
@@ -21,9 +22,13 @@ class RowIterator implements IteratorInterface
     const XML_NODE_ROW = 'table:table-row';
     const XML_NODE_CELL = 'table:table-cell';
     const MAX_COLUMNS_EXCEL = 16384;
+    const MAX_ROWS_EXCEL = 1048576;
 
     /** Definition of XML attribute used to parse data */
     const XML_ATTRIBUTE_NUM_COLUMNS_REPEATED = 'table:number-columns-repeated';
+
+    /** Definition of XML attribute used to parse data */
+    const XML_ATTRIBUTE_NUM_ROWS_REPEATED = 'table:number-rows-repeated';
 
     /** @var \Box\Spout\Reader\Wrapper\XMLReader The XMLReader object that will help read sheet's XML data */
     protected $xmlReader;
@@ -34,23 +39,27 @@ class RowIterator implements IteratorInterface
     /** @var bool Whether the iterator has already been rewound once */
     protected $hasAlreadyBeenRewound = false;
 
-    /** @var int Number of read rows */
-    protected $numReadRows = 0;
+    /** @var int Key for iterator */
+    protected $rowIndex = 0;
 
-    /** @var array|null Buffer used to store the row data, while checking if there are more rows to read */
-    protected $rowDataBuffer = null;
+    /** @var array Buffer used to store the row data, while checking if there are more rows to read */
+    protected $rowDataBuffer = [];
 
     /** @var bool Indicates whether all rows have been read */
     protected $hasReachedEndOfFile = false;
 
+    /** @var \Box\Spout\Reader\ReaderOptions */
+    protected $readerOptions;
+
     /**
      * @param XMLReader $xmlReader XML Reader, positioned on the "<table:table>" element
-     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param \Box\Spout\Reader\ReaderOptions $readerOptions
      */
-    public function __construct($xmlReader, $shouldFormatDates)
+    public function __construct($xmlReader, ReaderOptions $readerOptions)
     {
         $this->xmlReader = $xmlReader;
-        $this->cellValueFormatter = new CellValueFormatter($shouldFormatDates);
+        $this->readerOptions = $readerOptions;
+        $this->cellValueFormatter = new CellValueFormatter($readerOptions->shouldFormatDates());
     }
 
     /**
@@ -71,8 +80,8 @@ class RowIterator implements IteratorInterface
         }
 
         $this->hasAlreadyBeenRewound = true;
-        $this->numReadRows = 0;
-        $this->rowDataBuffer = null;
+        $this->rowIndex = 0;
+        $this->rowDataBuffer = [];
         $this->hasReachedEndOfFile = false;
 
         $this->next();
@@ -90,7 +99,7 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * Move forward to next element. Empty rows will be skipped.
+     * Move forward to next element. Empty rows can be skipped.
      * @link http://php.net/manual/en/iterator.next.php
      *
      * @return void
@@ -99,15 +108,34 @@ class RowIterator implements IteratorInterface
      */
     public function next()
     {
+        $prevRow = null;
+
+        if (count($this->rowDataBuffer) > 1) {
+            array_shift($this->rowDataBuffer);
+            $this->rowIndex++;
+
+            return;
+        } else {
+            $prevRow = $this->current();
+            $this->rowDataBuffer = [];
+        }
+
         $rowData = [];
         $cellValue = null;
+        $numRowsRepeated = 0;
         $numColumnsRepeated = 1;
         $numCellsRead = 0;
         $hasAlreadyReadOneCell = false;
 
         try {
             while ($this->xmlReader->read()) {
-                if ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL)) {
+                if ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_ROW)) {
+                    // Start of a row description
+                    $this->rowIndex++;
+
+                    $numRowsRepeated = $this->getNumRowsRepeatedForCurrentNode();
+
+                } elseif ($this->xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL)) {
                     // Start of a cell description
                     $currentNumColumnsRepeated = $this->getNumColumnsRepeatedForCurrentNode();
 
@@ -127,30 +155,37 @@ class RowIterator implements IteratorInterface
                     $numCellsRead++;
                     $hasAlreadyReadOneCell = true;
 
-                } else if ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_ROW)) {
+                } elseif ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_ROW)) {
                     // End of the row description
                     $isEmptyRow = ($numCellsRead <= 1 && $this->isEmptyCellValue($cellValue));
-                    if ($isEmptyRow) {
-                        // skip empty rows
-                        $this->next();
-                        return;
+
+                    if (!$isEmptyRow) {
+                        // Only add the value if the last read cell is not a trailing empty cell repeater in Excel.
+                        // The current count of read columns is determined by counting the values in $rowData.
+                        // This is to avoid creating a lot of empty cells, as Excel adds a last empty "<table:table-cell>"
+                        // with a number-columns-repeated value equals to the number of (supported columns - used columns).
+                        // In Excel, the number of supported columns is 16384, but we don't want to returns rows with
+                        // always 16384 cells.
+                        if ((count($rowData) + $numColumnsRepeated) !== self::MAX_COLUMNS_EXCEL) {
+                            for ($i = 0; $i < $numColumnsRepeated; $i++) {
+                                $rowData[] = $cellValue;
+                            }
+                        }
+                    } elseif ($this->readerOptions->shouldPreserveEmptyRows()) {
+                        // Take number of cells from the previously read line.
+                        $rowData = empty($prevRow) ? [] : array_fill(0, count($prevRow), '');
+                    } else {
+                        return $this->next();
                     }
 
-                    // Only add the value if the last read cell is not a trailing empty cell repeater in Excel.
-                    // The current count of read columns is determined by counting the values in $rowData.
-                    // This is to avoid creating a lot of empty cells, as Excel adds a last empty "<table:table-cell>"
-                    // with a number-columns-repeated value equals to the number of (supported columns - used columns).
-                    // In Excel, the number of supported columns is 16384, but we don't want to returns rows with
-                    // always 16384 cells.
-                    if ((count($rowData) + $numColumnsRepeated) !== self::MAX_COLUMNS_EXCEL) {
-                        for ($i = 0; $i < $numColumnsRepeated; $i++) {
-                            $rowData[] = $cellValue;
-                        }
-                        $this->numReadRows++;
+                    // see above, now check number of rows...
+                    if ($this->rowIndex - 1 + $numRowsRepeated >= self::MAX_ROWS_EXCEL) {
+                        $numRowsRepeated = 0;
+                        $this->hasReachedEndOfFile = true;
                     }
                     break;
 
-                } else if ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_TABLE)) {
+                } elseif ($this->xmlReader->isPositionedOnEndingNode(self::XML_NODE_TABLE)) {
                     // The closing "</table:table>" marks the end of the file
                     $this->hasReachedEndOfFile = true;
                     break;
@@ -161,7 +196,9 @@ class RowIterator implements IteratorInterface
             throw new IOException("The sheet's data cannot be read. [{$exception->getMessage()}]");
         }
 
-        $this->rowDataBuffer = $rowData;
+        for ($i = 0; $i < $numRowsRepeated; ++$i) {
+            $this->rowDataBuffer[] = $rowData;
+        }
     }
 
     /**
@@ -171,6 +208,15 @@ class RowIterator implements IteratorInterface
     {
         $numColumnsRepeated = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_NUM_COLUMNS_REPEATED);
         return ($numColumnsRepeated !== null) ? intval($numColumnsRepeated) : 1;
+    }
+
+    /**
+     * @return int The value of "table:number-rows-repeated" attribute of the current node, or 1 if attribute missing
+     */
+    protected function getNumRowsRepeatedForCurrentNode()
+    {
+        $numRowsRepeated = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_NUM_ROWS_REPEATED);
+        return ($numRowsRepeated !== null) ? intval($numRowsRepeated) : 1;
     }
 
     /**
@@ -203,7 +249,7 @@ class RowIterator implements IteratorInterface
      */
     public function current()
     {
-        return $this->rowDataBuffer;
+        return isset($this->rowDataBuffer[0]) ? $this->rowDataBuffer[0] : null;
     }
 
     /**
@@ -214,9 +260,8 @@ class RowIterator implements IteratorInterface
      */
     public function key()
     {
-        return $this->numReadRows;
+        return $this->rowIndex;
     }
-
 
     /**
      * Cleans up what was created to iterate over the object.

@@ -239,8 +239,10 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testReadShouldSupportFormatDatesAndTimesIfSpecified()
     {
-        $shouldFormatDates = true;
-        $allRows = $this->getAllRowsForFile('sheet_with_dates_and_times.xlsx', $shouldFormatDates);
+        $reader = ReaderFactory::create(Type::XLSX);
+        $reader->setShouldFormatDates(true);
+
+        $allRows = $this->getAllRowsForFile('sheet_with_dates_and_times.xlsx', $reader);
 
         $expectedRows = [
             ['1/13/2016', '01/13/2016', '13-Jan-16', 'Wednesday January 13, 16', 'Today is 1/13/2016'],
@@ -307,16 +309,53 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testReadShouldSkipEmptyRows()
+    public function testReadShouldSkipEmptyRow()
     {
-        $allRows = $this->getAllRowsForFile('sheet_with_empty_row.xlsx');
+        $allRows = $this->getAllRowsForFirstSheet('sheet_with_empty_row.xlsx');
 
         $this->assertEquals(2, count($allRows), 'There should be only 2 rows, because the empty row is skipped');
 
         $expectedRows = [
-            ['s1--A1', 's1--B1', 's1--C1', 's1--D1', 's1--E1'],
+            1 => ['s1--A1', 's1--B1', 's1--C1', 's1--D1', 's1--E1'],
             // skipped row here
-            ['s1--A3', 's1--B3', 's1--C3', 's1--D3', 's1--E3'],
+            3 => ['s1--A3', 's1--B3', 's1--C3', 's1--D3', 's1--E3'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadShouldPreserveEmptyRow()
+    {
+        $reader = ReaderFactory::create(Type::XLSX);
+        $reader->setShouldPreserveEmptyRows(true);
+        $allRows = $this->getAllRowsForFirstSheet('sheet_with_empty_row.xlsx', $reader);
+
+        $expectedRows = [
+            1 => ['s1--A1', 's1--B1', 's1--C1', 's1--D1', 's1--E1'],
+            2 => ['', '', '', '', ''],
+            3 => ['s1--A3', 's1--B3', 's1--C3', 's1--D3', 's1--E3'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadShouldPreserveConsecutiveEmptyRows()
+    {
+        $reader = ReaderFactory::create(Type::XLSX);
+        $reader->setShouldPreserveEmptyRows(true);
+        $allRows = $this->getAllRowsForFirstSheet('sheet_with_consecutive_empty_rows.xlsx', $reader);
+
+        $expectedRows = [
+            1 => ['First'],
+            2 => [''],
+            3 => [''],
+            4 => [''],
+            5 => ['Second'],
+            6 => ['Third'],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }
@@ -549,22 +588,49 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $fileName
-     * @param bool|void $shouldFormatDates
-     * @return array All the read rows the given file
+     * @param Reader $reader
+     * @return array
      */
-    private function getAllRowsForFile($fileName, $shouldFormatDates = false)
+    private function getAllRowsForFile($fileName, Reader $reader = null)
     {
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
-        $reader = ReaderFactory::create(Type::XLSX);
-        $reader->setShouldFormatDates($shouldFormatDates);
+        if (!$reader) {
+            $reader = ReaderFactory::create(Type::XLSX);
+        }
+
         $reader->open($resourcePath);
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
-            foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                $allRows[] = $row;
-            }
+            $allRows = array_merge($allRows, iterator_to_array($sheet->getRowIterator(), false));
+        }
+
+        $reader->close();
+
+        return $allRows;
+    }
+
+
+    /**
+     * @param string $fileName
+     * @param Reader $reader
+     * @return array
+     */
+    private function getAllRowsForFirstSheet($fileName, Reader $reader = null)
+    {
+        $allRows = [];
+        $resourcePath = $this->getResourcePath($fileName);
+
+        if (!$reader) {
+            $reader = ReaderFactory::create(Type::XLSX);
+        }
+
+        $reader->open($resourcePath);
+
+        foreach ($reader->getSheetIterator() as $sheet) {
+            $allRows = iterator_to_array($sheet->getRowIterator(), true);
+            break;
         }
 
         $reader->close();
