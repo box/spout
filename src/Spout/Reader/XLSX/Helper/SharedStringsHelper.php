@@ -147,7 +147,7 @@ class SharedStringsHelper
      * Returns the shared strings unique count, as specified in <sst> tag.
      *
      * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XMLReader instance
-     * @return int Number of unique shared strings in the sharedStrings.xml file
+     * @return int|null Number of unique shared strings in the sharedStrings.xml file
      * @throws \Box\Spout\Common\Exception\IOException If sharedStrings.xml is invalid and can't be read
      */
     protected function getSharedStringsUniqueCount($xmlReader)
@@ -167,13 +167,13 @@ class SharedStringsHelper
             $uniqueCount = $xmlReader->getAttribute('count');
         }
 
-        return intval($uniqueCount);
+        return ($uniqueCount !== null) ? intval($uniqueCount) : null;
     }
 
     /**
      * Returns the best shared strings caching strategy.
      *
-     * @param int $sharedStringsUniqueCount
+     * @param int|null $sharedStringsUniqueCount Number of unique shared strings (NULL if unknown)
      * @return CachingStrategyInterface
      */
     protected function getBestSharedStringsCachingStrategy($sharedStringsUniqueCount)
