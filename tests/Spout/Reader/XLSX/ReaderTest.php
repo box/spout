@@ -129,6 +129,20 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportSheetWithSharedStringsMissingUniqueCountAndCountAttributes()
+    {
+        $allRows = $this->getAllRowsForFile('one_sheet_with_shared_strings_missing_unique_count_and_count.xlsx');
+
+        $expectedRows = [
+            ['s1--A1', 's1--B1'],
+            ['s1--A2', 's1--B2'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldSupportFilesWithoutSharedStringsFile()
     {
         $allRows = $this->getAllRowsForFile('sheet_with_no_shared_strings_file.xlsx');

@@ -15,6 +15,7 @@ class CachingStrategyFactoryTest extends \PHPUnit_Framework_TestCase
     public function dataProviderForTestGetBestCachingStrategy()
     {
         return [
+            [null, -1, 'FileBasedStrategy'],
             [CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE, -1, 'FileBasedStrategy'],
             [CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE + 10, -1, 'FileBasedStrategy'],
             [CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE - 10, -1, 'InMemoryStrategy'],
@@ -27,7 +28,7 @@ class CachingStrategyFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider dataProviderForTestGetBestCachingStrategy
      *
-     * @param int $sharedStringsUniqueCount
+     * @param int|null $sharedStringsUniqueCount
      * @param int $memoryLimitInKB
      * @param string $expectedStrategyClassName
      * @return void
