@@ -143,6 +143,21 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportFilesWithoutCellReference()
+    {
+        // file where the cell definition does not have a "r" attribute
+        // as in <c r="A1">...</c>
+        $allRows = $this->getAllRowsForFile('sheet_with_missing_cell_reference.xlsx');
+
+        $expectedRows = [
+            ['s1--A1'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldSupportAllCellTypes()
     {
         // make sure dates are always created with the same timezone
