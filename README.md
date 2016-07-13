@@ -179,7 +179,7 @@ $style = (new StyleBuilder())
 $writer = WriterFactory::create(Type::XLSX);
 $writer->openToFile($filePath);
 
-$writer->addRowWithStyle(['Border Bottom Green Thin Dashed'], $style)
+$writer->addRowWithStyle(['Border Bottom Green Thin Dashed'], $style);
 
 $writer->close();
 ```
