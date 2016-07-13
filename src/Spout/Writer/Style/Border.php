@@ -36,6 +36,24 @@ class Border
     }
 
     /**
+     * @param $name The name of the border part
+     * @return null|BorderPart
+     */
+    public function getPart($name)
+    {
+        return $this->hasPart($name) ? $this->parts[$name] : null;
+    }
+
+    /**
+     * @param $name The name of the border part
+     * @return bool
+     */
+    public function hasPart($name)
+    {
+        return isset($this->parts[$name]);
+    }
+
+    /**
      * @return array
      */
     public function getParts()

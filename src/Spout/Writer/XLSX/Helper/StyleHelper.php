@@ -110,13 +110,22 @@ EOD;
             $border = $style->getBorder();
             if ($border) {
                 $content .= '<border>';
-                foreach ($border->getParts() as $part) {
-                    /** @var $part \Box\Spout\Writer\Style\BorderPart */
-                    $content .= BorderHelper::serializeBorderPart($part);
+
+                // @link https://github.com/box/spout/issues/271
+                $sortOrder = ['left', 'right', 'top', 'bottom'];
+
+                foreach ($sortOrder as $partName) {
+                    if ($border->hasPart($partName)) {
+                        /** @var $part \Box\Spout\Writer\Style\BorderPart */
+                        $part = $border->getPart($partName);
+                        $content .= BorderHelper::serializeBorderPart($part);
+                    }
                 }
+
                 $content .= '</border>';
+
             } else {
-                $content .= '<border><left/><right/><top/><bottom/><diagonal/></border>';
+                $content .= '<border><left/><right/><top/><bottom/></border>';
             }
         }
 

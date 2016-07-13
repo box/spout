@@ -269,6 +269,49 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testBordersCorrectOrder()
+    {
+        // Border should be Left, Right, Top, Bottom
+        $fileName = 'test_borders_correct_order.xlsx';
+
+        $dataRows = [
+            ['I am a teapot'],
+        ];
+
+        $borders = (new BorderBuilder())
+            ->setBorderRight()
+            ->setBorderTop()
+            ->setBorderLeft()
+            ->setBorderBottom()
+            ->build();
+
+        $style = (new StyleBuilder())->setBorder($borders)->build();
+        $this->writeToXLSXFile($dataRows, $fileName, $style);
+        $borderElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'borders');
+
+        $correctOrdering = [
+            'left', 'right', 'top', 'bottom'
+        ];
+
+        /** @var  $borderNode  \DOMElement */
+        foreach ($borderElements->childNodes as $borderNode) {
+            $borderParts = $borderNode->childNodes;
+            $ordering = [];
+
+            /** @var $part \DOMText */
+            foreach ($borderParts as $part) {
+                if ($part instanceof \DOMElement) {
+                    $ordering[] = $part->nodeName;
+                }
+            }
+
+            $this->assertEquals($correctOrdering, $ordering, 'The border parts are in correct ordering');
+        };
+    }
+
+    /**
      * @param array $allRows
      * @param string $fileName
      * @param \Box\Spout\Writer\Style\Style $style
