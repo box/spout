@@ -111,6 +111,7 @@ EOD;
             if ($border) {
                 $content .= '<border>';
 
+                // @link https://github.com/box/spout/issues/271
                 $sortOrder = ['left', 'right', 'top', 'bottom'];
 
                 foreach ($sortOrder as $partName) {
