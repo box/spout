@@ -274,6 +274,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $expectedRows = [
             ['1/13/2016', '01/13/2016', '13-Jan-16', 'Wednesday January 13, 16', 'Today is 1/13/2016'],
             ['4:43:25', '04:43', '4:43', '4:43:25 AM', '4:43:25 PM'],
+            ['1976-11-22T08:30:00.000', '1976-11-22T08:30', '1582-10-15', '08:30:00', '08:30'],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }
