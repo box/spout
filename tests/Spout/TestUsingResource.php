@@ -7,8 +7,8 @@ namespace Box\Spout;
  *
  * @package Box\Spout
  */
-trait TestUsingResource {
-
+trait TestUsingResource
+{
     /** @var string Path to the test resources folder */
     private $resourcesPath = 'tests/resources';
 
@@ -70,6 +70,11 @@ trait TestUsingResource {
      */
     protected function createUnwritableFolderIfNeeded()
     {
+        // On Windows, chmod() or the mkdir's mode is ignored
+        if ($this->isWindows()) {
+            $this->markTestSkipped('Skipping because Windows cannot create read-only folders through PHP');
+        }
+
         if (!file_exists($this->generatedUnwritableResourcesPath)) {
             // Make sure generated folder exists first
             if (!file_exists($this->generatedResourcesPath)) {
@@ -79,5 +84,13 @@ trait TestUsingResource {
             // 0444 = read only
             mkdir($this->generatedUnwritableResourcesPath, 0444, true);
         }
+    }
+
+    /**
+     * @return bool Whether the OS on which PHP is installed is Windows
+     */
+    protected function isWindows()
+    {
+        return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
 }
