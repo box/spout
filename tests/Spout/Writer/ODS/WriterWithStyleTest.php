@@ -118,6 +118,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             ->setFontSize(15)
             ->setFontColor(Color::RED)
             ->setFontName('Cambria')
+            ->setBackgroundColor(Color::GREEN)
             ->build();
 
         $this->writeToODSFileWithMultipleStyles($dataRows, $fileName, [$style, $style2]);
@@ -137,6 +138,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $this->assertFirstChildHasAttributeEquals('15pt', $customFont2Element, 'text-properties', 'fo:font-size');
         $this->assertFirstChildHasAttributeEquals('#' . Color::RED, $customFont2Element, 'text-properties', 'fo:color');
         $this->assertFirstChildHasAttributeEquals('Cambria', $customFont2Element, 'text-properties', 'style:font-name');
+        $this->assertFirstChildHasAttributeEquals('#' . Color::GREEN, $customFont2Element, 'table-cell-properties', 'fo:background-color');
     }
 
     /**
@@ -237,6 +239,26 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $customStyleElement = $styleElements[1];
         $this->assertFirstChildHasAttributeEquals('wrap', $customStyleElement, 'table-cell-properties', 'fo:wrap-option');
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddBackgroundColor()
+    {
+        $fileName = 'test_default_background_style.ods';
+        $dataRows = [
+            ['defaultBgColor'],
+        ];
+
+        $style = (new StyleBuilder())->setBackgroundColor(Color::WHITE)->build();
+        $this->writeToODSFile($dataRows, $fileName, $style);
+
+        $styleElements = $this->getCellStyleElementsFromContentXmlFile($fileName);
+        $this->assertEquals(2, count($styleElements), 'There should be 2 styles (default and custom)');
+
+        $customStyleElement = $styleElements[1];
+        $this->assertFirstChildHasAttributeEquals('#' . Color::WHITE, $customStyleElement, 'table-cell-properties', 'fo:background-color');
     }
 
     /**
