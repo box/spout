@@ -2,7 +2,6 @@
 
 namespace Box\Spout\Reader\XLSX\Helper;
 
-use Box\Spout\Reader\Wrapper\SimpleXMLElement;
 use Box\Spout\Reader\Wrapper\XMLReader;
 
 /**
@@ -81,12 +80,10 @@ class StyleHelper
         if ($xmlReader->openFileInZip($this->filePath, self::STYLES_XML_FILE_PATH)) {
             while ($xmlReader->read()) {
                 if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_NUM_FMTS)) {
-                    $numFmtsNode = new SimpleXMLElement($xmlReader->readOuterXml());
-                    $this->extractNumberFormats($numFmtsNode);
+                    $this->extractNumberFormats($xmlReader);
 
                 } else if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL_XFS)) {
-                    $cellXfsNode = new SimpleXMLElement($xmlReader->readOuterXml());
-                    $this->extractStyleAttributes($cellXfsNode);
+                    $this->extractStyleAttributes($xmlReader);
                 }
             }
 
@@ -99,15 +96,20 @@ class StyleHelper
      * For simplicity, the styles attributes are kept in memory. This is possible thanks
      * to the reuse of formats. So 1 million cells should not use 1 million formats.
      *
-     * @param SimpleXMLElement $numFmtsNode The "numFmts" node
+     * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XML Reader positioned on the "numFmts" node
      * @return void
      */
-    protected function extractNumberFormats($numFmtsNode)
+    protected function extractNumberFormats($xmlReader)
     {
-        foreach ($numFmtsNode->children() as $numFmtNode) {
-            $numFmtId = intval($numFmtNode->getAttribute(self::XML_ATTRIBUTE_NUM_FMT_ID));
-            $formatCode = $numFmtNode->getAttribute(self::XML_ATTRIBUTE_FORMAT_CODE);
-            $this->customNumberFormats[$numFmtId] = $formatCode;
+        while ($xmlReader->read()) {
+            if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_NUM_FMT)) {
+                $numFmtId = intval($xmlReader->getAttribute(self::XML_ATTRIBUTE_NUM_FMT_ID));
+                $formatCode = $xmlReader->getAttribute(self::XML_ATTRIBUTE_FORMAT_CODE);
+                $this->customNumberFormats[$numFmtId] = $formatCode;
+            } else if ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_NUM_FMTS)) {
+                // Once done reading "numFmts" node's children
+                break;
+            }
         }
     }
 
@@ -116,16 +118,21 @@ class StyleHelper
      * For simplicity, the styles attributes are kept in memory. This is possible thanks
      * to the reuse of styles. So 1 million cells should not use 1 million styles.
      *
-     * @param SimpleXMLElement $cellXfsNode The "cellXfs" node
+     * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XML Reader positioned on the "cellXfs" node
      * @return void
      */
-    protected function extractStyleAttributes($cellXfsNode)
+    protected function extractStyleAttributes($xmlReader)
     {
-        foreach ($cellXfsNode->children() as $xfNode) {
-            $this->stylesAttributes[] = [
-                self::XML_ATTRIBUTE_NUM_FMT_ID => intval($xfNode->getAttribute(self::XML_ATTRIBUTE_NUM_FMT_ID)),
-                self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT => !!($xfNode->getAttribute(self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT)),
-            ];
+        while ($xmlReader->read()) {
+            if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_XF)) {
+                $this->stylesAttributes[] = [
+                    self::XML_ATTRIBUTE_NUM_FMT_ID => intval($xmlReader->getAttribute(self::XML_ATTRIBUTE_NUM_FMT_ID)),
+                    self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT => !!($xmlReader->getAttribute(self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT)),
+                ];
+            } else if ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_CELL_XFS)) {
+                // Once done reading "cellXfs" node's children
+                break;
+            }
         }
     }
 
