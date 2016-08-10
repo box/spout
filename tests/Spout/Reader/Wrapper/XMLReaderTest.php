@@ -138,11 +138,12 @@ class XMLReaderTest extends \PHPUnit_Framework_TestCase
     public function dataProviderForTestGetRealPathURIForFileInZip()
     {
         $tempFolder = realpath(sys_get_temp_dir());
+        $tempFolderName = basename($tempFolder);
         $expectedRealPathURI = 'zip://' . $tempFolder . '/test.xlsx#test.xml';
 
         return [
             [$tempFolder, "$tempFolder/test.xlsx", 'test.xml', $expectedRealPathURI],
-            [$tempFolder, "/../../../$tempFolder/test.xlsx", 'test.xml', $expectedRealPathURI],
+            [$tempFolder, "$tempFolder/../$tempFolderName/test.xlsx", 'test.xml', $expectedRealPathURI],
         ];
     }
 
@@ -162,7 +163,11 @@ class XMLReaderTest extends \PHPUnit_Framework_TestCase
         $xmlReader = new XMLReader();
         $realPathURI = \ReflectionHelper::callMethodOnObject($xmlReader, 'getRealPathURIForFileInZip', $zipFilePath, $fileInsideZipPath);
 
-        $this->assertEquals($expectedRealPathURI, $realPathURI);
+        // Normalizing path separators for Windows support
+        $normalizedRealPathURI = str_replace('\\', '/', $realPathURI);
+        $normalizedExpectedRealPathURI = str_replace('\\', '/', $expectedRealPathURI);
+
+        $this->assertEquals($normalizedExpectedRealPathURI, $normalizedRealPathURI);
 
         unlink($tempFolder . '/test.xlsx');
     }

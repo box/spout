@@ -22,7 +22,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testWriteShouldThrowExceptionIfCannotOpenFileForWriting()
     {
         $fileName = 'file_that_wont_be_written.csv';
-        $this->createUnwritableFolderIfNeeded($fileName);
+        $this->createUnwritableFolderIfNeeded();
         $filePath = $this->getGeneratedUnwritableResourcePath($fileName);
 
         $writer = WriterFactory::create(Type::CSV);
