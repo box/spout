@@ -360,6 +360,75 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testReUseBorders()
+    {
+
+        $fileName = 'test_reuse_borders.xlsx';
+
+        $borderLeft = (new BorderBuilder())
+            ->setBorderLeft()
+            ->build();
+        $borderLeftStyle = (new StyleBuilder())->setBorder($borderLeft)->build();
+
+        $borderRight = (new BorderBuilder())
+            ->setBorderRight(Color::RED, Border::WIDTH_THICK)
+            ->build();
+        $borderRightStyle = (new StyleBuilder())->setBorder($borderRight)->build();
+
+        $fontStyle = (new StyleBuilder())->setFontBold()->build();
+        $emptyStyle = (new StyleBuilder())->build();
+
+        $dataRows = [
+            ['Border-Left'],
+            ['Empty'],
+            ['Font-Bold'],
+            ['Border-Right']
+        ];
+
+        $styles = [
+            $borderLeftStyle,
+            $emptyStyle,
+            $fontStyle,
+            $borderRightStyle,
+        ];
+        
+        $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, $styles);
+        $borderElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'borders');
+
+        $this->assertEquals(3, $borderElements->getAttribute('count'), '3 borders in count attribute');
+        $this->assertEquals(3, $borderElements->childNodes->length, '3 border childnodes present');
+
+        /** @var \DOMElement $firstBorder */
+        $firstBorder = $borderElements->childNodes->item(1); // 0  = default border
+        $leftStyle = $firstBorder->getElementsByTagName('left')->item(0)->getAttribute('style');
+        $this->assertEquals('medium', $leftStyle, 'Style is medium');
+
+        /** @var \DOMElement $secondBorder */
+        $secondBorder = $borderElements->childNodes->item(2);
+        $rightStyle = $secondBorder->getElementsByTagName('right')->item(0)->getAttribute('style');
+        $this->assertEquals('thick', $rightStyle, 'Style is thick');
+
+        $styleXfsElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
+
+        // A rather relaxed test
+        // Where a border is applied - the borderId attribute has to be greater than 0
+        $bordersApplied = 0;
+        /** @var \DOMElement $node */
+        foreach($styleXfsElements->childNodes as $node) {
+            if($node->getAttribute('applyBorder') == 1) {
+                $bordersApplied++;
+                $this->assertTrue((int)$node->getAttribute('borderId') > 0, 'BorderId is greater than 0');
+            } else {
+                $this->assertTrue((int)$node->getAttribute('borderId') === 0, 'BorderId is 0');
+            }
+        }
+
+        $this->assertEquals(2, $bordersApplied, 'Two borders have been applied');
+    }
+
+    /**
      * @param array $allRows
      * @param string $fileName
      * @param \Box\Spout\Writer\Style\Style $style
