@@ -380,11 +380,14 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $fontStyle = (new StyleBuilder())->setFontBold()->build();
         $emptyStyle = (new StyleBuilder())->build();
 
+        $borderRightFontBoldStyle = $borderRightStyle->mergeWith($fontStyle);
+
         $dataRows = [
             ['Border-Left'],
             ['Empty'],
             ['Font-Bold'],
-            ['Border-Right']
+            ['Border-Right'],
+            ['Border-Right-Font-Bold'],
         ];
 
         $styles = [
@@ -392,6 +395,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             $emptyStyle,
             $fontStyle,
             $borderRightStyle,
+            $borderRightFontBoldStyle
         ];
         
         $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, $styles);

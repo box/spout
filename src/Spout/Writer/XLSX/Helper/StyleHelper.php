@@ -91,7 +91,7 @@ class StyleHelper extends AbstractStyleHelper
     {
         $styleId = $style->getId();
 
-        if (true === $style->shouldApplyBorder()) {
+        if ($style->shouldApplyBorder()) {
 
             $border = $style->getBorder();
             $serializedBorder = serialize($border);
