@@ -339,6 +339,27 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testSetDefaultRowStyle()
+    {
+        $fileName = 'test_set_default_row_style.xlsx';
+        $dataRows = [['xlsx--11']];
+
+        $defaultFontSize = 50;
+        $defaultStyle = (new StyleBuilder())->setFontSize($defaultFontSize)->build();
+
+        $this->writeToXLSXFileWithDefaultStyle($dataRows, $fileName, $defaultStyle);
+
+        $fontsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'fonts');
+        $fontElements = $fontsDomElement->getElementsByTagName('font');
+        $this->assertEquals(1, $fontElements->length, 'There should only be the default font.');
+
+        $defaultFontElement = $fontElements->item(0);
+        $this->assertFirstChildHasAttributeEquals((string) $defaultFontSize, $defaultFontElement, 'sz', 'val');
+    }
+
+    /**
      * @param array $allRows
      * @param string $fileName
      * @param \Box\Spout\Writer\Style\Style $style
@@ -355,6 +376,29 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $writer->openToFile($resourcePath);
         $writer->addRowsWithStyle($allRows, $style);
+        $writer->close();
+
+        return $writer;
+    }
+
+    /**
+     * @param array $allRows
+     * @param string $fileName
+     * @param \Box\Spout\Writer\Style\Style|null $defaultStyle
+     * @return Writer
+     */
+    private function writeToXLSXFileWithDefaultStyle($allRows, $fileName, $defaultStyle)
+    {
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
+        $writer = WriterFactory::create(Type::XLSX);
+        $writer->setShouldUseInlineStrings(true);
+        $writer->setDefaultRowStyle($defaultStyle);
+
+        $writer->openToFile($resourcePath);
+        $writer->addRows($allRows);
         $writer->close();
 
         return $writer;

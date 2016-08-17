@@ -326,6 +326,22 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedThird, $actualThird);
     }
 
+    /**
+     * @return void
+     */
+    public function testSetDefaultRowStyle()
+    {
+        $fileName = 'test_set_default_row_style.ods';
+        $dataRows = [['ods--11']];
+
+        $defaultFontSize = 50;
+        $defaultStyle = (new StyleBuilder())->setFontSize($defaultFontSize)->build();
+
+        $this->writeToODSFileWithDefaultStyle($dataRows, $fileName, $defaultStyle);
+
+        $textPropertiesElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'style:text-properties');
+        $this->assertEquals($defaultFontSize . 'pt', $textPropertiesElement->getAttribute('fo:font-size'));
+    }
 
     /**
      * @param array $allRows
@@ -343,6 +359,28 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $writer->openToFile($resourcePath);
         $writer->addRowsWithStyle($allRows, $style);
+        $writer->close();
+
+        return $writer;
+    }
+
+    /**
+     * @param array $allRows
+     * @param string $fileName
+     * @param \Box\Spout\Writer\Style\Style|null $defaultStyle
+     * @return Writer
+     */
+    private function writeToODSFileWithDefaultStyle($allRows, $fileName, $defaultStyle)
+    {
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
+        $writer = WriterFactory::create(Type::ODS);
+        $writer->setDefaultRowStyle($defaultStyle);
+
+        $writer->openToFile($resourcePath);
+        $writer->addRows($allRows);
         $writer->close();
 
         return $writer;
@@ -398,7 +436,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         }
 
         $xmlReader->close();
-        
+
         return $cellElements;
     }
 
@@ -422,7 +460,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         }
 
         $xmlReader->close();
-        
+
         return $cellStyleElements;
     }
 

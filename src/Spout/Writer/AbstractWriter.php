@@ -72,6 +72,21 @@ abstract class AbstractWriter implements WriterInterface
     }
 
     /**
+     * Sets the default styles for all rows added with "addRow".
+     * Overriding the default style instead of using "addRowWithStyle" improves performance by 20%.
+     * @see https://github.com/box/spout/issues/272
+     *
+     * @param Style\Style $defaultStyle
+     * @return AbstractWriter
+     */
+    public function setDefaultRowStyle($defaultStyle)
+    {
+        $this->defaultRowStyle = $defaultStyle;
+        $this->resetRowStyleToDefault();
+        return $this;
+    }
+
+    /**
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      * @return AbstractWriter
      */
