@@ -185,6 +185,19 @@ $writer->addRowWithStyle(['Border Bottom Green Thin Dashed'], $style);
 $writer->close();
 ```
 
+Spout will use a default style for all created rows. This style can be overridden this way:
+
+```php
+$defaultStyle = (new StyleBuilder())
+                ->setFontName('Arial')
+                ->setFontSize(11)
+                ->build();
+
+$writer = WriterFactory::create(Type::XLSX);
+$writer->setDefaultRowStyle($defaultStyle)
+       ->openToFile($filePath);
+```
+
 Unfortunately, Spout does not support all the possible formatting options yet. But you can find the most important ones:
 
 Category  | Property      | API
