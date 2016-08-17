@@ -95,14 +95,19 @@ class StyleHelper extends AbstractStyleHelper
             $border = $style->getBorder();
             $serializedBorder = serialize($border);
 
-            if (isset($this->registeredBorders[$serializedBorder])) {
-                $this->styleIdToBorderMappingTable[$styleId] = $this->registeredBorders[$serializedBorder];
+            $isBorderAlreadyRegistered = isset($this->registeredBorders[$serializedBorder]);
+
+            if ($isBorderAlreadyRegistered) {
+                $registeredStyleId = $this->registeredBorders[$serializedBorder];
+                $registeredBorderId = $this->styleIdToBorderMappingTable[$registeredStyleId];
+                $this->styleIdToBorderMappingTable[$styleId] = $registeredBorderId;
             } else {
                 $this->registeredBorders[$serializedBorder] = $styleId;
                 $this->styleIdToBorderMappingTable[$styleId] = count($this->registeredBorders);
             }
 
-        } else { // If no border should be applied - the mapping is the default border: 0
+        } else { 
+            // If no border should be applied - the mapping is the default border: 0
             $this->styleIdToBorderMappingTable[$styleId] = 0;
         }
     }
