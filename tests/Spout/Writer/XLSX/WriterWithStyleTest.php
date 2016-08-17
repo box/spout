@@ -420,8 +420,8 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         // Where a border is applied - the borderId attribute has to be greater than 0
         $bordersApplied = 0;
         /** @var \DOMElement $node */
-        foreach($styleXfsElements->childNodes as $node) {
-            if($node->getAttribute('applyBorder') == 1) {
+        foreach ($styleXfsElements->childNodes as $node) {
+            if ($node->getAttribute('applyBorder') == 1) {
                 $bordersApplied++;
                 $this->assertTrue((int)$node->getAttribute('borderId') > 0, 'BorderId is greater than 0');
             } else {
@@ -429,7 +429,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $this->assertEquals(2, $bordersApplied, 'Two borders have been applied');
+        $this->assertEquals(3, $bordersApplied, 'Three borders have been applied');
     }
 
     /**

@@ -92,18 +92,17 @@ class StyleHelper extends AbstractStyleHelper
         $styleId = $style->getId();
 
         if ($style->shouldApplyBorder()) {
-
             $border = $style->getBorder();
             $serializedBorder = serialize($border);
 
-            if (!isset($this->registeredBorders[$serializedBorder])) {
-
+            if (isset($this->registeredBorders[$serializedBorder])) {
+                $this->styleIdToBorderMappingTable[$styleId] = $this->registeredBorders[$serializedBorder];
+            } else {
                 $this->registeredBorders[$serializedBorder] = $styleId;
                 $this->styleIdToBorderMappingTable[$styleId] = count($this->registeredBorders);
-
             }
 
-        } else {
+        } else { // If no border should be applied - the mapping is the default border: 0
             $this->styleIdToBorderMappingTable[$styleId] = 0;
         }
     }
@@ -189,7 +188,6 @@ EOD;
 
         // The other fills are actually registered by setting a background color
         foreach ($this->registeredFills as $styleId) {
-
             /** @var Style $style */
             $style = $this->styleIdToStyleMappingTable[$styleId];
 
@@ -222,7 +220,6 @@ EOD;
         $content .= '<border><left/><right/><top/><bottom/></border>';
 
         foreach ($this->registeredBorders as $styleId) {
-
             /** @var \Box\Spout\Writer\Style\Style $style */
             $style = $this->styleIdToStyleMappingTable[$styleId];
             $border = $style->getBorder();
@@ -232,7 +229,6 @@ EOD;
             $sortOrder = ['left', 'right', 'top', 'bottom'];
 
             foreach ($sortOrder as $partName) {
-
                 if ($border->hasPart($partName)) {
                     /** @var $part \Box\Spout\Writer\Style\BorderPart */
                     $part = $border->getPart($partName);
@@ -275,7 +271,6 @@ EOD;
         $content = '<cellXfs count="' . count($registeredStyles) . '">';
 
         foreach ($registeredStyles as $style) {
-
             $styleId = $style->getId();
             $fillId = $this->styleIdToFillMappingTable[$styleId];
             $borderId = $this->styleIdToBorderMappingTable[$styleId];
