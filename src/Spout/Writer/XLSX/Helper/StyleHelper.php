@@ -33,6 +33,16 @@ class StyleHelper extends AbstractStyleHelper
     protected $fillIndex = 2;
 
     /**
+     * @var array
+     */
+    protected $registeredBorders = [];
+
+    /**
+     * @var array [STYLE_ID] => [BORDER_ID] maps a style to a border declaration
+     */
+    protected $styleIdToBorderMappingTable = [];
+
+    /**
      * XLSX specific operations on the registered styles
      *
      * @param \Box\Spout\Writer\Style\Style $style
@@ -42,6 +52,7 @@ class StyleHelper extends AbstractStyleHelper
     {
         $registeredStyle = parent::registerStyle($style);
         $this->registerFill($registeredStyle);
+        $this->registerBorder($registeredStyle);
         return $registeredStyle;
     }
 
@@ -68,6 +79,36 @@ class StyleHelper extends AbstractStyleHelper
             // When there is no background color definition - we default to 0
             $fillId = $backgroundColor !== null ? $this->fillIndex++ : 0;
             $this->styleIdToFillMappingTable[$styleId] = $fillId;
+        }
+    }
+
+    /**
+     * Register a border definition
+     *
+     * @param $style
+     */
+    protected function registerBorder($style)
+    {
+        $styleId = $style->getId();
+
+        if ($style->shouldApplyBorder()) {
+            $border = $style->getBorder();
+            $serializedBorder = serialize($border);
+
+            $isBorderAlreadyRegistered = isset($this->registeredBorders[$serializedBorder]);
+
+            if ($isBorderAlreadyRegistered) {
+                $registeredStyleId = $this->registeredBorders[$serializedBorder];
+                $registeredBorderId = $this->styleIdToBorderMappingTable[$registeredStyleId];
+                $this->styleIdToBorderMappingTable[$styleId] = $registeredBorderId;
+            } else {
+                $this->registeredBorders[$serializedBorder] = $styleId;
+                $this->styleIdToBorderMappingTable[$styleId] = count($this->registeredBorders);
+            }
+
+        } else { 
+            // If no border should be applied - the mapping is the default border: 0
+            $this->styleIdToBorderMappingTable[$styleId] = 0;
         }
     }
 
@@ -152,7 +193,6 @@ EOD;
 
         // The other fills are actually registered by setting a background color
         foreach ($this->registeredFills as $styleId) {
-
             /** @var Style $style */
             $style = $this->styleIdToStyleMappingTable[$styleId];
 
@@ -175,33 +215,34 @@ EOD;
      */
     protected function getBordersSectionContent()
     {
-        $registeredStyles = $this->getRegisteredStyles();
-        $registeredStylesCount = count($registeredStyles);
 
-        $content = '<borders count="' . $registeredStylesCount . '">';
+        // There is one default border with index 0
+        $borderCount = count($this->registeredBorders) + 1;
 
-        /** @var \Box\Spout\Writer\Style\Style $style */
-        foreach ($registeredStyles as $style) {
+        $content = '<borders count="' . $borderCount . '">';
+
+        // Default border starting at index 0
+        $content .= '<border><left/><right/><top/><bottom/></border>';
+
+        foreach ($this->registeredBorders as $styleId) {
+            /** @var \Box\Spout\Writer\Style\Style $style */
+            $style = $this->styleIdToStyleMappingTable[$styleId];
             $border = $style->getBorder();
-            if ($border) {
-                $content .= '<border>';
+            $content .= '<border>';
 
-                // @link https://github.com/box/spout/issues/271
-                $sortOrder = ['left', 'right', 'top', 'bottom'];
+            // @link https://github.com/box/spout/issues/271
+            $sortOrder = ['left', 'right', 'top', 'bottom'];
 
-                foreach ($sortOrder as $partName) {
-                    if ($border->hasPart($partName)) {
-                        /** @var $part \Box\Spout\Writer\Style\BorderPart */
-                        $part = $border->getPart($partName);
-                        $content .= BorderHelper::serializeBorderPart($part);
-                    }
+            foreach ($sortOrder as $partName) {
+                if ($border->hasPart($partName)) {
+                    /** @var $part \Box\Spout\Writer\Style\BorderPart */
+                    $part = $border->getPart($partName);
+                    $content .= BorderHelper::serializeBorderPart($part);
                 }
 
-                $content .= '</border>';
-
-            } else {
-                $content .= '<border><left/><right/><top/><bottom/></border>';
             }
+
+            $content .= '</border>';
         }
 
         $content .= '</borders>';
@@ -235,19 +276,17 @@ EOD;
         $content = '<cellXfs count="' . count($registeredStyles) . '">';
 
         foreach ($registeredStyles as $style) {
-
             $styleId = $style->getId();
             $fillId = $this->styleIdToFillMappingTable[$styleId];
+            $borderId = $this->styleIdToBorderMappingTable[$styleId];
 
-            $content .= '<xf numFmtId="0" fontId="' . $styleId . '" fillId="' . $fillId . '" borderId="' . $styleId . '" xfId="0"';
+            $content .= '<xf numFmtId="0" fontId="' . $styleId . '" fillId="' . $fillId . '" borderId="' . $borderId . '" xfId="0"';
 
             if ($style->shouldApplyFont()) {
                 $content .= ' applyFont="1"';
             }
 
-            if ($style->shouldApplyBorder()) {
-                $content .= ' applyBorder="1"';
-            }
+            $content .= sprintf(' applyBorder="%d"', $style->shouldApplyBorder() ? 1 : 0);
 
             if ($style->shouldWrapText()) {
                 $content .= ' applyAlignment="1">';
