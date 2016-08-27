@@ -264,6 +264,45 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReuseBackgroundColorSharedDefinition()
+    {
+        $fileName = 'test_add_background_color_shared_definition.xlsx';
+        $dataRows = [
+            ["row-bold-background-red"],
+            ["row-background-red"],
+        ];
+
+        $styles = [
+            (new StyleBuilder())->setBackgroundColor(Color::RED)->setFontBold()->build(),
+            (new StyleBuilder())->setBackgroundColor(Color::RED)->build()
+        ];
+
+        $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, $styles);
+
+        $fillsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'fills');
+        $this->assertEquals(
+            3,
+            $fillsDomElement->getAttribute('count'),
+            'There should be 3 fills, including the 2 default ones'
+        );
+
+        $styleXfsElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
+        $this->assertEquals(
+            3,
+            $styleXfsElements->getAttribute('count'),
+            '3 cell xfs present - a default one and two custom ones'
+        );
+
+        $firstCustomId = $styleXfsElements->childNodes->item(1)->getAttribute('fillId');
+        $this->assertEquals(2, (int)$firstCustomId, 'The first custom fill id should have the index 2');
+
+        $secondCustomId = $styleXfsElements->childNodes->item(2)->getAttribute('fillId');
+        $this->assertEquals(2, (int)$secondCustomId, 'The second custom fill id should have the index 2');
+    }
+
+    /**
+     * @return void
+     */
     public function testBorders()
     {
         $fileName = 'test_borders.xlsx';
