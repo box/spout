@@ -69,23 +69,30 @@ class StyleHelper extends AbstractStyleHelper
         // so $backgroundColor is a scalar value (RGB Color)
         $backgroundColor = $style->getBackgroundColor();
 
-        // We need to track the already registered background definitions
-        if (isset($backgroundColor) && !isset($this->registeredFills[$backgroundColor])) {
-            $this->registeredFills[$backgroundColor] = $styleId;
-        }
+        if ($backgroundColor) {
+            $isBackgroundColorRegistered = isset($this->registeredFills[$backgroundColor]);
+            
+            // We need to track the already registered background definitions
+            if ($isBackgroundColorRegistered) {
+                $registeredStyleId = $this->registeredFills[$backgroundColor];
+                $registeredFillId = $this->styleIdToFillMappingTable[$registeredStyleId];
+                $this->styleIdToFillMappingTable[$styleId] = $registeredFillId;
+            } else {
+                $this->registeredFills[$backgroundColor] = $styleId;
+                $this->styleIdToFillMappingTable[$styleId] = $this->fillIndex++;
+            }
 
-        if (!isset($this->styleIdToFillMappingTable[$styleId])) {
+        } else {
             // The fillId maps a style to a fill declaration
             // When there is no background color definition - we default to 0
-            $fillId = $backgroundColor !== null ? $this->fillIndex++ : 0;
-            $this->styleIdToFillMappingTable[$styleId] = $fillId;
+            $this->styleIdToFillMappingTable[$styleId] = 0;
         }
     }
 
     /**
      * Register a border definition
      *
-     * @param $style
+     * @param \Box\Spout\Writer\Style\Style $style
      */
     protected function registerBorder($style)
     {
