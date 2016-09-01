@@ -95,6 +95,10 @@ class XLSX implements EscaperInterface
      */
     protected function escapeControlCharacters($string)
     {
+        if (1 !== preg_match('~[^A-Za-z0-9\-.:, ]~', $string)) {
+            return $string;
+        }
+
         $escapedString = $this->escapeEscapeCharacter($string);
         return str_replace(array_values($this->controlCharactersEscapingMap), array_keys($this->controlCharactersEscapingMap), $escapedString);
     }
