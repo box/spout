@@ -134,29 +134,7 @@ EOD;
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
         foreach($dataRow as $cellValue) {
-            $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
-            $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
-            $cellXML .= ' s="' . $style->getId() . '"';
-
-            if (CellHelper::isNonEmptyString($cellValue)) {
-                if ($this->shouldUseInlineStrings) {
-                    $cellXML .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
-                } else {
-                    $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
-                    $cellXML .= ' t="s"><v>' . $sharedStringId . '</v></c>';
-                }
-            } else if (CellHelper::isBoolean($cellValue)) {
-                    $cellXML .= ' t="b"><v>' . intval($cellValue) . '</v></c>';
-            } else if (CellHelper::isNumeric($cellValue)) {
-                $cellXML .= '><v>' . $cellValue . '</v></c>';
-            } else if (empty($cellValue)) {
-                // don't write empty cells (not appending to $cellXML is the right behavior!)
-                $cellXML = '';
-            } else {
-                throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
-            }
-
-            $rowXML .= $cellXML;
+            $rowXML .= $this->getCellXml($rowIndex, $cellNumber, $cellValue, $style->getId());
             $cellNumber++;
         }
 
@@ -169,6 +147,43 @@ EOD;
 
         // only update the count if the write worked
         $this->lastWrittenRowIndex++;
+    }
+
+    /**
+     * Build and return xml for a single cell.
+     *
+     * @param int $rowIndex
+     * @param int $cellNumber
+     * @param mixed $cellValue
+     * @param int $styleId
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    private function getCellXml($rowIndex, $cellNumber, $cellValue, $styleId)
+    {
+        $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
+        $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
+        $cellXML .= ' s="' . $styleId . '"';
+
+        if (CellHelper::isNonEmptyString($cellValue)) {
+            if ($this->shouldUseInlineStrings) {
+                $cellXML .= ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
+            } else {
+                $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
+                $cellXML .= ' t="s"><v>' . $sharedStringId . '</v></c>';
+            }
+        } else if (CellHelper::isBoolean($cellValue)) {
+            $cellXML .= ' t="b"><v>' . intval($cellValue) . '</v></c>';
+        } else if (CellHelper::isNumeric($cellValue)) {
+            $cellXML .= '><v>' . $cellValue . '</v></c>';
+        } else if (empty($cellValue)) {
+            // don't write empty cells (not appending to $cellXML is the right behavior!)
+            $cellXML = '';
+        } else {
+            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
+        }
+
+        return $cellXML;
     }
 
     /**
