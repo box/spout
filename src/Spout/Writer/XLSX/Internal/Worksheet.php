@@ -134,7 +134,7 @@ EOD;
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
         foreach($dataRow as $cellValue) {
-            $rowXML .= $this->getCellXml($rowIndex, $cellNumber, $cellValue, $style->getId());
+            $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cellValue, $style->getId());
             $cellNumber++;
         }
 
@@ -159,7 +159,7 @@ EOD;
      * @return string
      * @throws InvalidArgumentException
      */
-    private function getCellXml($rowIndex, $cellNumber, $cellValue, $styleId)
+    private function getCellXML($rowIndex, $cellNumber, $cellValue, $styleId)
     {
         $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
         $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';

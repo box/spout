@@ -155,7 +155,7 @@ class Worksheet implements WorksheetInterface
                 $currentCellValue !== $dataRowWithNumericIndexes[$nextCellIndex]) {
 
                 $numTimesValueRepeated = ($nextCellIndex - $currentCellIndex);
-                $data .= $this->getCellContent($currentCellValue, $styleIndex, $numTimesValueRepeated);
+                $data .= $this->getCellXML($currentCellValue, $styleIndex, $numTimesValueRepeated);
 
                 $currentCellIndex = $nextCellIndex;
             }
@@ -183,7 +183,7 @@ class Worksheet implements WorksheetInterface
      * @return string The cell XML content
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
      */
-    protected function getCellContent($cellValue, $styleIndex, $numTimesValueRepeated)
+    protected function getCellXML($cellValue, $styleIndex, $numTimesValueRepeated)
     {
         $data = '<table:table-cell table:style-name="ce' . $styleIndex . '"';
 
