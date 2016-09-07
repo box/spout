@@ -2,6 +2,9 @@
 
 namespace Box\Spout\Writer\XLSX\Helper;
 
+use Box\Spout\Writer\Style\Border;
+use Box\Spout\Writer\Style\BorderBuilder;
+use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\StyleBuilder;
 
 /**
@@ -55,6 +58,27 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, $registeredStyle1->getId());
         $this->assertEquals(1, $registeredStyle2->getId());
+    }
+
+    /**
+     * @return void
+     */
+    public function testShouldApplyStyleOnEmptyCell()
+    {
+        $styleWithFont = (new StyleBuilder())->setFontBold()->build();
+        $styleWithBackground = (new StyleBuilder())->setBackgroundColor(Color::BLUE)->build();
+
+        $border = (new BorderBuilder())->setBorderBottom(Color::GREEN)->build();
+        $styleWithBorder = (new StyleBuilder())->setBorder($border)->build();
+
+        $styleHelper = new StyleHelper($this->defaultStyle);
+        $styleHelper->registerStyle($styleWithFont);
+        $styleHelper->registerStyle($styleWithBackground);
+        $styleHelper->registerStyle($styleWithBorder);
+
+        $this->assertFalse($styleHelper->shouldApplyStyleOnEmptyCell($styleWithFont->getId()));
+        $this->assertTrue($styleHelper->shouldApplyStyleOnEmptyCell($styleWithBackground->getId()));
+        $this->assertTrue($styleHelper->shouldApplyStyleOnEmptyCell($styleWithBorder->getId()));
     }
 
     /**

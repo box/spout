@@ -71,7 +71,7 @@ class StyleHelper extends AbstractStyleHelper
 
         if ($backgroundColor) {
             $isBackgroundColorRegistered = isset($this->registeredFills[$backgroundColor]);
-            
+
             // We need to track the already registered background definitions
             if ($isBackgroundColorRegistered) {
                 $registeredStyleId = $this->registeredFills[$backgroundColor];
@@ -113,10 +113,29 @@ class StyleHelper extends AbstractStyleHelper
                 $this->styleIdToBorderMappingTable[$styleId] = count($this->registeredBorders);
             }
 
-        } else { 
+        } else {
             // If no border should be applied - the mapping is the default border: 0
             $this->styleIdToBorderMappingTable[$styleId] = 0;
         }
+    }
+
+
+    /**
+     * For empty cells, we can specify a style or not. If no style are specified,
+     * then the software default will be applied. But sometimes, it may be useful
+     * to override this default style, for instance if the cell should have a
+     * background color different than the default one or some borders
+     * (fonts property don't really matter here).
+     *
+     * @param int $styleId
+     * @return bool Whether the cell should define a custom style
+     */
+    public function shouldApplyStyleOnEmptyCell($styleId)
+    {
+        $hasStyleCustomFill = (isset($this->styleIdToFillMappingTable[$styleId]) && $this->styleIdToFillMappingTable[$styleId] !== 0);
+        $hasStyleCustomBorders = (isset($this->styleIdToBorderMappingTable[$styleId]) && $this->styleIdToBorderMappingTable[$styleId] !== 0);
+
+        return ($hasStyleCustomFill || $hasStyleCustomBorders);
     }
 
 
