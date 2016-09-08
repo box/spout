@@ -179,6 +179,53 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testAddRowWithStyleShouldApplyStyleToEmptyCellsIfNeeded()
+    {
+        $fileName = 'test_add_row_with_style_should_apply_style_to_empty_cells_if_needed.xlsx';
+        $dataRows = [
+            ['xlsx--11', '', 'xlsx--13'],
+            ['xlsx--21', '', 'xlsx--23'],
+            ['xlsx--31', '', 'xlsx--33'],
+            ['xlsx--41', '', 'xlsx--43'],
+        ];
+
+        $styleWithFont = (new StyleBuilder())->setFontBold()->build();
+        $styleWithBackground = (new StyleBuilder())->setBackgroundColor(Color::BLUE)->build();
+
+        $border = (new BorderBuilder())->setBorderBottom(Color::GREEN)->build();
+        $styleWithBorder = (new StyleBuilder())->setBorder($border)->build();
+
+        $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, [null, $styleWithFont, $styleWithBackground, $styleWithBorder]);
+
+        $cellDomElements = $this->getCellElementsFromSheetXmlFile($fileName);
+
+        // The first and second rows should not have a reference to the empty cell
+        // The other rows should have the reference because style should be applied to them
+        // So that's: 2 + 2 + 3 + 3 = 10 cells
+        $this->assertEquals(10, count($cellDomElements));
+
+        // First row has 2 styled cells
+        $this->assertEquals('0', $cellDomElements[0]->getAttribute('s'));
+        $this->assertEquals('0', $cellDomElements[1]->getAttribute('s'));
+
+        // Second row has 2 styled cells
+        $this->assertEquals('1', $cellDomElements[2]->getAttribute('s'));
+        $this->assertEquals('1', $cellDomElements[3]->getAttribute('s'));
+
+        // Third row has 3 styled cells
+        $this->assertEquals('2', $cellDomElements[4]->getAttribute('s'));
+        $this->assertEquals('2', $cellDomElements[5]->getAttribute('s'));
+        $this->assertEquals('2', $cellDomElements[6]->getAttribute('s'));
+
+        // Third row has 3 styled cells
+        $this->assertEquals('3', $cellDomElements[7]->getAttribute('s'));
+        $this->assertEquals('3', $cellDomElements[8]->getAttribute('s'));
+        $this->assertEquals('3', $cellDomElements[9]->getAttribute('s'));
+    }
+
+    /**
+     * @return void
+     */
     public function testAddRowWithStyleShouldReuseDuplicateStyles()
     {
         $fileName = 'test_add_row_with_style_should_reuse_duplicate_styles.xlsx';
@@ -403,17 +450,12 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
      */
     public function testReUseBorders()
     {
-
         $fileName = 'test_reuse_borders.xlsx';
 
-        $borderLeft = (new BorderBuilder())
-            ->setBorderLeft()
-            ->build();
+        $borderLeft = (new BorderBuilder())->setBorderLeft()->build();
         $borderLeftStyle = (new StyleBuilder())->setBorder($borderLeft)->build();
 
-        $borderRight = (new BorderBuilder())
-            ->setBorderRight(Color::RED, Border::WIDTH_THICK)
-            ->build();
+        $borderRight = (new BorderBuilder())->setBorderRight(Color::RED, Border::WIDTH_THICK)->build();
         $borderRightStyle = (new StyleBuilder())->setBorder($borderRight)->build();
 
         $fontStyle = (new StyleBuilder())->setFontBold()->build();
@@ -436,7 +478,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             $borderRightStyle,
             $borderRightFontBoldStyle
         ];
-        
+
         $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, $styles);
         $borderElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'borders');
 
