@@ -269,13 +269,22 @@ class Style
     }
 
     /**
+     * @param boolean $shouldWrap Should the text be wrapped
      * @return Style
      */
-    public function setShouldWrapText()
+    public function setShouldWrapText($shouldWrap = true)
     {
-        $this->shouldWrapText = true;
+        $this->shouldWrapText = $shouldWrap;
         $this->hasSetWrapText = true;
         return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasSetWrapText()
+    {
+        return $this->hasSetWrapText;
     }
 
     /**
