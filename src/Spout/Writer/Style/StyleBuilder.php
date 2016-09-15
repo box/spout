@@ -112,7 +112,7 @@ class StyleBuilder
      * Makes the text wrap in the cell if requested
      *
      * @api
-     * @param boolean $shouldWrap Should the text be wrapped
+     * @param bool $shouldWrap Should the text be wrapped
      * @return StyleBuilder
      */
     public function setShouldWrapText($shouldWrap = true)
