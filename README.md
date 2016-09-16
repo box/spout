@@ -209,7 +209,7 @@ Font      | Bold          | `StyleBuilder::setFontBold()`
           | Font name     | `StyleBuilder::setFontName('Arial')`
           | Font size     | `StyleBuilder::setFontSize(14)`
           | Font color    | `StyleBuilder::setFontColor(Color::BLUE)`<br>`StyleBuilder::setFontColor(Color::rgb(0, 128, 255))`
-Alignment | Wrap text     | `StyleBuilder::setShouldWrapText()`
+Alignment | Wrap text     | `StyleBuilder::setShouldWrapText(true|false)`
 
 #### New sheet creation
 
@@ -259,7 +259,7 @@ $writer->setShouldUseInlineStrings(false); // will use shared strings
 
 When reading a spreadsheet containing dates or times, Spout returns the values by default as DateTime objects.
 It is possible to change this behavior and have a formatted date returned instead (e.g. "2016-11-29 1:22 AM"). The format of the date corresponds to what is specified in the spreadsheet.
- 
+
 ```php
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Common\Type;
@@ -302,7 +302,7 @@ $sheetName = $sheet->getName();
 // Customizing the sheet name when writing
 $sheet = $writer->getCurrentSheet();
 $sheet->setName('My custom name');
-``` 
+```
 
 > Please note that Excel has some restrictions on the sheet's name:
 > * it must not be blank
