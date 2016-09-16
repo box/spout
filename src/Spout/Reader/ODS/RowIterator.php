@@ -82,7 +82,7 @@ class RowIterator implements IteratorInterface
      * Checks if current position is valid
      * @link http://php.net/manual/en/iterator.valid.php
      *
-     * @return boolean
+     * @return bool
      */
     public function valid()
     {
