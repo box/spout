@@ -115,7 +115,7 @@ class Style
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function shouldApplyBorder()
     {
@@ -123,7 +123,7 @@ class Style
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isFontBold()
     {
@@ -142,7 +142,7 @@ class Style
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isFontItalic()
     {
@@ -161,7 +161,7 @@ class Style
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isFontUnderline()
     {
@@ -180,7 +180,7 @@ class Style
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isFontStrikethrough()
     {
@@ -261,7 +261,7 @@ class Style
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function shouldWrapText()
     {
