@@ -282,6 +282,21 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldApplyCustomDateFormatNumberEvenIfApplyNumberFormatNotSpecified()
+    {
+        $shouldFormatDates = true;
+        $allRows = $this->getAllRowsForFile('sheet_with_custom_date_formats_and_no_apply_number_format.xlsx', $shouldFormatDates);
+
+        $expectedRows = [
+            // "General", "GENERAL", "MM/DD/YYYY", "MM/dd/YYYY", "H:MM:SS"
+            ['42382', '42382', '01/13/2016', '01/13/2016', '4:43:25'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldKeepEmptyCellsAtTheEndIfDimensionsSpecified()
     {
         $allRows = $this->getAllRowsForFile('sheet_without_dimensions_but_spans_and_empty_cells.xlsx');
