@@ -18,6 +18,9 @@ trait TestUsingResource
     /** @var string Path to the test resources folder, that does not have writing permissions */
     private $generatedUnwritableResourcesPath = 'tests/resources/generated/unwritable';
 
+    /** @var string Path to the test temp folder */
+    private $tempFolderPath = 'tests/resources/generated/temp';
+
     /**
      * @param string $resourceName
      * @return string|null Path of the resource who matches the given name or null if resource not found
@@ -84,6 +87,48 @@ trait TestUsingResource
             // 0444 = read only
             mkdir($this->generatedUnwritableResourcesPath, 0444, true);
         }
+    }
+
+    /**
+     * @return string Path of the temp folder
+     */
+    protected function getTempFolderPath()
+    {
+        return realpath($this->tempFolderPath);
+    }
+
+    /**
+     * @return void
+     */
+    protected function recreateTempFolder()
+    {
+        if (file_exists($this->tempFolderPath)) {
+            $this->deleteFolderRecursively($this->tempFolderPath);
+        }
+
+        mkdir($this->tempFolderPath, 0777, true);
+    }
+
+    /**
+     * @param string $folderPath
+     * @return void
+     */
+    private function deleteFolderRecursively($folderPath)
+    {
+        $itemIterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($folderPath, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        foreach ($itemIterator as $item) {
+            if ($item->isDir()) {
+                rmdir($item->getPathname());
+            } else {
+                unlink($item->getPathname());
+            }
+        }
+
+        rmdir($folderPath);
     }
 
     /**

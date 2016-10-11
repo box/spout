@@ -204,6 +204,18 @@ class GlobalFunctionsHelper
     }
 
     /**
+     * Wrapper around global function dirname()
+     * @see dirname()
+     *
+     * @param string $filePath
+     * @return string
+     */
+    public function dirname($filePath)
+    {
+        return dirname($filePath);
+    }
+
+    /**
      * Wrapper around global function feof()
      * @see feof()
      *

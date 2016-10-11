@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\ODS;
 
+use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
@@ -89,6 +90,39 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->writeToODSFile($dataRows, $fileName);
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldCleanupAllFilesIfExceptionIsThrown()
+    {
+        $fileName = 'test_add_row_should_cleanup_all_files_if_exception_thrown.ods';
+        $dataRows = [
+            ['wrong'],
+            [new \stdClass()],
+        ];
+
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $this->recreateTempFolder();
+        $tempFolderPath = $this->getTempFolderPath();
+
+        /** @var \Box\Spout\Writer\ODS\Writer $writer */
+        $writer = WriterFactory::create(Type::ODS);
+        $writer->setTempFolder($tempFolderPath);
+        $writer->openToFile($resourcePath);
+
+        try {
+            $writer->addRows($dataRows);
+            $this->fail('Exception should have been thrown');
+        } catch (SpoutException $e) {
+            $this->assertFalse(file_exists($fileName), 'Output file should have been deleted');
+
+            $numFiles = iterator_count(new \FilesystemIterator($tempFolderPath, \FilesystemIterator::SKIP_DOTS));
+            $this->assertEquals(0, $numFiles, 'All temp files should have been deleted');
+        }
     }
 
     /**
