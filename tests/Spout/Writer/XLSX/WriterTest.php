@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\XLSX;
 
+use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\WriterFactory;
@@ -102,6 +103,39 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->writeToXLSXFile($dataRows, $fileName);
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldCleanupAllFilesIfExceptionIsThrown2()
+    {
+        $fileName = 'test_add_row_should_cleanup_all_files_if_exception_thrown.xlsx';
+        $dataRows = [
+            ['wrong'],
+            [new \stdClass()],
+        ];
+
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $this->recreateTempFolder();
+        $tempFolderPath = $this->getTempFolderPath();
+
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
+        $writer = WriterFactory::create(Type::XLSX);
+        $writer->setTempFolder($tempFolderPath);
+        $writer->openToFile($resourcePath);
+
+        try {
+            $writer->addRows($dataRows);
+            $this->fail('Exception should have been thrown');
+        } catch (SpoutException $e) {
+            $this->assertFalse(file_exists($fileName), 'Output file should have been deleted');
+
+            $numFiles = iterator_count(new \FilesystemIterator($tempFolderPath, \FilesystemIterator::SKIP_DOTS));
+            $this->assertEquals(0, $numFiles, 'All temp files should have been deleted');
+        }
     }
 
     /**
