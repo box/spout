@@ -372,8 +372,8 @@ abstract class AbstractWriter implements WriterInterface
 
         // remove output file if it was created
         if ($this->globalFunctionsHelper->file_exists($this->outputFilePath)) {
-            $outputFolder = $this->globalFunctionsHelper->dirname($this->outputFilePath);
-            $fileSystemHelper = new FileSystemHelper($outputFolder);
+            $outputFolderPath = dirname($this->outputFilePath);
+            $fileSystemHelper = new FileSystemHelper($outputFolderPath);
             $fileSystemHelper->deleteFile($this->outputFilePath);
         }
     }
