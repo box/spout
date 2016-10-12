@@ -119,8 +119,9 @@ class Reader extends AbstractReader
             $this->filePointer,
             $this->fieldDelimiter,
             $this->fieldEnclosure,
-            $this->encoding,
             $this->endOfLineCharacter,
+            $this->encoding,
+            $this->shouldPreserveEmptyRows,
             $this->globalFunctionsHelper
         );
     }
