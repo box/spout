@@ -22,6 +22,9 @@ abstract class AbstractReader implements ReaderInterface
     /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
     protected $shouldFormatDates = false;
 
+    /** @var bool Whether empty rows should be returned or skipped */
+    protected $shouldPreserveEmptyRows = false;
+
     /**
      * Returns whether stream wrappers are supported
      *
@@ -64,12 +67,26 @@ abstract class AbstractReader implements ReaderInterface
     /**
      * Sets whether date/time values should be returned as PHP objects or be formatted as strings.
      *
+     * @api
      * @param bool $shouldFormatDates
      * @return AbstractReader
      */
     public function setShouldFormatDates($shouldFormatDates)
     {
         $this->shouldFormatDates = $shouldFormatDates;
+        return $this;
+    }
+
+    /**
+     * Sets whether empty rows should be returned or skipped.
+     *
+     * @api
+     * @param bool $shouldPreserveEmptyRows
+     * @return AbstractReader
+     */
+    public function setShouldPreserveEmptyRows($shouldPreserveEmptyRows)
+    {
+        $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
         return $this;
     }
 

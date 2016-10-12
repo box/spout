@@ -69,7 +69,7 @@ class Reader extends AbstractReader
                 $this->sharedStringsHelper->extractSharedStrings();
             }
 
-            $this->sheetIterator = new SheetIterator($filePath, $this->sharedStringsHelper, $this->globalFunctionsHelper, $this->shouldFormatDates);
+            $this->sheetIterator = new SheetIterator($filePath, $this->sharedStringsHelper, $this->globalFunctionsHelper, $this->shouldFormatDates, $this->shouldPreserveEmptyRows);
         } else {
             throw new IOException("Could not open $filePath for reading.");
         }
