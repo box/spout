@@ -27,6 +27,9 @@ class SheetIterator implements IteratorInterface
     /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
     protected $shouldFormatDates;
 
+    /** @var bool Whether empty rows should be returned or skipped */
+    protected $shouldPreserveEmptyRows;
+
     /** @var XMLReader The XMLReader object that will help read sheet's XML data */
     protected $xmlReader;
 
@@ -42,12 +45,14 @@ class SheetIterator implements IteratorInterface
     /**
      * @param string $filePath Path of the file to be read
      * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param bool $shouldPreserveEmptyRows Whether empty rows should be returned or skipped
      * @throws \Box\Spout\Reader\Exception\NoSheetsFoundException If there are no sheets in the file
      */
-    public function __construct($filePath, $shouldFormatDates)
+    public function __construct($filePath, $shouldFormatDates, $shouldPreserveEmptyRows)
     {
         $this->filePath = $filePath;
         $this->shouldFormatDates = $shouldFormatDates;
+        $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
         $this->xmlReader = new XMLReader();
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
@@ -116,7 +121,7 @@ class SheetIterator implements IteratorInterface
         $escapedSheetName = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_TABLE_NAME);
         $sheetName = $this->escaper->unescape($escapedSheetName);
 
-        return new Sheet($this->xmlReader, $this->shouldFormatDates, $sheetName, $this->currentSheetIndex);
+        return new Sheet($this->xmlReader, $this->shouldFormatDates, $this->shouldPreserveEmptyRows, $sheetName, $this->currentSheetIndex);
     }
 
     /**
