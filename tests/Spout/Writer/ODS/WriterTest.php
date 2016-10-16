@@ -455,6 +455,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_illegal_characters.ods';
         $dataRows = [
+            ['I am a text'],
             ['I am a vertical tab:' . "\v"],
             ['I am a form feed:' . "\f"],
         ];
@@ -470,9 +471,10 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         try {
             foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
                 foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                    $canBeRead = true;
+
                 }
             }
+            $canBeRead = true;
             $reader->close();
         } catch(\Exception $e) {}
 
