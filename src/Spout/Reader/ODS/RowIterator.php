@@ -131,13 +131,10 @@ class RowIterator implements IteratorInterface
 
     /**
      * Returns whether we need data for the next row to be processed.
-     * We don't need to read data if:
-     *   we have already read at least one row
-     *     AND
-     *   we need to preserve empty rows
-     *     AND
-     *   the last row that was read is not the row that need to be processed
-     *   (i.e. if we need to return empty rows)
+     * We DO need to read data if:
+     *   - we have not read any rows yet
+     *      OR
+     *   - the next row to be processed immediately follows the last read row
      *
      * @return bool Whether we need data for the next row to be processed.
      */
@@ -147,7 +144,6 @@ class RowIterator implements IteratorInterface
 
         return (
             !$hasReadAtLeastOneRow ||
-            !$this->shouldPreserveEmptyRows ||
             $this->lastRowIndexProcessed === $this->nextRowIndexToBeProcessed - 1
         );
     }
