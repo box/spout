@@ -45,7 +45,7 @@ abstract class AbstractReader implements ReaderInterface
      *
      * @return \Iterator To iterate over sheets
      */
-    abstract public function getConcreteSheetIterator();
+    abstract protected function getConcreteSheetIterator();
 
     /**
      * Closes the reader. To be used after reading the file.

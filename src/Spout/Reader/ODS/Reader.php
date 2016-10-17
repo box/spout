@@ -53,7 +53,7 @@ class Reader extends AbstractReader
      *
      * @return SheetIterator To iterate over sheets
      */
-    public function getConcreteSheetIterator()
+    protected function getConcreteSheetIterator()
     {
         return $this->sheetIterator;
     }
