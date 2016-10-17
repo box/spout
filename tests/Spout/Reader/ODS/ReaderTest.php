@@ -81,6 +81,19 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportNumberRowsRepeated()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_number_rows_repeated.ods');
+        $expectedRows = [
+            ['foo', 10.43],
+            ['foo', 10.43],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldSupportNumberColumnsRepeated()
     {
         $allRows = $this->getAllRowsForFile('sheet_with_number_columns_repeated.ods');
