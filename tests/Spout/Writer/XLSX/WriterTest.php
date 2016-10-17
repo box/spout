@@ -108,7 +108,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowShouldCleanupAllFilesIfExceptionIsThrown2()
+    public function testAddRowShouldCleanupAllFilesIfExceptionIsThrown()
     {
         $fileName = 'test_add_row_should_cleanup_all_files_if_exception_thrown.xlsx';
         $dataRows = [
@@ -276,13 +276,36 @@ class WriterTest extends \PHPUnit_Framework_TestCase
             ['foo' => 'xlsx--11', 'bar' => 'xlsx--12'],
         ];
 
-        $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = true);
+        $this->writeToXLSXFile($dataRows, $fileName);
 
         foreach ($dataRows as $dataRow) {
             foreach ($dataRow as $cellValue) {
                 $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cellValue);
             }
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldNotWriteEmptyRows()
+    {
+        $fileName = 'test_add_row_should_not_write_empty_rows.xlsx';
+        $dataRows = [
+            [''],
+            ['xlsx--21', 'xlsx--22'],
+            [''],
+            [''],
+            ['xlsx--51', 'xlsx--52'],
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName);
+
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'row r="2"');
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'row r="5"');
+        $this->assertInlineDataWasNotWrittenToSheet($fileName, 1, 'row r="1"');
+        $this->assertInlineDataWasNotWrittenToSheet($fileName, 1, 'row r="3"');
+        $this->assertInlineDataWasNotWrittenToSheet($fileName, 1, 'row r="4"');
     }
 
     /**

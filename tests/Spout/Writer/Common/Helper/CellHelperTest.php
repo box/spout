@@ -38,6 +38,23 @@ class CellHelperTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
+    public function testIsEmpty()
+    {
+        $this->assertTrue(CellHelper::isEmpty(null));
+        $this->assertTrue(CellHelper::isEmpty(""));
+
+        $this->assertFalse(CellHelper::isEmpty("string"));
+        $this->assertFalse(CellHelper::isEmpty(0));
+        $this->assertFalse(CellHelper::isEmpty(1));
+        $this->assertFalse(CellHelper::isEmpty(true));
+        $this->assertFalse(CellHelper::isEmpty(false));
+        $this->assertFalse(CellHelper::isEmpty(["string"]));
+        $this->assertFalse(CellHelper::isEmpty(new \stdClass()));
+    }
+
+    /**
+     * @return array
+     */
     public function testIsNonEmptyString()
     {
         $this->assertTrue(CellHelper::isNonEmptyString("string"));
