@@ -115,29 +115,40 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return array
+     * @return void
      */
-    public function dataProviderForTestReadShouldSkipEmptyLines()
+    public function testReadShouldSkipEmptyLinesIfShouldPreserveEmptyRowsNotSet()
     {
-        return [
-            ['csv_with_empty_line.csv'],
-            ['csv_with_empty_last_line.csv'],
+        $allRows = $this->getAllRowsForFile('csv_with_multiple_empty_lines.csv');
+
+        $expectedRows = [
+            // skipped row here
+            ['csv--21', 'csv--22', 'csv--23'],
+            // skipped row here
+            ['csv--41', 'csv--42', 'csv--43'],
+            // skipped row here
+            // last row empty
         ];
+        $this->assertEquals($expectedRows, $allRows);
     }
 
     /**
-     * @dataProvider dataProviderForTestReadShouldSkipEmptyLines
-     *
-     * @param string $fileName
      * @return void
      */
-    public function testReadShouldSkipEmptyLines($fileName)
+    public function testReadShouldReturnEmptyLinesIfShouldPreserveEmptyRowsSet()
     {
-        $allRows = $this->getAllRowsForFile($fileName);
+        $allRows = $this->getAllRowsForFile(
+            'csv_with_multiple_empty_lines.csv',
+            ',', '"', "\n", EncodingHelper::ENCODING_UTF8,
+            $shouldPreserveEmptyRows = true
+        );
 
         $expectedRows = [
-            ['csv--11', 'csv--12', 'csv--13'],
-            ['csv--31', 'csv--32', 'csv--33'],
+            [''],
+            ['csv--21', 'csv--22', 'csv--23'],
+            [''],
+            ['csv--41', 'csv--42', 'csv--43'],
+            [''],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }
@@ -207,6 +218,21 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadCustomEOLs()
+    {
+        $allRows = $this->getAllRowsForFile('csv_with_CR_EOL.csv', ',', '"', "\r");
+
+        $expectedRows = [
+            ['csv--11', 'csv--12', 'csv--13'],
+            ['csv--21', 'csv--22', 'csv--23'],
+            ['csv--31', 'csv--32', 'csv--33'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldNotTruncateLineBreak()
     {
         $allRows = $this->getAllRowsForFile('csv_with_line_breaks.csv', ',');
@@ -236,7 +262,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      */
     public function testReadShouldSkipBom($fileName, $fileEncoding)
     {
-        $allRows = $this->getAllRowsForFile($fileName, ',', '"', $fileEncoding);
+        $allRows = $this->getAllRowsForFile($fileName, ',', '"', "\n", $fileEncoding);
 
         $expectedRows = [
             ['csv--11', 'csv--12', 'csv--13'],
@@ -275,6 +301,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
+        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit_Framework_MockObject_MockObject $helperStub */
         $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
                         ->setMethods(['function_exists'])
                         ->getMock();
@@ -405,14 +432,18 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      * @param string $fileName
      * @param string|void $fieldDelimiter
      * @param string|void $fieldEnclosure
+     * @param string|void $endOfLineCharacter
      * @param string|void $encoding
+     * @param bool|void $shouldPreserveEmptyRows
      * @return array All the read rows the given file
      */
     private function getAllRowsForFile(
         $fileName,
         $fieldDelimiter = ',',
         $fieldEnclosure = '"',
-        $encoding = EncodingHelper::ENCODING_UTF8)
+        $endOfLineCharacter = "\n",
+        $encoding = EncodingHelper::ENCODING_UTF8,
+        $shouldPreserveEmptyRows = false)
     {
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
@@ -422,7 +453,9 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $reader
             ->setFieldDelimiter($fieldDelimiter)
             ->setFieldEnclosure($fieldEnclosure)
+            ->setEndOfLineCharacter($endOfLineCharacter)
             ->setEncoding($encoding)
+            ->setShouldPreserveEmptyRows($shouldPreserveEmptyRows)
             ->open($resourcePath);
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
@@ -434,51 +467,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $reader->close();
 
         return $allRows;
-    }
-
-    /**
-     * @return array
-     */
-    public function dataProviderForTestReadCustomEOL()
-    {
-        return [
-            ['csv_with_CR_EOL.csv', "\r"],
-            ['csv_standard.csv', "\n"],
-        ];
-    }
-
-    /**
-     * @dataProvider dataProviderForTestReadCustomEOL
-     *
-     * @param string $fileName
-     * @param string $customEOL
-     * @return void
-     */
-    public function testReadCustomEOLs($fileName, $customEOL)
-    {
-        $allRows = [];
-        $resourcePath = $this->getResourcePath($fileName);
-
-        /** @var \Box\Spout\Reader\CSV\Reader $reader */
-        $reader = ReaderFactory::create(Type::CSV);
-        $reader
-            ->setEndOfLineCharacter($customEOL)
-            ->open($resourcePath);
-
-        foreach ($reader->getSheetIterator() as $sheet) {
-            foreach ($sheet->getRowIterator() as $row) {
-                $allRows[] = $row;
-            }
-        }
-
-        $reader->close();
-
-        $expectedRows = [
-            ['csv--11', 'csv--12', 'csv--13'],
-            ['csv--21', 'csv--22', 'csv--23'],
-            ['csv--31', 'csv--32', 'csv--33'],
-        ];
-        $this->assertEquals($expectedRows, $allRows);
     }
 
     /**

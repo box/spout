@@ -26,12 +26,13 @@ class Sheet implements SheetInterface
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
      * @param Helper\SharedStringsHelper Helper to work with shared strings
      * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param bool $shouldPreserveEmptyRows Whether empty rows should be returned or skipped
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $sheetName Name of the sheet
      */
-    public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $shouldFormatDates, $sheetIndex, $sheetName)
+    public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $shouldFormatDates, $shouldPreserveEmptyRows, $sheetIndex, $sheetName)
     {
-        $this->rowIterator = new RowIterator($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $shouldFormatDates);
+        $this->rowIterator = new RowIterator($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $shouldFormatDates, $shouldPreserveEmptyRows);
         $this->index = $sheetIndex;
         $this->name = $sheetName;
     }

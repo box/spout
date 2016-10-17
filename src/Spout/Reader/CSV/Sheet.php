@@ -18,12 +18,21 @@ class Sheet implements SheetInterface
      * @param resource $filePointer Pointer to the CSV file to read
      * @param string $fieldDelimiter Character that delimits fields
      * @param string $fieldEnclosure Character that enclose fields
+     * @param string $endOfLineCharacter Character defining the end of a line
      * @param string $encoding Encoding of the CSV file to be read
+     * @param bool $shouldPreserveEmptyRows Whether empty rows should be returned or skipped
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $endOfLineCharacter, $globalFunctionsHelper)
+    public function __construct(
+        $filePointer, $fieldDelimiter, $fieldEnclosure,
+        $endOfLineCharacter, $encoding, $shouldPreserveEmptyRows,
+        $globalFunctionsHelper)
     {
-        $this->rowIterator = new RowIterator($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $endOfLineCharacter, $globalFunctionsHelper);
+        $this->rowIterator = new RowIterator(
+            $filePointer, $fieldDelimiter, $fieldEnclosure,
+            $endOfLineCharacter, $encoding, $shouldPreserveEmptyRows,
+            $globalFunctionsHelper
+        );
     }
 
     /**

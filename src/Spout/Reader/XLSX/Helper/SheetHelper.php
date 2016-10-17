@@ -29,18 +29,23 @@ class SheetHelper
     /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
     protected $shouldFormatDates;
 
+    /** @var bool Whether empty rows should be returned or skipped */
+    protected $shouldPreserveEmptyRows;
+
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param bool $shouldPreserveEmptyRows Whether empty rows should be returned or skipped
      */
-    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper, $shouldFormatDates)
+    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper, $shouldFormatDates, $shouldPreserveEmptyRows)
     {
         $this->filePath = $filePath;
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
         $this->shouldFormatDates = $shouldFormatDates;
+        $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
     }
 
     /**
@@ -92,7 +97,7 @@ class SheetHelper
 
         $sheetDataXMLFilePath = $this->getSheetDataXMLFilePathForSheetId($sheetId);
 
-        return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $this->shouldFormatDates, $sheetIndexZeroBased, $sheetName);
+        return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $this->shouldFormatDates, $this->shouldPreserveEmptyRows, $sheetIndexZeroBased, $sheetName);
     }
 
     /**

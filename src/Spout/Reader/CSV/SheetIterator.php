@@ -22,12 +22,21 @@ class SheetIterator implements IteratorInterface
      * @param resource $filePointer
      * @param string $fieldDelimiter Character that delimits fields
      * @param string $fieldEnclosure Character that enclose fields
+     * @param string $endOfLineCharacter Character defining the end of a line
      * @param string $encoding Encoding of the CSV file to be read
+     * @param bool $shouldPreserveEmptyRows Whether empty rows should be returned or skipped
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $endOfLineCharacter, $globalFunctionsHelper)
+    public function __construct(
+        $filePointer, $fieldDelimiter, $fieldEnclosure,
+        $endOfLineCharacter, $encoding, $shouldPreserveEmptyRows,
+        $globalFunctionsHelper)
     {
-        $this->sheet = new Sheet($filePointer, $fieldDelimiter, $fieldEnclosure, $encoding, $endOfLineCharacter, $globalFunctionsHelper);
+        $this->sheet = new Sheet(
+            $filePointer, $fieldDelimiter, $fieldEnclosure,
+            $endOfLineCharacter, $encoding, $shouldPreserveEmptyRows,
+            $globalFunctionsHelper
+        );
     }
 
     /**
