@@ -468,10 +468,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $reader->open($resourcePath);
 
         $canBeRead = false;
+        $rowsRead = [];
         try {
             foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
                 foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-
+                    $rowsRead[] = $row;
                 }
             }
             $canBeRead = true;
@@ -479,6 +480,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         } catch(\Exception $e) {}
 
         $this->assertTrue($canBeRead, 'The file with illegal chars can be read');
+        $dataRowsExpected = [
+            ['I am a text'],
+            ['I am a vertical tab:�'],
+            ['I am a form feed:�'],
+        ];
+        $this->assertEquals($dataRowsExpected, $rowsRead, 'Correct rows with unicode replacement are read');
     }
 
     /**
