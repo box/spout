@@ -132,6 +132,38 @@ EOD;
      */
     public function addRow($dataRow, $style)
     {
+        if (!$this->isEmptyRow($dataRow)) {
+            $this->addNonEmptyRow($dataRow, $style);
+        }
+
+        $this->lastWrittenRowIndex++;
+    }
+
+    /**
+     * Returns whether the given row is empty
+     *
+     * @param array $dataRow Array containing data to be written. Cannot be empty.
+     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @return bool Whether the given row is empty
+     */
+    private function isEmptyRow($dataRow)
+    {
+        $numCells = count($dataRow);
+        return ($numCells === 1 && CellHelper::isEmpty($dataRow[0]));
+    }
+
+    /**
+     * Adds non empty row to the worksheet.
+     *
+     * @param array $dataRow Array containing data to be written. Cannot be empty.
+     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row. NULL means use default style.
+     * @return void
+     * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
+     */
+    private function addNonEmptyRow($dataRow, $style)
+    {
         $cellNumber = 0;
         $rowIndex = $this->lastWrittenRowIndex + 1;
         $numCells = count($dataRow);
@@ -149,9 +181,6 @@ EOD;
         if ($wasWriteSuccessful === false) {
             throw new IOException("Unable to write data in {$this->worksheetFilePath}");
         }
-
-        // only update the count if the write worked
-        $this->lastWrittenRowIndex++;
     }
 
     /**
