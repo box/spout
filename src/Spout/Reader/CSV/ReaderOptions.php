@@ -3,7 +3,6 @@
 namespace Box\Spout\Reader\CSV;
 
 use Box\Spout\Common\Helper\EncodingHelper;
-use Box\Spout\Reader\ReaderOptionsCommon;
 
 /**
  * Class ReaderOptions
@@ -11,7 +10,7 @@ use Box\Spout\Reader\ReaderOptionsCommon;
  *
  * @package Box\Spout\Reader\CSV
  */
-class ReaderOptions extends ReaderOptionsCommon
+class ReaderOptions extends \Box\Spout\Reader\Common\ReaderOptions
 {
     /** @var string Defines the character used to delimit fields (one character only) */
     protected $fieldDelimiter = ',';
