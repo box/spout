@@ -29,6 +29,8 @@ class DateFormatHelperTest extends \PHPUnit_Framework_TestCase
             ['[$USD-F480]hh:mm AM/PM', 'h:i A'],
             ['"Day " d', '\\D\\a\\y\\  j'],
             ['yy "Year" m "Month"', 'y \\Y\\e\\a\\r n \\M\\o\\n\\t\\h'],
+            ['mmm-yy;@', 'M-y'],
+            ['[$-409]hh:mm AM/PM;"foo"@', 'h:i A'],
         ];
     }
 
