@@ -8,6 +8,7 @@ use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Reader\ODS\Helper\CellValueFormatter;
 use Box\Spout\Reader\Wrapper\XMLReader;
+use Box\Spout\Reader\Common\XMLProcessor;
 
 /**
  * Class RowIterator
@@ -29,6 +30,9 @@ class RowIterator implements IteratorInterface
     /** @var \Box\Spout\Reader\Wrapper\XMLReader The XMLReader object that will help read sheet's XML data */
     protected $xmlReader;
 
+    /** @var \Box\Spout\Reader\Common\XMLProcessor Helper Object to process XML nodes */
+    protected $xmlProcessor;
+
     /** @var bool Whether empty rows should be returned or skipped */
     protected $shouldPreserveEmptyRows;
 
@@ -37,6 +41,9 @@ class RowIterator implements IteratorInterface
 
     /** @var bool Whether the iterator has already been rewound once */
     protected $hasAlreadyBeenRewound = false;
+
+    /** @var array Contains the data for the currently processed row (key = cell index, value = cell value) */
+    protected $currentlyProcessedRowData = [];
 
     /** @var array|null Buffer used to store the row data, while checking if there are more rows to read */
     protected $rowDataBuffer = null;
@@ -72,6 +79,13 @@ class RowIterator implements IteratorInterface
         $this->xmlReader = $xmlReader;
         $this->shouldPreserveEmptyRows = $options->shouldPreserveEmptyRows();
         $this->cellValueFormatter = new CellValueFormatter($options->shouldFormatDates());
+
+        // Register all callbacks to process different nodes when reading the XML file
+        $this->xmlProcessor = new XMLProcessor($this->xmlReader);
+        $this->xmlProcessor->registerCallback(self::XML_NODE_ROW, XMLProcessor::NODE_TYPE_START, [$this, 'processRowStartingNode']);
+        $this->xmlProcessor->registerCallback(self::XML_NODE_CELL, XMLProcessor::NODE_TYPE_START, [$this, 'processCellStartingNode']);
+        $this->xmlProcessor->registerCallback(self::XML_NODE_ROW, XMLProcessor::NODE_TYPE_END, [$this, 'processRowEndingNode']);
+        $this->xmlProcessor->registerCallback(self::XML_NODE_TABLE, XMLProcessor::NODE_TYPE_END, [$this, 'processTableEndingNode']);
     }
 
     /**
@@ -122,7 +136,7 @@ class RowIterator implements IteratorInterface
     public function next()
     {
         if ($this->doesNeedDataForNextRowToBeProcessed()) {
-            $this->readDataForNextRow($this->xmlReader);
+            $this->readDataForNextRow();
         }
 
         $this->lastRowIndexProcessed++;
@@ -148,54 +162,26 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XMLReader object
      * @return void
      * @throws \Box\Spout\Reader\Exception\SharedStringNotFoundException If a shared string was not found
      * @throws \Box\Spout\Common\Exception\IOException If unable to read the sheet data XML
      */
-    protected function readDataForNextRow($xmlReader)
+    protected function readDataForNextRow()
     {
-        $rowData = [];
+        $this->currentlyProcessedRowData = [];
 
         try {
-            while ($xmlReader->read()) {
-                if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_ROW)) {
-                    $this->processRowStartingNode($xmlReader);
-
-                } else if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL)) {
-                    $rowData = $this->processCellStartingNode($xmlReader, $rowData);
-
-                } else if ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_ROW)) {
-                    $isEmptyRow = $this->isEmptyRow($rowData, $this->lastProcessedCellValue);
-
-                    // if the fetched row is empty and we don't want to preserve it...
-                    if (!$this->shouldPreserveEmptyRows && $isEmptyRow) {
-                        // ... skip it
-                        continue;
-                    }
-
-                    $rowData = $this->processRowEndingNode($rowData, $isEmptyRow);
-
-                    // at this point, we have all the data we need for the row
-                    // so that we can populate the buffer
-                    break;
-
-                } else if ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_TABLE)) {
-                    $this->processTableEndingNode();
-                    break;
-                }
-            }
-
+            $this->xmlProcessor->readUntilStopped();
         } catch (XMLProcessingException $exception) {
             throw new IOException("The sheet's data cannot be read. [{$exception->getMessage()}]");
         }
 
-        $this->rowDataBuffer = $rowData;
+        $this->rowDataBuffer = $this->currentlyProcessedRowData;
     }
 
     /**
      * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XMLReader object, positioned on a "<table:table-row>" starting node
-     * @return void
+     * @return int A return code that indicates what action should the processor take next
      */
     protected function processRowStartingNode($xmlReader)
     {
@@ -204,14 +190,15 @@ class RowIterator implements IteratorInterface
         $this->lastProcessedCellValue = null;
         $this->numColumnsRepeated = 1;
         $this->numRowsRepeated = $this->getNumRowsRepeatedForCurrentNode($xmlReader);
+
+        return XMLProcessor::PROCESSING_CONTINUE;
     }
 
     /**
      * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XMLReader object, positioned on a "<table:table-cell>" starting node
-     * @param array $rowData Data of all cells read so far
-     * @return array Original row data + data for the cell that was just read
+     * @return int A return code that indicates what action should the processor take next
      */
-    protected function processCellStartingNode($xmlReader, $rowData)
+    protected function processCellStartingNode($xmlReader)
     {
         $currentNumColumnsRepeated = $this->getNumColumnsRepeatedForCurrentNode($xmlReader);
 
@@ -221,7 +208,7 @@ class RowIterator implements IteratorInterface
         // process cell N only after having read cell N+1 (see below why)
         if ($this->hasAlreadyReadOneCellInCurrentRow) {
             for ($i = 0; $i < $this->numColumnsRepeated; $i++) {
-                $rowData[] = $this->lastProcessedCellValue;
+                $this->currentlyProcessedRowData[] = $this->lastProcessedCellValue;
             }
         }
 
@@ -229,28 +216,34 @@ class RowIterator implements IteratorInterface
         $this->lastProcessedCellValue = $currentCellValue;
         $this->numColumnsRepeated = $currentNumColumnsRepeated;
 
-        return $rowData;
+        return XMLProcessor::PROCESSING_CONTINUE;
     }
 
     /**
-     * @param array $rowData Data of all cells read so far
-     * @param bool $isEmptyRow Whether the given row is empty
-     * @return array
+     * @return int A return code that indicates what action should the processor take next
      */
-    protected function processRowEndingNode($rowData, $isEmptyRow)
+    protected function processRowEndingNode()
     {
+        $isEmptyRow = $this->isEmptyRow($this->currentlyProcessedRowData, $this->lastProcessedCellValue);
+
+        // if the fetched row is empty and we don't want to preserve it...
+        if (!$this->shouldPreserveEmptyRows && $isEmptyRow) {
+            // ... skip it
+            return XMLProcessor::PROCESSING_CONTINUE;
+        }
+
         // if the row is empty, we don't want to return more than one cell
         $actualNumColumnsRepeated = (!$isEmptyRow) ? $this->numColumnsRepeated : 1;
 
         // Only add the value if the last read cell is not a trailing empty cell repeater in Excel.
-        // The current count of read columns is determined by counting the values in $rowData.
+        // The current count of read columns is determined by counting the values in "$this->currentlyProcessedRowData".
         // This is to avoid creating a lot of empty cells, as Excel adds a last empty "<table:table-cell>"
         // with a number-columns-repeated value equals to the number of (supported columns - used columns).
         // In Excel, the number of supported columns is 16384, but we don't want to returns rows with
         // always 16384 cells.
-        if ((count($rowData) + $actualNumColumnsRepeated) !== self::MAX_COLUMNS_EXCEL) {
+        if ((count($this->currentlyProcessedRowData) + $actualNumColumnsRepeated) !== self::MAX_COLUMNS_EXCEL) {
             for ($i = 0; $i < $actualNumColumnsRepeated; $i++) {
-                $rowData[] = $this->lastProcessedCellValue;
+                $this->currentlyProcessedRowData[] = $this->lastProcessedCellValue;
             }
         }
 
@@ -258,16 +251,20 @@ class RowIterator implements IteratorInterface
         // then the next row to be processed will be row (N+M).
         $this->nextRowIndexToBeProcessed += $this->numRowsRepeated;
 
-        return $rowData;
+        // at this point, we have all the data we need for the row
+        // so that we can populate the buffer
+        return XMLProcessor::PROCESSING_STOP;
     }
 
     /**
-     * @return void
+     * @return int A return code that indicates what action should the processor take next
      */
     protected function processTableEndingNode()
     {
         // The closing "</table:table>" marks the end of the file
         $this->hasReachedEndOfFile = true;
+
+        return XMLProcessor::PROCESSING_STOP;
     }
 
     /**
