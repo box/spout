@@ -22,16 +22,15 @@ class SheetIterator implements IteratorInterface
 
     /**
      * @param string $filePath Path of the file to be read
+     * @param \Box\Spout\Reader\XLSX\ReaderOptions $options Reader's current options
      * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper $sharedStringsHelper
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
-     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
-     * @param bool $shouldPreserveEmptyRows Whether empty rows should be returned or skipped
      * @throws \Box\Spout\Reader\Exception\NoSheetsFoundException If there are no sheets in the file
      */
-    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper, $shouldFormatDates, $shouldPreserveEmptyRows)
+    public function __construct($filePath, $options, $sharedStringsHelper, $globalFunctionsHelper)
     {
         // Fetch all available sheets
-        $sheetHelper = new SheetHelper($filePath, $sharedStringsHelper, $globalFunctionsHelper, $shouldFormatDates, $shouldPreserveEmptyRows);
+        $sheetHelper = new SheetHelper($filePath, $options, $sharedStringsHelper, $globalFunctionsHelper);
         $this->sheets = $sheetHelper->getSheets();
 
         if (count($this->sheets) === 0) {

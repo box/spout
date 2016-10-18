@@ -20,32 +20,27 @@ class SheetHelper
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
+    /** @var \Box\Spout\Reader\XLSX\ReaderOptions Reader's current options */
+    protected $options;
+
     /** @var \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings */
     protected $sharedStringsHelper;
 
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
-    protected $shouldFormatDates;
-
-    /** @var bool Whether empty rows should be returned or skipped */
-    protected $shouldPreserveEmptyRows;
-
     /**
      * @param string $filePath Path of the XLSX file being read
+     * @param \Box\Spout\Reader\XLSX\ReaderOptions $options Reader's current options
      * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
-     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
-     * @param bool $shouldPreserveEmptyRows Whether empty rows should be returned or skipped
      */
-    public function __construct($filePath, $sharedStringsHelper, $globalFunctionsHelper, $shouldFormatDates, $shouldPreserveEmptyRows)
+    public function __construct($filePath, $options, $sharedStringsHelper, $globalFunctionsHelper)
     {
         $this->filePath = $filePath;
+        $this->options = $options;
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
-        $this->shouldFormatDates = $shouldFormatDates;
-        $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
     }
 
     /**
@@ -97,7 +92,7 @@ class SheetHelper
 
         $sheetDataXMLFilePath = $this->getSheetDataXMLFilePathForSheetId($sheetId);
 
-        return new Sheet($this->filePath, $sheetDataXMLFilePath, $this->sharedStringsHelper, $this->shouldFormatDates, $this->shouldPreserveEmptyRows, $sheetIndexZeroBased, $sheetName);
+        return new Sheet($this->filePath, $sheetDataXMLFilePath, $sheetIndexZeroBased, $sheetName, $this->options, $this->sharedStringsHelper);
     }
 
     /**

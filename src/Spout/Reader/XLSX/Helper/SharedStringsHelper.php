@@ -34,7 +34,7 @@ class SharedStringsHelper
 
     /**
      * @param string $filePath Path of the XLSX file being read
-     * @param string|void $tempFolder Temporary folder where the temporary files to store shared strings will be stored
+     * @param string|null|void $tempFolder Temporary folder where the temporary files to store shared strings will be stored
      */
     public function __construct($filePath, $tempFolder = null)
     {

@@ -40,6 +40,12 @@ class RowIterator implements IteratorInterface
     /** @var string Encoding of the CSV file to be read */
     protected $encoding;
 
+    /** @var string End of line delimiter, given by the user as input. */
+    protected $inputEOLDelimiter;
+
+    /** @var bool Whether empty rows should be returned or skipped */
+    protected $shouldPreserveEmptyRows;
+
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
@@ -49,29 +55,19 @@ class RowIterator implements IteratorInterface
     /** @var string End of line delimiter, encoded using the same encoding as the CSV */
     protected $encodedEOLDelimiter;
 
-    /** @var string End of line delimiter, given by the user as input. */
-    protected $inputEOLDelimiter;
-
-    /** @var bool Whether empty rows should be returned or skipped */
-    protected $shouldPreserveEmptyRows;
-
     /**
      * @param resource $filePointer Pointer to the CSV file to read
-     * @param string $fieldDelimiter Character that delimits fields
-     * @param string $fieldEnclosure Character that enclose fields
-     * @param string $endOfLineDelimiter End of line delimiter
-     * @param string $encoding Encoding of the CSV file to be read
-     * @param bool $shouldPreserveEmptyRows Whether empty rows should be returned or skipped
+     * @param \Box\Spout\Reader\CSV\ReaderOptions $options
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $fieldDelimiter, $fieldEnclosure, $endOfLineDelimiter, $encoding, $shouldPreserveEmptyRows, $globalFunctionsHelper)
+    public function __construct($filePointer, $options, $globalFunctionsHelper)
     {
         $this->filePointer = $filePointer;
-        $this->fieldDelimiter = $fieldDelimiter;
-        $this->fieldEnclosure = $fieldEnclosure;
-        $this->encoding = $encoding;
-        $this->inputEOLDelimiter = $endOfLineDelimiter;
-        $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
+        $this->fieldDelimiter = $options->getFieldDelimiter();
+        $this->fieldEnclosure = $options->getFieldEnclosure();
+        $this->encoding = $options->getEncoding();
+        $this->inputEOLDelimiter = $options->getEndOfLineCharacter();
+        $this->shouldPreserveEmptyRows = $options->shouldPreserveEmptyRows();
         $this->globalFunctionsHelper = $globalFunctionsHelper;
 
         $this->encodingHelper = new EncodingHelper($globalFunctionsHelper);
