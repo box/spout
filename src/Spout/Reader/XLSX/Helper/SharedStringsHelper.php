@@ -94,43 +94,18 @@ class SharedStringsHelper
             $xmlReader->readUntilNodeFound('si');
 
             while ($xmlReader->name === 'si') {
-                $node = $this->getSimpleXmlElementNodeFromXMLReader($xmlReader);
-                $node->registerXPathNamespace('ns', self::MAIN_NAMESPACE_FOR_SHARED_STRINGS_XML);
-
-                // removes nodes that should not be read, like the pronunciation of the Kanji characters
-                $cleanNode = $this->removeSuperfluousTextNodes($node);
-
-                // find all text nodes "t"; there can be multiple if the cell contains formatting
-                $textNodes = $cleanNode->xpath('//ns:t');
-
-                $textValue = '';
-                foreach ($textNodes as $nodeIndex => $textNode) {
-                    if ($nodeIndex !== 0) {
-                        // add a space between each "t" node
-                        $textValue .= ' ';
-                    }
-
-                    if ($this->shouldPreserveWhitespace($textNode)) {
-                        $textValue .= $textNode->__toString();
-                    } else {
-                        $textValue .= trim($textNode->__toString());
-                    }
-                }
-
-                $unescapedTextValue = $escaper->unescape($textValue);
-                $this->cachingStrategy->addStringForIndex($unescapedTextValue, $sharedStringIndex);
-
+                $this->processSharedStringsItem($xmlReader, $sharedStringIndex, $escaper);
                 $sharedStringIndex++;
 
                 // jump to the next 'si' tag
                 $xmlReader->next('si');
             }
 
+            $this->cachingStrategy->closeCache();
+
         } catch (XMLProcessingException $exception) {
             throw new IOException("The sharedStrings.xml file is invalid and cannot be read. [{$exception->getMessage()}]");
         }
-
-        $this->cachingStrategy->closeCache();
 
         $xmlReader->close();
     }
@@ -183,6 +158,31 @@ class SharedStringsHelper
     }
 
     /**
+     * Processes the shared strings item XML node which the given XML reader is positioned on.
+     *
+     * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader
+     * @param int $sharedStringIndex Index of the processed shared strings item
+     * @param \Box\Spout\Common\Escaper\XLSX $escaper Helper to escape values
+     * @return void
+     */
+    protected function processSharedStringsItem($xmlReader, $sharedStringIndex, $escaper)
+    {
+        $node = $this->getSimpleXmlElementNodeFromXMLReader($xmlReader);
+        $node->registerXPathNamespace('ns', self::MAIN_NAMESPACE_FOR_SHARED_STRINGS_XML);
+
+        // removes nodes that should not be read, like the pronunciation of the Kanji characters
+        $cleanNode = $this->removeSuperfluousTextNodes($node);
+
+        // find all text nodes "t"; there can be multiple if the cell contains formatting
+        $textNodes = $cleanNode->xpath('//ns:t');
+
+        $textValue = $this->extractTextValueForNodes($textNodes);
+        $unescapedTextValue = $escaper->unescape($textValue);
+
+        $this->cachingStrategy->addStringForIndex($unescapedTextValue, $sharedStringIndex);
+    }
+
+    /**
      * Returns a SimpleXMLElement node from the current node in the given XMLReader instance.
      * This is to simplify the parsing of the subtree.
      *
@@ -223,6 +223,29 @@ class SharedStringsHelper
         }
 
         return $parentNode;
+    }
+
+    /**
+     * @param array $textNodes Text XML nodes ("<t>")
+     * @return string The value associated with the given text node(s)
+     */
+    protected function extractTextValueForNodes($textNodes)
+    {
+        $textValue = '';
+
+        foreach ($textNodes as $nodeIndex => $textNode) {
+            if ($nodeIndex !== 0) {
+                // add a space between each "t" node
+                $textValue .= ' ';
+            }
+
+            $textNodeAsString = $textNode->__toString();
+            $shouldPreserveWhitespace = $this->shouldPreserveWhitespace($textNode);
+
+            $textValue .= ($shouldPreserveWhitespace) ? $textNodeAsString : trim($textNodeAsString);
+        }
+
+        return $textValue;
     }
 
     /**
