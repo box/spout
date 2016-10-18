@@ -19,13 +19,13 @@ abstract class AbstractReader implements ReaderInterface
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var \Box\Spout\Reader\ReaderOptionsCommon Reader's customized options */
+    /** @var \Box\Spout\Reader\Common\ReaderOptions Reader's customized options */
     protected $options;
 
     /**
      * Returns the reader's current options
      *
-     * @return \Box\Spout\Reader\ReaderOptionsCommon
+     * @return \Box\Spout\Reader\Common\ReaderOptions
      */
     abstract protected function getOptions();
 

@@ -1,14 +1,14 @@
 <?php
 
-namespace Box\Spout\Reader;
+namespace Box\Spout\Reader\Common;
 
 /**
- * Class ReaderOptionsCommon
+ * Class ReaderOptions
  * Readers' common options
  *
- * @package Box\Spout\Reader
+ * @package Box\Spout\Reader\Common
  */
-class ReaderOptionsCommon
+class ReaderOptions
 {
     /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
     protected $shouldFormatDates = false;
@@ -28,7 +28,7 @@ class ReaderOptionsCommon
      * Sets whether date/time values should be returned as PHP objects or be formatted as strings.
      *
      * @param bool $shouldFormatDates
-     * @return ReaderOptionsCommon
+     * @return ReaderOptions
      */
     public function setShouldFormatDates($shouldFormatDates)
     {
@@ -48,7 +48,7 @@ class ReaderOptionsCommon
      * Sets whether empty rows should be returned or skipped.
      *
      * @param bool $shouldPreserveEmptyRows
-     * @return ReaderOptionsCommon
+     * @return ReaderOptions
      */
     public function setShouldPreserveEmptyRows($shouldPreserveEmptyRows)
     {
