@@ -19,11 +19,15 @@ abstract class AbstractReader implements ReaderInterface
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
-    protected $shouldFormatDates = false;
+    /** @var \Box\Spout\Reader\ReaderOptionsCommon Reader's customized options */
+    protected $options;
 
-    /** @var bool Whether empty rows should be returned or skipped */
-    protected $shouldPreserveEmptyRows = false;
+    /**
+     * Returns the reader's current options
+     *
+     * @return \Box\Spout\Reader\ReaderOptionsCommon
+     */
+    abstract protected function getOptions();
 
     /**
      * Returns whether stream wrappers are supported
@@ -73,7 +77,7 @@ abstract class AbstractReader implements ReaderInterface
      */
     public function setShouldFormatDates($shouldFormatDates)
     {
-        $this->shouldFormatDates = $shouldFormatDates;
+        $this->getOptions()->setShouldFormatDates($shouldFormatDates);
         return $this;
     }
 
@@ -86,7 +90,7 @@ abstract class AbstractReader implements ReaderInterface
      */
     public function setShouldPreserveEmptyRows($shouldPreserveEmptyRows)
     {
-        $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
+        $this->getOptions()->setShouldPreserveEmptyRows($shouldPreserveEmptyRows);
         return $this;
     }
 

@@ -74,11 +74,10 @@ class RowIterator implements IteratorInterface
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
+     * @param \Box\Spout\Reader\XLSX\ReaderOptions $options Reader's current options
      * @param Helper\SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
-     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
-     * @param bool $shouldPreserveEmptyRows Whether empty rows should be returned or skipped
      */
-    public function __construct($filePath, $sheetDataXMLFilePath, $sharedStringsHelper, $shouldFormatDates, $shouldPreserveEmptyRows)
+    public function __construct($filePath, $sheetDataXMLFilePath, $options, $sharedStringsHelper)
     {
         $this->filePath = $filePath;
         $this->sheetDataXMLFilePath = $this->normalizeSheetDataXMLFilePath($sheetDataXMLFilePath);
@@ -86,9 +85,9 @@ class RowIterator implements IteratorInterface
         $this->xmlReader = new XMLReader();
 
         $this->styleHelper = new StyleHelper($filePath);
-        $this->cellValueFormatter = new CellValueFormatter($sharedStringsHelper, $this->styleHelper, $shouldFormatDates);
+        $this->cellValueFormatter = new CellValueFormatter($sharedStringsHelper, $this->styleHelper, $options->shouldFormatDates());
 
-        $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
+        $this->shouldPreserveEmptyRows = $options->shouldPreserveEmptyRows();
     }
 
     /**
