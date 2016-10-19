@@ -4,7 +4,6 @@ namespace Box\Spout\Writer\ODS;
 
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
-use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
@@ -445,47 +444,6 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $this->assertEquals('application/vnd.oasis.opendocument.spreadsheet', $finfo->file($resourcePath));
-    }
-
-    /**
-     * https://github.com/box/spout/issues/329
-     * @return  void
-     */
-    public function testGeneratedFileWithIllegalCharsCanBeRead()
-    {
-        $fileName = 'test_illegal_characters.ods';
-        $dataRows = [
-            ['I am a text'],
-            ['I am a vertical tab:' . "\v"],
-            ['I am a form feed:' . "\f"],
-        ];
-
-        $this->writeToODSFile($dataRows, $fileName);
-
-        $resourcePath = $this->getGeneratedResourcePath($fileName);
-
-        $reader = ReaderFactory::create(Type::ODS);
-        $reader->open($resourcePath);
-
-        $canBeRead = false;
-        $rowsRead = [];
-        try {
-            foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
-                foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                    $rowsRead[] = $row;
-                }
-            }
-            $canBeRead = true;
-            $reader->close();
-        } catch(\Exception $e) {}
-
-        $this->assertTrue($canBeRead, 'The file with illegal chars can be read');
-        $dataRowsExpected = [
-            ['I am a text'],
-            ['I am a vertical tab:�'],
-            ['I am a form feed:�'],
-        ];
-        $this->assertEquals($dataRowsExpected, $rowsRead, 'Correct rows with unicode replacement are read');
     }
 
     /**
