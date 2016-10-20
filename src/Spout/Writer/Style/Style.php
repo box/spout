@@ -106,6 +106,7 @@ class Style
 
     /**
      * @param Border $border
+     * @return Style
      */
     public function setBorder(Border $border)
     {
@@ -359,37 +360,67 @@ class Style
     {
         $mergedStyle = clone $this;
 
-        if (!$this->hasSetFontBold && $baseStyle->isFontBold()) {
-            $mergedStyle->setFontBold();
-        }
-        if (!$this->hasSetFontItalic && $baseStyle->isFontItalic()) {
-            $mergedStyle->setFontItalic();
-        }
-        if (!$this->hasSetFontUnderline && $baseStyle->isFontUnderline()) {
-            $mergedStyle->setFontUnderline();
-        }
-        if (!$this->hasSetFontStrikethrough && $baseStyle->isFontStrikethrough()) {
-            $mergedStyle->setFontStrikethrough();
-        }
-        if (!$this->hasSetFontSize && $baseStyle->getFontSize() !== self::DEFAULT_FONT_SIZE) {
-            $mergedStyle->setFontSize($baseStyle->getFontSize());
-        }
-        if (!$this->hasSetFontColor && $baseStyle->getFontColor() !== self::DEFAULT_FONT_COLOR) {
-            $mergedStyle->setFontColor($baseStyle->getFontColor());
-        }
-        if (!$this->hasSetFontName && $baseStyle->getFontName() !== self::DEFAULT_FONT_NAME) {
-            $mergedStyle->setFontName($baseStyle->getFontName());
-        }
-        if (!$this->hasSetWrapText && $baseStyle->shouldWrapText()) {
-            $mergedStyle->setShouldWrapText();
-        }
-        if (!$this->getBorder() && $baseStyle->shouldApplyBorder()) {
-            $mergedStyle->setBorder($baseStyle->getBorder());
-        }
-        if (!$this->hasSetBackgroundColor && $baseStyle->shouldApplyBackgroundColor()) {
-            $mergedStyle->setBackgroundColor($baseStyle->getBackgroundColor());
-        }
+        $this->mergeFontStyles($mergedStyle, $baseStyle);
+        $this->mergeOtherFontProperties($mergedStyle, $baseStyle);
+        $this->mergeCellProperties($mergedStyle, $baseStyle);
 
         return $mergedStyle;
+    }
+
+    /**
+     * @param Style $styleToUpdate (passed as reference)
+     * @param Style $baseStyle
+     * @return void
+     */
+    private function mergeFontStyles($styleToUpdate, $baseStyle)
+    {
+        if (!$this->hasSetFontBold && $baseStyle->isFontBold()) {
+            $styleToUpdate->setFontBold();
+        }
+        if (!$this->hasSetFontItalic && $baseStyle->isFontItalic()) {
+            $styleToUpdate->setFontItalic();
+        }
+        if (!$this->hasSetFontUnderline && $baseStyle->isFontUnderline()) {
+            $styleToUpdate->setFontUnderline();
+        }
+        if (!$this->hasSetFontStrikethrough && $baseStyle->isFontStrikethrough()) {
+            $styleToUpdate->setFontStrikethrough();
+        }
+    }
+
+    /**
+     * @param Style $styleToUpdate Style to update (passed as reference)
+     * @param Style $baseStyle
+     * @return void
+     */
+    private function mergeOtherFontProperties($styleToUpdate, $baseStyle)
+    {
+        if (!$this->hasSetFontSize && $baseStyle->getFontSize() !== self::DEFAULT_FONT_SIZE) {
+            $styleToUpdate->setFontSize($baseStyle->getFontSize());
+        }
+        if (!$this->hasSetFontColor && $baseStyle->getFontColor() !== self::DEFAULT_FONT_COLOR) {
+            $styleToUpdate->setFontColor($baseStyle->getFontColor());
+        }
+        if (!$this->hasSetFontName && $baseStyle->getFontName() !== self::DEFAULT_FONT_NAME) {
+            $styleToUpdate->setFontName($baseStyle->getFontName());
+        }
+    }
+
+    /**
+     * @param Style $styleToUpdate Style to update (passed as reference)
+     * @param Style $baseStyle
+     * @return void
+     */
+    private function mergeCellProperties($styleToUpdate, $baseStyle)
+    {
+        if (!$this->hasSetWrapText && $baseStyle->shouldWrapText()) {
+            $styleToUpdate->setShouldWrapText();
+        }
+        if (!$this->getBorder() && $baseStyle->shouldApplyBorder()) {
+            $styleToUpdate->setBorder($baseStyle->getBorder());
+        }
+        if (!$this->hasSetBackgroundColor && $baseStyle->shouldApplyBackgroundColor()) {
+            $styleToUpdate->setBackgroundColor($baseStyle->getBackgroundColor());
+        }
     }
 }
