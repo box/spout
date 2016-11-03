@@ -202,7 +202,7 @@ EOD;
 
         if (CellHelper::isNonEmptyString($cellValue)) {
             $matches = array();
-            if (preg_match('/=HYPERLINK\("(.*)","(.*)"\)/', $cellValue, $matches)) {
+            if (preg_match('/=HYPERLINK\([\'"](.*)[\'"],\s*[\'"](.*)[\'"]\)/', $cellValue, $matches)) {
                 // Special case to add HYPERLINK Formula
                 $url = $this->stringsEscaper->escape($matches[1]);
                 $text = $this->stringsEscaper->escape($matches[2]);
