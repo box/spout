@@ -149,7 +149,8 @@ EOD;
     private function isEmptyRow($dataRow)
     {
         $numCells = count($dataRow);
-        return ($numCells === 1 && CellHelper::isEmpty($dataRow[0]));
+        // using "reset()" instead of "$dataRow[0]" because $dataRow can be an associative array
+        return ($numCells === 1 && CellHelper::isEmpty(reset($dataRow)));
     }
 
     /**

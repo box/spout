@@ -294,7 +294,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $dataRows = [
             [''],
             ['xlsx--21', 'xlsx--22'],
-            [''],
+            ['key' => ''],
             [''],
             ['xlsx--51', 'xlsx--52'],
         ];
