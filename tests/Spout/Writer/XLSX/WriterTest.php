@@ -6,6 +6,7 @@ use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Writer\XLSX\Internal\Worksheet;
 
 /**
  * Class WriterTest
@@ -98,6 +99,19 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldThrowExceptionIfUnsupportedDataTypePassedIn()
     {
         $fileName = 'test_add_row_should_throw_exception_if_unsupported_data_type_passed_in.xlsx';
+        $dataRows = [
+            [str_repeat('a', Worksheet::MAX_CHARACTERS_PER_CELL + 1)],
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName);
+    }
+
+    /**
+     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
+     */
+    public function testAddRowShouldThrowExceptionIfWritingStringExceedingMaxNumberOfCharactersAllowedPerCell()
+    {
+        $fileName = 'test_add_row_should_throw_exception_if_string_exceeds_max_num_chars_allowed_per_cell.xlsx';
         $dataRows = [
             [new \stdClass()],
         ];
