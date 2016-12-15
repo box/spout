@@ -14,10 +14,9 @@ use Box\Spout\Common\Helper\EncodingHelper;
 class RowIterator implements IteratorInterface
 {
     /**
-     * If no value is given to fgetcsv(), it defaults to 8192 (which may be too low).
-     * Alignement with other functions like fgets() is discussed here: https://bugs.php.net/bug.php?id=48421
+     * @var int Number of bytes to read
      */
-    const MAX_READ_BYTES_PER_LINE = 32768;
+    protected $maxReadBytesPerLine;
 
     /** @var resource Pointer to the CSV file to read */
     protected $filePointer;
@@ -67,6 +66,7 @@ class RowIterator implements IteratorInterface
         $this->fieldEnclosure = $options->getFieldEnclosure();
         $this->encoding = $options->getEncoding();
         $this->inputEOLDelimiter = $options->getEndOfLineCharacter();
+        $this->maxReadBytesPerLine = $options->getMaxReadBytesPerLine();
         $this->shouldPreserveEmptyRows = $options->shouldPreserveEmptyRows();
         $this->globalFunctionsHelper = $globalFunctionsHelper;
 
@@ -177,7 +177,7 @@ class RowIterator implements IteratorInterface
      */
     protected function getNextUTF8EncodedRow()
     {
-        $encodedRowData = $this->globalFunctionsHelper->fgetcsv($this->filePointer, self::MAX_READ_BYTES_PER_LINE, $this->fieldDelimiter, $this->fieldEnclosure);
+        $encodedRowData = $this->globalFunctionsHelper->fgetcsv($this->filePointer, $this->maxReadBytesPerLine, $this->fieldDelimiter, $this->fieldEnclosure);
         if ($encodedRowData === false) {
             return false;
         }

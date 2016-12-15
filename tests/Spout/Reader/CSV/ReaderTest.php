@@ -429,6 +429,26 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * maxReadBytesPerLine should be configurable
+     * @return void
+     */
+    public function testShouldReadLinesOfAnySize()
+    {
+        $allColumns = $this->getAllRowsForFile(
+            'csv_with_long_lines.csv',
+            ';',
+            '"',
+            "\n",
+            EncodingHelper::ENCODING_UTF8,
+            false,
+            (1.5 * 1024 * 1024)
+        )[0];
+
+        $expectedNumOfColumns = 4;
+        $this->assertEquals($expectedNumOfColumns, count($allColumns));
+    }
+
+    /**
      * @param string $fileName
      * @param string|void $fieldDelimiter
      * @param string|void $fieldEnclosure
@@ -443,8 +463,9 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $fieldEnclosure = '"',
         $endOfLineCharacter = "\n",
         $encoding = EncodingHelper::ENCODING_UTF8,
-        $shouldPreserveEmptyRows = false)
-    {
+        $shouldPreserveEmptyRows = false,
+        $maxReadBytesPerLine = 32768
+    ) {
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
@@ -456,6 +477,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
             ->setEndOfLineCharacter($endOfLineCharacter)
             ->setEncoding($encoding)
             ->setShouldPreserveEmptyRows($shouldPreserveEmptyRows)
+            ->setMaxReadBytesPerLine($maxReadBytesPerLine)
             ->open($resourcePath);
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {

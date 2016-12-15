@@ -88,6 +88,17 @@ class Reader extends AbstractReader
     }
 
     /**
+     * Set maximum bytes to read per line
+     * @param $maxReadBytesPerLine
+     * @return Reader
+     */
+    public function setMaxReadBytesPerLine($maxReadBytesPerLine)
+    {
+        $this->getOptions()->setMaxReadBytesPerLine($maxReadBytesPerLine);
+        return $this;
+    }
+
+    /**
      * Returns whether stream wrappers are supported
      *
      * @return bool

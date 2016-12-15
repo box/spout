@@ -25,6 +25,12 @@ class ReaderOptions extends \Box\Spout\Reader\Common\ReaderOptions
     protected $endOfLineCharacter = "\n";
 
     /**
+     * Alignment with other functions like fgets() is discussed here: https://bugs.php.net/bug.php?id=48421
+     * @var int Number of bytes to read
+     */
+    protected $maxReadBytesPerLine = 32768;
+
+    /**
      * @return string
      */
     public function getFieldDelimiter()
@@ -106,5 +112,27 @@ class ReaderOptions extends \Box\Spout\Reader\Common\ReaderOptions
     {
         $this->endOfLineCharacter = $endOfLineCharacter;
         return $this;
+    }
+
+    /**
+     * Sets maximum bytes to read in line
+     *
+     * @param int $maxReadBytesPerLine
+     * @return ReaderOptions
+     */
+    public function setMaxReadBytesPerLine($maxReadBytesPerLine)
+    {
+        $this->maxReadBytesPerLine = $maxReadBytesPerLine;
+        return $this;
+    }
+
+    /**
+     * Gets maximum bytes to read in line
+     *
+     * @return int
+     */
+    public function getMaxReadBytesPerLine()
+    {
+        return $this->maxReadBytesPerLine;
     }
 }
