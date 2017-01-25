@@ -16,6 +16,12 @@ class XMLReader extends \XMLReader
 
     const ZIP_WRAPPER = 'zip://';
 
+    public function __construct()
+    {
+        // ensure libxml entity loading is enabled
+        libxml_disable_entity_loader(false);
+    }
+
     /**
      * Opens the XML Reader to read a file located inside a ZIP file.
      *
