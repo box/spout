@@ -164,7 +164,8 @@ class Sheet
      */
     protected function isNameUnique($name)
     {
-		foreach ($this->workbook->getWorksheets() as $sheetIndex => $sheet) {
+		foreach ($this->workbook->getWorksheets() as $sheetIndex => $worksheet) {
+			$sheet = $worksheet->getExternalSheet();
 			if ($sheetIndex !== $this->index && $sheet->getName() === $name) {
 				return false;
 			}

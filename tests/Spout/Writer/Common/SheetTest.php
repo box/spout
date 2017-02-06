@@ -2,12 +2,16 @@
 
 namespace Box\Spout\Writer\Common;
 
+use Box\Spout\Writer\Common\Internal\AbstractWorkbook;
+use Box\Spout\Writer\Common\Internal\WorksheetInterface;
+use PHPUnit_Framework_TestCase;
+
 /**
  * Class SheetTest
  *
  * @package Box\Spout\Writer\Common
  */
-class SheetTest extends \PHPUnit_Framework_TestCase
+class SheetTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @return void
@@ -101,8 +105,13 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     }
 }
 
-class SheetTestWorkbook extends \Box\Spout\Writer\Common\Internal\AbstractWorkbook
+class SheetTestWorkbook extends AbstractWorkbook
 {
+	public function __construct()
+	{
+		parent::__construct(false, null);
+	}
+
 	protected function getMaxRowsPerWorksheet()
 	{
 		return 0;
@@ -117,11 +126,42 @@ class SheetTestWorkbook extends \Box\Spout\Writer\Common\Internal\AbstractWorkbo
 	{
         $newSheetIndex = count($this->worksheets);
         $sheet = new Sheet($newSheetIndex, $this);
-        $this->worksheets[] = $sheet;
+        $this->worksheets[] = new SheetTestWorksheet($sheet);
         return $sheet;
 	}
 
 	public function close($finalFilePointer)
 	{
 	}
+}
+
+class SheetTestWorksheet implements WorksheetInterface
+{
+	private $sheet;
+
+	public function __construct(Sheet $sheet)
+	{
+		$this->sheet = $sheet;
+	}
+
+	public function addRow($dataRow, $style)
+	{
+
+	}
+
+	public function close()
+	{
+
+	}
+
+	public function getExternalSheet()
+	{
+		return $this->sheet;
+	}
+
+	public function getLastWrittenRowIndex()
+	{
+
+	}
+
 }
