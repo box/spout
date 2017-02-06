@@ -14,7 +14,9 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSheetName()
     {
-        $sheets = [new Sheet(0), new Sheet(1)];
+        $workbook = new SheetTestWorkbook();
+
+        $sheets = [$workbook->addNewSheet(), $workbook->addNewSheet()];
 
         $this->assertEquals('Sheet1', $sheets[0]->getName(), 'Invalid name for the first sheet');
         $this->assertEquals('Sheet2', $sheets[1]->getName(), 'Invalid name for the second sheet');
@@ -25,8 +27,10 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetSheetNameShouldCreateSheetWithCustomName()
     {
+        $workbook = new SheetTestWorkbook();
+
         $customSheetName = 'CustomName';
-        $sheet = new Sheet(0);
+        $sheet = $workbook->addNewSheet();
         $sheet->setName($customSheetName);
 
         $this->assertEquals($customSheetName, $sheet->getName(), "The sheet name should have been changed to '$customSheetName'");
@@ -63,7 +67,8 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetSheetNameShouldThrowOnInvalidName($customSheetName)
     {
-        (new Sheet(0))->setName($customSheetName);
+        $workbook = new SheetTestWorkbook();
+        $workbook->addNewSheet()->setName($customSheetName);
     }
 
     /**
@@ -71,8 +76,9 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetSheetNameShouldNotThrowWhenSettingSameNameAsCurrentOne()
     {
+        $workbook = new SheetTestWorkbook();
         $customSheetName = 'Sheet name';
-        $sheet = new Sheet(0);
+        $sheet = $workbook->addNewSheet();
         $sheet->setName($customSheetName);
         $sheet->setName($customSheetName);
     }
@@ -83,12 +89,39 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetSheetNameShouldThrowWhenNameIsAlreadyUsed()
     {
+        $workbook = new SheetTestWorkbook();
+
         $customSheetName = 'Sheet name';
 
-        $sheet = new Sheet(0);
+        $sheet = $workbook->addNewSheet();
         $sheet->setName($customSheetName);
 
-        $sheet = new Sheet(1);
+        $sheet = $workbook->addNewSheet();
         $sheet->setName($customSheetName);
     }
+}
+
+class SheetTestWorkbook extends \Box\Spout\Writer\Common\Internal\AbstractWorkbook
+{
+	protected function getMaxRowsPerWorksheet()
+	{
+		return 0;
+	}
+
+	protected function getStyleHelper()
+	{
+		return null;
+	}
+
+	public function addNewSheet()
+	{
+        $newSheetIndex = count($this->worksheets);
+        $sheet = new Sheet($newSheetIndex, $this);
+        $this->worksheets[] = $sheet;
+        return $sheet;
+	}
+
+	public function close($finalFilePointer)
+	{
+	}
 }
