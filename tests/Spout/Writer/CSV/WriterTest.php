@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\CSV;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Common\Type;
 use Box\Spout\Common\Helper\EncodingHelper;
+use Box\Spout\Writer\Common\Cell;
 use Box\Spout\Writer\WriterFactory;
 
 /**
@@ -175,6 +176,19 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writtenContent = $this->trimWrittenContent($writtenContent);
 
         $this->assertEquals('#This is, a comma#,csv--12,csv--13', $writtenContent, 'The fields should be enclosed with #');
+    }
+
+    /**
+     * @return void
+     */
+    public function testWriteShouldAcceptCellObjects()
+    {
+        $allRows = [
+            [new Cell('String Value'), new Cell(1)]
+        ];
+        $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_cell_objects.csv');
+        $writtenContent = $this->trimWrittenContent($writtenContent);
+        $this->assertEquals('"String Value",1', $writtenContent);
     }
 
     /**

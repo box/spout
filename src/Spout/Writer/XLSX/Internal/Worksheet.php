@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\XLSX\Internal;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Writer\Common\Cell;
 use Box\Spout\Writer\Common\Helper\CellHelper;
 use Box\Spout\Writer\Common\Internal\WorksheetInterface;
 
@@ -213,13 +214,19 @@ EOD;
         $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
         $cellXML .= ' s="' . $styleId . '"';
 
-        if (CellHelper::isNonEmptyString($cellValue)) {
-            $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cellValue);
-        } else if (CellHelper::isBoolean($cellValue)) {
-            $cellXML .= ' t="b"><v>' . intval($cellValue) . '</v></c>';
-        } else if (CellHelper::isNumeric($cellValue)) {
-            $cellXML .= '><v>' . $cellValue . '</v></c>';
-        } else if (empty($cellValue)) {
+        if($cellValue instanceof Cell) {
+            $cellContent = $cellValue->getValue();
+        } else {
+            $cellContent = $cellValue;
+        }
+
+        if (CellHelper::isNonEmptyString($cellContent)) {
+            $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cellContent);
+        } else if (CellHelper::isBoolean($cellContent)) {
+            $cellXML .= ' t="b"><v>' . intval($cellContent) . '</v></c>';
+        } else if (CellHelper::isNumeric($cellContent)) {
+            $cellXML .= '><v>' . $cellContent . '</v></c>';
+        } else if (empty($cellContent)) {
             if ($this->styleHelper->shouldApplyStyleOnEmptyCell($styleId)) {
                 $cellXML .= '/>';
             } else {
@@ -228,7 +235,7 @@ EOD;
                 $cellXML = '';
             }
         } else {
-            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
+            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellContent));
         }
 
         return $cellXML;

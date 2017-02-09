@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\ODS\Internal;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Writer\Common\Cell;
 use Box\Spout\Writer\Common\Helper\CellHelper;
 use Box\Spout\Writer\Common\Internal\WorksheetInterface;
 
@@ -191,27 +192,33 @@ class Worksheet implements WorksheetInterface
             $data .= ' table:number-columns-repeated="' . $numTimesValueRepeated . '"';
         }
 
-        if (CellHelper::isNonEmptyString($cellValue)) {
+        if($cellValue instanceof Cell) {
+            $cellContent = $cellValue->getValue();
+        } else {
+            $cellContent = $cellValue;
+        }
+
+        if (CellHelper::isNonEmptyString($cellContent)) {
             $data .= ' office:value-type="string" calcext:value-type="string">';
 
-            $cellValueLines = explode("\n", $cellValue);
+            $cellValueLines = explode("\n", $cellContent);
             foreach ($cellValueLines as $cellValueLine) {
                 $data .= '<text:p>' . $this->stringsEscaper->escape($cellValueLine) . '</text:p>';
             }
 
             $data .= '</table:table-cell>';
-        } else if (CellHelper::isBoolean($cellValue)) {
-            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:boolean-value="' . $cellValue . '">';
-            $data .= '<text:p>' . $cellValue . '</text:p>';
+        } else if (CellHelper::isBoolean($cellContent)) {
+            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:boolean-value="' . $cellContent . '">';
+            $data .= '<text:p>' . $cellContent . '</text:p>';
             $data .= '</table:table-cell>';
-        } else if (CellHelper::isNumeric($cellValue)) {
-            $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cellValue . '">';
-            $data .= '<text:p>' . $cellValue . '</text:p>';
+        } else if (CellHelper::isNumeric($cellContent)) {
+            $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cellContent . '">';
+            $data .= '<text:p>' . $cellContent . '</text:p>';
             $data .= '</table:table-cell>';
-        } else if (empty($cellValue)) {
+        } else if (empty($cellContent)) {
             $data .= '/>';
         } else {
-            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
+            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellContent));
         }
 
         return $data;
