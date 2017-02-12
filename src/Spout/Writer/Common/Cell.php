@@ -9,32 +9,32 @@ class Cell
     /**
      * Numeric cell type (whole numbers, fractional numbers, dates)
      */
-    const CELL_TYPE_NUMERIC = 0;
+    const TYPE_NUMERIC = 0;
 
     /**
      * String (text) cell type
      */
-    const CELL_TYPE_STRING = 1;
+    const TYPE_STRING = 1;
 
     /**
      * Formula cell type
      */
-    const CELL_TYPE_FORMULA = 2;
+    const TYPE_FORMULA = 2;
 
     /**
      * Blank cell type
      */
-    const CELL_TYPE_BLANK = 3;
+    const TYPE_BLANK = 3;
 
     /**
      * Boolean cell type
      */
-    const CELL_TYPE_BOOLEAN = 4;
+    const TYPE_BOOLEAN = 4;
 
     /**
      * Error cell type
      */
-    const CELL_TYPE_ERROR = 5;
+    const TYPE_ERROR = 5;
 
     /**
      * The value of this cell
@@ -90,15 +90,15 @@ class Cell
     protected function detectType($value)
     {
         if (CellHelper::isBoolean($value)) {
-            return self::CELL_TYPE_BOOLEAN;
+            return self::TYPE_BOOLEAN;
         } elseif (CellHelper::isEmpty($value)) {
-            return self::CELL_TYPE_BLANK;
+            return self::TYPE_BLANK;
         } elseif (CellHelper::isNumeric($this->getValue())) {
-            return self::CELL_TYPE_NUMERIC;
+            return self::TYPE_NUMERIC;
         } elseif (CellHelper::isNonEmptyString($value)) {
-            return self::CELL_TYPE_STRING;
+            return self::TYPE_STRING;
         } else {
-            return self::CELL_TYPE_ERROR;
+            return self::TYPE_ERROR;
         }
     }
 
@@ -107,7 +107,7 @@ class Cell
      */
     public function isBoolean()
     {
-        return $this->type === self::CELL_TYPE_BOOLEAN;
+        return $this->type === self::TYPE_BOOLEAN;
     }
 
     /**
@@ -115,7 +115,15 @@ class Cell
      */
     public function isBlank()
     {
-        return $this->type === self::CELL_TYPE_BLANK;
+        return $this->type === self::TYPE_BLANK;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFormula()
+    {
+        return $this->type === self::TYPE_FORMULA;
     }
 
     /**
@@ -123,7 +131,7 @@ class Cell
      */
     public function isNumeric()
     {
-        return $this->type === self::CELL_TYPE_NUMERIC;
+        return $this->type === self::TYPE_NUMERIC;
     }
 
     /**
@@ -131,7 +139,7 @@ class Cell
      */
     public function isString()
     {
-        return $this->type === self::CELL_TYPE_STRING;
+        return $this->type === self::TYPE_STRING;
     }
 
     /**
@@ -139,7 +147,7 @@ class Cell
      */
     public function isError()
     {
-        return $this->type === self::CELL_TYPE_ERROR;
+        return $this->type === self::TYPE_ERROR;
     }
 
     /**
