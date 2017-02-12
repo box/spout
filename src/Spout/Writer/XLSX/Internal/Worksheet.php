@@ -214,19 +214,19 @@ EOD;
         $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
         $cellXML .= ' s="' . $styleId . '"';
 
-        if($cellValue instanceof Cell) {
-            $cellContent = $cellValue->getValue();
+        if ($cellValue instanceof Cell) {
+            $cell = $cellValue;
         } else {
-            $cellContent = $cellValue;
+            $cell = new Cell($cellValue);
         }
 
-        if (CellHelper::isNonEmptyString($cellContent)) {
-            $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cellContent);
-        } else if (CellHelper::isBoolean($cellContent)) {
-            $cellXML .= ' t="b"><v>' . intval($cellContent) . '</v></c>';
-        } else if (CellHelper::isNumeric($cellContent)) {
-            $cellXML .= '><v>' . $cellContent . '</v></c>';
-        } else if (empty($cellContent)) {
+        if ($cell->isString()) {
+            $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cell->getValue());
+        } else if ($cell->isBoolean()) {
+            $cellXML .= ' t="b"><v>' . intval($cell->getValue()) . '</v></c>';
+        } else if ($cell->isNumeric()) {
+            $cellXML .= '><v>' . $cell->getValue() . '</v></c>';
+        } else if ($cell->isBlank()) {
             if ($this->styleHelper->shouldApplyStyleOnEmptyCell($styleId)) {
                 $cellXML .= '/>';
             } else {
@@ -235,7 +235,7 @@ EOD;
                 $cellXML = '';
             }
         } else {
-            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellContent));
+            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cell->getValue()));
         }
 
         return $cellXML;

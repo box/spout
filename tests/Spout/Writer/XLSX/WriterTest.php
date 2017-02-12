@@ -530,6 +530,39 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return  void
+     */
+    public function testWriteShouldAcceptCellObjectsWithDifferentValueTypes()
+    {
+        $fileName = 'test_writer_should_accept_cell_objects_with_types.xlsx';
+
+        $dataRowsShared = [
+            [new Cell('i am a string')],
+        ];
+        $dataRowsInline = [
+            [new Cell(51465), new Cell(true), new Cell(51465.5)]
+        ];
+
+        $dataRows = array_merge($dataRowsShared, $dataRowsInline);
+
+        $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
+
+        foreach ($dataRowsShared as $dataRow) {
+            /** @var Cell $cell */
+            foreach ($dataRow as $cell) {
+                $this->assertSharedStringWasWritten($fileName, (string)$cell->getValue());
+            }
+        }
+
+        foreach ($dataRowsInline as $dataRow) {
+            /** @var Cell $cell */
+            foreach ($dataRow as $cell) {
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cell->getValue());
+            }
+        }
+    }
+
+    /**
      * @param array $allRows
      * @param string $fileName
      * @param bool $shouldUseInlineStrings

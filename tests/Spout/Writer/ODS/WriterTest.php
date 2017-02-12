@@ -486,6 +486,26 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testWriteShouldAcceptCellObjectsWithDifferentValueTypes()
+    {
+        $fileName = 'test_writer_should_accept_cell_objects_with_types.ods';
+        $dataRows = [
+            [new Cell('i am a string'), new Cell(51465), new Cell(true), new Cell(51465.5)],
+        ];
+
+        $this->writeToODSFile($dataRows, $fileName);
+
+        foreach ($dataRows as $dataRow) {
+            /** @var Cell $cell */
+            foreach ($dataRow as $cell) {
+                $this->assertValueWasWritten($fileName, (string)$cell->getValue(), '', true);
+            }
+        }
+    }
+
+    /**
      * @param array $allRows
      * @param string $fileName
      * @param bool $shouldCreateSheetsAutomatically
@@ -549,6 +569,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $xmlContents = file_get_contents('zip://' . $pathToContentFile);
 
         $this->assertContains($value, $xmlContents, $message);
+
     }
 
     /**

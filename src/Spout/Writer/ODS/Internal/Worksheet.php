@@ -192,33 +192,33 @@ class Worksheet implements WorksheetInterface
             $data .= ' table:number-columns-repeated="' . $numTimesValueRepeated . '"';
         }
 
-        if($cellValue instanceof Cell) {
-            $cellContent = $cellValue->getValue();
+        if ($cellValue instanceof Cell) {
+            $cell = $cellValue;
         } else {
-            $cellContent = $cellValue;
+            $cell = new Cell($cellValue);
         }
 
-        if (CellHelper::isNonEmptyString($cellContent)) {
+        if ($cell->isString()) {
             $data .= ' office:value-type="string" calcext:value-type="string">';
 
-            $cellValueLines = explode("\n", $cellContent);
+            $cellValueLines = explode("\n", $cell->getValue());
             foreach ($cellValueLines as $cellValueLine) {
                 $data .= '<text:p>' . $this->stringsEscaper->escape($cellValueLine) . '</text:p>';
             }
 
             $data .= '</table:table-cell>';
-        } else if (CellHelper::isBoolean($cellContent)) {
-            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:boolean-value="' . $cellContent . '">';
-            $data .= '<text:p>' . $cellContent . '</text:p>';
+        } else if ($cell->isBoolean()) {
+            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:boolean-value="' . $cell->getValue() . '">';
+            $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
-        } else if (CellHelper::isNumeric($cellContent)) {
-            $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cellContent . '">';
-            $data .= '<text:p>' . $cellContent . '</text:p>';
+        } else if ($cell->isNumeric()) {
+            $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cell->getValue() . '">';
+            $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
-        } else if (empty($cellContent)) {
+        } else if ($cell->isBlank()) {
             $data .= '/>';
         } else {
-            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellContent));
+            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cell->getValue()));
         }
 
         return $data;

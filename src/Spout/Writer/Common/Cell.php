@@ -43,20 +43,19 @@ class Cell
     protected $value = null;
 
     /**
-     * Comment of this cell
-     * @var null | string
+     * The cell type
+     * @var null
      */
-    protected $comment = null;
+    protected $type = null;
 
     /**
      * Cell constructor.
      * @param $value mixed
      * @param $comment string
      */
-    public function __construct($value, $comment = null)
+    public function __construct($value)
     {
         $this->setValue($value);
-        $this->setComment($comment);
     }
 
     /**
@@ -65,6 +64,7 @@ class Cell
     public function setValue($value)
     {
         $this->value = $value;
+        $this->type = $this->detectType($value);
     }
 
     /**
@@ -76,40 +76,70 @@ class Cell
     }
 
     /**
-     * @param $comment string
+     * @return mixed|null
      */
-    public function setComment($comment)
+    public function getType()
     {
-        $this->comment = $comment;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getComment()
-    {
-        return $this->comment;
+        return $this->type;
     }
 
     /**
      * Get the current value type
      * @return int
      */
-    public function getType()
+    protected function detectType($value)
     {
-        $value = $this->getValue();
-
-        if(CellHelper::isBoolean($value)) {
+        if (CellHelper::isBoolean($value)) {
             return self::CELL_TYPE_BOOLEAN;
         } elseif (CellHelper::isEmpty($value)) {
             return self::CELL_TYPE_BLANK;
-        } elseif(CellHelper::isNumeric($this->getValue())) {
+        } elseif (CellHelper::isNumeric($this->getValue())) {
             return self::CELL_TYPE_NUMERIC;
         } elseif (CellHelper::isNonEmptyString($value)) {
             return self::CELL_TYPE_STRING;
         } else {
             return self::CELL_TYPE_ERROR;
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBoolean()
+    {
+        return $this->type === self::CELL_TYPE_BOOLEAN;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBlank()
+    {
+        return $this->type === self::CELL_TYPE_BLANK;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNumeric()
+    {
+        return $this->type === self::CELL_TYPE_NUMERIC;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isString()
+    {
+        return $this->type === self::CELL_TYPE_STRING;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isError()
+    {
+        return $this->type === self::CELL_TYPE_ERROR;
     }
 
     /**
