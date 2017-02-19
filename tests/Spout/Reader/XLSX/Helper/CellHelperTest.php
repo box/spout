@@ -10,14 +10,25 @@ namespace Box\Spout\Reader\XLSX\Helper;
 class CellHelperTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @return void
+     * @return array
      */
-    public function testFillMissingArrayIndexes()
+    public function dataProviderForTestFillMissingArrayIndexes()
     {
-        $arrayToFill = [1 => 1, 3 => 3];
-        $filledArray = CellHelper::fillMissingArrayIndexes($arrayToFill, 'FILL');
+        return [
+            [ null, [] ],
+            [ [], [] ],
+            [ [1 => 1, 3 => 3], ['FILL', 1, 'FILL', 3] ]
+        ];
+    }
 
-        $expectedFilledArray = ['FILL', 1, 'FILL', 3];
+    /**
+     * @dataProvider dataProviderForTestFillMissingArrayIndexes
+     * @param array $arrayToFill
+     * @param array $expectedFilledArray
+     */
+    public function testFillMissingArrayIndexes($arrayToFill, array $expectedFilledArray)
+    {
+        $filledArray = CellHelper::fillMissingArrayIndexes($arrayToFill, 'FILL');
         $this->assertEquals($expectedFilledArray, $filledArray);
     }
 
