@@ -85,7 +85,7 @@ class SheetHelper
         if ($xmlReader->openFileInZip($this->filePath, self::WORKBOOK_XML_FILE_PATH)) {
             while ($xmlReader->read()) {
                 if ($xmlReader->isPositionedOnStartingNode('workbookView')) {
-                    $activeSheetIndex = $xmlReader->getAttribute('activeTab');
+                    $activeSheetIndex = (int) $xmlReader->getAttribute('activeTab');
                 }
             }
             $xmlReader->close();
