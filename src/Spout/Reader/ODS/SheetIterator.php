@@ -116,7 +116,7 @@ class SheetIterator implements IteratorInterface
         $escapedSheetName = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_TABLE_NAME);
         $sheetName = $this->escaper->unescape($escapedSheetName);
 
-        return new Sheet($this->xmlReader, $sheetName, $this->currentSheetIndex, $this->options);
+        return new Sheet($this->xmlReader, $this->currentSheetIndex, $sheetName, $this->options);
     }
 
     /**
