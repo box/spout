@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\Common;
 
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Writer\Common\Internal\WorkbookInterface;
 use Box\Spout\Writer\Exception\InvalidSheetNameException;
 
 /**
@@ -21,8 +22,8 @@ class Sheet
     /** @var array Invalid characters that cannot be contained in the sheet name */
     private static $INVALID_CHARACTERS_IN_SHEET_NAME = ['\\', '/', '?', '*', ':', '[', ']'];
 
-    /** @var array Associative array [SHEET_INDEX] => [SHEET_NAME] keeping track of sheets' name to enforce uniqueness */
-    protected static $SHEETS_NAME_USED = [];
+    /** @var \Box\Spout\Writer\Common\Internal\WorkbookInterface reference to Workbook this sheet is a part of */
+    protected $workbook;
 
     /** @var int Index of the sheet, based on order in the workbook (zero-based) */
     protected $index;
@@ -36,9 +37,10 @@ class Sheet
     /**
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      */
-    public function __construct($sheetIndex)
+    public function __construct($sheetIndex, WorkbookInterface $wb)
     {
         $this->index = $sheetIndex;
+		$this->workbook = $wb;
         $this->stringHelper = new StringHelper();
         $this->setName(self::DEFAULT_SHEET_NAME_PREFIX . ($sheetIndex + 1));
     }
@@ -71,14 +73,13 @@ class Sheet
      * @api
      * @param string $name Name of the sheet
      * @return Sheet
-     * @throws \Box\Spout\Writer\Exception\InvalidSheetNameException If the sheet's name is invalid.
+     * @throws InvalidSheetNameException If the sheet's name is invalid.
      */
     public function setName($name)
     {
         $this->throwIfNameIsInvalid($name);
 
         $this->name = $name;
-        self::$SHEETS_NAME_USED[$this->index] = $name;
 
         return $this;
     }
@@ -89,7 +90,7 @@ class Sheet
      *
      * @param string $name
      * @return void
-     * @throws \Box\Spout\Writer\Exception\InvalidSheetNameException If the sheet's name is invalid.
+     * @throws InvalidSheetNameException If the sheet's name is invalid.
      */
     protected function throwIfNameIsInvalid($name)
     {
@@ -163,11 +164,12 @@ class Sheet
      */
     protected function isNameUnique($name)
     {
-        foreach (self::$SHEETS_NAME_USED as $sheetIndex => $sheetName) {
-            if ($sheetIndex !== $this->index && $sheetName === $name) {
-                return false;
-            }
-        }
+		foreach ($this->workbook->getWorksheets() as $sheetIndex => $worksheet) {
+			$sheet = $worksheet->getExternalSheet();
+			if ($sheetIndex !== $this->index && $sheet->getName() === $name) {
+				return false;
+			}
+		}
 
         return true;
     }
