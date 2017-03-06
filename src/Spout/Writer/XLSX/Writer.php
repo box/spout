@@ -3,8 +3,8 @@
 namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Writer\AbstractMultiSheetsWriter;
-use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Writer\XLSX\Internal\Workbook;
+use Box\Spout\Writer\Style\StyleBuilder;
 
 /**
  * Class Writer
@@ -26,6 +26,9 @@ class Writer extends AbstractMultiSheetsWriter
 
     /** @var bool Whether inline or shared strings should be used - inline string is more memory efficient */
     protected $shouldUseInlineStrings = true;
+
+    /** @var bool Determine whether cell widths should be calculated */
+    protected $shouldUseCellAutosizing = false;
 
     /** @var Internal\Workbook The workbook for the XLSX file */
     protected $book;
@@ -65,6 +68,22 @@ class Writer extends AbstractMultiSheetsWriter
     }
 
     /**
+     * Enable or disable automated calculation of cell sizes to fit the contents of a cell value.
+     *
+     * @api
+     * @param bool $shouldUseCellAutosizing
+     * @return Writer
+     * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
+     */
+    public function setShouldUseCellAutosizing($shouldUseCellAutosizing)
+    {
+        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
+
+        $this->shouldUseCellAutosizing = $shouldUseCellAutosizing;
+        return $this;
+    }
+
+    /**
      * Configures the write and sets the current sheet pointer to a new sheet.
      *
      * @return void
@@ -74,7 +93,13 @@ class Writer extends AbstractMultiSheetsWriter
     {
         if (!$this->book) {
             $tempFolder = ($this->tempFolder) ? : sys_get_temp_dir();
-            $this->book = new Workbook($tempFolder, $this->shouldUseInlineStrings, $this->shouldCreateNewSheetsAutomatically, $this->defaultRowStyle);
+            $this->book = new Workbook(
+                $tempFolder,
+                $this->shouldUseInlineStrings,
+                $this->shouldUseCellAutosizing,
+                $this->shouldCreateNewSheetsAutomatically,
+                $this->defaultRowStyle
+            );
             $this->book->addNewSheetAndMakeItCurrent();
         }
     }
@@ -98,6 +123,7 @@ class Writer extends AbstractMultiSheetsWriter
      * @return void
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the book is not created yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     * @throws \Box\Spout\Writer\Exception\WriterException
      */
     protected function addRowToWriter(array $dataRow, $style)
     {
@@ -120,8 +146,8 @@ class Writer extends AbstractMultiSheetsWriter
 
     /**
      * Closes the writer, preventing any additional writing.
-     *
      * @return void
+     * @throws \Box\Spout\Common\Exception\IOException
      */
     protected function closeWriter()
     {

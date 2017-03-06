@@ -3,10 +3,12 @@
 namespace Box\Spout\Writer\XLSX\Internal;
 
 use Box\Spout\Common\Exception\InvalidArgumentException;
+use Box\Spout\Writer\Common\Internal\WorksheetInterface;
+use Box\Spout\Writer\XLSX\Helper\SizeCalculator;
+use Box\Spout\Writer\Common\Helper\CellHelper;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Common\Helper\CellHelper;
-use Box\Spout\Writer\Common\Internal\WorksheetInterface;
+use Box\Spout\Writer\Style\Style;
 
 /**
  * Class Worksheet
@@ -45,11 +47,17 @@ EOD;
     /** @var bool Whether inline or shared strings should be used */
     protected $shouldUseInlineStrings;
 
+    /** @var bool Determine whether cell widths should be calculated */
+    protected $shouldUseCellAutosizing;
+
     /** @var \Box\Spout\Common\Escaper\XLSX Strings escaper */
     protected $stringsEscaper;
 
     /** @var \Box\Spout\Common\Helper\StringHelper String helper */
     protected $stringHelper;
+
+    /** @var \Box\Spout\Writer\XLSX\Helper\SizeCalculator */
+    protected $sizeCalculator;
 
     /** @var Resource Pointer to the sheet data file (e.g. xl/worksheets/sheet1.xml) */
     protected $sheetFilePointer;
@@ -57,20 +65,34 @@ EOD;
     /** @var int Index of the last written row */
     protected $lastWrittenRowIndex = 0;
 
+    /** @var array Holds the column widths for cell sizing */
+    protected $columnWidths = [];
+
     /**
      * @param \Box\Spout\Writer\Common\Sheet $externalSheet The associated "external" sheet
      * @param string $worksheetFilesFolder Temporary folder where the files to create the XLSX will be stored
      * @param \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper $sharedStringsHelper Helper for shared strings
      * @param \Box\Spout\Writer\XLSX\Helper\StyleHelper Helper to work with styles
+     * @param \Box\Spout\Writer\XLSX\Helper\SizeCalculator $sizeCalculator To calculate cell sizes
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
+     * @param bool $shouldUseCellAutosizing Whether cell sizes should be calculated or not
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
-    public function __construct($externalSheet, $worksheetFilesFolder, $sharedStringsHelper, $styleHelper, $shouldUseInlineStrings)
-    {
+    public function __construct(
+        $externalSheet,
+        $worksheetFilesFolder,
+        $sharedStringsHelper,
+        $styleHelper,
+        $sizeCalculator,
+        $shouldUseInlineStrings,
+        $shouldUseCellAutosizing
+    ) {
         $this->externalSheet = $externalSheet;
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->styleHelper = $styleHelper;
+        $this->sizeCalculator = $sizeCalculator;
         $this->shouldUseInlineStrings = $shouldUseInlineStrings;
+        $this->shouldUseCellAutosizing = $shouldUseCellAutosizing;
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $this->stringsEscaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
@@ -81,7 +103,8 @@ EOD;
     }
 
     /**
-     * Prepares the worksheet to accept data
+     * Prepares the worksheet to accept data and preserves free space at the beginning
+     * of the sheet file to prepend header xml and optional column size data.
      *
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
@@ -91,7 +114,8 @@ EOD;
         $this->sheetFilePointer = fopen($this->worksheetFilePath, 'w');
         $this->throwIfSheetFilePointerIsNotAvailable();
 
-        fwrite($this->sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        $spaceToPreserve = $this->shouldUseCellAutosizing ? 1024 * 1024 : 512;
+        fwrite($this->sheetFilePointer, str_repeat(' ', $spaceToPreserve));
         fwrite($this->sheetFilePointer, '<sheetData>');
     }
 
@@ -184,8 +208,12 @@ EOD;
 
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
+        if ($this->shouldUseCellAutosizing) {
+            $this->sizeCalculator->setFont($style->getFontName(), $style->getFontSize());
+        }
+
         foreach($dataRow as $cellValue) {
-            $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cellValue, $style->getId());
+            $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cellValue, $style);
             $cellNumber++;
         }
 
@@ -200,18 +228,19 @@ EOD;
     /**
      * Build and return xml for a single cell.
      *
-     * @param int $rowIndex
-     * @param int $cellNumber
+     * @param int   $rowIndex
+     * @param int   $cellNumber
      * @param mixed $cellValue
-     * @param int $styleId
+     * @param Style $style Style to be applied to the row. NULL means use default style.
+     *
      * @return string
      * @throws InvalidArgumentException If the given value cannot be processed
      */
-    private function getCellXML($rowIndex, $cellNumber, $cellValue, $styleId)
+    private function getCellXML($rowIndex, $cellNumber, $cellValue, Style $style)
     {
         $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
         $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
-        $cellXML .= ' s="' . $styleId . '"';
+        $cellXML .= ' s="' . $style->getId() . '"';
 
         if (CellHelper::isNonEmptyString($cellValue)) {
             $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cellValue);
@@ -220,7 +249,7 @@ EOD;
         } else if (CellHelper::isNumeric($cellValue)) {
             $cellXML .= '><v>' . $cellValue . '</v></c>';
         } else if (empty($cellValue)) {
-            if ($this->styleHelper->shouldApplyStyleOnEmptyCell($styleId)) {
+            if ($this->styleHelper->shouldApplyStyleOnEmptyCell($style->getId())) {
                 $cellXML .= '/>';
             } else {
                 // don't write empty cells that do no need styling
@@ -230,6 +259,8 @@ EOD;
         } else {
             throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
         }
+
+        $this->updateColumnWidth($cellNumber, $cellValue, $style);
 
         return $cellXML;
     }
@@ -258,6 +289,48 @@ EOD;
     }
 
     /**
+     * Update the width of the current cellNumber, if cell autosizing is enabled
+     * and the width of the current value exceeds a previously calculated one.
+     *
+     * @param int    $cellNumber
+     * @param string $cellValue
+     * @param Style  $style
+     */
+    private function updateColumnWidth($cellNumber, $cellValue, $style)
+    {
+        if ($this->shouldUseCellAutosizing) {
+            $cellWidth = $this->sizeCalculator->getCellWidth($cellValue, $style->getFontSize());
+            if (!isset($this->columnWidths[$cellNumber]) || $cellWidth > $this->columnWidths[$cellNumber]) {
+                $this->columnWidths[$cellNumber] = $cellWidth;
+            }
+        }
+    }
+
+    /**
+     * Return writable <cols> xml string, if column widths have been
+     * calculated or custom widths have been set.
+     *
+     * @return string
+     */
+    private function getColsXML()
+    {
+        if (0 === count($this->columnWidths)) {
+            return '';
+        }
+
+        $colsXml = '<cols>';
+        $colTemplate = '<col min="%d" max="%d" width="%s" customWidth="1"/>';
+
+        foreach ($this->columnWidths as $columnIndex => $columnWidth) {
+            $colsXml .= sprintf($colTemplate, $columnIndex+1, $columnIndex+1, $columnWidth);
+        }
+
+        $colsXml .= '</cols>';
+
+        return $colsXml;
+    }
+
+    /**
      * Closes the worksheet
      *
      * @return void
@@ -268,8 +341,12 @@ EOD;
             return;
         }
 
-        fwrite($this->sheetFilePointer, '</sheetData>');
-        fwrite($this->sheetFilePointer, '</worksheet>');
+        fwrite($this->sheetFilePointer, '</sheetData></worksheet>');
+        rewind($this->sheetFilePointer);
+
+        fwrite($this->sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        fwrite($this->sheetFilePointer, $this->getColsXML());
+
         fclose($this->sheetFilePointer);
     }
 }
