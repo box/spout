@@ -203,12 +203,12 @@ Unfortunately, Spout does not support all the possible formatting options yet. B
 Category  | Property      | API
 ----------|---------------|---------------------------------------
 Font      | Bold          | `StyleBuilder::setFontBold()`
-          | Italic        | `StyleBuilder::setFontItalic()`
-          | Underline     | `StyleBuilder::setFontUnderline()`
-          | Strikethrough | `StyleBuilder::setFontStrikethrough()`
-          | Font name     | `StyleBuilder::setFontName('Arial')`
-          | Font size     | `StyleBuilder::setFontSize(14)`
-          | Font color    | `StyleBuilder::setFontColor(Color::BLUE)`<br>`StyleBuilder::setFontColor(Color::rgb(0, 128, 255))`
+&nbsp;    | Italic        | `StyleBuilder::setFontItalic()`
+&nbsp;    | Underline     | `StyleBuilder::setFontUnderline()`
+&nbsp;    | Strikethrough | `StyleBuilder::setFontStrikethrough()`
+&nbsp;    | Font name     | `StyleBuilder::setFontName('Arial')`
+&nbsp;    | Font size     | `StyleBuilder::setFontSize(14)`
+&nbsp;    | Font color    | `StyleBuilder::setFontColor(Color::BLUE)`<br>`StyleBuilder::setFontColor(Color::rgb(0, 128, 255))`
 Alignment | Wrap text     | `StyleBuilder::setShouldWrapText(true|false)`
 
 #### New sheet creation
