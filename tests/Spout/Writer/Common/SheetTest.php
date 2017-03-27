@@ -14,7 +14,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSheetName()
     {
-        $sheets = [new Sheet(0), new Sheet(1)];
+        $sheets = [new Sheet(0, 'workbookId1'), new Sheet(1, 'workbookId1')];
 
         $this->assertEquals('Sheet1', $sheets[0]->getName(), 'Invalid name for the first sheet');
         $this->assertEquals('Sheet2', $sheets[1]->getName(), 'Invalid name for the second sheet');
@@ -26,7 +26,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     public function testSetSheetNameShouldCreateSheetWithCustomName()
     {
         $customSheetName = 'CustomName';
-        $sheet = new Sheet(0);
+        $sheet = new Sheet(0, 'workbookId1');
         $sheet->setName($customSheetName);
 
         $this->assertEquals($customSheetName, $sheet->getName(), "The sheet name should have been changed to '$customSheetName'");
@@ -63,7 +63,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetSheetNameShouldThrowOnInvalidName($customSheetName)
     {
-        (new Sheet(0))->setName($customSheetName);
+        (new Sheet(0, 'workbookId1'))->setName($customSheetName);
     }
 
     /**
@@ -72,7 +72,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     public function testSetSheetNameShouldNotThrowWhenSettingSameNameAsCurrentOne()
     {
         $customSheetName = 'Sheet name';
-        $sheet = new Sheet(0);
+        $sheet = new Sheet(0, 'workbookId1');
         $sheet->setName($customSheetName);
         $sheet->setName($customSheetName);
     }
@@ -85,10 +85,27 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     {
         $customSheetName = 'Sheet name';
 
-        $sheet = new Sheet(0);
+        $sheet = new Sheet(0, 'workbookId1');
         $sheet->setName($customSheetName);
 
-        $sheet = new Sheet(1);
+        $sheet = new Sheet(1, 'workbookId1');
+        $sheet->setName($customSheetName);
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetSheetNameShouldNotThrowWhenSameNameUsedInDifferentWorkbooks()
+    {
+        $customSheetName = 'Sheet name';
+
+        $sheet = new Sheet(0, 'workbookId1');
+        $sheet->setName($customSheetName);
+
+        $sheet = new Sheet(0, 'workbookId2');
+        $sheet->setName($customSheetName);
+
+        $sheet = new Sheet(1, 'workbookId3');
         $sheet->setName($customSheetName);
     }
 }

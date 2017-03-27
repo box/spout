@@ -7,7 +7,7 @@ use Box\Spout\Writer\Exception\InvalidSheetNameException;
 
 /**
  * Class Sheet
- * External representation of a worksheet within a ODS file
+ * External representation of a worksheet
  *
  * @package Box\Spout\Writer\Common
  */
@@ -21,11 +21,14 @@ class Sheet
     /** @var array Invalid characters that cannot be contained in the sheet name */
     private static $INVALID_CHARACTERS_IN_SHEET_NAME = ['\\', '/', '?', '*', ':', '[', ']'];
 
-    /** @var array Associative array [SHEET_INDEX] => [SHEET_NAME] keeping track of sheets' name to enforce uniqueness */
+    /** @var array Associative array [WORKBOOK_ID] => [[SHEET_INDEX] => [SHEET_NAME]] keeping track of sheets' name to enforce uniqueness per workbook */
     protected static $SHEETS_NAME_USED = [];
 
     /** @var int Index of the sheet, based on order in the workbook (zero-based) */
     protected $index;
+
+    /** @var string ID of the sheet's associated workbook. Used to restrict sheet name uniqueness enforcement to a single workbook */
+    protected $associatedWorkbookId;
 
     /** @var string Name of the sheet */
     protected $name;
@@ -35,10 +38,16 @@ class Sheet
 
     /**
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
+     * @param string $associatedWorkbookId ID of the sheet's associated workbook
      */
-    public function __construct($sheetIndex)
+    public function __construct($sheetIndex, $associatedWorkbookId)
     {
         $this->index = $sheetIndex;
+        $this->associatedWorkbookId = $associatedWorkbookId;
+        if (!isset(self::$SHEETS_NAME_USED[$associatedWorkbookId])) {
+            self::$SHEETS_NAME_USED[$associatedWorkbookId] = [];
+        }
+
         $this->stringHelper = new StringHelper();
         $this->setName(self::DEFAULT_SHEET_NAME_PREFIX . ($sheetIndex + 1));
     }
@@ -78,7 +87,7 @@ class Sheet
         $this->throwIfNameIsInvalid($name);
 
         $this->name = $name;
-        self::$SHEETS_NAME_USED[$this->index] = $name;
+        self::$SHEETS_NAME_USED[$this->associatedWorkbookId][$this->index] = $name;
 
         return $this;
     }
@@ -163,7 +172,7 @@ class Sheet
      */
     protected function isNameUnique($name)
     {
-        foreach (self::$SHEETS_NAME_USED as $sheetIndex => $sheetName) {
+        foreach (self::$SHEETS_NAME_USED[$this->associatedWorkbookId] as $sheetIndex => $sheetName) {
             if ($sheetIndex !== $this->index && $sheetName === $name) {
                 return false;
             }
