@@ -200,16 +200,16 @@ $writer->setDefaultRowStyle($defaultStyle)
 
 Unfortunately, Spout does not support all the possible formatting options yet. But you can find the most important ones:
 
-Category  | Property      | API
-----------|---------------|---------------------------------------
-Font      | Bold          | `StyleBuilder::setFontBold()`
-          | Italic        | `StyleBuilder::setFontItalic()`
-          | Underline     | `StyleBuilder::setFontUnderline()`
-          | Strikethrough | `StyleBuilder::setFontStrikethrough()`
-          | Font name     | `StyleBuilder::setFontName('Arial')`
-          | Font size     | `StyleBuilder::setFontSize(14)`
-          | Font color    | `StyleBuilder::setFontColor(Color::BLUE)`<br>`StyleBuilder::setFontColor(Color::rgb(0, 128, 255))`
-Alignment | Wrap text     | `StyleBuilder::setShouldWrapText(true|false)`
+| Category  | Property      | API
+|-----------|---------------|---------------------------------------
+| Font      | Bold          | `StyleBuilder::setFontBold()`
+|           | Italic        | `StyleBuilder::setFontItalic()`
+|           | Underline     | `StyleBuilder::setFontUnderline()`
+|           | Strikethrough | `StyleBuilder::setFontStrikethrough()`
+|           | Font name     | `StyleBuilder::setFontName('Arial')`
+|           | Font size     | `StyleBuilder::setFontSize(14)`
+|           | Font color    | `StyleBuilder::setFontColor(Color::BLUE)`<br>`StyleBuilder::setFontColor(Color::rgb(0, 128, 255))`
+| Alignment | Wrap text     | `StyleBuilder::setShouldWrapText(true|false)`
 
 #### New sheet creation
 
