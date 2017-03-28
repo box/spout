@@ -67,7 +67,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Box\Spout\Writer\Exception\WriterAlreadyOpenedException
      */
-    public function testsetShouldCreateNewSheetsAutomaticallyShouldThrowExceptionIfCalledAfterOpeningWriter()
+    public function testSetShouldCreateNewSheetsAutomaticallyShouldThrowExceptionIfCalledAfterOpeningWriter()
     {
         $fileName = 'file_that_wont_be_written.ods';
         $filePath = $this->getGeneratedResourcePath($fileName);
@@ -166,6 +166,23 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer->close();
 
         $this->assertEquals($firstSheet, $writer->getCurrentSheet(), 'The current sheet should be the first one.');
+    }
+
+    /**
+     * @return void
+     */
+    public function testCloseShouldNoopWhenWriterIsNotOpened()
+    {
+        $fileName = 'test_double_close_calls.ods';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterFactory::create(Type::ODS);
+        $writer->close(); // This call should not cause any error
+
+        $writer->openToFile($fileName);
+        $writer->close();
+        $writer->close(); // This call should not cause any error
     }
 
     /**
