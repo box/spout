@@ -234,11 +234,6 @@ class SharedStringsHelper
         $textValue = '';
 
         foreach ($textNodes as $nodeIndex => $textNode) {
-            if ($nodeIndex !== 0) {
-                // add a space between each "t" node
-                $textValue .= ' ';
-            }
-
             $textNodeAsString = $textNode->__toString();
             $shouldPreserveWhitespace = $this->shouldPreserveWhitespace($textNode);
 
