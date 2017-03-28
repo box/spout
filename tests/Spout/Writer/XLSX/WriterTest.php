@@ -197,6 +197,23 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testCloseShouldNoopWhenWriterIsNotOpened()
+    {
+        $fileName = 'test_double_close_calls.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterFactory::create(Type::XLSX);
+        $writer->close(); // This call should not cause any error
+
+        $writer->openToFile($fileName);
+        $writer->close();
+        $writer->close(); // This call should not cause any error
+    }
+
+    /**
+     * @return void
+     */
     public function testAddRowShouldWriteGivenDataToSheetUsingInlineStrings()
     {
         $fileName = 'test_add_row_should_write_given_data_to_sheet_using_inline_strings.xlsx';

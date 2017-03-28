@@ -64,6 +64,23 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testCloseShouldNoopWhenWriterIsNotOpened()
+    {
+        $fileName = 'test_double_close_calls.csv';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterFactory::create(Type::CSV);
+        $writer->close(); // This call should not cause any error
+
+        $writer->openToFile($fileName);
+        $writer->close();
+        $writer->close(); // This call should not cause any error
+    }
+
+    /**
+     * @return void
+     */
     public function testWriteShouldAddUtf8Bom()
     {
         $allRows = [

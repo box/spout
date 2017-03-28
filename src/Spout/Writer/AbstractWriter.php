@@ -350,6 +350,10 @@ abstract class AbstractWriter implements WriterInterface
      */
     public function close()
     {
+        if (!$this->isWriterOpened) {
+            return;
+        }
+
         $this->closeWriter();
 
         if (is_resource($this->filePointer)) {
@@ -378,4 +382,3 @@ abstract class AbstractWriter implements WriterInterface
         }
     }
 }
-
