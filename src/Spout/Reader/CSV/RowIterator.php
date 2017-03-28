@@ -14,10 +14,9 @@ use Box\Spout\Common\Helper\EncodingHelper;
 class RowIterator implements IteratorInterface
 {
     /**
-     * If no value is given to fgetcsv(), it defaults to 8192 (which may be too low).
-     * Alignement with other functions like fgets() is discussed here: https://bugs.php.net/bug.php?id=48421
+     * Value passed to fgetcsv. 0 means "unlimited" (slightly slower but accomodates for very long lines).
      */
-    const MAX_READ_BYTES_PER_LINE = 32768;
+    const MAX_READ_BYTES_PER_LINE = 0;
 
     /** @var resource Pointer to the CSV file to read */
     protected $filePointer;
