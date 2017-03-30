@@ -226,7 +226,7 @@ EOD;
             $cellXML .= ' t="b"><v>' . intval($cell->getValue()) . '</v></c>';
         } else if ($cell->isNumeric()) {
             $cellXML .= '><v>' . $cell->getValue() . '</v></c>';
-        } else if ($cell->isBlank()) {
+        } else if ($cell->isEmpty()) {
             if ($this->styleHelper->shouldApplyStyleOnEmptyCell($styleId)) {
                 $cellXML .= '/>';
             } else {

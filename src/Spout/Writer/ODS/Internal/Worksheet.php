@@ -215,7 +215,7 @@ class Worksheet implements WorksheetInterface
             $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cell->getValue() . '">';
             $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
-        } else if ($cell->isBlank()) {
+        } else if ($cell->isEmpty()) {
             $data .= '/>';
         } else {
             throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cell->getValue()));

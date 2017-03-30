@@ -4,6 +4,11 @@ namespace Box\Spout\Writer\Common;
 
 use Box\Spout\Writer\Common\Helper\CellHelper;
 
+/**
+ * Class Cell
+ *
+ * @package Box\Spout\Writer\Common
+ */
 class Cell
 {
     /**
@@ -18,13 +23,14 @@ class Cell
 
     /**
      * Formula cell type
+     * Not used at the moment
      */
     const TYPE_FORMULA = 2;
 
     /**
-     * Blank cell type
+     * Empty cell type
      */
-    const TYPE_BLANK = 3;
+    const TYPE_EMPTY = 3;
 
     /**
      * Boolean cell type
@@ -38,20 +44,19 @@ class Cell
 
     /**
      * The value of this cell
-     * @var null | mixed
+     * @var mixed|null
      */
     protected $value = null;
 
     /**
      * The cell type
-     * @var null
+     * @var int
      */
     protected $type = null;
 
     /**
      * Cell constructor.
      * @param $value mixed
-     * @param $comment string
      */
     public function __construct($value)
     {
@@ -92,7 +97,7 @@ class Cell
         if (CellHelper::isBoolean($value)) {
             return self::TYPE_BOOLEAN;
         } elseif (CellHelper::isEmpty($value)) {
-            return self::TYPE_BLANK;
+            return self::TYPE_EMPTY;
         } elseif (CellHelper::isNumeric($this->getValue())) {
             return self::TYPE_NUMERIC;
         } elseif (CellHelper::isNonEmptyString($value)) {
@@ -113,12 +118,13 @@ class Cell
     /**
      * @return bool
      */
-    public function isBlank()
+    public function isEmpty()
     {
-        return $this->type === self::TYPE_BLANK;
+        return $this->type === self::TYPE_EMPTY;
     }
 
     /**
+     * Not used at the moment
      * @return bool
      */
     public function isFormula()
