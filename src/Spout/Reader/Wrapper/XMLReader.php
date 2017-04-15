@@ -28,13 +28,10 @@ class XMLReader extends \XMLReader
         $wasOpenSuccessful = false;
         $realPathURI = $this->getRealPathURIForFileInZip($zipFilePath, $fileInsideZipPath);
 
-        // HHVM does not check if file exists within zip file
-        // @link https://github.com/facebook/hhvm/issues/5779
-        if ($this->isRunningHHVM()) {
-            if ($this->fileExistsWithinZip($realPathURI)) {
-                $wasOpenSuccessful = $this->open($realPathURI, null, LIBXML_NONET);
-            }
-        } else {
+        // We need to check first that the file we are trying to read really exist because:
+        //  - PHP emits a warning when trying to open a file that does not exist.
+        //  - HHVM does not check if file exists within zip file (@link https://github.com/facebook/hhvm/issues/5779)
+        if ($this->fileExistsWithinZip($realPathURI)) {
             $wasOpenSuccessful = $this->open($realPathURI, null, LIBXML_NONET);
         }
 
@@ -52,16 +49,6 @@ class XMLReader extends \XMLReader
     public function getRealPathURIForFileInZip($zipFilePath, $fileInsideZipPath)
     {
         return (self::ZIP_WRAPPER . realpath($zipFilePath) . '#' . $fileInsideZipPath);
-    }
-
-    /**
-     * Returns whether the current environment is HHVM
-     *
-     * @return bool TRUE if running on HHVM, FALSE otherwise
-     */
-    protected function isRunningHHVM()
-    {
-        return defined('HHVM_VERSION');
     }
 
     /**

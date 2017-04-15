@@ -53,12 +53,18 @@ class SheetHelper
     {
         $sheets = [];
         $sheetIndex = 0;
+        $activeSheetIndex = 0; // By default, the first sheet is active
 
         $xmlReader = new XMLReader();
         if ($xmlReader->openFileInZip($this->filePath, self::WORKBOOK_XML_FILE_PATH)) {
             while ($xmlReader->read()) {
-                if ($xmlReader->isPositionedOnStartingNode('sheet')) {
-                    $sheets[] = $this->getSheetFromSheetXMLNode($xmlReader, $sheetIndex);
+                if ($xmlReader->isPositionedOnStartingNode('workbookView')) {
+                    // The "workbookView" node is located before "sheet" nodes, ensuring that
+                    // the active sheet is known before parsing sheets data.
+                    $activeSheetIndex = (int) $xmlReader->getAttribute('activeTab');
+                } else if ($xmlReader->isPositionedOnStartingNode('sheet')) {
+                    $isSheetActive = ($sheetIndex === $activeSheetIndex);
+                    $sheets[] = $this->getSheetFromSheetXMLNode($xmlReader, $sheetIndex, $isSheetActive);
                     $sheetIndex++;
                 } else if ($xmlReader->isPositionedOnEndingNode('sheets')) {
                     // stop reading once all sheets have been read
@@ -79,9 +85,10 @@ class SheetHelper
      *
      * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReaderOnSheetNode XML Reader instance, pointing on the node describing the sheet, as defined in "workbook.xml"
      * @param int $sheetIndexZeroBased Index of the sheet, based on order of appearance in the workbook (zero-based)
+     * @param bool $isSheetActive Whether this sheet was defined as active
      * @return \Box\Spout\Reader\XLSX\Sheet Sheet instance
      */
-    protected function getSheetFromSheetXMLNode($xmlReaderOnSheetNode, $sheetIndexZeroBased)
+    protected function getSheetFromSheetXMLNode($xmlReaderOnSheetNode, $sheetIndexZeroBased, $isSheetActive)
     {
         $sheetId = $xmlReaderOnSheetNode->getAttribute('r:id');
         $escapedSheetName = $xmlReaderOnSheetNode->getAttribute('name');
@@ -92,7 +99,11 @@ class SheetHelper
 
         $sheetDataXMLFilePath = $this->getSheetDataXMLFilePathForSheetId($sheetId);
 
-        return new Sheet($this->filePath, $sheetDataXMLFilePath, $sheetIndexZeroBased, $sheetName, $this->options, $this->sharedStringsHelper);
+        return new Sheet(
+            $this->filePath, $sheetDataXMLFilePath,
+            $sheetIndexZeroBased, $sheetName, $isSheetActive,
+            $this->options, $this->sharedStringsHelper
+        );
     }
 
     /**

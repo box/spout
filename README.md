@@ -313,6 +313,15 @@ $sheet->setName('My custom name');
 >
 > Handling these restrictions is the developer's responsibility. Spout does not try to automatically change the sheet's name, as one may rely on this name to be exactly what was passed in.
 
+Finally, it is possible to know which sheet was active when the spreadsheet was last saved. This can be useful if you are only interested in processing the one sheet that was last focused.
+```php
+foreach ($reader->getSheetIterator() as $sheet) {
+    // only process data for the active sheet
+    if ($sheet->isActive()) {
+        // do something...
+    }
+}
+```
 
 ### Fluent interface
 
