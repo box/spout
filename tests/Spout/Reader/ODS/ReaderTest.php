@@ -284,7 +284,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testReadShouldBeProtectedAgainstBillionLaughAttack()
+    public function testReadShouldBeProtectedAgainstBillionLaughsAttack()
     {
         $startTime = microtime(true);
         $fileName = 'attack_billion_laughs.ods';

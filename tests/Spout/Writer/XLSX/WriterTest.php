@@ -206,7 +206,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::XLSX);
         $writer->close(); // This call should not cause any error
 
-        $writer->openToFile($fileName);
+        $writer->openToFile($resourcePath);
         $writer->close();
         $writer->close(); // This call should not cause any error
     }
