@@ -17,6 +17,19 @@ class SheetHelper
     const WORKBOOK_XML_RELS_FILE_PATH = 'xl/_rels/workbook.xml.rels';
     const WORKBOOK_XML_FILE_PATH = 'xl/workbook.xml';
 
+    /** Definition of XML node names used to parse data */
+    const XML_NODE_WORKBOOK_VIEW = 'workbookView';
+    const XML_NODE_SHEET = 'sheet';
+    const XML_NODE_SHEETS = 'sheets';
+    const XML_NODE_RELATIONSHIP = 'Relationship';
+
+    /** Definition of XML attributes used to parse data */
+    const XML_ATTRIBUTE_ACTIVE_TAB = 'activeTab';
+    const XML_ATTRIBUTE_R_ID = 'r:id';
+    const XML_ATTRIBUTE_NAME = 'name';
+    const XML_ATTRIBUTE_ID = 'Id';
+    const XML_ATTRIBUTE_TARGET = 'Target';
+
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
@@ -58,15 +71,15 @@ class SheetHelper
         $xmlReader = new XMLReader();
         if ($xmlReader->openFileInZip($this->filePath, self::WORKBOOK_XML_FILE_PATH)) {
             while ($xmlReader->read()) {
-                if ($xmlReader->isPositionedOnStartingNode('workbookView')) {
+                if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_WORKBOOK_VIEW)) {
                     // The "workbookView" node is located before "sheet" nodes, ensuring that
                     // the active sheet is known before parsing sheets data.
-                    $activeSheetIndex = (int) $xmlReader->getAttribute('activeTab');
-                } else if ($xmlReader->isPositionedOnStartingNode('sheet')) {
+                    $activeSheetIndex = (int) $xmlReader->getAttribute(self::XML_ATTRIBUTE_ACTIVE_TAB);
+                } else if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_SHEET)) {
                     $isSheetActive = ($sheetIndex === $activeSheetIndex);
                     $sheets[] = $this->getSheetFromSheetXMLNode($xmlReader, $sheetIndex, $isSheetActive);
                     $sheetIndex++;
-                } else if ($xmlReader->isPositionedOnEndingNode('sheets')) {
+                } else if ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_SHEETS)) {
                     // stop reading once all sheets have been read
                     break;
                 }
@@ -90,8 +103,8 @@ class SheetHelper
      */
     protected function getSheetFromSheetXMLNode($xmlReaderOnSheetNode, $sheetIndexZeroBased, $isSheetActive)
     {
-        $sheetId = $xmlReaderOnSheetNode->getAttribute('r:id');
-        $escapedSheetName = $xmlReaderOnSheetNode->getAttribute('name');
+        $sheetId = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_R_ID);
+        $escapedSheetName = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_NAME);
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
@@ -118,13 +131,13 @@ class SheetHelper
         $xmlReader = new XMLReader();
         if ($xmlReader->openFileInZip($this->filePath, self::WORKBOOK_XML_RELS_FILE_PATH)) {
             while ($xmlReader->read()) {
-                if ($xmlReader->isPositionedOnStartingNode('Relationship')) {
-                    $relationshipSheetId = $xmlReader->getAttribute('Id');
+                if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_RELATIONSHIP)) {
+                    $relationshipSheetId = $xmlReader->getAttribute(self::XML_ATTRIBUTE_ID);
 
                     if ($relationshipSheetId === $sheetId) {
                         // In workbook.xml.rels, it is only "worksheets/sheet1.xml"
                         // In [Content_Types].xml, the path is "/xl/worksheets/sheet1.xml"
-                        $sheetDataXMLFilePath = $xmlReader->getAttribute('Target');
+                        $sheetDataXMLFilePath = $xmlReader->getAttribute(self::XML_ATTRIBUTE_TARGET);
 
                         // sometimes, the sheet data file path already contains "/xl/"...
                         if (strpos($sheetDataXMLFilePath, '/xl/') !== 0) {
