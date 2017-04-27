@@ -16,7 +16,7 @@ class ODSTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['test', 'test'],
-            ['carl\'s "pokemon"', 'carl&#039;s &quot;pokemon&quot;'],
+            ['carl\'s "pokemon"', 'carl\'s "pokemon"'],
             ["\n", "\n"],
             ["\r", "\r"],
             ["\t", "\t"],

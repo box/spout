@@ -4,7 +4,6 @@ namespace Box\Spout\Reader\XLSX\Helper;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Exception\XMLProcessingException;
-use Box\Spout\Reader\Wrapper\SimpleXMLElement;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyInterface;
@@ -22,6 +21,18 @@ class SharedStringsHelper
 
     /** Main namespace for the sharedStrings.xml file */
     const MAIN_NAMESPACE_FOR_SHARED_STRINGS_XML = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+
+    /** Definition of XML nodes names used to parse data */
+    const XML_NODE_SST = 'sst';
+    const XML_NODE_SI = 'si';
+    const XML_NODE_R = 'r';
+    const XML_NODE_T = 't';
+
+    /** Definition of XML attributes used to parse data */
+    const XML_ATTRIBUTE_COUNT = 'count';
+    const XML_ATTRIBUTE_UNIQUE_COUNT = 'uniqueCount';
+    const XML_ATTRIBUTE_XML_SPACE = 'xml:space';
+    const XML_ATTRIBUTE_VALUE_PRESERVE = 'preserve';
 
     /** @var string Path of the XLSX file being read */
     protected $filePath;
@@ -79,8 +90,6 @@ class SharedStringsHelper
     {
         $xmlReader = new XMLReader();
         $sharedStringIndex = 0;
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
 
         $sharedStringsFilePath = $this->getSharedStringsFilePath();
         if ($xmlReader->open($sharedStringsFilePath) === false) {
@@ -91,14 +100,14 @@ class SharedStringsHelper
             $sharedStringsUniqueCount = $this->getSharedStringsUniqueCount($xmlReader);
             $this->cachingStrategy = $this->getBestSharedStringsCachingStrategy($sharedStringsUniqueCount);
 
-            $xmlReader->readUntilNodeFound('si');
+            $xmlReader->readUntilNodeFound(self::XML_NODE_SI);
 
-            while ($xmlReader->name === 'si') {
-                $this->processSharedStringsItem($xmlReader, $sharedStringIndex, $escaper);
+            while ($xmlReader->name === self::XML_NODE_SI) {
+                $this->processSharedStringsItem($xmlReader, $sharedStringIndex);
                 $sharedStringIndex++;
 
-                // jump to the next 'si' tag
-                $xmlReader->next('si');
+                // jump to the next '<si>' tag
+                $xmlReader->next(self::XML_NODE_SI);
             }
 
             $this->cachingStrategy->closeCache();
@@ -127,19 +136,19 @@ class SharedStringsHelper
      */
     protected function getSharedStringsUniqueCount($xmlReader)
     {
-        $xmlReader->next('sst');
+        $xmlReader->next(self::XML_NODE_SST);
 
         // Iterate over the "sst" elements to get the actual "sst ELEMENT" (skips any DOCTYPE)
-        while ($xmlReader->name === 'sst' && $xmlReader->nodeType !== XMLReader::ELEMENT) {
+        while ($xmlReader->name === self::XML_NODE_SST && $xmlReader->nodeType !== XMLReader::ELEMENT) {
             $xmlReader->read();
         }
 
-        $uniqueCount = $xmlReader->getAttribute('uniqueCount');
+        $uniqueCount = $xmlReader->getAttribute(self::XML_ATTRIBUTE_UNIQUE_COUNT);
 
         // some software do not add the "uniqueCount" attribute but only use the "count" one
         // @see https://github.com/box/spout/issues/254
         if ($uniqueCount === null) {
-            $uniqueCount = $xmlReader->getAttribute('count');
+            $uniqueCount = $xmlReader->getAttribute(self::XML_ATTRIBUTE_COUNT);
         }
 
         return ($uniqueCount !== null) ? intval($uniqueCount) : null;
@@ -160,99 +169,54 @@ class SharedStringsHelper
     /**
      * Processes the shared strings item XML node which the given XML reader is positioned on.
      *
-     * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader
+     * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XML Reader positioned on a "<si>" node
      * @param int $sharedStringIndex Index of the processed shared strings item
-     * @param \Box\Spout\Common\Escaper\XLSX $escaper Helper to escape values
      * @return void
      */
-    protected function processSharedStringsItem($xmlReader, $sharedStringIndex, $escaper)
+    protected function processSharedStringsItem($xmlReader, $sharedStringIndex)
     {
-        $node = $this->getSimpleXmlElementNodeFromXMLReader($xmlReader);
-        $node->registerXPathNamespace('ns', self::MAIN_NAMESPACE_FOR_SHARED_STRINGS_XML);
+        $sharedStringValue = '';
 
-        // removes nodes that should not be read, like the pronunciation of the Kanji characters
-        $cleanNode = $this->removeSuperfluousTextNodes($node);
+        // NOTE: expand() will automatically decode all XML entities of the child nodes
+        $siNode = $xmlReader->expand();
+        $textNodes = $siNode->getElementsByTagName(self::XML_NODE_T);
 
-        // find all text nodes "t"; there can be multiple if the cell contains formatting
-        $textNodes = $cleanNode->xpath('//ns:t');
+        foreach ($textNodes as $textNode) {
+            if ($this->shouldExtractTextNodeValue($textNode)) {
+                $textNodeValue = $textNode->nodeValue;
+                $shouldPreserveWhitespace = $this->shouldPreserveWhitespace($textNode);
 
-        $textValue = $this->extractTextValueForNodes($textNodes);
-        $unescapedTextValue = $escaper->unescape($textValue);
+                $sharedStringValue .= ($shouldPreserveWhitespace) ? $textNodeValue : trim($textNodeValue);
+            }
+        }
 
-        $this->cachingStrategy->addStringForIndex($unescapedTextValue, $sharedStringIndex);
+        $this->cachingStrategy->addStringForIndex($sharedStringValue, $sharedStringIndex);
     }
 
     /**
-     * Returns a SimpleXMLElement node from the current node in the given XMLReader instance.
-     * This is to simplify the parsing of the subtree.
+     * Not all text nodes' values must be extracted.
+     * Some text nodes are part of a node describing the pronunciation for instance.
+     * We'll only consider the nodes whose parents are "<si>" or "<r>".
      *
-     * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader
-     * @return \Box\Spout\Reader\Wrapper\SimpleXMLElement
-     * @throws \Box\Spout\Common\Exception\IOException If the current node cannot be read
+     * @param \DOMElement $textNode Text node to check
+     * @return bool Whether the given text node's value must be extracted
      */
-    protected function getSimpleXmlElementNodeFromXMLReader($xmlReader)
+    protected function shouldExtractTextNodeValue($textNode)
     {
-        $node = null;
-        try {
-            $node = new SimpleXMLElement($xmlReader->readOuterXml());
-        } catch (XMLProcessingException $exception) {
-            throw new IOException("The sharedStrings.xml file contains unreadable data [{$exception->getMessage()}].");
-        }
-
-        return $node;
-    }
-
-    /**
-     * Removes nodes that should not be read, like the pronunciation of the Kanji characters.
-     * By keeping them, their text content would be added to the read string.
-     *
-     * @param \Box\Spout\Reader\Wrapper\SimpleXMLElement $parentNode Parent node that may contain nodes to remove
-     * @return \Box\Spout\Reader\Wrapper\SimpleXMLElement Cleaned parent node
-     */
-    protected function removeSuperfluousTextNodes($parentNode)
-    {
-        $tagsToRemove = [
-            'rPh', // Pronunciation of the text
-            'pPr', // Paragraph Properties / Previous Paragraph Properties
-            'rPr', // Run Properties for the Paragraph Mark / Previous Run Properties for the Paragraph Mark
-        ];
-
-        foreach ($tagsToRemove as $tagToRemove) {
-            $xpath = '//ns:' . $tagToRemove;
-            $parentNode->removeNodesMatchingXPath($xpath);
-        }
-
-        return $parentNode;
-    }
-
-    /**
-     * @param array $textNodes Text XML nodes ("<t>")
-     * @return string The value associated with the given text node(s)
-     */
-    protected function extractTextValueForNodes($textNodes)
-    {
-        $textValue = '';
-
-        foreach ($textNodes as $nodeIndex => $textNode) {
-            $textNodeAsString = $textNode->__toString();
-            $shouldPreserveWhitespace = $this->shouldPreserveWhitespace($textNode);
-
-            $textValue .= ($shouldPreserveWhitespace) ? $textNodeAsString : trim($textNodeAsString);
-        }
-
-        return $textValue;
+        $parentTagName = $textNode->parentNode->localName;
+        return ($parentTagName === self::XML_NODE_SI || $parentTagName === self::XML_NODE_R);
     }
 
     /**
      * If the text node has the attribute 'xml:space="preserve"', then preserve whitespace.
      *
-     * @param \Box\Spout\Reader\Wrapper\SimpleXMLElement $textNode The text node element (<t>) whitespace may be preserved
+     * @param \DOMElement $textNode The text node element (<t>) whose whitespace may be preserved
      * @return bool Whether whitespace should be preserved
      */
     protected function shouldPreserveWhitespace($textNode)
     {
-        $spaceValue = $textNode->getAttribute('space', 'xml');
-        return ($spaceValue === 'preserve');
+        $spaceValue = $textNode->getAttribute(self::XML_ATTRIBUTE_XML_SPACE);
+        return ($spaceValue === self::XML_ATTRIBUTE_VALUE_PRESERVE);
     }
 
     /**

@@ -202,6 +202,7 @@ class RowIterator implements IteratorInterface
     {
         $currentNumColumnsRepeated = $this->getNumColumnsRepeatedForCurrentNode($xmlReader);
 
+        // NOTE: expand() will automatically decode all XML entities of the child nodes
         $node = $xmlReader->expand();
         $currentCellValue = $this->getCellValue($node);
 
