@@ -260,6 +260,7 @@ class RowIterator implements IteratorInterface
     {
         $currentColumnIndex = $this->getColumnIndex($xmlReader);
 
+        // NOTE: expand() will automatically decode all XML entities of the child nodes
         $node = $xmlReader->expand();
         $this->currentlyProcessedRowData[$currentColumnIndex] = $this->getCellValue($node);
         $this->lastColumnIndexProcessed = $currentColumnIndex;

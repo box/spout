@@ -14,8 +14,7 @@
     "require": {
         "php": ">=5.4.0",
         "ext-zip": "*",
-        "ext-xmlreader" : "*",
-        "ext-simplexml": "*"
+        "ext-xmlreader" : "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8.0"

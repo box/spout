@@ -473,7 +473,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $this->writeToXLSXFile($dataRows, $fileName);
 
-        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'I&#039;m in &quot;great&quot; mood', 'Quotes should be escaped');
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'I\'m in "great" mood', 'Quotes should not be escaped');
         $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'This &lt;must&gt; be escaped &amp; tested', '<, > and & should be escaped');
     }
 
@@ -482,14 +482,14 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddRowShouldEscapeControlCharacters()
     {
-        $fileName = 'test_add_row_should_escape_html_special_characters.xlsx';
+        $fileName = 'test_add_row_should_escape_control_characters.xlsx';
         $dataRows = [
-            ['control\'s '.chr(21).' "character"'],
+            ['control '.chr(21).' character'],
         ];
 
         $this->writeToXLSXFile($dataRows, $fileName);
 
-        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'control&#039;s _x0015_ &quot;character&quot;');
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'control _x0015_ character');
     }
 
     /**

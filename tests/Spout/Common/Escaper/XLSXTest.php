@@ -16,7 +16,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['test', 'test'],
-            ['adam\'s "car"', 'adam&#039;s &quot;car&quot;'],
+            ['adam\'s "car"', 'adam\'s "car"'],
             ["\n", "\n"],
             ["\r", "\r"],
             ["\t", "\t"],
@@ -25,7 +25,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
             ['_x0000_', '_x005F_x0000_'],
             [chr(21), '_x0015_'],
             ['control '.chr(21).' character', 'control _x0015_ character'],
-            ['control\'s '.chr(21).' "character"', 'control&#039;s _x0015_ &quot;character&quot;'],
+            ['control\'s '.chr(21).' "character"', 'control\'s _x0015_ "character"'],
         ];
     }
 
@@ -52,7 +52,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['test', 'test'],
-            ['adam&#039;s &quot;car&quot;', 'adam\'s "car"'],
+            ['adam&#039;s &quot;car&quot;', 'adam&#039;s &quot;car&quot;'],
             ["\n", "\n"],
             ["\r", "\r"],
             ["\t", "\t"],
@@ -61,7 +61,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
             ['_x005F_x0000_', '_x0000_'],
             ['_x0015_', chr(21)],
             ['control _x0015_ character', 'control '.chr(21).' character'],
-            ['control&#039;s _x0015_ &quot;character&quot;', 'control\'s '.chr(21).' "character"'],
+            ['control&#039;s _x0015_ &quot;character&quot;', 'control&#039;s '.chr(21).' &quot;character&quot;'],
         ];
     }
 

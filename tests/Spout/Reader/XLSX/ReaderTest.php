@@ -426,40 +426,44 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedRow, $allRows[0], 'Pronunciation data should be removed.');
     }
 
-
     /**
-     * @return array
-     */
-    public function dataProviderForTestReadShouldBeProtectedAgainstAttacks()
-    {
-        return [
-            ['attack_billion_laughs.xlsx'],
-            ['attack_quadratic_blowup.xlsx'],
-        ];
-    }
-
-    /**
-     * @dataProvider dataProviderForTestReadShouldBeProtectedAgainstAttacks
      * @NOTE: The LIBXML_NOENT is used to ACTUALLY substitute entities (and should therefore not be used)
      *
-     * @param string $fileName
      * @return void
      */
-    public function testReadShouldBeProtectedAgainstAttacks($fileName)
+    public function testReadShouldBeProtectedAgainstBillionLaughsAttack()
     {
         $startTime = microtime(true);
 
         try {
             // using @ to prevent warnings/errors from being displayed
-            @$this->getAllRowsForFile($fileName);
+            @$this->getAllRowsForFile('attack_billion_laughs.xlsx');
             $this->fail('An exception should have been thrown');
         } catch (IOException $exception) {
             $duration = microtime(true) - $startTime;
             $this->assertLessThan(10, $duration, 'Entities should not be expanded and therefore take more than 10 seconds to be parsed.');
 
-            $expectedMaxMemoryUsage = 30 * 1024 * 1024; // 30MB
+            $expectedMaxMemoryUsage = 40 * 1024 * 1024; // 40MB
             $this->assertLessThan($expectedMaxMemoryUsage, memory_get_peak_usage(true), 'Entities should not be expanded and therefore consume all the memory.');
         }
+    }
+
+    /**
+     * @NOTE: The LIBXML_NOENT is used to ACTUALLY substitute entities (and should therefore not be used)
+     *
+     * @return void
+     */
+    public function testReadShouldBeProtectedAgainstQuadraticBlowupAttack()
+    {
+        $startTime = microtime(true);
+
+        $this->getAllRowsForFile('attack_quadratic_blowup.xlsx');
+
+        $duration = microtime(true) - $startTime;
+        $this->assertLessThan(10, $duration, 'Entities should not be expanded and therefore take more than 10 seconds to be parsed.');
+
+        $expectedMaxMemoryUsage = 40 * 1024 * 1024; // 40MB
+        $this->assertLessThan($expectedMaxMemoryUsage, memory_get_peak_usage(true), 'Entities should not be expanded and therefore consume all the memory.');
     }
 
     /**
