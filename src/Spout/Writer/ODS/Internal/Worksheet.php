@@ -192,6 +192,7 @@ class Worksheet implements WorksheetInterface
             $data .= ' table:number-columns-repeated="' . $numTimesValueRepeated . '"';
         }
 
+        /** @TODO Remove code duplication with XLSX writer: https://github.com/box/spout/pull/383#discussion_r113292746 */
         if ($cellValue instanceof Cell) {
             $cell = $cellValue;
         } else {

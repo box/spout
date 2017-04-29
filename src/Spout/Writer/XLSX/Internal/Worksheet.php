@@ -214,6 +214,7 @@ EOD;
         $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
         $cellXML .= ' s="' . $styleId . '"';
 
+        /** @TODO Remove code duplication with ODS writer: https://github.com/box/spout/pull/383#discussion_r113292746 */
         if ($cellValue instanceof Cell) {
             $cell = $cellValue;
         } else {

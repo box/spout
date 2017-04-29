@@ -50,7 +50,7 @@ class Cell
 
     /**
      * The cell type
-     * @var int
+     * @var int|null
      */
     protected $type = null;
 
@@ -81,7 +81,7 @@ class Cell
     }
 
     /**
-     * @return mixed|null
+     * @return int|null
      */
     public function getType()
     {
