@@ -6,6 +6,7 @@ use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Common\Cell;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\WriterFactory;
 
@@ -464,6 +465,47 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testWriteShouldAcceptCellObjects()
+    {
+        $fileName = 'test_writer_should_accept_cell_objects.ods';
+        $dataRows = [
+            [new Cell('ods--11'), new Cell('ods--12')],
+            [new Cell('ods--21'), new Cell('ods--22'), new Cell('ods--23')],
+        ];
+
+        $this->writeToODSFile($dataRows, $fileName);
+
+        foreach ($dataRows as $dataRow) {
+            /** @var Cell $cell */
+            foreach ($dataRow as $cell) {
+                $this->assertValueWasWritten($fileName, $cell->getValue());
+            }
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function testWriteShouldAcceptCellObjectsWithDifferentValueTypes()
+    {
+        $fileName = 'test_writer_should_accept_cell_objects_with_types.ods';
+        $dataRows = [
+            [new Cell('i am a string'), new Cell(51465), new Cell(true), new Cell(51465.5)],
+        ];
+
+        $this->writeToODSFile($dataRows, $fileName);
+
+        foreach ($dataRows as $dataRow) {
+            /** @var Cell $cell */
+            foreach ($dataRow as $cell) {
+                $this->assertValueWasWritten($fileName, (string)$cell->getValue(), '', true);
+            }
+        }
+    }
+
+    /**
      * @param array $allRows
      * @param string $fileName
      * @param bool $shouldCreateSheetsAutomatically
@@ -527,6 +569,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $xmlContents = file_get_contents('zip://' . $pathToContentFile);
 
         $this->assertContains($value, $xmlContents, $message);
+
     }
 
     /**

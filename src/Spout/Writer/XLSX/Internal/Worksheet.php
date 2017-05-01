@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\XLSX\Internal;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Writer\Common\Cell;
 use Box\Spout\Writer\Common\Helper\CellHelper;
 use Box\Spout\Writer\Common\Internal\WorksheetInterface;
 
@@ -213,13 +214,20 @@ EOD;
         $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
         $cellXML .= ' s="' . $styleId . '"';
 
-        if (CellHelper::isNonEmptyString($cellValue)) {
-            $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cellValue);
-        } else if (CellHelper::isBoolean($cellValue)) {
-            $cellXML .= ' t="b"><v>' . intval($cellValue) . '</v></c>';
-        } else if (CellHelper::isNumeric($cellValue)) {
-            $cellXML .= '><v>' . $cellValue . '</v></c>';
-        } else if (empty($cellValue)) {
+        /** @TODO Remove code duplication with ODS writer: https://github.com/box/spout/pull/383#discussion_r113292746 */
+        if ($cellValue instanceof Cell) {
+            $cell = $cellValue;
+        } else {
+            $cell = new Cell($cellValue);
+        }
+
+        if ($cell->isString()) {
+            $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cell->getValue());
+        } else if ($cell->isBoolean()) {
+            $cellXML .= ' t="b"><v>' . intval($cell->getValue()) . '</v></c>';
+        } else if ($cell->isNumeric()) {
+            $cellXML .= '><v>' . $cell->getValue() . '</v></c>';
+        } else if ($cell->isEmpty()) {
             if ($this->styleHelper->shouldApplyStyleOnEmptyCell($styleId)) {
                 $cellXML .= '/>';
             } else {
@@ -228,7 +236,7 @@ EOD;
                 $cellXML = '';
             }
         } else {
-            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
+            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cell->getValue()));
         }
 
         return $cellXML;

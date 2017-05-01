@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\XLSX;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Common\Cell;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Internal\Worksheet;
 
@@ -505,6 +506,60 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $this->assertEquals('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', $finfo->file($resourcePath));
+    }
+
+    /**
+     * @return  void
+     */
+    public function testWriterShouldAcceptCellObjects()
+    {
+        $fileName = 'test_writer_should_accept_cell_objects.xlsx';
+        $dataRows = [
+            [new Cell('xlsx--11'), new Cell('xlsx--12')],
+            [new Cell('xlsx--21'), new Cell('xlsx--22'), new Cell('xlsx--23')],
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
+
+        foreach ($dataRows as $dataRow) {
+            /** @var Cell $cell */
+            foreach ($dataRow as $cell) {
+                $this->assertSharedStringWasWritten($fileName, $cell->getValue());
+            }
+        }
+    }
+
+    /**
+     * @return  void
+     */
+    public function testWriteShouldAcceptCellObjectsWithDifferentValueTypes()
+    {
+        $fileName = 'test_writer_should_accept_cell_objects_with_types.xlsx';
+
+        $dataRowsShared = [
+            [new Cell('i am a string')],
+        ];
+        $dataRowsInline = [
+            [new Cell(51465), new Cell(true), new Cell(51465.5)]
+        ];
+
+        $dataRows = array_merge($dataRowsShared, $dataRowsInline);
+
+        $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
+
+        foreach ($dataRowsShared as $dataRow) {
+            /** @var Cell $cell */
+            foreach ($dataRow as $cell) {
+                $this->assertSharedStringWasWritten($fileName, (string)$cell->getValue());
+            }
+        }
+
+        foreach ($dataRowsInline as $dataRow) {
+            /** @var Cell $cell */
+            foreach ($dataRow as $cell) {
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cell->getValue());
+            }
+        }
     }
 
     /**
