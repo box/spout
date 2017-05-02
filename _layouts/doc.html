@@ -1,0 +1,40 @@
+---
+layout: default
+---
+<script src="{{site.github.url}}/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="{{site.github.url}}/bower_components/anchor-js/anchor.js"></script>
+<script src="{{site.github.url}}/bower_components/bootstrap/js/affix.js"></script>
+<script type="text/javascript">
+
+  document.addEventListener('DOMContentLoaded', function() {
+    anchors.add();
+
+    $('.post-title, .doc-content h1, .doc-content h2, .doc-content h3').each(function(index, element) {
+      var el = $(element);
+      var title = el.text();
+      var id = el.attr('id');
+      var tag = el.prop('tagName');
+      var titleEl = $('<div>').append(
+        $('<a>')
+          .attr('href', '#' + id)
+          .addClass(tag.toLowerCase())
+          .text(title));
+      $('.table-of-content').append(titleEl);
+    });
+});
+</script>
+
+<div class="table-of-content" data-spy="affix" data-offset-top="40" data-offset-bottom="300">
+</div>
+
+<article class="post">
+  <div class="wrapper">
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title }}</h1>
+  </header>
+  <div class="post-content">
+    <div class="doc-content">
+      {{ content }}
+    </div>
+</div>
+</div>
