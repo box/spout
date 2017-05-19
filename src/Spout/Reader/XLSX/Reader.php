@@ -74,9 +74,9 @@ class Reader extends AbstractReader
         if ($this->zip->open($filePath) === true) {
             $this->sharedStringsHelper = new SharedStringsHelper($filePath, $this->getOptions()->getTempFolder());
 
-            if ($this->sharedStringsHelper->hasSharedStrings()) {
+            if ($sharedStringsPath = $this->sharedStringsHelper->getSharedStringsPath()) {
                 // Extracts all the strings from the sheets for easy access in the future
-                $this->sharedStringsHelper->extractSharedStrings();
+                $this->sharedStringsHelper->extractSharedStrings($sharedStringsPath);
             }
 
             $this->sheetIterator = new SheetIterator($filePath, $this->getOptions(), $this->sharedStringsHelper, $this->globalFunctionsHelper);
