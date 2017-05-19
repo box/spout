@@ -60,15 +60,28 @@ class SharedStringsHelper
      */
     public function hasSharedStrings()
     {
-        $hasSharedStrings = false;
+        return $this->getSharedStringsPath() !== null;
+    }
+
+    /**
+     * Returns shared strings XML file path
+     *
+     * @return string|null
+     */
+    public function getSharedStringsPath()
+    {
+        $sharedStringsPath = null;
         $zip = new \ZipArchive();
 
         if ($zip->open($this->filePath) === true) {
-            $hasSharedStrings = ($zip->locateName(self::SHARED_STRINGS_XML_FILE_PATH) !== false);
+            $index = $zip->locateName(self::SHARED_STRINGS_XML_FILE_PATH, \ZipArchive::FL_NOCASE);
+            if ($index !== false) {
+                $sharedStringsPath = $zip->getNameIndex($index);
+            }
             $zip->close();
         }
 
-        return $hasSharedStrings;
+        return $sharedStringsPath;
     }
 
     /**
@@ -83,17 +96,18 @@ class SharedStringsHelper
      * Please note that SimpleXML does not provide such a functionality but since it is faster
      * and more handy to parse few XML nodes, it is used in combination with XMLReader for that purpose.
      *
+     * @param string $stringsPath Path of the XLSX's shared strings
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If sharedStrings.xml can't be read
      */
-    public function extractSharedStrings()
+    public function extractSharedStrings($stringsPath = self::SHARED_STRINGS_XML_FILE_PATH)
     {
         $xmlReader = new XMLReader();
         $sharedStringIndex = 0;
 
-        $sharedStringsFilePath = $this->getSharedStringsFilePath();
+        $sharedStringsFilePath = $this->getSharedStringsFilePath($stringsPath);
         if ($xmlReader->open($sharedStringsFilePath) === false) {
-            throw new IOException('Could not open "' . self::SHARED_STRINGS_XML_FILE_PATH . '".');
+            throw new IOException('Could not open "' . $stringsPath . '".');
         }
 
         try {
@@ -122,9 +136,9 @@ class SharedStringsHelper
     /**
      * @return string The path to the shared strings XML file
      */
-    protected function getSharedStringsFilePath()
+    protected function getSharedStringsFilePath($path = self::SHARED_STRINGS_XML_FILE_PATH)
     {
-        return 'zip://' . $this->filePath . '#' . self::SHARED_STRINGS_XML_FILE_PATH;
+        return 'zip://' . $this->filePath . '#' . $path;
     }
 
     /**
