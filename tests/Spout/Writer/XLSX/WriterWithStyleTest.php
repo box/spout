@@ -11,6 +11,7 @@ use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\Style;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Writer\WriterFactory;
+use Box\Spout\Writer\XLSX\Manager\OptionsManager;
 
 /**
  * Class WriterWithStyleTest
@@ -129,9 +130,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         // First font should be the default one
         $defaultFontElement = $fontElements->item(0);
         $this->assertChildrenNumEquals(3, $defaultFontElement, 'The default font should only have 3 properties.');
-        $this->assertFirstChildHasAttributeEquals((string) Writer::DEFAULT_FONT_SIZE, $defaultFontElement, 'sz', 'val');
+        $this->assertFirstChildHasAttributeEquals((string) OptionsManager::DEFAULT_FONT_SIZE, $defaultFontElement, 'sz', 'val');
         $this->assertFirstChildHasAttributeEquals(Color::toARGB(Style::DEFAULT_FONT_COLOR), $defaultFontElement, 'color', 'rgb');
-        $this->assertFirstChildHasAttributeEquals(Writer::DEFAULT_FONT_NAME, $defaultFontElement, 'name', 'val');
+        $this->assertFirstChildHasAttributeEquals(OptionsManager::DEFAULT_FONT_NAME, $defaultFontElement, 'name', 'val');
 
         // Second font should contain data from the first created style
         $secondFontElement = $fontElements->item(1);
@@ -140,9 +141,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $this->assertChildExists($secondFontElement, 'i');
         $this->assertChildExists($secondFontElement, 'u');
         $this->assertChildExists($secondFontElement, 'strike');
-        $this->assertFirstChildHasAttributeEquals((string) Writer::DEFAULT_FONT_SIZE, $secondFontElement, 'sz', 'val');
+        $this->assertFirstChildHasAttributeEquals((string) OptionsManager::DEFAULT_FONT_SIZE, $secondFontElement, 'sz', 'val');
         $this->assertFirstChildHasAttributeEquals(Color::toARGB(Style::DEFAULT_FONT_COLOR), $secondFontElement, 'color', 'rgb');
-        $this->assertFirstChildHasAttributeEquals(Writer::DEFAULT_FONT_NAME, $secondFontElement, 'name', 'val');
+        $this->assertFirstChildHasAttributeEquals(OptionsManager::DEFAULT_FONT_NAME, $secondFontElement, 'name', 'val');
 
         // Third font should contain data from the second created style
         $thirdFontElement = $fontElements->item(2);

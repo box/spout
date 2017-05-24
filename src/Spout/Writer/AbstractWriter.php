@@ -6,9 +6,10 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Helper\FileSystemHelper;
+use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Options;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
-use Box\Spout\Writer\Style\StyleBuilder;
 
 /**
  * Class AbstractWriter
@@ -30,11 +31,11 @@ abstract class AbstractWriter implements WriterInterface
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
+    /** @var \Box\Spout\Writer\Common\Manager\OptionsManagerInterface Writer options manager */
+    protected $optionsManager;
+
     /** @var Style\Style Style to be applied to the next written row(s) */
     protected $rowStyle;
-
-    /** @var Style\Style Default row style. Each writer can have its own default style */
-    protected $defaultRowStyle;
 
     /** @var string Content-Type value for the header - to be defined by child class */
     protected static $headerContentType;
@@ -65,11 +66,11 @@ abstract class AbstractWriter implements WriterInterface
     abstract protected function closeWriter();
 
     /**
-     *
+     * @param \Box\Spout\Writer\Common\Manager\OptionsManagerInterface $optionsManager
      */
-    public function __construct()
+    public function __construct(OptionsManagerInterface $optionsManager)
     {
-        $this->defaultRowStyle = $this->getDefaultRowStyle();
+        $this->optionsManager = $optionsManager;
         $this->resetRowStyleToDefault();
     }
 
@@ -83,7 +84,7 @@ abstract class AbstractWriter implements WriterInterface
      */
     public function setDefaultRowStyle($defaultStyle)
     {
-        $this->defaultRowStyle = $defaultStyle;
+        $this->optionsManager->setOption(Options::DEFAULT_ROW_STYLE, $defaultStyle);
         $this->resetRowStyleToDefault();
         return $this;
     }
@@ -308,17 +309,6 @@ abstract class AbstractWriter implements WriterInterface
     }
 
     /**
-     * Returns the default style to be applied to rows.
-     * Can be overriden by children to have a custom style.
-     *
-     * @return Style\Style
-     */
-    protected function getDefaultRowStyle()
-    {
-        return (new StyleBuilder())->build();
-    }
-
-    /**
      * Sets the style to be applied to the next written rows
      * until it is changed or reset.
      *
@@ -328,7 +318,8 @@ abstract class AbstractWriter implements WriterInterface
     private function setRowStyle($style)
     {
         // Merge given style with the default one to inherit custom properties
-        $this->rowStyle = $style->mergeWith($this->defaultRowStyle);
+        $defaultRowStyle = $this->optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
+        $this->rowStyle = $style->mergeWith($defaultRowStyle);
     }
 
     /**
@@ -338,7 +329,7 @@ abstract class AbstractWriter implements WriterInterface
      */
     private function resetRowStyleToDefault()
     {
-        $this->rowStyle = $this->defaultRowStyle;
+        $this->rowStyle = $this->optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
     }
 
     /**

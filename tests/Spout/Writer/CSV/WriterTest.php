@@ -204,6 +204,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
+        /** @var \Box\Spout\Writer\CSV\Writer $writer */
         $writer = WriterFactory::create(Type::CSV);
         $writer->setFieldDelimiter($fieldDelimiter);
         $writer->setFieldEnclosure($fieldEnclosure);

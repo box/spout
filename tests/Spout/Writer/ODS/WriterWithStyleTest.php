@@ -375,7 +375,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
+        /** @var \Box\Spout\Writer\ODS\Writer $writer */
         $writer = WriterFactory::create(Type::ODS);
         $writer->setDefaultRowStyle($defaultStyle);
 
@@ -467,7 +467,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $fileName
      * @param string $section
-     * @return \DomElement
+     * @return \DomNode
      */
     private function getXmlSectionFromStylesXmlFile($fileName, $section)
     {

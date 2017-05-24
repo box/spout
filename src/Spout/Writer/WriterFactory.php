@@ -5,6 +5,7 @@ namespace Box\Spout\Writer;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Type;
+use Box\Spout\Writer\Style\StyleBuilder;
 
 /**
  * Class WriterFactory
@@ -29,13 +30,13 @@ class WriterFactory
 
         switch ($writerType) {
             case Type::CSV:
-                $writer = new CSV\Writer();
+                $writer = self::getCSVWriter();
                 break;
             case Type::XLSX:
-                $writer = new XLSX\Writer();
+                $writer = self::getXLSXWriter();
                 break;
             case Type::ODS:
-                $writer = new ODS\Writer();
+                $writer = self::getODSWriter();
                 break;
             default:
                 throw new UnsupportedTypeException('No writers supporting the given type: ' . $writerType);
@@ -44,5 +45,37 @@ class WriterFactory
         $writer->setGlobalFunctionsHelper(new GlobalFunctionsHelper());
 
         return $writer;
+    }
+
+    /**
+     * @return CSV\Writer
+     */
+    private static function getCSVWriter()
+    {
+        $optionsManager = new CSV\Manager\OptionsManager();
+
+        return new CSV\Writer($optionsManager);
+    }
+
+    /**
+     * @return XLSX\Writer
+     */
+    private static function getXLSXWriter()
+    {
+        $styleBuilder = new StyleBuilder();
+        $optionsManager = new XLSX\Manager\OptionsManager($styleBuilder);
+
+        return new XLSX\Writer($optionsManager);
+    }
+
+    /**
+     * @return ODS\Writer
+     */
+    private static function getODSWriter()
+    {
+        $styleBuilder = new StyleBuilder();
+        $optionsManager = new ODS\Manager\OptionsManager($styleBuilder);
+
+        return new ODS\Writer($optionsManager);
     }
 }

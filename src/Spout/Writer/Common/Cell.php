@@ -64,7 +64,7 @@ class Cell
     }
 
     /**
-     * @param $value mixed
+     * @param $value mixed|null
      */
     public function setValue($value)
     {
@@ -90,6 +90,7 @@ class Cell
 
     /**
      * Get the current value type
+     * @param mixed|null $value
      * @return int
      */
     protected function detectType($value)

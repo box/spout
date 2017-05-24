@@ -3,10 +3,13 @@
 namespace Box\Spout\Writer\XLSX\Internal;
 
 use Box\Spout\Writer\Common\Internal\AbstractWorkbook;
+use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Options;
 use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
 use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
 use Box\Spout\Writer\XLSX\Helper\StyleHelper;
 use Box\Spout\Writer\Common\Sheet;
+use Box\Spout\Writer\XLSX\Manager\OptionsManager;
 
 /**
  * Class Workbook
@@ -36,21 +39,18 @@ class Workbook extends AbstractWorkbook
     protected $styleHelper;
 
     /**
-     * @param string $tempFolder
-     * @param bool $shouldUseInlineStrings
-     * @param bool $shouldCreateNewSheetsAutomatically
-     * @param \Box\Spout\Writer\Style\Style $defaultRowStyle
+     * @param \Box\Spout\Writer\Common\Manager\OptionsManagerInterface $optionsManager Options manager
      * @throws \Box\Spout\Common\Exception\IOException If unable to create at least one of the base folders
      */
-    public function __construct($tempFolder, $shouldUseInlineStrings, $shouldCreateNewSheetsAutomatically, $defaultRowStyle)
+    public function __construct(OptionsManagerInterface $optionsManager)
     {
-        parent::__construct($shouldCreateNewSheetsAutomatically, $defaultRowStyle);
+        parent::__construct($optionsManager);
 
-        $this->shouldUseInlineStrings = $shouldUseInlineStrings;
-
+        $tempFolder = $optionsManager->getOption(Options::TEMP_FOLDER);
         $this->fileSystemHelper = new FileSystemHelper($tempFolder);
         $this->fileSystemHelper->createBaseFilesAndFolders();
 
+        $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
         $this->styleHelper = new StyleHelper($defaultRowStyle);
 
         // This helper will be shared by all sheets
@@ -86,7 +86,7 @@ class Workbook extends AbstractWorkbook
         $sheet = new Sheet($newSheetIndex, $this->internalId);
 
         $worksheetFilesFolder = $this->fileSystemHelper->getXlWorksheetsFolder();
-        $worksheet = new Worksheet($sheet, $worksheetFilesFolder, $this->sharedStringsHelper, $this->styleHelper, $this->shouldUseInlineStrings);
+        $worksheet = new Worksheet($sheet, $worksheetFilesFolder, $this->sharedStringsHelper, $this->styleHelper, $this->optionManager);
         $this->worksheets[] = $worksheet;
 
         return $worksheet;

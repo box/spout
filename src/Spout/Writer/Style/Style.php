@@ -61,14 +61,10 @@ class Style
     /** @var bool Whether the wrap text property was set */
     protected $hasSetWrapText = false;
 
-    /**
-     * @var Border
-     */
+    /** @var Border */
     protected $border = null;
 
-    /**
-     * @var bool Whether border properties should be applied
-     */
+    /** @var bool Whether border properties should be applied */
     protected $shouldApplyBorder = false;
 
     /** @var string Background color */

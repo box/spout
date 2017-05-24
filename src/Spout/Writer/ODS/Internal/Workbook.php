@@ -3,6 +3,8 @@
 namespace Box\Spout\Writer\ODS\Internal;
 
 use Box\Spout\Writer\Common\Internal\AbstractWorkbook;
+use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Options;
 use Box\Spout\Writer\ODS\Helper\FileSystemHelper;
 use Box\Spout\Writer\ODS\Helper\StyleHelper;
 use Box\Spout\Writer\Common\Sheet;
@@ -29,18 +31,18 @@ class Workbook extends AbstractWorkbook
     protected $styleHelper;
 
     /**
-     * @param string $tempFolder
-     * @param bool $shouldCreateNewSheetsAutomatically
-     * @param \Box\Spout\Writer\Style\Style $defaultRowStyle
+     * @param \Box\Spout\Writer\Common\Manager\OptionsManagerInterface $optionsManager Options manager
      * @throws \Box\Spout\Common\Exception\IOException If unable to create at least one of the base folders
      */
-    public function __construct($tempFolder, $shouldCreateNewSheetsAutomatically, $defaultRowStyle)
+    public function __construct(OptionsManagerInterface $optionsManager)
     {
-        parent::__construct($shouldCreateNewSheetsAutomatically, $defaultRowStyle);
+        parent::__construct($optionsManager);
 
+        $tempFolder = $optionsManager->getOption(Options::TEMP_FOLDER);
         $this->fileSystemHelper = new FileSystemHelper($tempFolder);
         $this->fileSystemHelper->createBaseFilesAndFolders();
 
+        $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
         $this->styleHelper = new StyleHelper($defaultRowStyle);
     }
 
