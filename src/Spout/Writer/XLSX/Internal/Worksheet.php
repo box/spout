@@ -8,6 +8,8 @@ use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Cell;
 use Box\Spout\Writer\Common\Helper\CellHelper;
 use Box\Spout\Writer\Common\Internal\WorksheetInterface;
+use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Options;
 
 /**
  * Class Worksheet
@@ -62,16 +64,16 @@ EOD;
      * @param \Box\Spout\Writer\Common\Sheet $externalSheet The associated "external" sheet
      * @param string $worksheetFilesFolder Temporary folder where the files to create the XLSX will be stored
      * @param \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper $sharedStringsHelper Helper for shared strings
-     * @param \Box\Spout\Writer\XLSX\Helper\StyleHelper Helper to work with styles
-     * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
+     * @param \Box\Spout\Writer\XLSX\Helper\StyleHelper $styleHelper Helper to work with styles
+     * @param \Box\Spout\Writer\Common\Manager\OptionsManagerInterface $optionsManager Options manager
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
-    public function __construct($externalSheet, $worksheetFilesFolder, $sharedStringsHelper, $styleHelper, $shouldUseInlineStrings)
+    public function __construct($externalSheet, $worksheetFilesFolder, $sharedStringsHelper, $styleHelper, OptionsManagerInterface $optionsManager)
     {
         $this->externalSheet = $externalSheet;
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->styleHelper = $styleHelper;
-        $this->shouldUseInlineStrings = $shouldUseInlineStrings;
+        $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $this->stringsEscaper = \Box\Spout\Common\Escaper\XLSX::getInstance();

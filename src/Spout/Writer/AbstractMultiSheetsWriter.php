@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer;
 
+use Box\Spout\Writer\Common\Options;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 
 /**
@@ -12,9 +13,6 @@ use Box\Spout\Writer\Exception\WriterNotOpenedException;
  */
 abstract class AbstractMultiSheetsWriter extends AbstractWriter
 {
-    /** @var bool Whether new sheets should be automatically created when the max rows limit per sheet is reached */
-    protected $shouldCreateNewSheetsAutomatically = true;
-
     /**
      * @return Common\Internal\WorkbookInterface The workbook representing the file to be written
      */
@@ -33,7 +31,7 @@ abstract class AbstractMultiSheetsWriter extends AbstractWriter
     {
         $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
-        $this->shouldCreateNewSheetsAutomatically = $shouldCreateNewSheetsAutomatically;
+        $this->optionsManager->setOption(Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY, $shouldCreateNewSheetsAutomatically);
         return $this;
     }
 

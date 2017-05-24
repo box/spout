@@ -2,6 +2,8 @@
 
 namespace Box\Spout\Writer\Common\Internal;
 
+use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Options;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
 
 /**
@@ -13,8 +15,8 @@ use Box\Spout\Writer\Exception\SheetNotFoundException;
  */
 abstract class AbstractWorkbook implements WorkbookInterface
 {
-    /** @var bool Whether new sheets should be automatically created when the max rows limit per sheet is reached */
-    protected $shouldCreateNewSheetsAutomatically;
+    /** @var \Box\Spout\Writer\Common\Manager\OptionsManagerInterface $optionsManager */
+    protected $optionManager;
 
     /** @var string Timestamp based unique ID identifying the workbook */
     protected $internalId;
@@ -26,13 +28,12 @@ abstract class AbstractWorkbook implements WorkbookInterface
     protected $currentWorksheet;
 
     /**
-     * @param bool $shouldCreateNewSheetsAutomatically
-     * @param \Box\Spout\Writer\Style\Style $defaultRowStyle
+     * @param \Box\Spout\Writer\Common\Manager\OptionsManagerInterface $optionsManager
      * @throws \Box\Spout\Common\Exception\IOException If unable to create at least one of the base folders
      */
-    public function __construct($shouldCreateNewSheetsAutomatically, $defaultRowStyle)
+    public function __construct(OptionsManagerInterface $optionsManager)
     {
-        $this->shouldCreateNewSheetsAutomatically = $shouldCreateNewSheetsAutomatically;
+        $this->optionManager = $optionsManager;
         $this->internalId = uniqid();
     }
 
@@ -155,7 +156,7 @@ abstract class AbstractWorkbook implements WorkbookInterface
         // if we reached the maximum number of rows for the current sheet...
         if ($hasReachedMaxRows) {
             // ... continue writing in a new sheet if option set
-            if ($this->shouldCreateNewSheetsAutomatically) {
+            if ($this->optionManager->getOption(Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY)) {
                 $currentWorksheet = $this->addNewSheetAndMakeItCurrent();
 
                 $updatedStyle = $styleHelper->applyExtraStylesIfNeeded($style, $dataRow);

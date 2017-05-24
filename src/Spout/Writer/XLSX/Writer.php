@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Writer\AbstractMultiSheetsWriter;
+use Box\Spout\Writer\Common\Options;
 use Box\Spout\Writer\Style\StyleBuilder;
 use Box\Spout\Writer\XLSX\Internal\Workbook;
 
@@ -14,18 +15,8 @@ use Box\Spout\Writer\XLSX\Internal\Workbook;
  */
 class Writer extends AbstractMultiSheetsWriter
 {
-    /** Default style font values */
-    const DEFAULT_FONT_SIZE = 12;
-    const DEFAULT_FONT_NAME = 'Calibri';
-
     /** @var string Content-Type value for the header */
     protected static $headerContentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-
-    /** @var string Temporary folder where the files to create the XLSX will be stored */
-    protected $tempFolder;
-
-    /** @var bool Whether inline or shared strings should be used - inline string is more memory efficient */
-    protected $shouldUseInlineStrings = true;
 
     /** @var Internal\Workbook The workbook for the XLSX file */
     protected $book;
@@ -43,7 +34,7 @@ class Writer extends AbstractMultiSheetsWriter
     {
         $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
-        $this->tempFolder = $tempFolder;
+        $this->optionsManager->setOption(Options::TEMP_FOLDER, $tempFolder);
         return $this;
     }
 
@@ -60,7 +51,7 @@ class Writer extends AbstractMultiSheetsWriter
     {
         $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
-        $this->shouldUseInlineStrings = $shouldUseInlineStrings;
+        $this->optionsManager->setOption(Options::SHOULD_USE_INLINE_STRINGS, $shouldUseInlineStrings);
         return $this;
     }
 
@@ -73,8 +64,7 @@ class Writer extends AbstractMultiSheetsWriter
     protected function openWriter()
     {
         if (!$this->book) {
-            $tempFolder = ($this->tempFolder) ? : sys_get_temp_dir();
-            $this->book = new Workbook($tempFolder, $this->shouldUseInlineStrings, $this->shouldCreateNewSheetsAutomatically, $this->defaultRowStyle);
+            $this->book = new Workbook($this->optionsManager);
             $this->book->addNewSheetAndMakeItCurrent();
         }
     }
@@ -103,19 +93,6 @@ class Writer extends AbstractMultiSheetsWriter
     {
         $this->throwIfBookIsNotAvailable();
         $this->book->addRowToCurrentWorksheet($dataRow, $style);
-    }
-
-    /**
-     * Returns the default style to be applied to rows.
-     *
-     * @return \Box\Spout\Writer\Style\Style
-     */
-    protected function getDefaultRowStyle()
-    {
-        return (new StyleBuilder())
-            ->setFontSize(self::DEFAULT_FONT_SIZE)
-            ->setFontName(self::DEFAULT_FONT_NAME)
-            ->build();
     }
 
     /**
