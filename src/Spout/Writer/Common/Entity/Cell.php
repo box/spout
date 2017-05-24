@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\Common\Entity;
 
 use Box\Spout\Writer\Common\Helper\CellHelper;
+use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
  * Class Cell
@@ -55,12 +56,22 @@ class Cell
     protected $type = null;
 
     /**
+     * The cell style
+     * @var Style|null
+     */
+    protected $style = null;
+
+    /**
      * Cell constructor.
      * @param $value mixed
+     * @param $style Style
      */
-    public function __construct($value)
+    public function __construct($value, Style $style = null)
     {
         $this->setValue($value);
+        if ($style) {
+            $this->setStyle($style);
+        }
     }
 
     /**
@@ -78,6 +89,22 @@ class Cell
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * @param Style $style
+     */
+    public function setStyle(Style $style)
+    {
+        $this->style = $style;
+    }
+
+    /**
+     * @return Style|null
+     */
+    public function getStyle()
+    {
+        return $this->style;
     }
 
     /**
