@@ -1,16 +1,16 @@
 <?php
 
-namespace Box\Spout\Writer\Creator;
+namespace Box\Spout\Writer\Common\Creator;
 
 use Box\Spout\Writer\Common\Sheet;
-use Box\Spout\Writer\Entity\Workbook;
-use Box\Spout\Writer\Entity\Worksheet;
+use Box\Spout\Writer\Common\Entity\Workbook;
+use Box\Spout\Writer\Common\Entity\Worksheet;
 
 /**
  * Class EntityFactory
  * Factory to create entities
  *
- * @package Box\Spout\Writer\Creator
+ * @package Box\Spout\Writer\Common\Creator
  */
 class EntityFactory
 {

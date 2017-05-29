@@ -1,15 +1,15 @@
 <?php
 
-namespace Box\Spout\Writer\Manager;
+namespace Box\Spout\Writer\Common\Manager;
 
-use Box\Spout\Writer\Entity\Worksheet;
+use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Style\Style;
 
 /**
  * Interface WorksheetManagerInterface
  * Inteface for worksheet managers, providing the generic interfaces to work with worksheets.
  *
- * @package Box\Spout\Writer\Manager
+ * @package Box\Spout\Writer\Common\Manager
  */
 interface WorksheetManagerInterface
 {

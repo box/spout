@@ -5,7 +5,7 @@ namespace Box\Spout\Writer\XLSX;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\Entity\Cell;
+use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Manager\WorksheetManager;
 

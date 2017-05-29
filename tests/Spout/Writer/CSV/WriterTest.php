@@ -5,7 +5,7 @@ namespace Box\Spout\Writer\CSV;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Common\Type;
 use Box\Spout\Common\Helper\EncodingHelper;
-use Box\Spout\Writer\Entity\Cell;
+use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\WriterFactory;
 
 /**

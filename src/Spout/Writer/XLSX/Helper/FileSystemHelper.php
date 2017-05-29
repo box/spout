@@ -4,7 +4,7 @@ namespace Box\Spout\Writer\XLSX\Helper;
 
 use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
-use Box\Spout\Writer\Entity\Worksheet;
+use Box\Spout\Writer\Common\Entity\Worksheet;
 
 /**
  * Class FileSystemHelper

@@ -1,6 +1,6 @@
 <?php
 
-namespace Box\Spout\Writer\Entity;
+namespace Box\Spout\Writer\Common\Entity;
 
 use Box\Spout\Writer\Common\Sheet;
 
@@ -8,7 +8,7 @@ use Box\Spout\Writer\Common\Sheet;
  * Class Worksheet
  * Entity describing a Worksheet
  *
- * @package Box\Spout\Writer\Entity
+ * @package Box\Spout\Writer\Common\Entity
  */
 class Worksheet
 {

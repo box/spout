@@ -1,12 +1,12 @@
 <?php
 
-namespace Box\Spout\Writer\Manager;
+namespace Box\Spout\Writer\Common\Manager;
 
 /**
  * Interface OptionsManagerInterface
  * Writer' options interface
  *
- * @package Box\Spout\Writer\Manager
+ * @package Box\Spout\Writer\Common\Manager
  */
 interface OptionsManagerInterface
 {

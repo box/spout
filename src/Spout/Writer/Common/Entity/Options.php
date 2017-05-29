@@ -1,12 +1,12 @@
 <?php
 
-namespace Box\Spout\Writer\Entity;
+namespace Box\Spout\Writer\Common\Entity;
 
 /**
  * Class Options
  * Writer' options holder
  *
- * @package Box\Spout\Writer\Entity
+ * @package Box\Spout\Writer\Common\Entity
  */
 abstract class Options
 {

@@ -2,12 +2,12 @@
 
 namespace Box\Spout\Writer;
 
-use Box\Spout\Writer\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Entity\Options;
-use Box\Spout\Writer\Entity\Worksheet;
+use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
-use Box\Spout\Writer\Creator\InternalFactoryInterface;
-use Box\Spout\Writer\Manager\WorkbookManagerInterface;
+use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
+use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
 
 /**
  * Class WriterMultiSheetsAbstract

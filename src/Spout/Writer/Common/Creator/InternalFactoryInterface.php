@@ -1,14 +1,14 @@
 <?php
 
-namespace Box\Spout\Writer\Creator;
+namespace Box\Spout\Writer\Common\Creator;
 
-use Box\Spout\Writer\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Manager\WorkbookManagerInterface;
+use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
 
 /**
  * Interface GeneralFactoryInterface
  *
- * @package Box\Spout\Writer\Creator
+ * @package Box\Spout\Writer\Common\Creator
  */
 interface InternalFactoryInterface
 {

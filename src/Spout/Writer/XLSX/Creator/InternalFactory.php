@@ -4,12 +4,12 @@ namespace Box\Spout\Writer\XLSX\Creator;
 
 use Box\Spout\Common\Escaper;
 use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Entity\Options;
-use Box\Spout\Writer\Creator\EntityFactory;
-use Box\Spout\Writer\Creator\InternalFactoryInterface;
-use Box\Spout\Writer\Creator\WorkbookFactory;
-use Box\Spout\Writer\Creator\WorksheetFactory;
+use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
+use Box\Spout\Writer\Common\Creator\WorkbookFactory;
+use Box\Spout\Writer\Common\Creator\WorksheetFactory;
 use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
 use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
 use Box\Spout\Writer\XLSX\Helper\StyleHelper;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Box\Spout\Writer\Manager;
+namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Writer\Common\Sheet;
-use Box\Spout\Writer\Entity\Workbook;
-use Box\Spout\Writer\Entity\Worksheet;
+use Box\Spout\Writer\Common\Entity\Workbook;
+use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Writer\Exception\WriterException;
 use Box\Spout\Writer\Style\Style;
@@ -14,7 +14,7 @@ use Box\Spout\Writer\Style\Style;
  * Interface WorkbookManagerInterface
  * workbook manager interface, providing the generic interfaces to work with workbook.
  *
- * @package Box\Spout\Writer\Manager
+ * @package Box\Spout\Writer\Common\Manager
  */
 interface WorkbookManagerInterface
 {
