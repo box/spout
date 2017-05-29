@@ -3,10 +3,10 @@
 namespace Box\Spout\Writer\ODS\Creator;
 
 use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Entity\Options;
-use Box\Spout\Writer\Creator\EntityFactory;
-use Box\Spout\Writer\Creator\InternalFactoryInterface;
+use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
 use Box\Spout\Writer\ODS\Helper\FileSystemHelper;
 use Box\Spout\Writer\ODS\Helper\StyleHelper;
 use Box\Spout\Writer\ODS\Manager\WorkbookManager;

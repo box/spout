@@ -3,7 +3,7 @@
 namespace Box\Spout\Writer\XLSX\Manager;
 
 use Box\Spout\Writer\Common\Sheet;
-use Box\Spout\Writer\Manager\WorkbookManagerAbstract;
+use Box\Spout\Writer\Common\Manager\WorkbookManagerAbstract;
 use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
 use Box\Spout\Writer\XLSX\Helper\StyleHelper;
 

@@ -5,7 +5,7 @@ namespace Box\Spout\Writer\CSV;
 use Box\Spout\Writer\WriterAbstract;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
-use Box\Spout\Writer\Entity\Options;
+use Box\Spout\Writer\Common\Entity\Options;
 
 /**
  * Class Writer

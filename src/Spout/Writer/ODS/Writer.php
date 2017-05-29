@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\ODS;
 
-use Box\Spout\Writer\Entity\Options;
+use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\WriterMultiSheetsAbstract;
 
 /**

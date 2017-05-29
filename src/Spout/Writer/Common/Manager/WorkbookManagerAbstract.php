@@ -1,25 +1,24 @@
 <?php
 
-namespace Box\Spout\Writer\Manager;
+namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Helper\StyleHelperInterface;
-use Box\Spout\Writer\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Entity\Options;
+use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Sheet;
-use Box\Spout\Writer\Entity\Workbook;
-use Box\Spout\Writer\Entity\Worksheet;
+use Box\Spout\Writer\Common\Entity\Workbook;
+use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Writer\Exception\WriterException;
-use Box\Spout\Writer\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Style\Style;
 
 /**
  * Class WorkbookManagerAbstract
  * Abstract workbook manager, providing the generic interfaces to work with workbook.
  *
- * @package Box\Spout\Writer\Manager
+ * @package Box\Spout\Writer\Common\Manager
  */
 abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
 {

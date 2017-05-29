@@ -1,11 +1,11 @@
 <?php
 
-namespace Box\Spout\Writer\Manager;
+namespace Box\Spout\Writer\Common\Manager;
 
 /**
  * Class OptionsManagerTest
  *
- * @package Box\Spout\Writer\Manager
+ * @package Box\Spout\Writer\Common\Manager
  */
 class OptionsManagerTest extends \PHPUnit_Framework_TestCase
 {

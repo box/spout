@@ -5,7 +5,7 @@ namespace Box\Spout\Writer;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Type;
-use Box\Spout\Writer\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
 
 /**

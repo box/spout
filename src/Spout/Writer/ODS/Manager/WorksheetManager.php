@@ -5,9 +5,9 @@ namespace Box\Spout\Writer\ODS\Manager;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Entity\Cell;
-use Box\Spout\Writer\Entity\Worksheet;
-use Box\Spout\Writer\Manager\WorksheetManagerInterface;
+use Box\Spout\Writer\Common\Entity\Cell;
+use Box\Spout\Writer\Common\Entity\Worksheet;
+use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
 use Box\Spout\Writer\ODS\Helper\StyleHelper;
 use Box\Spout\Writer\Style\Style;
 
