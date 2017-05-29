@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\XLSX\Manager;
 
 use Box\Spout\Writer\Common\Options;
+use Box\Spout\Writer\Manager\OptionsManagerAbstract;
 use Box\Spout\Writer\Style\StyleBuilder;
 
 /**
@@ -11,7 +12,7 @@ use Box\Spout\Writer\Style\StyleBuilder;
  *
  * @package Box\Spout\Writer\XLSX\Manager
  */
-class OptionsManager extends \Box\Spout\Writer\Common\Manager\OptionsManager
+class OptionsManager extends OptionsManagerAbstract
 {
     /** Default style font values */
     const DEFAULT_FONT_SIZE = 12;

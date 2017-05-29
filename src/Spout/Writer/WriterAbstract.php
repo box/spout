@@ -6,7 +6,7 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Helper\FileSystemHelper;
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Options;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
@@ -31,7 +31,7 @@ abstract class WriterAbstract implements WriterInterface
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var \Box\Spout\Writer\Common\Manager\OptionsManagerInterface Writer options manager */
+    /** @var \Box\Spout\Writer\Manager\OptionsManagerInterface Writer options manager */
     protected $optionsManager;
 
     /** @var Style\Style Style to be applied to the next written row(s) */
@@ -66,7 +66,7 @@ abstract class WriterAbstract implements WriterInterface
     abstract protected function closeWriter();
 
     /**
-     * @param \Box\Spout\Writer\Common\Manager\OptionsManagerInterface $optionsManager
+     * @param \Box\Spout\Writer\Manager\OptionsManagerInterface $optionsManager
      */
     public function __construct(OptionsManagerInterface $optionsManager)
     {

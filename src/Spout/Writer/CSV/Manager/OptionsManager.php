@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\CSV\Manager;
 
 use Box\Spout\Writer\Common\Options;
+use Box\Spout\Writer\Manager\OptionsManagerAbstract;
 
 /**
  * Class OptionsManager
@@ -10,7 +11,7 @@ use Box\Spout\Writer\Common\Options;
  *
  * @package Box\Spout\Writer\CSV\Manager
  */
-class OptionsManager extends \Box\Spout\Writer\Common\Manager\OptionsManager
+class OptionsManager extends OptionsManagerAbstract
 {
     /**
      * @inheritdoc

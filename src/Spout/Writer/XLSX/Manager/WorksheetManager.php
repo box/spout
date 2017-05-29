@@ -7,7 +7,7 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Cell;
 use Box\Spout\Writer\Common\Helper\CellHelper;
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Options;
 use Box\Spout\Writer\Entity\Worksheet;
 use Box\Spout\Writer\Manager\WorksheetManagerInterface;

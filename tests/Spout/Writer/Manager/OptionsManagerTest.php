@@ -1,11 +1,11 @@
 <?php
 
-namespace Box\Spout\Writer\Common\Manager;
+namespace Box\Spout\Writer\Manager;
 
 /**
  * Class OptionsManagerTest
  *
- * @package Box\Spout\Writer\Common\Manager
+ * @package Box\Spout\Writer\Manager
  */
 class OptionsManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,7 +51,7 @@ class OptionsManagerTest extends \PHPUnit_Framework_TestCase
 
 
 // TODO: Convert this to anonymous class when PHP < 7 support is dropped
-class FakeOptionsManager extends OptionsManager
+class FakeOptionsManager extends OptionsManagerAbstract
 {
     protected function getSupportedOptions()
     {

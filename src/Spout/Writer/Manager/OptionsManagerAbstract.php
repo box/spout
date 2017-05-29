@@ -1,14 +1,14 @@
 <?php
 
-namespace Box\Spout\Writer\Common\Manager;
+namespace Box\Spout\Writer\Manager;
 
 /**
  * Class OptionsManager
  * Writer' options manager
  *
- * @package Box\Spout\Writer\Common\Manager
+ * @package Box\Spout\Writer\Manager
  */
-abstract class OptionsManager implements OptionsManagerInterface
+abstract class OptionsManagerAbstract implements OptionsManagerInterface
 {
     const PREFIX_OPTION = 'OPTION_';
 
