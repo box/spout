@@ -3,12 +3,12 @@
 namespace Box\Spout\Writer\Common\Helper;
 
 /**
- * Class AbstractStyleHelper
+ * Class StyleHelperAbstract
  * This class provides helper functions to manage styles
  *
  * @package Box\Spout\Writer\Common\Helper
  */
-abstract class AbstractStyleHelper
+abstract class StyleHelperAbstract implements StyleHelperInterface
 {
     /** @var array [SERIALIZED_STYLE] => [STYLE_ID] mapping table, keeping track of the registered styles */
     protected $serializedStyleToStyleIdMappingTable = [];

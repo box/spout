@@ -1,147 +1,116 @@
 <?php
 
-namespace Box\Spout\Writer\ODS\Internal;
+namespace Box\Spout\Writer\ODS\Manager;
 
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Cell;
-use Box\Spout\Writer\Common\Helper\CellHelper;
-use Box\Spout\Writer\Common\Internal\WorksheetInterface;
+use Box\Spout\Writer\Entity\Worksheet;
+use Box\Spout\Writer\Manager\WorksheetManagerInterface;
+use Box\Spout\Writer\ODS\Helper\StyleHelper;
+use Box\Spout\Writer\Style\Style;
 
 /**
- * Class Worksheet
- * Represents a worksheet within a ODS file. The difference with the Sheet object is
- * that this class provides an interface to write data
+ * Class WorksheetManager
+ * ODS worksheet manager, providing the interfaces to work with ODS worksheets.
  *
- * @package Box\Spout\Writer\ODS\Internal
+ * @package Box\Spout\Writer\ODS\Manager
  */
-class Worksheet implements WorksheetInterface
+class WorksheetManager implements WorksheetManagerInterface
 {
-    /** @var \Box\Spout\Writer\Common\Sheet The "external" sheet */
-    protected $externalSheet;
-
-    /** @var string Path to the XML file that will contain the sheet data */
-    protected $worksheetFilePath;
+    /** @var StyleHelper Helper to work with styles */
+    private $styleHelper;
 
     /** @var \Box\Spout\Common\Escaper\ODS Strings escaper */
-    protected $stringsEscaper;
+    private $stringsEscaper;
 
-    /** @var \Box\Spout\Common\Helper\StringHelper To help with string manipulation */
-    protected $stringHelper;
-
-    /** @var Resource Pointer to the temporary sheet data file (e.g. worksheets-temp/sheet1.xml) */
-    protected $sheetFilePointer;
-
-    /** @var int Maximum number of columns among all the written rows */
-    protected $maxNumColumns = 1;
-
-    /** @var int Index of the last written row */
-    protected $lastWrittenRowIndex = 0;
+    /** @var StringHelper String helper */
+    private $stringHelper;
 
     /**
-     * @param \Box\Spout\Writer\Common\Sheet $externalSheet The associated "external" sheet
-     * @param string $worksheetFilesFolder Temporary folder where the files to create the ODS will be stored
-     * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
+     * WorksheetManager constructor.
+     *
+     * @param StyleHelper $styleHelper
+     * @param \Box\Spout\Common\Escaper\ODS $stringsEscaper
+     * @param StringHelper $stringHelper
      */
-    public function __construct($externalSheet, $worksheetFilesFolder)
+    public function __construct(
+        StyleHelper $styleHelper,
+        \Box\Spout\Common\Escaper\ODS $stringsEscaper,
+        StringHelper $stringHelper)
     {
-        $this->externalSheet = $externalSheet;
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->stringsEscaper = \Box\Spout\Common\Escaper\ODS::getInstance();
-        $this->worksheetFilePath = $worksheetFilesFolder . '/sheet' . $externalSheet->getIndex() . '.xml';
-
-        $this->stringHelper = new StringHelper();
-
-        $this->startSheet();
+        $this->styleHelper = $styleHelper;
+        $this->stringsEscaper = $stringsEscaper;
+        $this->stringHelper = $stringHelper;
     }
 
     /**
      * Prepares the worksheet to accept data
-     * The XML file does not contain the "<table:table>" node as it contains the sheet's name
-     * which may change during the execution of the program. It will be added at the end.
      *
+     * @param Worksheet $worksheet The worksheet to start
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
-    protected function startSheet()
+    public function startSheet(Worksheet $worksheet)
     {
-        $this->sheetFilePointer = fopen($this->worksheetFilePath, 'w');
-        $this->throwIfSheetFilePointerIsNotAvailable();
+        $sheetFilePointer = fopen($worksheet->getFilePath(), 'w');
+        $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
+
+        $worksheet->setFilePointer($sheetFilePointer);
     }
 
     /**
-     * Checks if the book has been created. Throws an exception if not created yet.
+     * Checks if the sheet has been sucessfully created. Throws an exception if not.
      *
+     * @param bool|resource $sheetFilePointer Pointer to the sheet data file or FALSE if unable to open the file
      * @return void
-     * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
+     * @throws IOException If the sheet data file cannot be opened for writing
      */
-    protected function throwIfSheetFilePointerIsNotAvailable()
+    private function throwIfSheetFilePointerIsNotAvailable($sheetFilePointer)
     {
-        if (!$this->sheetFilePointer) {
+        if (!$sheetFilePointer) {
             throw new IOException('Unable to open sheet for writing.');
         }
     }
 
     /**
-     * @return string Path to the temporary sheet content XML file
-     */
-    public function getWorksheetFilePath()
-    {
-        return $this->worksheetFilePath;
-    }
-
-    /**
      * Returns the table XML root node as string.
      *
+     * @param Worksheet $worksheet
      * @return string <table> node as string
      */
-    public function getTableElementStartAsString()
+    public function getTableElementStartAsString(Worksheet $worksheet)
     {
-        $escapedSheetName = $this->stringsEscaper->escape($this->externalSheet->getName());
-        $tableStyleName = 'ta' . ($this->externalSheet->getIndex() + 1);
+        $externalSheet = $worksheet->getExternalSheet();
+        $escapedSheetName = $this->stringsEscaper->escape($externalSheet->getName());
+        $tableStyleName = 'ta' . ($externalSheet->getIndex() + 1);
 
         $tableElement  = '<table:table table:style-name="' . $tableStyleName . '" table:name="' . $escapedSheetName . '">';
-        $tableElement .= '<table:table-column table:default-cell-style-name="ce1" table:style-name="co1" table:number-columns-repeated="' . $this->maxNumColumns . '"/>';
+        $tableElement .= '<table:table-column table:default-cell-style-name="ce1" table:style-name="co1" table:number-columns-repeated="' . $worksheet->getMaxNumColumns() . '"/>';
 
         return $tableElement;
     }
 
     /**
-     * @return \Box\Spout\Writer\Common\Sheet The "external" sheet
-     */
-    public function getExternalSheet()
-    {
-        return $this->externalSheet;
-    }
-
-    /**
-     * @return int The index of the last written row
-     */
-    public function getLastWrittenRowIndex()
-    {
-        return $this->lastWrittenRowIndex;
-    }
-
-    /**
-     * Adds data to the worksheet.
+     * Adds data to the given worksheet.
      *
+     * @param Worksheet $worksheet The worksheet to add the row to
      * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row. NULL means use default style.
+     * @param Style $rowStyle Style to be applied to the row. NULL means use default style.
      * @return void
-     * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
+     * @throws IOException If the data cannot be written
+     * @throws InvalidArgumentException If a cell value's type is not supported
      */
-    public function addRow($dataRow, $style)
+    public function addRow(Worksheet $worksheet, $dataRow, $rowStyle)
     {
         // $dataRow can be an associative array. We need to transform
         // it into a regular array, as we'll use the numeric indexes.
         $dataRowWithNumericIndexes = array_values($dataRow);
 
-        $styleIndex = ($style->getId() + 1); // 1-based
+        $styleIndex = ($rowStyle->getId() + 1); // 1-based
         $cellsCount = count($dataRow);
-        $this->maxNumColumns = max($this->maxNumColumns, $cellsCount);
 
         $data = '<table:table-row table:style-name="ro1">';
 
@@ -166,13 +135,14 @@ class Worksheet implements WorksheetInterface
 
         $data .= '</table:table-row>';
 
-        $wasWriteSuccessful = fwrite($this->sheetFilePointer, $data);
+        $wasWriteSuccessful = fwrite($worksheet->getFilePointer(), $data);
         if ($wasWriteSuccessful === false) {
-            throw new IOException("Unable to write data in {$this->worksheetFilePath}");
+            throw new IOException("Unable to write data in {$worksheet->getFilePath()}");
         }
 
         // only update the count if the write worked
-        $this->lastWrittenRowIndex++;
+        $lastWrittenRowIndex = $worksheet->getLastWrittenRowIndex();
+        $worksheet->setLastWrittenRowIndex($lastWrittenRowIndex + 1);
     }
 
     /**
@@ -184,7 +154,7 @@ class Worksheet implements WorksheetInterface
      * @return string The cell XML content
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
      */
-    protected function getCellXML($cellValue, $styleIndex, $numTimesValueRepeated)
+    private function getCellXML($cellValue, $styleIndex, $numTimesValueRepeated)
     {
         $data = '<table:table-cell table:style-name="ce' . $styleIndex . '"';
 
@@ -228,14 +198,17 @@ class Worksheet implements WorksheetInterface
     /**
      * Closes the worksheet
      *
+     * @param Worksheet $worksheet
      * @return void
      */
-    public function close()
+    public function close(Worksheet $worksheet)
     {
-        if (!is_resource($this->sheetFilePointer)) {
+        $worksheetFilePointer = $worksheet->getFilePointer();
+
+        if (!is_resource($worksheetFilePointer)) {
             return;
         }
 
-        fclose($this->sheetFilePointer);
+        fclose($worksheetFilePointer);
     }
 }

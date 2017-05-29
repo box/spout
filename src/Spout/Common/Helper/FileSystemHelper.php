@@ -11,7 +11,7 @@ use Box\Spout\Common\Exception\IOException;
  *
  * @package Box\Spout\Common\Helper
  */
-class FileSystemHelper
+class FileSystemHelper implements FileSystemHelperInterface
 {
     /** @var string Real path of the base folder where all the I/O can occur */
     protected $baseFolderRealPath;

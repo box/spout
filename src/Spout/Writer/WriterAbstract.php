@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Writer;
 
-use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\InvalidArgumentException;
+use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Helper\FileSystemHelper;
 use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
@@ -12,12 +12,12 @@ use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 
 /**
- * Class AbstractWriter
+ * Class WriterAbstract
  *
  * @package Box\Spout\Writer
  * @abstract
  */
-abstract class AbstractWriter implements WriterInterface
+abstract class WriterAbstract implements WriterInterface
 {
     /** @var string Path to the output file */
     protected $outputFilePath;
@@ -80,7 +80,7 @@ abstract class AbstractWriter implements WriterInterface
      * @see https://github.com/box/spout/issues/272
      *
      * @param Style\Style $defaultStyle
-     * @return AbstractWriter
+     * @return WriterAbstract
      */
     public function setDefaultRowStyle($defaultStyle)
     {
@@ -91,7 +91,7 @@ abstract class AbstractWriter implements WriterInterface
 
     /**
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
-     * @return AbstractWriter
+     * @return WriterAbstract
      */
     public function setGlobalFunctionsHelper($globalFunctionsHelper)
     {
@@ -105,7 +105,7 @@ abstract class AbstractWriter implements WriterInterface
      *
      * @api
      * @param  string $outputFilePath Path of the output file that will contain the data
-     * @return AbstractWriter
+     * @return WriterAbstract
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened or if the given path is not writable
      */
     public function openToFile($outputFilePath)
@@ -129,7 +129,7 @@ abstract class AbstractWriter implements WriterInterface
      *
      * @api
      * @param  string $outputFileName Name of the output file that will contain the data. If a path is passed in, only the file name will be kept
-     * @return AbstractWriter
+     * @return WriterAbstract
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened
      */
     public function openToBrowser($outputFileName)
@@ -199,7 +199,7 @@ abstract class AbstractWriter implements WriterInterface
      *                        If empty, no data is added (i.e. not even as a blank row)
      *                        Example: $dataRow = ['data1', 1234, null, '', 'data5', false];
      * @api
-     * @return AbstractWriter
+     * @return WriterAbstract
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      * @throws \Box\Spout\Common\Exception\SpoutException If anything else goes wrong while writing data
@@ -234,7 +234,7 @@ abstract class AbstractWriter implements WriterInterface
      * @api
      * @param array $dataRow Array of array containing data to be streamed.
      * @param Style\Style $style Style to be applied to the row.
-     * @return AbstractWriter
+     * @return WriterAbstract
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
@@ -262,7 +262,7 @@ abstract class AbstractWriter implements WriterInterface
      *                             ['data11', 12, , '', 'data13'],
      *                             ['data21', 'data22', null, false],
      *                         ];
-     * @return AbstractWriter
+     * @return WriterAbstract
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
@@ -290,7 +290,7 @@ abstract class AbstractWriter implements WriterInterface
      * @api
      * @param array $dataRows Array of array containing data to be streamed.
      * @param Style\Style $style Style to be applied to the rows.
-     * @return AbstractWriter
+     * @return WriterAbstract
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data

@@ -62,6 +62,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
+        /** @var \Box\Spout\Writer\ODS\Writer $writer */
         $writer = WriterFactory::create(Type::ODS);
         $writer->openToFile($resourcePath);
 
@@ -85,6 +86,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
+        /** @var \Box\Spout\Writer\ODS\Writer $writer */
         $writer = WriterFactory::create(Type::ODS);
         $writer->openToFile($resourcePath);
 

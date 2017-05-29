@@ -2,8 +2,9 @@
 
 namespace Box\Spout\Writer\XLSX\Helper;
 
+use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
-use Box\Spout\Writer\XLSX\Internal\Worksheet;
+use Box\Spout\Writer\Entity\Worksheet;
 
 /**
  * Class FileSystemHelper
@@ -12,7 +13,7 @@ use Box\Spout\Writer\XLSX\Internal\Worksheet;
  *
  * @package Box\Spout\Writer\XLSX\Helper
  */
-class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
+class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper implements FileSystemWithRootFolderHelperInterface
 {
     const APP_NAME = 'Spout';
 
@@ -30,22 +31,22 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
     const STYLES_XML_FILE_NAME = 'styles.xml';
 
     /** @var string Path to the root folder inside the temp folder where the files to create the XLSX will be stored */
-    protected $rootFolder;
+    private $rootFolder;
 
     /** @var string Path to the "_rels" folder inside the root folder */
-    protected $relsFolder;
+    private $relsFolder;
 
     /** @var string Path to the "docProps" folder inside the root folder */
-    protected $docPropsFolder;
+    private $docPropsFolder;
 
     /** @var string Path to the "xl" folder inside the root folder */
-    protected $xlFolder;
+    private $xlFolder;
 
     /** @var string Path to the "_rels" folder inside the "xl" folder */
-    protected $xlRelsFolder;
+    private $xlRelsFolder;
 
     /** @var string Path to the "worksheets" folder inside the "xl" folder */
-    protected $xlWorksheetsFolder;
+    private $xlWorksheetsFolder;
 
     /**
      * @return string
@@ -92,7 +93,7 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
      * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the folder
      */
-    protected function createRootFolder()
+    private function createRootFolder()
     {
         $this->rootFolder = $this->createFolder($this->baseFolderRealPath, uniqid('xlsx', true));
         return $this;
@@ -104,7 +105,7 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
      * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the folder or the ".rels" file
      */
-    protected function createRelsFolderAndFile()
+    private function createRelsFolderAndFile()
     {
         $this->relsFolder = $this->createFolder($this->rootFolder, self::RELS_FOLDER_NAME);
 
@@ -119,7 +120,7 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
      * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the file
      */
-    protected function createRelsFile()
+    private function createRelsFile()
     {
         $relsFileContents = <<<EOD
 <?xml version="1.0" encoding="UTF-8"?>
@@ -141,7 +142,7 @@ EOD;
      * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the folder or one of the files
      */
-    protected function createDocPropsFolderAndFiles()
+    private function createDocPropsFolderAndFiles()
     {
         $this->docPropsFolder = $this->createFolder($this->rootFolder, self::DOC_PROPS_FOLDER_NAME);
 
@@ -157,7 +158,7 @@ EOD;
      * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the file
      */
-    protected function createAppXmlFile()
+    private function createAppXmlFile()
     {
         $appName = self::APP_NAME;
         $appXmlFileContents = <<<EOD
@@ -179,7 +180,7 @@ EOD;
      * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the file
      */
-    protected function createCoreXmlFile()
+    private function createCoreXmlFile()
     {
         $createdDate = (new \DateTime())->format(\DateTime::W3C);
         $coreXmlFileContents = <<<EOD
@@ -202,7 +203,7 @@ EOD;
      * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create at least one of the folders
      */
-    protected function createXlFolderAndSubFolders()
+    private function createXlFolderAndSubFolders()
     {
         $this->xlFolder = $this->createFolder($this->rootFolder, self::XL_FOLDER_NAME);
         $this->createXlRelsFolder();
@@ -217,7 +218,7 @@ EOD;
      * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the folder
      */
-    protected function createXlRelsFolder()
+    private function createXlRelsFolder()
     {
         $this->xlRelsFolder = $this->createFolder($this->xlFolder, self::RELS_FOLDER_NAME);
         return $this;
@@ -229,7 +230,7 @@ EOD;
      * @return FileSystemHelper
      * @throws \Box\Spout\Common\Exception\IOException If unable to create the folder
      */
-    protected function createXlWorksheetsFolder()
+    private function createXlWorksheetsFolder()
     {
         $this->xlWorksheetsFolder = $this->createFolder($this->xlFolder, self::WORKSHEETS_FOLDER_NAME);
         return $this;
