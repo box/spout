@@ -3,7 +3,7 @@
 namespace Box\Spout\Writer\ODS\Factory;
 
 use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Options;
 use Box\Spout\Writer\Factory\EntityFactory;
 use Box\Spout\Writer\Factory\InternalFactoryInterface;

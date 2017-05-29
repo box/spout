@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\ODS\Manager;
 
 use Box\Spout\Writer\Common\Options;
+use Box\Spout\Writer\Manager\OptionsManagerAbstract;
 use Box\Spout\Writer\Style\StyleBuilder;
 
 /**
@@ -11,7 +12,7 @@ use Box\Spout\Writer\Style\StyleBuilder;
  *
  * @package Box\Spout\Writer\ODS\Manager
  */
-class OptionsManager extends \Box\Spout\Writer\Common\Manager\OptionsManager
+class OptionsManager extends OptionsManagerAbstract
 {
     /** @var StyleBuilder Style builder */
     protected $styleBuilder;
