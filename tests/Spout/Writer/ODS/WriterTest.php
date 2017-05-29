@@ -155,6 +155,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
+        /** @var Writer $writer */
         $writer = WriterFactory::create(Type::ODS);
         $writer->openToFile($resourcePath);
 
@@ -376,7 +377,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         ];
 
         // set the maxRowsPerSheet limit to 2
-        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\ODS\Internal\Workbook', 'maxRowsPerWorksheet', 2);
+        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\ODS\Manager\WorkbookManager', 'maxRowsPerWorksheet', 2);
 
         $writer = $this->writeToODSFile($dataRows, $fileName, $shouldCreateSheetsAutomatically = true);
         $this->assertEquals(2, count($writer->getSheets()), '2 sheets should have been created.');
@@ -400,7 +401,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         ];
 
         // set the maxRowsPerSheet limit to 2
-        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\ODS\Internal\Workbook', 'maxRowsPerWorksheet', 2);
+        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\ODS\Manager\WorkbookManager', 'maxRowsPerWorksheet', 2);
 
         $writer = $this->writeToODSFile($dataRows, $fileName, $shouldCreateSheetsAutomatically = false);
         $this->assertEquals(1, count($writer->getSheets()), 'Only 1 sheet should have been created.');
@@ -500,7 +501,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         foreach ($dataRows as $dataRow) {
             /** @var Cell $cell */
             foreach ($dataRow as $cell) {
-                $this->assertValueWasWritten($fileName, (string)$cell->getValue(), '', true);
+                $this->assertValueWasWritten($fileName, (string)$cell->getValue(), '');
             }
         }
     }

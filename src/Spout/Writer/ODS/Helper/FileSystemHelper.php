@@ -2,8 +2,10 @@
 
 namespace Box\Spout\Writer\ODS\Helper;
 
+use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
-use Box\Spout\Writer\ODS\Internal\Worksheet;
+use Box\Spout\Writer\Entity\Worksheet;
+use Box\Spout\Writer\ODS\Manager\WorksheetManager;
 
 /**
  * Class FileSystemHelper
@@ -12,7 +14,7 @@ use Box\Spout\Writer\ODS\Internal\Worksheet;
  *
  * @package Box\Spout\Writer\ODS\Helper
  */
-class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper
+class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper implements FileSystemWithRootFolderHelperInterface
 {
     const APP_NAME = 'Spout';
     const MIMETYPE = 'application/vnd.oasis.opendocument.spreadsheet';
@@ -172,11 +174,12 @@ EOD;
     /**
      * Creates the "content.xml" file under the root folder
      *
+     * @param WorksheetManager $worksheetManager
      * @param Worksheet[] $worksheets
      * @param StyleHelper $styleHelper
      * @return FileSystemHelper
      */
-    public function createContentFile($worksheets, $styleHelper)
+    public function createContentFile($worksheetManager, $worksheets, $styleHelper)
     {
         $contentXmlFileContents = <<<EOD
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -196,9 +199,9 @@ EOD;
 
         foreach ($worksheets as $worksheet) {
             // write the "<table:table>" node, with the final sheet's name
-            fwrite($contentXmlHandle, $worksheet->getTableElementStartAsString());
+            fwrite($contentXmlHandle, $worksheetManager->getTableElementStartAsString($worksheet));
 
-            $worksheetFilePath = $worksheet->getWorksheetFilePath();
+            $worksheetFilePath = $worksheet->getFilePath();
             $this->copyFileContentsToTarget($worksheetFilePath, $contentXmlHandle);
 
             fwrite($contentXmlHandle, '</table:table>');

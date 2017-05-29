@@ -1,24 +1,27 @@
 <?php
 
-namespace Box\Spout\Writer\XLSX\Internal;
+namespace Box\Spout\Writer\XLSX\Manager;
 
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Cell;
 use Box\Spout\Writer\Common\Helper\CellHelper;
-use Box\Spout\Writer\Common\Internal\WorksheetInterface;
 use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Options;
+use Box\Spout\Writer\Entity\Worksheet;
+use Box\Spout\Writer\Manager\WorksheetManagerInterface;
+use Box\Spout\Writer\Style\Style;
+use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
+use Box\Spout\Writer\XLSX\Helper\StyleHelper;
 
 /**
- * Class Worksheet
- * Represents a worksheet within a XLSX file. The difference with the Sheet object is
- * that this class provides an interface to write data
+ * Class WorksheetManager
+ * XLSX worksheet manager, providing the interfaces to work with XLSX worksheets.
  *
- * @package Box\Spout\Writer\XLSX\Internal
+ * @package Box\Spout\Writer\XLSX\Manager
  */
-class Worksheet implements WorksheetInterface
+class WorksheetManager implements WorksheetManagerInterface
 {
     /**
      * Maximum number of characters a cell can contain
@@ -33,126 +36,103 @@ class Worksheet implements WorksheetInterface
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
 EOD;
 
-    /** @var \Box\Spout\Writer\Common\Sheet The "external" sheet */
-    protected $externalSheet;
-
-    /** @var string Path to the XML file that will contain the sheet data */
-    protected $worksheetFilePath;
-
-    /** @var \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper Helper to write shared strings */
-    protected $sharedStringsHelper;
-
-    /** @var \Box\Spout\Writer\XLSX\Helper\StyleHelper Helper to work with styles */
-    protected $styleHelper;
-
     /** @var bool Whether inline or shared strings should be used */
     protected $shouldUseInlineStrings;
 
+    /** @var SharedStringsHelper Helper to write shared strings */
+    private $sharedStringsHelper;
+
+    /** @var StyleHelper Helper to work with styles */
+    private $styleHelper;
+
     /** @var \Box\Spout\Common\Escaper\XLSX Strings escaper */
-    protected $stringsEscaper;
+    private $stringsEscaper;
 
-    /** @var \Box\Spout\Common\Helper\StringHelper String helper */
-    protected $stringHelper;
-
-    /** @var Resource Pointer to the sheet data file (e.g. xl/worksheets/sheet1.xml) */
-    protected $sheetFilePointer;
-
-    /** @var int Index of the last written row */
-    protected $lastWrittenRowIndex = 0;
+    /** @var StringHelper String helper */
+    private $stringHelper;
 
     /**
-     * @param \Box\Spout\Writer\Common\Sheet $externalSheet The associated "external" sheet
-     * @param string $worksheetFilesFolder Temporary folder where the files to create the XLSX will be stored
-     * @param \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper $sharedStringsHelper Helper for shared strings
-     * @param \Box\Spout\Writer\XLSX\Helper\StyleHelper $styleHelper Helper to work with styles
-     * @param \Box\Spout\Writer\Common\Manager\OptionsManagerInterface $optionsManager Options manager
-     * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
+     * WorksheetManager constructor.
+     *
+     * @param OptionsManagerInterface $optionsManager
+     * @param SharedStringsHelper $sharedStringsHelper
+     * @param StyleHelper $styleHelper
+     * @param \Box\Spout\Common\Escaper\XLSX $stringsEscaper
+     * @param StringHelper $stringHelper
      */
-    public function __construct($externalSheet, $worksheetFilesFolder, $sharedStringsHelper, $styleHelper, OptionsManagerInterface $optionsManager)
+    public function __construct(
+        OptionsManagerInterface $optionsManager,
+        SharedStringsHelper $sharedStringsHelper,
+        StyleHelper $styleHelper,
+        \Box\Spout\Common\Escaper\XLSX $stringsEscaper,
+        StringHelper $stringHelper)
     {
-        $this->externalSheet = $externalSheet;
+        $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->styleHelper = $styleHelper;
-        $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
-
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->stringsEscaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
-        $this->stringHelper = new StringHelper();
-
-        $this->worksheetFilePath = $worksheetFilesFolder . '/' . strtolower($this->externalSheet->getName()) . '.xml';
-        $this->startSheet();
+        $this->stringsEscaper = $stringsEscaper;
+        $this->stringHelper = $stringHelper;
     }
+
+    /**
+     * @return SharedStringsHelper
+     */
+    public function getSharedStringsHelper()
+    {
+        return $this->sharedStringsHelper;
+    }
+
 
     /**
      * Prepares the worksheet to accept data
      *
+     * @param Worksheet $worksheet The worksheet to start
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
-    protected function startSheet()
+    public function startSheet(Worksheet $worksheet)
     {
-        $this->sheetFilePointer = fopen($this->worksheetFilePath, 'w');
-        $this->throwIfSheetFilePointerIsNotAvailable();
+        $sheetFilePointer = fopen($worksheet->getFilePath(), 'w');
+        $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
 
-        fwrite($this->sheetFilePointer, self::SHEET_XML_FILE_HEADER);
-        fwrite($this->sheetFilePointer, '<sheetData>');
+        $worksheet->setFilePointer($sheetFilePointer);
+
+        fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        fwrite($sheetFilePointer, '<sheetData>');
     }
 
     /**
-     * Checks if the book has been created. Throws an exception if not created yet.
+     * Checks if the sheet has been sucessfully created. Throws an exception if not.
      *
+     * @param bool|resource $sheetFilePointer Pointer to the sheet data file or FALSE if unable to open the file
      * @return void
-     * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
+     * @throws IOException If the sheet data file cannot be opened for writing
      */
-    protected function throwIfSheetFilePointerIsNotAvailable()
+    private function throwIfSheetFilePointerIsNotAvailable($sheetFilePointer)
     {
-        if (!$this->sheetFilePointer) {
+        if (!$sheetFilePointer) {
             throw new IOException('Unable to open sheet for writing.');
         }
     }
 
     /**
-     * @return \Box\Spout\Writer\Common\Sheet The "external" sheet
-     */
-    public function getExternalSheet()
-    {
-        return $this->externalSheet;
-    }
-
-    /**
-     * @return int The index of the last written row
-     */
-    public function getLastWrittenRowIndex()
-    {
-        return $this->lastWrittenRowIndex;
-    }
-
-    /**
-     * @return int The ID of the worksheet
-     */
-    public function getId()
-    {
-        // sheet index is zero-based, while ID is 1-based
-        return $this->externalSheet->getIndex() + 1;
-    }
-
-    /**
-     * Adds data to the worksheet.
+     * Adds data to the given worksheet.
      *
+     * @param Worksheet $worksheet The worksheet to add the row to
      * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row. NULL means use default style.
+     * @param Style $rowStyle Style to be applied to the row. NULL means use default style.
      * @return void
-     * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
+     * @throws IOException If the data cannot be written
+     * @throws InvalidArgumentException If a cell value's type is not supported
      */
-    public function addRow($dataRow, $style)
+    public function addRow(Worksheet $worksheet, $dataRow, $rowStyle)
     {
         if (!$this->isEmptyRow($dataRow)) {
-            $this->addNonEmptyRow($dataRow, $style);
+            $this->addNonEmptyRow($worksheet, $dataRow, $rowStyle);
         }
 
-        $this->lastWrittenRowIndex++;
+        $worksheet->setLastWrittenRowIndex($worksheet->getLastWrittenRowIndex() + 1);
     }
 
     /**
@@ -172,6 +152,7 @@ EOD;
     /**
      * Adds non empty row to the worksheet.
      *
+     * @param Worksheet $worksheet The worksheet to add the row to
      * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row. NULL means use default style.
@@ -179,10 +160,10 @@ EOD;
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
      */
-    private function addNonEmptyRow($dataRow, $style)
+    private function addNonEmptyRow(Worksheet $worksheet, $dataRow, $style)
     {
         $cellNumber = 0;
-        $rowIndex = $this->lastWrittenRowIndex + 1;
+        $rowIndex = $worksheet->getLastWrittenRowIndex() + 1;
         $numCells = count($dataRow);
 
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
@@ -194,9 +175,9 @@ EOD;
 
         $rowXML .= '</row>';
 
-        $wasWriteSuccessful = fwrite($this->sheetFilePointer, $rowXML);
+        $wasWriteSuccessful = fwrite($worksheet->getFilePointer(), $rowXML);
         if ($wasWriteSuccessful === false) {
-            throw new IOException("Unable to write data in {$this->worksheetFilePath}");
+            throw new IOException("Unable to write data in {$worksheet->getFilePath()}");
         }
     }
 
@@ -270,16 +251,19 @@ EOD;
     /**
      * Closes the worksheet
      *
+     * @param Worksheet $worksheet
      * @return void
      */
-    public function close()
+    public function close(Worksheet $worksheet)
     {
-        if (!is_resource($this->sheetFilePointer)) {
+        $worksheetFilePointer = $worksheet->getFilePointer();
+
+        if (!is_resource($worksheetFilePointer)) {
             return;
         }
 
-        fwrite($this->sheetFilePointer, '</sheetData>');
-        fwrite($this->sheetFilePointer, '</worksheet>');
-        fclose($this->sheetFilePointer);
+        fwrite($worksheetFilePointer, '</sheetData>');
+        fwrite($worksheetFilePointer, '</worksheet>');
+        fclose($worksheetFilePointer);
     }
 }

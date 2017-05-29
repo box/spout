@@ -7,7 +7,7 @@ use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Cell;
 use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Writer\XLSX\Internal\Worksheet;
+use Box\Spout\Writer\XLSX\Manager\WorksheetManager;
 
 /**
  * Class WriterTest
@@ -101,7 +101,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_add_row_should_throw_exception_if_unsupported_data_type_passed_in.xlsx';
         $dataRows = [
-            [str_repeat('a', Worksheet::MAX_CHARACTERS_PER_CELL + 1)],
+            [str_repeat('a', WorksheetManager::MAX_CHARACTERS_PER_CELL + 1)],
         ];
 
         $this->writeToXLSXFile($dataRows, $fileName);
@@ -428,7 +428,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         ];
 
         // set the maxRowsPerSheet limit to 2
-        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\XLSX\Internal\Workbook', 'maxRowsPerWorksheet', 2);
+        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\XLSX\Manager\WorkbookManager', 'maxRowsPerWorksheet', 2);
 
         $writer = $this->writeToXLSXFile($dataRows, $fileName, true, $shouldCreateSheetsAutomatically = true);
         $this->assertEquals(2, count($writer->getSheets()), '2 sheets should have been created.');
@@ -452,7 +452,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         ];
 
         // set the maxRowsPerSheet limit to 2
-        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\XLSX\Internal\Workbook', 'maxRowsPerWorksheet', 2);
+        \ReflectionHelper::setStaticValue('\Box\Spout\Writer\XLSX\Manager\WorkbookManager', 'maxRowsPerWorksheet', 2);
 
         $writer = $this->writeToXLSXFile($dataRows, $fileName, true, $shouldCreateSheetsAutomatically = false);
         $this->assertEquals(1, count($writer->getSheets()), 'Only 1 sheet should have been created.');

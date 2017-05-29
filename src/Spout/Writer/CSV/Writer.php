@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\CSV;
 
-use Box\Spout\Writer\AbstractWriter;
+use Box\Spout\Writer\WriterAbstract;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Writer\Common\Options;
@@ -13,7 +13,7 @@ use Box\Spout\Writer\Common\Options;
  *
  * @package Box\Spout\Writer\CSV
  */
-class Writer extends AbstractWriter
+class Writer extends WriterAbstract
 {
     /** Number of rows to write before flushing */
     const FLUSH_THRESHOLD = 500;

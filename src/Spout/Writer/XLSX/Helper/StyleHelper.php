@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\XLSX\Helper;
 
-use Box\Spout\Writer\Common\Helper\AbstractStyleHelper;
+use Box\Spout\Writer\Common\Helper\StyleHelperAbstract;
 use Box\Spout\Writer\Style\Color;
 use Box\Spout\Writer\Style\Style;
 
@@ -12,7 +12,7 @@ use Box\Spout\Writer\Style\Style;
  *
  * @package Box\Spout\Writer\XLSX\Helper
  */
-class StyleHelper extends AbstractStyleHelper
+class StyleHelper extends StyleHelperAbstract
 {
     /**
      * @var array

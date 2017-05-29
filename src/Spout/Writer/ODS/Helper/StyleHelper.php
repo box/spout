@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\ODS\Helper;
 
-use Box\Spout\Writer\Common\Helper\AbstractStyleHelper;
+use Box\Spout\Writer\Common\Helper\StyleHelperAbstract;
 use Box\Spout\Writer\Style\BorderPart;
 
 /**
@@ -11,7 +11,7 @@ use Box\Spout\Writer\Style\BorderPart;
  *
  * @package Box\Spout\Writer\ODS\Helper
  */
-class StyleHelper extends AbstractStyleHelper
+class StyleHelper extends StyleHelperAbstract
 {
     /** @var string[] [FONT_NAME] => [] Map whose keys contain all the fonts used */
     protected $usedFontsSet = [];
