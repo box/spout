@@ -1,13 +1,13 @@
 <?php
 
-namespace Box\Spout\Writer\Common;
+namespace Box\Spout\Writer\Entity;
 
 use Box\Spout\Writer\Common\Helper\CellHelper;
 
 /**
  * Class Cell
  *
- * @package Box\Spout\Writer\Common
+ * @package Box\Spout\Writer\Entity
  */
 class Cell
 {

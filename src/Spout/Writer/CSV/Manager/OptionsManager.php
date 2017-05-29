@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\CSV\Manager;
 
-use Box\Spout\Writer\Common\Options;
+use Box\Spout\Writer\Entity\Options;
 use Box\Spout\Writer\Manager\OptionsManagerAbstract;
 
 /**

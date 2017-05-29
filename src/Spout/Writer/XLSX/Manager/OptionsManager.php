@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\XLSX\Manager;
 
-use Box\Spout\Writer\Common\Options;
+use Box\Spout\Writer\Entity\Options;
 use Box\Spout\Writer\Manager\OptionsManagerAbstract;
 use Box\Spout\Writer\Style\StyleBuilder;
 
