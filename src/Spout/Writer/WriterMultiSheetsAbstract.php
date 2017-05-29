@@ -6,7 +6,7 @@ use Box\Spout\Writer\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Entity\Options;
 use Box\Spout\Writer\Entity\Worksheet;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
-use Box\Spout\Writer\Factory\InternalFactoryInterface;
+use Box\Spout\Writer\Creator\InternalFactoryInterface;
 use Box\Spout\Writer\Manager\WorkbookManagerInterface;
 
 /**

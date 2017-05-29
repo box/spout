@@ -1,6 +1,6 @@
 <?php
 
-namespace Box\Spout\Writer\Factory;
+namespace Box\Spout\Writer\Creator;
 
 use Box\Spout\Writer\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Manager\WorkbookManagerInterface;
@@ -8,7 +8,7 @@ use Box\Spout\Writer\Manager\WorkbookManagerInterface;
 /**
  * Interface GeneralFactoryInterface
  *
- * @package Box\Spout\Writer\Factory
+ * @package Box\Spout\Writer\Creator
  */
 interface InternalFactoryInterface
 {

@@ -5,7 +5,7 @@ namespace Box\Spout\Writer;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Type;
-use Box\Spout\Writer\Factory\EntityFactory;
+use Box\Spout\Writer\Creator\EntityFactory;
 use Box\Spout\Writer\Style\StyleBuilder;
 
 /**
@@ -65,7 +65,7 @@ class WriterFactory
     {
         $styleBuilder = new StyleBuilder();
         $optionsManager = new XLSX\Manager\OptionsManager($styleBuilder);
-        $generalFactory = new XLSX\Factory\InternalFactory(new EntityFactory());
+        $generalFactory = new XLSX\Creator\InternalFactory(new EntityFactory());
 
         return new XLSX\Writer($optionsManager, $generalFactory);
     }
@@ -77,7 +77,7 @@ class WriterFactory
     {
         $styleBuilder = new StyleBuilder();
         $optionsManager = new ODS\Manager\OptionsManager($styleBuilder);
-        $generalFactory = new ODS\Factory\InternalFactory(new EntityFactory());
+        $generalFactory = new ODS\Creator\InternalFactory(new EntityFactory());
 
         return new ODS\Writer($optionsManager, $generalFactory);
     }
