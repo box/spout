@@ -6,7 +6,8 @@ use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Manager\StyleManager;
 
 /**
  * Class WriterFactory
@@ -54,8 +55,9 @@ class WriterFactory
     private static function getCSVWriter()
     {
         $optionsManager = new CSV\Manager\OptionsManager();
+        $styleManager = new StyleManager();
 
-        return new CSV\Writer($optionsManager);
+        return new CSV\Writer($optionsManager, $styleManager);
     }
 
     /**
@@ -65,9 +67,10 @@ class WriterFactory
     {
         $styleBuilder = new StyleBuilder();
         $optionsManager = new XLSX\Manager\OptionsManager($styleBuilder);
+        $styleManager = new StyleManager();
         $generalFactory = new XLSX\Creator\InternalFactory(new EntityFactory());
 
-        return new XLSX\Writer($optionsManager, $generalFactory);
+        return new XLSX\Writer($optionsManager, $styleManager, $generalFactory);
     }
 
     /**
@@ -77,8 +80,9 @@ class WriterFactory
     {
         $styleBuilder = new StyleBuilder();
         $optionsManager = new ODS\Manager\OptionsManager($styleBuilder);
+        $styleManager = new StyleManager();
         $generalFactory = new ODS\Creator\InternalFactory(new EntityFactory());
 
-        return new ODS\Writer($optionsManager, $generalFactory);
+        return new ODS\Writer($optionsManager, $styleManager, $generalFactory);
     }
 }

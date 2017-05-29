@@ -4,7 +4,7 @@ namespace Box\Spout\Writer\ODS\Manager;
 
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Manager\OptionsManagerAbstract;
-use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 
 /**
  * Class OptionsManager

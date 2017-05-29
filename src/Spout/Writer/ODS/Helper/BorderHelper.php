@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Writer\ODS\Helper;
 
-use Box\Spout\Writer\Style\BorderPart;
-use Box\Spout\Writer\Style\Border;
+use Box\Spout\Writer\Common\Entity\Style\BorderPart;
+use Box\Spout\Writer\Common\Entity\Style\Border;
 
 /**
  * Class BorderHelper

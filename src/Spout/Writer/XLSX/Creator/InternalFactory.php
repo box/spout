@@ -10,6 +10,7 @@ use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
 use Box\Spout\Writer\Common\Creator\WorkbookFactory;
 use Box\Spout\Writer\Common\Creator\WorksheetFactory;
+use Box\Spout\Writer\Common\Manager\StyleManager;
 use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
 use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
 use Box\Spout\Writer\XLSX\Helper\StyleHelper;
@@ -102,7 +103,17 @@ class InternalFactory implements InternalFactoryInterface
     private function createStyleHelper(OptionsManagerInterface $optionsManager)
     {
         $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
-        return new StyleHelper($defaultRowStyle);
+        $styleManager = $this->createStyleManager();
+
+        return new StyleHelper($defaultRowStyle, $styleManager);
+    }
+
+    /**
+     * @return StyleManager
+     */
+    private function createStyleManager()
+    {
+        return new StyleManager();
     }
 
     /**

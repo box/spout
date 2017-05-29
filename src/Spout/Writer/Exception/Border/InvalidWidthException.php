@@ -3,7 +3,7 @@
 namespace Box\Spout\Writer\Exception\Border;
 
 use Box\Spout\Writer\Exception\WriterException;
-use Box\Spout\Writer\Style\BorderPart;
+use Box\Spout\Writer\Common\Entity\Style\BorderPart;
 
 class InvalidWidthException extends WriterException
 {

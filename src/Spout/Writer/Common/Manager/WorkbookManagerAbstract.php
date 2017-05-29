@@ -12,7 +12,7 @@ use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Writer\Exception\WriterException;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Style\Style;
+use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
  * Class WorkbookManagerAbstract

@@ -5,11 +5,12 @@ namespace Box\Spout\Writer\XLSX;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\Style\Border;
-use Box\Spout\Writer\Style\BorderBuilder;
-use Box\Spout\Writer\Style\Color;
-use Box\Spout\Writer\Style\Style;
-use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Style\Border;
+use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
+use Box\Spout\Writer\Common\Entity\Style\Color;
+use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Manager\StyleManager;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Manager\OptionsManager;
 
@@ -22,7 +23,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 {
     use TestUsingResource;
 
-    /** @var \Box\Spout\Writer\Style\Style */
+    /** @var \Box\Spout\Writer\Common\Entity\Style\Style */
     protected $defaultStyle;
 
     /**
@@ -67,7 +68,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
      * @dataProvider dataProviderForInvalidStyle
      * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
      *
-     * @param \Box\Spout\Writer\Style\Style $style
+     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
      */
     public function testAddRowWithStyleShouldThrowExceptionIfInvalidStyleGiven($style)
     {
@@ -84,7 +85,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
      * @dataProvider dataProviderForInvalidStyle
      * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
      *
-     * @param \Box\Spout\Writer\Style\Style $style
+     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
      */
     public function testAddRowsWithStyleShouldThrowExceptionIfInvalidStyleGiven($style)
     {
@@ -462,7 +463,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $fontStyle = (new StyleBuilder())->setFontBold()->build();
         $emptyStyle = (new StyleBuilder())->build();
 
-        $borderRightFontBoldStyle = $borderRightStyle->mergeWith($fontStyle);
+        $borderRightFontBoldStyle = (new StyleManager())->merge($borderRightStyle, $fontStyle);
 
         $dataRows = [
             ['Border-Left'],
@@ -517,7 +518,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $allRows
      * @param string $fileName
-     * @param \Box\Spout\Writer\Style\Style $style
+     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
      * @return Writer
      */
     private function writeToXLSXFile($allRows, $fileName, $style)
@@ -539,7 +540,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $allRows
      * @param string $fileName
-     * @param \Box\Spout\Writer\Style\Style|null $defaultStyle
+     * @param \Box\Spout\Writer\Common\Entity\Style\Style|null $defaultStyle
      * @return Writer
      */
     private function writeToXLSXFileWithDefaultStyle($allRows, $fileName, $defaultStyle)
@@ -562,7 +563,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $allRows
      * @param string $fileName
-     * @param \Box\Spout\Writer\Style\Style|null[] $styles
+     * @param \Box\Spout\Writer\Common\Entity\Style\Style|null[] $styles
      * @return Writer
      */
     private function writeToXLSXFileWithMultipleStyles($allRows, $fileName, $styles)

@@ -2,7 +2,9 @@
 
 namespace Box\Spout\Writer\ODS\Helper;
 
-use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Manager\StyleManager;
 
 /**
  * Class StyleHelperTest
@@ -11,8 +13,11 @@ use Box\Spout\Writer\Style\StyleBuilder;
  */
 class StyleHelperTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \Box\Spout\Writer\Style\Style */
+    /** @var Style */
     protected $defaultStyle;
+
+    /** @var StyleHelper */
+    private $styleHelper;
 
     /**
      * @return void
@@ -20,6 +25,7 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->defaultStyle = (new StyleBuilder())->build();
+        $this->styleHelper = new StyleHelper($this->defaultStyle, new StyleManager());
     }
 
     /**
@@ -34,9 +40,8 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($style1->getId());
         $this->assertNull($style2->getId());
 
-        $styleHelper = new StyleHelper($this->defaultStyle);
-        $registeredStyle1 = $styleHelper->registerStyle($style1);
-        $registeredStyle2 = $styleHelper->registerStyle($style2);
+        $registeredStyle1 = $this->styleHelper->registerStyle($style1);
+        $registeredStyle2 = $this->styleHelper->registerStyle($style2);
 
         $this->assertEquals(1, $registeredStyle1->getId());
         $this->assertEquals(2, $registeredStyle2->getId());
@@ -49,9 +54,8 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
     {
         $style = (new StyleBuilder())->setFontBold()->build();
 
-        $styleHelper = new StyleHelper($this->defaultStyle);
-        $registeredStyle1 = $styleHelper->registerStyle($style);
-        $registeredStyle2 = $styleHelper->registerStyle($style);
+        $registeredStyle1 = $this->styleHelper->registerStyle($style);
+        $registeredStyle2 = $this->styleHelper->registerStyle($style);
 
         $this->assertEquals(1, $registeredStyle1->getId());
         $this->assertEquals(1, $registeredStyle2->getId());
@@ -63,11 +67,10 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
     public function testApplyExtraStylesIfNeededShouldApplyWrapTextIfCellContainsNewLine()
     {
         $style = clone $this->defaultStyle;
-        $styleHelper = new StyleHelper($this->defaultStyle);
 
         $this->assertFalse($style->shouldWrapText());
 
-        $updatedStyle = $styleHelper->applyExtraStylesIfNeeded($style, [12, 'single line', "multi\nlines", null]);
+        $updatedStyle = $this->styleHelper->applyExtraStylesIfNeeded($style, [12, 'single line', "multi\nlines", null]);
 
         $this->assertTrue($updatedStyle->shouldWrapText());
     }
@@ -78,11 +81,10 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
     public function testApplyExtraStylesIfNeededShouldDoNothingIfWrapTextAlreadyApplied()
     {
         $style = (new StyleBuilder())->setShouldWrapText()->build();
-        $styleHelper = new StyleHelper($this->defaultStyle);
 
         $this->assertTrue($style->shouldWrapText());
 
-        $updatedStyle = $styleHelper->applyExtraStylesIfNeeded($style, ["multi\nlines"]);
+        $updatedStyle = $this->styleHelper->applyExtraStylesIfNeeded($style, ["multi\nlines"]);
 
         $this->assertTrue($updatedStyle->shouldWrapText());
     }

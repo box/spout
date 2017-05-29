@@ -1,9 +1,11 @@
 <?php
 
-namespace Box\Spout\Writer\Style;
+namespace Box\Spout\Writer\Common\Entity\Style;
 
 /**
  * Class Border
+ *
+ * @package \Box\Spout\Writer\Common\Entity\Style
  */
 class Border
 {
@@ -22,10 +24,8 @@ class Border
     const WIDTH_MEDIUM = 'medium';
     const WIDTH_THICK = 'thick';
 
-    /**
-     * @var array A list of BorderPart objects for this border.
-     */
-    protected $parts = [];
+    /** @var array A list of BorderPart objects for this border. */
+    private $parts = [];
 
     /**
      * @param array|void $borderParts
@@ -36,7 +36,7 @@ class Border
     }
 
     /**
-     * @param $name The name of the border part
+     * @param string $name The name of the border part
      * @return null|BorderPart
      */
     public function getPart($name)
@@ -45,7 +45,7 @@ class Border
     }
 
     /**
-     * @param $name The name of the border part
+     * @param string $name The name of the border part
      * @return bool
      */
     public function hasPart($name)
@@ -64,6 +64,7 @@ class Border
     /**
      * Set BorderParts
      * @param array $parts
+     * @return void
      */
     public function setParts($parts)
     {
@@ -75,7 +76,7 @@ class Border
 
     /**
      * @param BorderPart $borderPart
-     * @return self
+     * @return Border
      */
     public function addPart(BorderPart $borderPart)
     {

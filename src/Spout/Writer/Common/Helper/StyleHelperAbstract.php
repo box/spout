@@ -2,6 +2,9 @@
 
 namespace Box\Spout\Writer\Common\Helper;
 
+use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Manager\StyleManager;
+
 /**
  * Class StyleHelperAbstract
  * This class provides helper functions to manage styles
@@ -10,6 +13,9 @@ namespace Box\Spout\Writer\Common\Helper;
  */
 abstract class StyleHelperAbstract implements StyleHelperInterface
 {
+    /** @var StyleManager Style manager */
+    private $styleManager;
+
     /** @var array [SERIALIZED_STYLE] => [STYLE_ID] mapping table, keeping track of the registered styles */
     protected $serializedStyleToStyleIdMappingTable = [];
 
@@ -17,10 +23,13 @@ abstract class StyleHelperAbstract implements StyleHelperInterface
     protected $styleIdToStyleMappingTable = [];
 
     /**
-     * @param \Box\Spout\Writer\Style\Style $defaultStyle
+     * @param Style $defaultStyle
+     * @param StyleManager $styleManager
      */
-    public function __construct($defaultStyle)
+    public function __construct(Style $defaultStyle, StyleManager $styleManager)
     {
+        $this->styleManager = $styleManager;
+
         // This ensures that the default style is the first one to be registered
         $this->registerStyle($defaultStyle);
     }
@@ -29,12 +38,12 @@ abstract class StyleHelperAbstract implements StyleHelperInterface
      * Registers the given style as a used style.
      * Duplicate styles won't be registered more than once.
      *
-     * @param \Box\Spout\Writer\Style\Style $style The style to be registered
-     * @return \Box\Spout\Writer\Style\Style The registered style, updated with an internal ID.
+     * @param Style $style The style to be registered
+     * @return Style The registered style, updated with an internal ID.
      */
     public function registerStyle($style)
     {
-        $serializedStyle = $style->serialize();
+        $serializedStyle = $this->styleManager->serialize($style);
 
         if (!$this->hasStyleAlreadyBeenRegistered($style)) {
             $nextStyleId = count($this->serializedStyleToStyleIdMappingTable);
@@ -50,12 +59,12 @@ abstract class StyleHelperAbstract implements StyleHelperInterface
     /**
      * Returns whether the given style has already been registered.
      *
-     * @param \Box\Spout\Writer\Style\Style $style
+     * @param Style $style
      * @return bool
      */
     protected function hasStyleAlreadyBeenRegistered($style)
     {
-        $serializedStyle = $style->serialize();
+        $serializedStyle = $this->styleManager->serialize($style);
 
         // Using isset here because it is way faster than array_key_exists...
         return isset($this->serializedStyleToStyleIdMappingTable[$serializedStyle]);
@@ -65,7 +74,7 @@ abstract class StyleHelperAbstract implements StyleHelperInterface
      * Returns the registered style associated to the given serialization.
      *
      * @param string $serializedStyle The serialized style from which the actual style should be fetched from
-     * @return \Box\Spout\Writer\Style\Style
+     * @return Style
      */
     protected function getStyleFromSerializedStyle($serializedStyle)
     {
@@ -74,7 +83,7 @@ abstract class StyleHelperAbstract implements StyleHelperInterface
     }
 
     /**
-     * @return \Box\Spout\Writer\Style\Style[] List of registered styles
+     * @return Style[] List of registered styles
      */
     protected function getRegisteredStyles()
     {
@@ -84,7 +93,7 @@ abstract class StyleHelperAbstract implements StyleHelperInterface
     /**
      * Returns the default style
      *
-     * @return \Box\Spout\Writer\Style\Style Default style
+     * @return Style Default style
      */
     protected function getDefaultStyle()
     {
@@ -96,9 +105,9 @@ abstract class StyleHelperAbstract implements StyleHelperInterface
      * Apply additional styles if the given row needs it.
      * Typically, set "wrap text" if a cell contains a new line.
      *
-     * @param \Box\Spout\Writer\Style\Style $style The original style
+     * @param Style $style The original style
      * @param array $dataRow The row the style will be applied to
-     * @return \Box\Spout\Writer\Style\Style The updated style
+     * @return Style The updated style
      */
     public function applyExtraStylesIfNeeded($style, $dataRow)
     {
@@ -115,9 +124,9 @@ abstract class StyleHelperAbstract implements StyleHelperInterface
      *        A workaround would be to encode "\n" as "_x000D_" but it does not work
      *        on the Windows version of Excel...
      *
-     * @param \Box\Spout\Writer\Style\Style $style The original style
+     * @param Style $style The original style
      * @param array $dataRow The row the style will be applied to
-     * @return \Box\Spout\Writer\Style\Style The eventually updated style
+     * @return Style The eventually updated style
      */
     protected function applyWrapTextIfCellContainsNewLine($style, $dataRow)
     {

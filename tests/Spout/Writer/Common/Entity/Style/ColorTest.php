@@ -1,11 +1,11 @@
 <?php
 
-namespace Box\Spout\Writer\Style;
+namespace Box\Spout\Writer\Common\Entity\Style;
 
 /**
  * Class ColorTest
  *
- * @package Box\Spout\Writer\Style
+ * @package Box\Spout\Writer\Common\Entity\Style
  */
 class ColorTest extends \PHPUnit_Framework_TestCase
 {

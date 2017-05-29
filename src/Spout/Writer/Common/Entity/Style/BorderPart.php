@@ -1,6 +1,6 @@
 <?php
 
-namespace Box\Spout\Writer\Style;
+namespace Box\Spout\Writer\Common\Entity\Style;
 
 use Box\Spout\Writer\Exception\Border\InvalidNameException;
 use Box\Spout\Writer\Exception\Border\InvalidStyleException;
@@ -8,6 +8,8 @@ use Box\Spout\Writer\Exception\Border\InvalidWidthException;
 
 /**
  * Class BorderPart
+ *
+ * @package \Box\Spout\Writer\Common\Entity\Style
  */
 class BorderPart
 {
