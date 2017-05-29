@@ -6,7 +6,7 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Helper\StyleHelperInterface;
 use Box\Spout\Writer\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Options;
+use Box\Spout\Writer\Entity\Options;
 use Box\Spout\Writer\Common\Sheet;
 use Box\Spout\Writer\Entity\Workbook;
 use Box\Spout\Writer\Entity\Worksheet;

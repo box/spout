@@ -5,7 +5,7 @@ namespace Box\Spout\Writer\XLSX\Factory;
 use Box\Spout\Common\Escaper;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Options;
+use Box\Spout\Writer\Entity\Options;
 use Box\Spout\Writer\Factory\EntityFactory;
 use Box\Spout\Writer\Factory\InternalFactoryInterface;
 use Box\Spout\Writer\Factory\WorkbookFactory;

@@ -3,7 +3,7 @@
 namespace Box\Spout\Writer;
 
 use Box\Spout\Writer\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Options;
+use Box\Spout\Writer\Entity\Options;
 use Box\Spout\Writer\Entity\Worksheet;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\Factory\InternalFactoryInterface;
