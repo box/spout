@@ -1,12 +1,12 @@
 <?php
 
-namespace Box\Spout\Writer\Style;
+namespace Box\Spout\Writer\Common\Entity\Style;
 
 /**
  * Class Style
  * Represents a style to be applied to a cell
  *
- * @package Box\Spout\Writer\Style
+ * @package Box\Spout\Writer\Common\Entity\Style
  */
 class Style
 {
@@ -16,62 +16,62 @@ class Style
     const DEFAULT_FONT_NAME = 'Arial';
 
     /** @var int|null Style ID */
-    protected $id = null;
+    private $id = null;
 
     /** @var bool Whether the font should be bold */
-    protected $fontBold = false;
+    private $fontBold = false;
     /** @var bool Whether the bold property was set */
-    protected $hasSetFontBold = false;
+    private $hasSetFontBold = false;
 
     /** @var bool Whether the font should be italic */
-    protected $fontItalic = false;
+    private $fontItalic = false;
     /** @var bool Whether the italic property was set */
-    protected $hasSetFontItalic = false;
+    private $hasSetFontItalic = false;
 
     /** @var bool Whether the font should be underlined */
-    protected $fontUnderline = false;
+    private $fontUnderline = false;
     /** @var bool Whether the underline property was set */
-    protected $hasSetFontUnderline = false;
+    private $hasSetFontUnderline = false;
 
     /** @var bool Whether the font should be struck through */
-    protected $fontStrikethrough = false;
+    private $fontStrikethrough = false;
     /** @var bool Whether the strikethrough property was set */
-    protected $hasSetFontStrikethrough = false;
+    private $hasSetFontStrikethrough = false;
 
     /** @var int Font size */
-    protected $fontSize = self::DEFAULT_FONT_SIZE;
+    private $fontSize = self::DEFAULT_FONT_SIZE;
     /** @var bool Whether the font size property was set */
-    protected $hasSetFontSize = false;
+    private $hasSetFontSize = false;
 
     /** @var string Font color */
-    protected $fontColor = self::DEFAULT_FONT_COLOR;
+    private $fontColor = self::DEFAULT_FONT_COLOR;
     /** @var bool Whether the font color property was set */
-    protected $hasSetFontColor = false;
+    private $hasSetFontColor = false;
 
     /** @var string Font name */
-    protected $fontName = self::DEFAULT_FONT_NAME;
+    private $fontName = self::DEFAULT_FONT_NAME;
     /** @var bool Whether the font name property was set */
-    protected $hasSetFontName = false;
+    private $hasSetFontName = false;
 
     /** @var bool Whether specific font properties should be applied */
-    protected $shouldApplyFont = false;
+    private $shouldApplyFont = false;
 
     /** @var bool Whether the text should wrap in the cell (useful for long or multi-lines text) */
-    protected $shouldWrapText = false;
+    private $shouldWrapText = false;
     /** @var bool Whether the wrap text property was set */
-    protected $hasSetWrapText = false;
+    private $hasSetWrapText = false;
 
     /** @var Border */
-    protected $border = null;
+    private $border = null;
 
     /** @var bool Whether border properties should be applied */
-    protected $shouldApplyBorder = false;
+    private $shouldApplyBorder = false;
 
     /** @var string Background color */
-    protected $backgroundColor = null;
+    private $backgroundColor = null;
 
     /** @var bool */
-    protected $hasSetBackgroundColor = false;
+    private $hasSetBackgroundColor = false;
 
 
     /**
@@ -141,6 +141,14 @@ class Style
     /**
      * @return bool
      */
+    public function hasSetFontBold()
+    {
+        return $this->hasSetFontBold;
+    }
+
+    /**
+     * @return bool
+     */
     public function isFontItalic()
     {
         return $this->fontItalic;
@@ -155,6 +163,14 @@ class Style
         $this->hasSetFontItalic = true;
         $this->shouldApplyFont = true;
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSetFontItalic()
+    {
+        return $this->hasSetFontItalic;
     }
 
     /**
@@ -179,6 +195,14 @@ class Style
     /**
      * @return bool
      */
+    public function hasSetFontUnderline()
+    {
+        return $this->hasSetFontUnderline;
+    }
+
+    /**
+     * @return bool
+     */
     public function isFontStrikethrough()
     {
         return $this->fontStrikethrough;
@@ -193,6 +217,14 @@ class Style
         $this->hasSetFontStrikethrough = true;
         $this->shouldApplyFont = true;
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSetFontStrikethrough()
+    {
+        return $this->hasSetFontStrikethrough;
     }
 
     /**
@@ -213,6 +245,14 @@ class Style
         $this->hasSetFontSize = true;
         $this->shouldApplyFont = true;
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSetFontSize()
+    {
+        return $this->hasSetFontSize;
     }
 
     /**
@@ -238,6 +278,14 @@ class Style
     }
 
     /**
+     * @return bool
+     */
+    public function hasSetFontColor()
+    {
+        return $this->hasSetFontColor;
+    }
+
+    /**
      * @return string
      */
     public function getFontName()
@@ -255,6 +303,14 @@ class Style
         $this->hasSetFontName = true;
         $this->shouldApplyFont = true;
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSetFontName()
+    {
+        return $this->hasSetFontName;
     }
 
     /**
@@ -319,104 +375,5 @@ class Style
     public function shouldApplyBackgroundColor()
     {
         return $this->hasSetBackgroundColor;
-    }
-
-    /**
-     * Serializes the style for future comparison with other styles.
-     * The ID is excluded from the comparison, as we only care about
-     * actual style properties.
-     *
-     * @return string The serialized style
-     */
-    public function serialize()
-    {
-        // In order to be able to properly compare style, set static ID value
-        $currentId = $this->id;
-        $this->setId(0);
-
-        $serializedStyle = serialize($this);
-
-        $this->setId($currentId);
-
-        return $serializedStyle;
-    }
-
-    /**
-     * Merges the current style with the given style, using the given style as a base. This means that:
-     *   - if current style and base style both have property A set, use current style property's value
-     *   - if current style has property A set but base style does not, use current style property's value
-     *   - if base style has property A set but current style does not, use base style property's value
-     *
-     * @NOTE: This function returns a new style.
-     *
-     * @param Style $baseStyle
-     * @return Style New style corresponding to the merge of the 2 styles
-     */
-    public function mergeWith($baseStyle)
-    {
-        $mergedStyle = clone $this;
-
-        $this->mergeFontStyles($mergedStyle, $baseStyle);
-        $this->mergeOtherFontProperties($mergedStyle, $baseStyle);
-        $this->mergeCellProperties($mergedStyle, $baseStyle);
-
-        return $mergedStyle;
-    }
-
-    /**
-     * @param Style $styleToUpdate (passed as reference)
-     * @param Style $baseStyle
-     * @return void
-     */
-    private function mergeFontStyles($styleToUpdate, $baseStyle)
-    {
-        if (!$this->hasSetFontBold && $baseStyle->isFontBold()) {
-            $styleToUpdate->setFontBold();
-        }
-        if (!$this->hasSetFontItalic && $baseStyle->isFontItalic()) {
-            $styleToUpdate->setFontItalic();
-        }
-        if (!$this->hasSetFontUnderline && $baseStyle->isFontUnderline()) {
-            $styleToUpdate->setFontUnderline();
-        }
-        if (!$this->hasSetFontStrikethrough && $baseStyle->isFontStrikethrough()) {
-            $styleToUpdate->setFontStrikethrough();
-        }
-    }
-
-    /**
-     * @param Style $styleToUpdate Style to update (passed as reference)
-     * @param Style $baseStyle
-     * @return void
-     */
-    private function mergeOtherFontProperties($styleToUpdate, $baseStyle)
-    {
-        if (!$this->hasSetFontSize && $baseStyle->getFontSize() !== self::DEFAULT_FONT_SIZE) {
-            $styleToUpdate->setFontSize($baseStyle->getFontSize());
-        }
-        if (!$this->hasSetFontColor && $baseStyle->getFontColor() !== self::DEFAULT_FONT_COLOR) {
-            $styleToUpdate->setFontColor($baseStyle->getFontColor());
-        }
-        if (!$this->hasSetFontName && $baseStyle->getFontName() !== self::DEFAULT_FONT_NAME) {
-            $styleToUpdate->setFontName($baseStyle->getFontName());
-        }
-    }
-
-    /**
-     * @param Style $styleToUpdate Style to update (passed as reference)
-     * @param Style $baseStyle
-     * @return void
-     */
-    private function mergeCellProperties($styleToUpdate, $baseStyle)
-    {
-        if (!$this->hasSetWrapText && $baseStyle->shouldWrapText()) {
-            $styleToUpdate->setShouldWrapText();
-        }
-        if (!$this->getBorder() && $baseStyle->shouldApplyBorder()) {
-            $styleToUpdate->setBorder($baseStyle->getBorder());
-        }
-        if (!$this->hasSetBackgroundColor && $baseStyle->shouldApplyBackgroundColor()) {
-            $styleToUpdate->setBackgroundColor($baseStyle->getBackgroundColor());
-        }
     }
 }

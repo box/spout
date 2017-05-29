@@ -9,7 +9,7 @@ use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
 use Box\Spout\Writer\ODS\Helper\StyleHelper;
-use Box\Spout\Writer\Style\Style;
+use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
  * Class WorksheetManager

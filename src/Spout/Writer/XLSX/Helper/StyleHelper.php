@@ -3,8 +3,8 @@
 namespace Box\Spout\Writer\XLSX\Helper;
 
 use Box\Spout\Writer\Common\Helper\StyleHelperAbstract;
-use Box\Spout\Writer\Style\Color;
-use Box\Spout\Writer\Style\Style;
+use Box\Spout\Writer\Common\Entity\Style\Color;
+use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
  * Class StyleHelper
@@ -45,8 +45,8 @@ class StyleHelper extends StyleHelperAbstract
     /**
      * XLSX specific operations on the registered styles
      *
-     * @param \Box\Spout\Writer\Style\Style $style
-     * @return \Box\Spout\Writer\Style\Style
+     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
+     * @return \Box\Spout\Writer\Common\Entity\Style\Style
      */
     public function registerStyle($style)
     {
@@ -59,7 +59,7 @@ class StyleHelper extends StyleHelperAbstract
     /**
      * Register a fill definition
      *
-     * @param \Box\Spout\Writer\Style\Style $style
+     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
      */
     protected function registerFill($style)
     {
@@ -92,7 +92,7 @@ class StyleHelper extends StyleHelperAbstract
     /**
      * Register a border definition
      *
-     * @param \Box\Spout\Writer\Style\Style $style
+     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
      */
     protected function registerBorder($style)
     {
@@ -174,7 +174,7 @@ EOD;
     {
         $content = '<fonts count="' . count($this->styleIdToStyleMappingTable) . '">';
 
-        /** @var \Box\Spout\Writer\Style\Style $style */
+        /** @var \Box\Spout\Writer\Common\Entity\Style\Style $style */
         foreach ($this->getRegisteredStyles() as $style) {
             $content .= '<font>';
 
@@ -251,7 +251,7 @@ EOD;
         $content .= '<border><left/><right/><top/><bottom/></border>';
 
         foreach ($this->registeredBorders as $styleId) {
-            /** @var \Box\Spout\Writer\Style\Style $style */
+            /** @var \Box\Spout\Writer\Common\Entity\Style\Style $style */
             $style = $this->styleIdToStyleMappingTable[$styleId];
             $border = $style->getBorder();
             $content .= '<border>';
@@ -261,7 +261,7 @@ EOD;
 
             foreach ($sortOrder as $partName) {
                 if ($border->hasPart($partName)) {
-                    /** @var $part \Box\Spout\Writer\Style\BorderPart */
+                    /** @var $part \Box\Spout\Writer\Common\Entity\Style\BorderPart */
                     $part = $border->getPart($partName);
                     $content .= BorderHelper::serializeBorderPart($part);
                 }

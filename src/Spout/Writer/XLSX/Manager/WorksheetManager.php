@@ -11,7 +11,7 @@ use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
-use Box\Spout\Writer\Style\Style;
+use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
 use Box\Spout\Writer\XLSX\Helper\StyleHelper;
 
@@ -155,7 +155,7 @@ EOD;
      * @param Worksheet $worksheet The worksheet to add the row to
      * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row. NULL means use default style.
+     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style Style to be applied to the row. NULL means use default style.
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported

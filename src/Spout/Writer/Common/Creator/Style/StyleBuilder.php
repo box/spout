@@ -1,12 +1,15 @@
 <?php
 
-namespace Box\Spout\Writer\Style;
+namespace Box\Spout\Writer\Common\Creator\Style;
+
+use Box\Spout\Writer\Common\Entity\Style\Border;
+use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
  * Class StyleBuilder
  * Builder to create new styles
  *
- * @package Box\Spout\Writer\Style
+ * @package Box\Spout\Writer\Common\Creator\Style
  */
 class StyleBuilder
 {

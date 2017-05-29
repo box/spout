@@ -1,14 +1,31 @@
 <?php
 
-namespace Box\Spout\Writer\Style;
+namespace Box\Spout\Writer\Common\Manager;
+
+use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Style\Border;
+use Box\Spout\Writer\Common\Entity\Style\Color;
+use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
- * Class StyleTest
+ * Class StyleManagerTest
  *
- * @package Box\Spout\Writer\Style
+ * @package Box\Spout\Writer\Common\Manager
  */
-class StyleTest extends \PHPUnit_Framework_TestCase
+class StyleManagerTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var StyleManager */
+    private $styleManager;
+
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        $this->styleManager = new StyleManager();
+    }
+
     /**
      * @return void
      */
@@ -20,7 +37,7 @@ class StyleTest extends \PHPUnit_Framework_TestCase
         $style2 = (new StyleBuilder())->setFontBold()->build();
         $style2->setId(2);
 
-        $this->assertEquals($style1->serialize(), $style2->serialize());
+        $this->assertEquals($this->styleManager->serialize($style1), $this->styleManager->serialize($style2));
     }
 
     /**
@@ -30,7 +47,7 @@ class StyleTest extends \PHPUnit_Framework_TestCase
     {
         $baseStyle = (new StyleBuilder())->build();
         $currentStyle = (new StyleBuilder())->build();
-        $mergedStyle = $currentStyle->mergeWith($baseStyle);
+        $mergedStyle = $this->styleManager->merge($currentStyle, $baseStyle);
 
         $this->assertNotSame($mergedStyle, $currentStyle);
     }
@@ -42,7 +59,7 @@ class StyleTest extends \PHPUnit_Framework_TestCase
     {
         $baseStyle = (new StyleBuilder())->setFontSize(99)->setFontBold()->build();
         $currentStyle = (new StyleBuilder())->setFontName('Font')->setFontUnderline()->build();
-        $mergedStyle = $currentStyle->mergeWith($baseStyle);
+        $mergedStyle = $this->styleManager->merge($currentStyle, $baseStyle);
 
         $this->assertNotEquals(99, $currentStyle->getFontSize());
         $this->assertFalse($currentStyle->isFontBold());
@@ -60,7 +77,7 @@ class StyleTest extends \PHPUnit_Framework_TestCase
     {
         $baseStyle = (new StyleBuilder())->setFontSize(10)->build();
         $currentStyle = (new StyleBuilder())->setFontSize(99)->build();
-        $mergedStyle = $currentStyle->mergeWith($baseStyle);
+        $mergedStyle = $this->styleManager->merge($currentStyle, $baseStyle);
 
         $this->assertEquals(99, $mergedStyle->getFontSize());
     }
@@ -72,7 +89,7 @@ class StyleTest extends \PHPUnit_Framework_TestCase
     {
         $baseStyle = (new StyleBuilder())->build();
         $currentStyle = (new StyleBuilder())->setFontItalic()->setFontStrikethrough()->build();
-        $mergedStyle = $currentStyle->mergeWith($baseStyle);
+        $mergedStyle = $this->styleManager->merge($currentStyle, $baseStyle);
 
         $this->assertFalse($baseStyle->isFontItalic());
         $this->assertFalse($baseStyle->isFontStrikethrough());
@@ -93,7 +110,7 @@ class StyleTest extends \PHPUnit_Framework_TestCase
             ->setShouldWrapText()
             ->build();
         $currentStyle = (new StyleBuilder())->build();
-        $mergedStyle = $currentStyle->mergeWith($baseStyle);
+        $mergedStyle = $this->styleManager->merge($currentStyle, $baseStyle);
 
         $this->assertFalse($currentStyle->isFontUnderline());
         $this->assertTrue($mergedStyle->isFontUnderline());
@@ -109,10 +126,10 @@ class StyleTest extends \PHPUnit_Framework_TestCase
     {
         $baseStyle = (new StyleBuilder())->build();
         $currentStyle = (new StyleBuilder())->build();
-        $mergedStyle = $currentStyle->mergeWith($baseStyle);
+        $mergedStyle = $this->styleManager->merge($currentStyle, $baseStyle);
 
-        $this->assertTrue($baseStyle->serialize() === $currentStyle->serialize());
-        $this->assertTrue($currentStyle->serialize() === $mergedStyle->serialize());
+        $this->assertTrue($this->styleManager->serialize($baseStyle) === $this->styleManager->serialize($currentStyle));
+        $this->assertTrue($this->styleManager->serialize($currentStyle) === $this->styleManager->serialize($mergedStyle));
     }
 
     /**
@@ -125,9 +142,9 @@ class StyleTest extends \PHPUnit_Framework_TestCase
             ->setFontSize(Style::DEFAULT_FONT_SIZE)
             ->build();
         $currentStyle = (new StyleBuilder())->build();
-        $mergedStyle = $currentStyle->mergeWith($baseStyle);
+        $mergedStyle = $this->styleManager->merge($currentStyle, $baseStyle);
 
-        $this->assertTrue($currentStyle->serialize() === $mergedStyle->serialize());
+        $this->assertTrue($this->styleManager->serialize($currentStyle) === $this->styleManager->serialize($mergedStyle));
     }
 
     /**
@@ -151,10 +168,10 @@ class StyleTest extends \PHPUnit_Framework_TestCase
 
         $baseStyle = (new StyleBuilder())->setBorder($border)->build();
         $currentStyle = (new StyleBuilder())->build();
-        $mergedStyle = $currentStyle->mergeWith($baseStyle);
+        $mergedStyle = $this->styleManager->merge($currentStyle, $baseStyle);
 
         $this->assertEquals(null, $currentStyle->getBorder(), 'Current style has no border');
-        $this->assertInstanceOf('Box\Spout\Writer\Style\Border', $baseStyle->getBorder(), 'Base style has a border');
-        $this->assertInstanceOf('Box\Spout\Writer\Style\Border', $mergedStyle->getBorder(), 'Merged style has a border');
+        $this->assertInstanceOf('Box\Spout\Writer\Common\Entity\Style\Border', $baseStyle->getBorder(), 'Base style has a border');
+        $this->assertInstanceOf('Box\Spout\Writer\Common\Entity\Style\Border', $mergedStyle->getBorder(), 'Merged style has a border');
     }
 }

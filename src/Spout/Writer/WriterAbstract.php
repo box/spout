@@ -6,8 +6,11 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Helper\FileSystemHelper;
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Manager\StyleManager;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 
@@ -28,13 +31,16 @@ abstract class WriterAbstract implements WriterInterface
     /** @var bool Indicates whether the writer has been opened or not */
     protected $isWriterOpened = false;
 
-    /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
+    /** @var GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var \Box\Spout\Writer\Common\Manager\OptionsManagerInterface Writer options manager */
+    /** @var OptionsManagerInterface Writer options manager */
     protected $optionsManager;
 
-    /** @var Style\Style Style to be applied to the next written row(s) */
+    /** @var StyleManager Style manager */
+    protected $styleManager;
+
+    /** @var Style Style to be applied to the next written row(s) */
     protected $rowStyle;
 
     /** @var string Content-Type value for the header - to be defined by child class */
@@ -53,7 +59,7 @@ abstract class WriterAbstract implements WriterInterface
      *
      * @param  array $dataRow Array containing data to be streamed.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param Style\Style $style Style to be applied to the written row
+     * @param Style $style Style to be applied to the written row
      * @return void
      */
     abstract protected function addRowToWriter(array $dataRow, $style);
@@ -66,11 +72,13 @@ abstract class WriterAbstract implements WriterInterface
     abstract protected function closeWriter();
 
     /**
-     * @param \Box\Spout\Writer\Common\Manager\OptionsManagerInterface $optionsManager
+     * @param OptionsManagerInterface $optionsManager
+     * @param StyleManager $styleManager
      */
-    public function __construct(OptionsManagerInterface $optionsManager)
+    public function __construct(OptionsManagerInterface $optionsManager, StyleManager $styleManager)
     {
         $this->optionsManager = $optionsManager;
+        $this->styleManager = $styleManager;
         $this->resetRowStyleToDefault();
     }
 
@@ -79,7 +87,7 @@ abstract class WriterAbstract implements WriterInterface
      * Overriding the default style instead of using "addRowWithStyle" improves performance by 20%.
      * @see https://github.com/box/spout/issues/272
      *
-     * @param Style\Style $defaultStyle
+     * @param Style $defaultStyle
      * @return WriterAbstract
      */
     public function setDefaultRowStyle($defaultStyle)
@@ -233,7 +241,7 @@ abstract class WriterAbstract implements WriterInterface
      *
      * @api
      * @param array $dataRow Array of array containing data to be streamed.
-     * @param Style\Style $style Style to be applied to the row.
+     * @param Style $style Style to be applied to the row.
      * @return WriterAbstract
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
@@ -241,7 +249,7 @@ abstract class WriterAbstract implements WriterInterface
      */
     public function addRowWithStyle(array $dataRow, $style)
     {
-        if (!$style instanceof Style\Style) {
+        if (!$style instanceof Style) {
             throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
         }
 
@@ -289,7 +297,7 @@ abstract class WriterAbstract implements WriterInterface
      *
      * @api
      * @param array $dataRows Array of array containing data to be streamed.
-     * @param Style\Style $style Style to be applied to the rows.
+     * @param Style $style Style to be applied to the rows.
      * @return WriterAbstract
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
@@ -297,7 +305,7 @@ abstract class WriterAbstract implements WriterInterface
      */
     public function addRowsWithStyle(array $dataRows, $style)
     {
-        if (!$style instanceof Style\Style) {
+        if (!$style instanceof Style) {
             throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
         }
 
@@ -312,14 +320,14 @@ abstract class WriterAbstract implements WriterInterface
      * Sets the style to be applied to the next written rows
      * until it is changed or reset.
      *
-     * @param Style\Style $style
+     * @param Style $style
      * @return void
      */
     private function setRowStyle($style)
     {
         // Merge given style with the default one to inherit custom properties
         $defaultRowStyle = $this->optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
-        $this->rowStyle = $style->mergeWith($defaultRowStyle);
+        $this->rowStyle = $this->styleManager->merge($style, $defaultRowStyle);
     }
 
     /**

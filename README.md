@@ -137,7 +137,7 @@ It is possible to apply some formatting options to a row. Spout supports fonts, 
 ```php
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Style\Color;
 
 $style = (new StyleBuilder())
@@ -163,9 +163,9 @@ Adding borders to a row requires a ```Border``` object.
 ```php
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Style\Border;
-use Box\Spout\Writer\Style\BorderBuilder;
+use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Style\Color;
-use Box\Spout\Writer\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\WriterFactory;
 
 $border = (new BorderBuilder())

@@ -7,6 +7,7 @@ use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
+use Box\Spout\Writer\Common\Manager\StyleManager;
 use Box\Spout\Writer\ODS\Helper\FileSystemHelper;
 use Box\Spout\Writer\ODS\Helper\StyleHelper;
 use Box\Spout\Writer\ODS\Manager\WorkbookManager;
@@ -80,7 +81,17 @@ class InternalFactory implements InternalFactoryInterface
     private function createStyleHelper(OptionsManagerInterface $optionsManager)
     {
         $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
-        return new StyleHelper($defaultRowStyle);
+        $styleManager = $this->createStyleManager();
+
+        return new StyleHelper($defaultRowStyle, $styleManager);
+    }
+
+    /**
+     * @return StyleManager
+     */
+    private function createStyleManager()
+    {
+        return new StyleManager();
     }
 
     /**

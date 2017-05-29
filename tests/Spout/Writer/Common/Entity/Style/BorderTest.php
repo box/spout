@@ -1,7 +1,17 @@
 <?php
 
-namespace Box\Spout\Writer\Style;
+namespace Box\Spout\Writer\Common\EntityStyle;
 
+use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
+use Box\Spout\Writer\Common\Entity\Style\Border;
+use Box\Spout\Writer\Common\Entity\Style\BorderPart;
+use Box\Spout\Writer\Common\Entity\Style\Color;
+
+/**
+ * Class BorderTest
+ *
+ * @package Box\Spout\Writer\Common\EntityStyle
+ */
 class BorderTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -20,7 +30,7 @@ class BorderTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidBorderPart()
     {
-        $invalidBorderPart = new BorderPart('invalid');
+        new BorderPart('invalid');
     }
 
     /**
@@ -28,7 +38,7 @@ class BorderTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidBorderPartStyle()
     {
-        $invalidBorderPartStyle = new BorderPart(Border::LEFT, Color::BLACK, Border::WIDTH_THIN, 'invalid');
+        new BorderPart(Border::LEFT, Color::BLACK, Border::WIDTH_THIN, 'invalid');
     }
 
     /**
@@ -36,7 +46,7 @@ class BorderTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidBorderPartWidth()
     {
-        $invalidBorderPartStyle = new BorderPart(Border::LEFT, Color::BLACK, 'invalid', Border::STYLE_DASHED);
+        new BorderPart(Border::LEFT, Color::BLACK, 'invalid', Border::STYLE_DASHED);
     }
 
     /**

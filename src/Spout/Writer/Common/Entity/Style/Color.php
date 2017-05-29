@@ -1,6 +1,6 @@
 <?php
 
-namespace Box\Spout\Writer\Style;
+namespace Box\Spout\Writer\Common\Entity\Style;
 
 use Box\Spout\Writer\Exception\InvalidColorException;
 
@@ -8,7 +8,7 @@ use Box\Spout\Writer\Exception\InvalidColorException;
  * Class Color
  * This class provides constants and functions to work with colors
  *
- * @package Box\Spout\Writer\Style
+ * @package Box\Spout\Writer\Common\Entity\Style
  */
 class Color
 {

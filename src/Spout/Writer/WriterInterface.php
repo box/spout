@@ -2,6 +2,8 @@
 
 namespace Box\Spout\Writer;
 
+use Box\Spout\Writer\Common\Entity\Style\Style;
+
 /**
  * Interface WriterInterface
  *
@@ -45,7 +47,7 @@ interface WriterInterface
      * @see addRow
      *
      * @param array $dataRow Array of array containing data to be streamed.
-     * @param Style\Style $style Style to be applied to the row.
+     * @param Style $style Style to be applied to the row.
      * @return WriterInterface
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
@@ -73,7 +75,7 @@ interface WriterInterface
      * @see addRows
      *
      * @param array $dataRows Array of array containing data to be streamed.
-     * @param Style\Style $style Style to be applied to the rows.
+     * @param Style $style Style to be applied to the rows.
      * @return WriterInterface
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
