@@ -31,6 +31,9 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper impleme
     const WORKBOOK_RELS_XML_FILE_NAME = 'workbook.xml.rels';
     const STYLES_XML_FILE_NAME = 'styles.xml';
 
+    /** @var ZipHelper Helper to perform tasks with Zip archive */
+    private $zipHelper;
+
     /** @var string Path to the root folder inside the temp folder where the files to create the XLSX will be stored */
     private $rootFolder;
 
@@ -48,6 +51,16 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper impleme
 
     /** @var string Path to the "worksheets" folder inside the "xl" folder */
     private $xlWorksheetsFolder;
+
+    /**
+     * @param string $baseFolderPath The path of the base folder where all the I/O can occur
+     * @param ZipHelper $zipHelper Helper to perform tasks with Zip archive
+     */
+    public function __construct($baseFolderPath, $zipHelper)
+    {
+        parent::__construct($baseFolderPath);
+        $this->zipHelper = $zipHelper;
+    }
 
     /**
      * @return string
@@ -355,19 +368,21 @@ EOD;
      */
     public function zipRootFolderAndCopyToStream($streamPointer)
     {
-        $zipHelper = new ZipHelper($this->rootFolder);
+        $zip = $this->zipHelper->createZip($this->rootFolder);
+
+        $zipFilePath = $this->zipHelper->getZipFilePath($zip);
 
         // In order to have the file's mime type detected properly, files need to be added
         // to the zip file in a particular order.
         // "[Content_Types].xml" then at least 2 files located in "xl" folder should be zipped first.
-        $zipHelper->addFileToArchive($this->rootFolder, self::CONTENT_TYPES_XML_FILE_NAME);
-        $zipHelper->addFileToArchive($this->rootFolder, self::XL_FOLDER_NAME . '/' . self::WORKBOOK_XML_FILE_NAME);
-        $zipHelper->addFileToArchive($this->rootFolder, self::XL_FOLDER_NAME . '/' . self::STYLES_XML_FILE_NAME);
+        $this->zipHelper->addFileToArchive($zip, $this->rootFolder, self::CONTENT_TYPES_XML_FILE_NAME);
+        $this->zipHelper->addFileToArchive($zip, $this->rootFolder, self::XL_FOLDER_NAME . '/' . self::WORKBOOK_XML_FILE_NAME);
+        $this->zipHelper->addFileToArchive($zip, $this->rootFolder, self::XL_FOLDER_NAME . '/' . self::STYLES_XML_FILE_NAME);
 
-        $zipHelper->addFolderToArchive($this->rootFolder, ZipHelper::EXISTING_FILES_SKIP);
-        $zipHelper->closeArchiveAndCopyToStream($streamPointer);
+        $this->zipHelper->addFolderToArchive($zip, $this->rootFolder, ZipHelper::EXISTING_FILES_SKIP);
+        $this->zipHelper->closeArchiveAndCopyToStream($zip, $streamPointer);
 
         // once the zip is copied, remove it
-        $this->deleteFile($zipHelper->getZipFilePath());
+        $this->deleteFile($zipFilePath);
     }
 }

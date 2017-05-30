@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\ODS\Creator;
 
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
@@ -90,7 +91,17 @@ class InternalFactory implements InternalFactoryInterface
     public function createFileSystemHelper(OptionsManagerInterface $optionsManager)
     {
         $tempFolder = $optionsManager->getOption(Options::TEMP_FOLDER);
-        return new FileSystemHelper($tempFolder);
+        $zipHelper = $this->createZipHelper();
+
+        return new FileSystemHelper($tempFolder, $zipHelper);
+    }
+
+    /**
+     * @return ZipHelper
+     */
+    private function createZipHelper()
+    {
+        return new ZipHelper();
     }
 
     /**
