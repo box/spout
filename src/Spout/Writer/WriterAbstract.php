@@ -49,11 +49,17 @@ abstract class WriterAbstract implements WriterInterface
     /**
      * @param OptionsManagerInterface $optionsManager
      * @param StyleMerger $styleMerger
+     * @param GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct(OptionsManagerInterface $optionsManager, StyleMerger $styleMerger)
+    public function __construct(
+        OptionsManagerInterface $optionsManager,
+        StyleMerger $styleMerger,
+        GlobalFunctionsHelper $globalFunctionsHelper)
     {
         $this->optionsManager = $optionsManager;
         $this->styleMerger = $styleMerger;
+        $this->globalFunctionsHelper = $globalFunctionsHelper;
+
         $this->resetRowStyleToDefault();
     }
 
@@ -94,16 +100,6 @@ abstract class WriterAbstract implements WriterInterface
     {
         $this->optionsManager->setOption(Options::DEFAULT_ROW_STYLE, $defaultStyle);
         $this->resetRowStyleToDefault();
-        return $this;
-    }
-
-    /**
-     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
-     * @return WriterAbstract
-     */
-    public function setGlobalFunctionsHelper($globalFunctionsHelper)
-    {
-        $this->globalFunctionsHelper = $globalFunctionsHelper;
         return $this;
     }
 

@@ -28,25 +28,13 @@ class WriterFactory
      */
     public static function create($writerType)
     {
-        $writer = null;
-
         switch ($writerType) {
-            case Type::CSV:
-                $writer = self::getCSVWriter();
-                break;
-            case Type::XLSX:
-                $writer = self::getXLSXWriter();
-                break;
-            case Type::ODS:
-                $writer = self::getODSWriter();
-                break;
+            case Type::CSV: return self::getCSVWriter();
+            case Type::XLSX: return self::getXLSXWriter();
+            case Type::ODS: return self::getODSWriter();
             default:
                 throw new UnsupportedTypeException('No writers supporting the given type: ' . $writerType);
         }
-
-        $writer->setGlobalFunctionsHelper(new GlobalFunctionsHelper());
-
-        return $writer;
     }
 
     /**
@@ -56,8 +44,9 @@ class WriterFactory
     {
         $optionsManager = new CSV\Manager\OptionsManager();
         $styleMerger = new StyleMerger();
+        $globalFunctionsHelper = new GlobalFunctionsHelper();
 
-        return new CSV\Writer($optionsManager, $styleMerger);
+        return new CSV\Writer($optionsManager, $styleMerger, $globalFunctionsHelper);
     }
 
     /**
@@ -68,9 +57,10 @@ class WriterFactory
         $styleBuilder = new StyleBuilder();
         $optionsManager = new XLSX\Manager\OptionsManager($styleBuilder);
         $styleMerger = new StyleMerger();
-        $generalFactory = new XLSX\Creator\InternalFactory(new EntityFactory());
+        $globalFunctionsHelper = new GlobalFunctionsHelper();
+        $internalFactory = new XLSX\Creator\InternalFactory(new EntityFactory());
 
-        return new XLSX\Writer($optionsManager, $styleMerger, $generalFactory);
+        return new XLSX\Writer($optionsManager, $styleMerger, $globalFunctionsHelper, $internalFactory);
     }
 
     /**
@@ -81,8 +71,9 @@ class WriterFactory
         $styleBuilder = new StyleBuilder();
         $optionsManager = new ODS\Manager\OptionsManager($styleBuilder);
         $styleMerger = new StyleMerger();
-        $generalFactory = new ODS\Creator\InternalFactory(new EntityFactory());
+        $globalFunctionsHelper = new GlobalFunctionsHelper();
+        $internalFactory = new ODS\Creator\InternalFactory(new EntityFactory());
 
-        return new ODS\Writer($optionsManager, $styleMerger, $generalFactory);
+        return new ODS\Writer($optionsManager, $styleMerger, $globalFunctionsHelper, $internalFactory);
     }
 }

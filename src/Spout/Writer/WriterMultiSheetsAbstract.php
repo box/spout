@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer;
 
+use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
@@ -28,11 +29,16 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /**
      * @param OptionsManagerInterface $optionsManager
      * @param StyleMerger $styleMerger
+     * @param GlobalFunctionsHelper $globalFunctionsHelper
      * @param InternalFactoryInterface $internalFactory
      */
-    public function __construct(OptionsManagerInterface $optionsManager, StyleMerger $styleMerger, InternalFactoryInterface $internalFactory)
+    public function __construct(
+        OptionsManagerInterface $optionsManager,
+        StyleMerger $styleMerger,
+        GlobalFunctionsHelper $globalFunctionsHelper,
+        InternalFactoryInterface $internalFactory)
     {
-        parent::__construct($optionsManager, $styleMerger);
+        parent::__construct($optionsManager, $styleMerger, $globalFunctionsHelper);
         $this->internalFactory = $internalFactory;
     }
 
