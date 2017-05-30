@@ -12,7 +12,6 @@ use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
 use Box\Spout\Writer\Common\Entity\Style\Style;
-use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
 use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
 
 /**
@@ -42,8 +41,8 @@ EOD;
     /** @var StyleManager Manages styles */
     private $styleManager;
 
-    /** @var SharedStringsHelper Helper to write shared strings */
-    private $sharedStringsHelper;
+    /** @var SharedStringsManager Helper to write shared strings */
+    private $sharedStringsManager;
 
     /** @var \Box\Spout\Common\Escaper\XLSX Strings escaper */
     private $stringsEscaper;
@@ -56,30 +55,30 @@ EOD;
      *
      * @param OptionsManagerInterface $optionsManager
      * @param StyleManager $styleManager
-     * @param SharedStringsHelper $sharedStringsHelper
+     * @param SharedStringsManager $sharedStringsManager
      * @param \Box\Spout\Common\Escaper\XLSX $stringsEscaper
      * @param StringHelper $stringHelper
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
         StyleManager $styleManager,
-        SharedStringsHelper $sharedStringsHelper,
+        SharedStringsManager $sharedStringsManager,
         \Box\Spout\Common\Escaper\XLSX $stringsEscaper,
         StringHelper $stringHelper)
     {
         $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
         $this->styleManager = $styleManager;
-        $this->sharedStringsHelper = $sharedStringsHelper;
+        $this->sharedStringsManager = $sharedStringsManager;
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
     }
 
     /**
-     * @return SharedStringsHelper
+     * @return SharedStringsManager
      */
-    public function getSharedStringsHelper()
+    public function getSharedStringsManager()
     {
-        return $this->sharedStringsHelper;
+        return $this->sharedStringsManager;
     }
 
 
@@ -241,7 +240,7 @@ EOD;
         if ($this->shouldUseInlineStrings) {
             $cellXMLFragment = ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
         } else {
-            $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
+            $sharedStringId = $this->sharedStringsManager->writeString($cellValue);
             $cellXMLFragment = ' t="s"><v>' . $sharedStringId . '</v></c>';
         }
 

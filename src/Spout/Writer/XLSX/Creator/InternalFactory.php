@@ -9,7 +9,7 @@ use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
-use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
+use Box\Spout\Writer\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
 use Box\Spout\Writer\XLSX\Manager\Style\StyleRegistry;
 use Box\Spout\Writer\XLSX\Manager\WorkbookManager;
@@ -48,10 +48,10 @@ class InternalFactory implements InternalFactoryInterface
         $fileSystemHelper->createBaseFilesAndFolders();
 
         $xlFolder = $fileSystemHelper->getXlFolder();
-        $sharedStringsHelper = $this->createSharedStringsHelper($xlFolder);
+        $sharedStringsManager = $this->createSharedStringsManager($xlFolder);
 
         $styleManager = $this->createStyleManager($optionsManager);
-        $worksheetManager = $this->createWorksheetManager($optionsManager, $styleManager, $sharedStringsHelper);
+        $worksheetManager = $this->createWorksheetManager($optionsManager, $styleManager, $sharedStringsManager);
 
         return new WorkbookManager($workbook, $optionsManager, $worksheetManager, $styleManager, $fileSystemHelper, $this->entityFactory);
     }
@@ -59,19 +59,19 @@ class InternalFactory implements InternalFactoryInterface
     /**
      * @param OptionsManagerInterface $optionsManager
      * @param StyleManager $styleManager
-     * @param SharedStringsHelper $sharedStringsHelper
+     * @param SharedStringsManager $sharedStringsManager
      * @return WorksheetManager
      */
     private function createWorksheetManager(
         OptionsManagerInterface $optionsManager,
         StyleManager $styleManager,
-        SharedStringsHelper $sharedStringsHelper
+        SharedStringsManager $sharedStringsManager
     )
     {
         $stringsEscaper = $this->createStringsEscaper();
         $stringsHelper = $this->createStringHelper();
 
-        return new WorksheetManager($optionsManager, $styleManager, $sharedStringsHelper, $stringsEscaper, $stringsHelper);
+        return new WorksheetManager($optionsManager, $styleManager, $sharedStringsManager, $stringsEscaper, $stringsHelper);
     }
 
     /**
@@ -96,11 +96,12 @@ class InternalFactory implements InternalFactoryInterface
 
     /**
      * @param string $xlFolder Path to the "xl" folder
-     * @return SharedStringsHelper
+     * @return SharedStringsManager
      */
-    private function createSharedStringsHelper($xlFolder)
+    private function createSharedStringsManager($xlFolder)
     {
-        return new SharedStringsHelper($xlFolder);
+        $stringEscaper = $this->createStringsEscaper();
+        return new SharedStringsManager($xlFolder, $stringEscaper);
     }
 
     /**
