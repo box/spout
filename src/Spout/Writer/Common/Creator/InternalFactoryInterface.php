@@ -6,7 +6,7 @@ use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
 
 /**
- * Interface GeneralFactoryInterface
+ * Interface InternalFactoryInterface
  *
  * @package Box\Spout\Writer\Common\Creator
  */
