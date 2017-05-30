@@ -2,8 +2,6 @@
 
 namespace Box\Spout\Writer\Common\Entity;
 
-use Box\Spout\Writer\Common\Sheet;
-
 /**
  * Class Worksheet
  * Entity describing a Worksheet

@@ -4,7 +4,7 @@ namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\Common\Sheet;
+use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\WriterFactory;
 
 /**
@@ -62,6 +62,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
 
@@ -85,6 +86,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
 
@@ -93,6 +95,8 @@ class SheetTest extends \PHPUnit_Framework_TestCase
 
         $writer->addRow(['xlsx--11', 'xlsx--12']);
         $writer->close();
+
+        return $sheet;
     }
 
     /**
