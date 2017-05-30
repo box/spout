@@ -29,12 +29,6 @@ class RowTest extends TestCase
         $this->assertInstanceOf('Box\Spout\Writer\Common\Entity\Row', new Row([$this->cellMock()->getMock()]));
     }
 
-    public function testInvalidInstanceCellType()
-    {
-        $this->expectException('TypeError');
-        $this->assertInstanceOf('Box\Spout\Writer\Common\Entity\Row', new Row(['string']));
-    }
-
     public function testSetCells()
     {
         $o = new Row();

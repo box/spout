@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\Common\Entity;
 
 use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 class Row
 {
@@ -19,6 +20,11 @@ class Row
     protected $style = null;
 
     /**
+     * @var StyleMerger
+     */
+    protected $styleMerger;
+
+    /**
      * Row constructor.
      * @param array $cells
      * @param Style|null $style
@@ -28,6 +34,8 @@ class Row
         $this
             ->setCells($cells)
             ->setStyle($style);
+
+        $this->styleMerger = new StyleMerger();
     }
 
     /**
@@ -56,6 +64,9 @@ class Row
      */
     public function getStyle()
     {
+        if (!isset($this->style)) {
+            $this->setStyle(new Style());
+        }
         return $this->style;
     }
 
@@ -70,11 +81,37 @@ class Row
     }
 
     /**
+     * @param Style $style|null
+     * @return $this
+     */
+    public function applyStyle(Style $style = null)
+    {
+        if ($style === null) {
+            return $this;
+        }
+        $merged = $this->styleMerger->merge($this->getStyle(), $style);
+        $this->setStyle($merged);
+        return $this;
+    }
+
+    /**
      * @param Cell $cell
+     * @return Row
      */
     public function addCell(Cell $cell)
     {
         $this->cells[] = $cell;
         return $this;
+    }
+
+    /**
+     * Detect whether this row is considered empty.
+     * An empty row has either no cells at all - or only empty cells
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return count($this->cells) === 0 || (count($this->cells) === 1 && $this->cells[0]->isEmpty());
     }
 }

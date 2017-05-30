@@ -12,7 +12,6 @@ use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Writer\Exception\WriterException;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
  * Class WorkbookManagerAbstract
@@ -192,18 +191,16 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     }
 
     /**
-     * Adds data to the current sheet.
+     * Adds a row to the current sheet.
      * If shouldCreateNewSheetsAutomatically option is set to true, it will handle pagination
      * with the creation of new worksheets if one worksheet has reached its maximum capicity.
      *
-     * @param array $dataRow Array containing data to be written. Cannot be empty.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param Style $style Style to be applied to the row.
+     * @param Row $row The row to added
      * @return void
      * @throws IOException If trying to create a new sheet and unable to open the sheet for writing
      * @throws WriterException If unable to write data
      */
-    public function addRowToCurrentWorksheet($dataRow, Style $style)
+    public function addRowToCurrentWorksheet(Row $row)
     {
         $currentWorksheet = $this->getCurrentWorksheet();
         $hasReachedMaxRows = $this->hasCurrentWorkseetReachedMaxRows();
@@ -214,12 +211,12 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
             if ($this->optionManager->getOption(Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY)) {
                 $currentWorksheet = $this->addNewSheetAndMakeItCurrent();
 
-                $this->addRowWithStyleToWorksheet($currentWorksheet, $dataRow, $style);
+                $this->addRowWithStyleToWorksheet($currentWorksheet, $row);
             } else {
                 // otherwise, do nothing as the data won't be written anyways
             }
         } else {
-            $this->addRowWithStyleToWorksheet($currentWorksheet, $dataRow, $style);
+            $this->addRowWithStyleToWorksheet($currentWorksheet, $row);
         }
     }
 
@@ -238,19 +235,16 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * @param Worksheet $worksheet Worksheet to write the row to
      * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param Style $style Style to be applied to the row.
      * @return void
      * @throws WriterException If unable to write data
      */
-    private function addRowWithStyleToWorksheet(Worksheet $worksheet, $dataRow, Style $style)
+    private function addRowWithStyleToWorksheet(Worksheet $worksheet, Row $row)
     {
-        $updatedStyle = $this->styleManager->applyExtraStylesIfNeeded($style, $dataRow);
-        $registeredStyle = $this->styleManager->registerStyle($updatedStyle);
-        $this->worksheetManager->addRow($worksheet, $dataRow, $registeredStyle);
+        $this->worksheetManager->addRow($worksheet, $row);
 
         // update max num columns for the worksheet
         $currentMaxNumColumns = $worksheet->getMaxNumColumns();
-        $cellsCount = count($dataRow);
+        $cellsCount = count($row->getCells());
         $worksheet->setMaxNumColumns(max($currentMaxNumColumns, $cellsCount));
     }
 

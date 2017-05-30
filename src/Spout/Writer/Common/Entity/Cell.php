@@ -2,8 +2,9 @@
 
 namespace Box\Spout\Writer\Common\Entity;
 
-use Box\Spout\Writer\Common\Helper\CellHelper;
 use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Helper\CellHelper;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 /**
  * Class Cell
@@ -62,6 +63,11 @@ class Cell
     protected $style = null;
 
     /**
+     * @var StyleMerger
+     */
+    protected $styleMerger;
+
+    /**
      * Cell constructor.
      * @param $value mixed
      * @param $style Style
@@ -72,6 +78,8 @@ class Cell
         if ($style) {
             $this->setStyle($style);
         }
+
+        $this->styleMerger = new StyleMerger();
     }
 
     /**
@@ -100,10 +108,13 @@ class Cell
     }
 
     /**
-     * @return Style|null
+     * @return Style
      */
     public function getStyle()
     {
+        if (!isset($this->style)) {
+            $this->setStyle(new Style());
+        }
         return $this->style;
     }
 
@@ -190,5 +201,19 @@ class Cell
     public function __toString()
     {
         return (string)$this->value;
+    }
+
+    /**
+     * @param Style $style|null
+     * @return $this
+     */
+    public function applyStyle(Style $style = null)
+    {
+        if ($style === null) {
+            return $this;
+        }
+        $merged = $this->styleMerger->merge($this->getStyle(), $style);
+        $this->setStyle($merged);
+        return $this;
     }
 }

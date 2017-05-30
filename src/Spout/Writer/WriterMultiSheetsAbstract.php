@@ -6,6 +6,7 @@ use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
@@ -159,17 +160,15 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * If shouldCreateNewSheetsAutomatically option is set to true, it will handle pagination
      * with the creation of new worksheets if one worksheet has reached its maximum capicity.
      *
-     * @param array $dataRow Array containing data to be written.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style Style to be applied to the row.
+     * @param Row $row
      * @return void
      * @throws WriterNotOpenedException If the book is not created yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    protected function addRowToWriter(array $dataRow, $style)
+    protected function addRowToWriter(Row $row)
     {
         $this->throwIfWorkbookIsNotAvailable();
-        $this->workbookManager->addRowToCurrentWorksheet($dataRow, $style);
+        $this->workbookManager->addRowToCurrentWorksheet($row);
     }
 
     /**

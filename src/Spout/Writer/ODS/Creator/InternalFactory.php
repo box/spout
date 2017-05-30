@@ -48,20 +48,22 @@ class InternalFactory implements InternalFactoryInterface
         $fileSystemHelper->createBaseFilesAndFolders();
 
         $styleManager = $this->createStyleManager($optionsManager);
-        $worksheetManager = $this->createWorksheetManager();
+        $worksheetManager = $this->createWorksheetManager($styleManager);
 
         return new WorkbookManager($workbook, $optionsManager, $worksheetManager, $styleManager, $fileSystemHelper, $this->entityFactory);
     }
 
     /**
+     * @param StyleManager $styleManager
      * @return WorksheetManager
      */
-    private function createWorksheetManager()
+    private function createWorksheetManager(StyleManager $styleManager)
     {
         $stringsEscaper = $this->createStringsEscaper();
         $stringsHelper = $this->createStringHelper();
 
-        return new WorksheetManager($stringsEscaper, $stringsHelper);
+
+        return new WorksheetManager($styleManager, $stringsEscaper, $stringsHelper);
     }
 
     /**
