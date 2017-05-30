@@ -6,7 +6,7 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Manager\Style\StyleManagerInterface;
-use Box\Spout\Writer\Common\Sheet;
+use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Workbook;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
@@ -113,7 +113,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         $worksheets = $this->getWorksheets();
 
         $newSheetIndex = count($worksheets);
-        $sheet = new Sheet($newSheetIndex, $this->workbook->getInternalId());
+        $sheet = $this->entityFactory->createSheet($newSheetIndex, $this->workbook->getInternalId());
 
         $worksheetFilePath = $this->getWorksheetFilePath($sheet);
         $worksheet = $this->entityFactory->createWorksheet($worksheetFilePath, $sheet);

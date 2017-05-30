@@ -1,20 +1,19 @@
 <?php
 
-namespace Box\Spout\Writer\Common;
+namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Exception\InvalidSheetNameException;
 
 /**
- * Class Sheet
- * External representation of a worksheet
+ * Class SheetManager
+ * Sheet manager
  *
- * @package Box\Spout\Writer\Common
+ * @package Box\Spout\Writer\Common\Manager
  */
-class Sheet
+class SheetManager
 {
-    const DEFAULT_SHEET_NAME_PREFIX = 'Sheet';
-
     /** Sheet name should not exceed 31 characters */
     const MAX_LENGTH_SHEET_NAME = 31;
 
@@ -22,74 +21,19 @@ class Sheet
     private static $INVALID_CHARACTERS_IN_SHEET_NAME = ['\\', '/', '?', '*', ':', '[', ']'];
 
     /** @var array Associative array [WORKBOOK_ID] => [[SHEET_INDEX] => [SHEET_NAME]] keeping track of sheets' name to enforce uniqueness per workbook */
-    protected static $SHEETS_NAME_USED = [];
+    private static $SHEETS_NAME_USED = [];
 
-    /** @var int Index of the sheet, based on order in the workbook (zero-based) */
-    protected $index;
-
-    /** @var string ID of the sheet's associated workbook. Used to restrict sheet name uniqueness enforcement to a single workbook */
-    protected $associatedWorkbookId;
-
-    /** @var string Name of the sheet */
-    protected $name;
-
-    /** @var \Box\Spout\Common\Helper\StringHelper */
-    protected $stringHelper;
+    /** @var StringHelper */
+    private $stringHelper;
 
     /**
-     * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
-     * @param string $associatedWorkbookId ID of the sheet's associated workbook
-     */
-    public function __construct($sheetIndex, $associatedWorkbookId)
-    {
-        $this->index = $sheetIndex;
-        $this->associatedWorkbookId = $associatedWorkbookId;
-        if (!isset(self::$SHEETS_NAME_USED[$associatedWorkbookId])) {
-            self::$SHEETS_NAME_USED[$associatedWorkbookId] = [];
-        }
-
-        $this->stringHelper = new StringHelper();
-        $this->setName(self::DEFAULT_SHEET_NAME_PREFIX . ($sheetIndex + 1));
-    }
-
-    /**
-     * @api
-     * @return int Index of the sheet, based on order in the workbook (zero-based)
-     */
-    public function getIndex()
-    {
-        return $this->index;
-    }
-
-    /**
-     * @api
-     * @return string Name of the sheet
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Sets the name of the sheet. Note that Excel has some restrictions on the name:
-     *  - it should not be blank
-     *  - it should not exceed 31 characters
-     *  - it should not contain these characters: \ / ? * : [ or ]
-     *  - it should be unique
+     * SheetManager constructor.
      *
-     * @api
-     * @param string $name Name of the sheet
-     * @return Sheet
-     * @throws \Box\Spout\Writer\Exception\InvalidSheetNameException If the sheet's name is invalid.
+     * @param StringHelper $stringHelper
      */
-    public function setName($name)
+    public function __construct(StringHelper $stringHelper)
     {
-        $this->throwIfNameIsInvalid($name);
-
-        $this->name = $name;
-        self::$SHEETS_NAME_USED[$this->associatedWorkbookId][$this->index] = $name;
-
-        return $this;
+        $this->stringHelper = $stringHelper;
     }
 
     /**
@@ -97,10 +41,11 @@ class Sheet
      * @see Sheet::setName for validity rules.
      *
      * @param string $name
+     * @param Sheet $sheet The sheet whose future name is checked
      * @return void
      * @throws \Box\Spout\Writer\Exception\InvalidSheetNameException If the sheet's name is invalid.
      */
-    protected function throwIfNameIsInvalid($name)
+    public function throwIfNameIsInvalid($name, Sheet $sheet)
     {
         if (!is_string($name)) {
             $actualType = gettype($name);
@@ -111,7 +56,7 @@ class Sheet
         $failedRequirements = [];
         $nameLength = $this->stringHelper->getStringLength($name);
 
-        if (!$this->isNameUnique($name)) {
+        if (!$this->isNameUnique($name, $sheet)) {
             $failedRequirements[] = 'It should be unique';
         } else {
             if ($nameLength === 0) {
@@ -145,7 +90,7 @@ class Sheet
      * @param string $name
      * @return bool TRUE if the name contains invalid characters, FALSE otherwise.
      */
-    protected function doesContainInvalidCharacters($name)
+    private function doesContainInvalidCharacters($name)
     {
         return (str_replace(self::$INVALID_CHARACTERS_IN_SHEET_NAME, '', $name) !== $name);
     }
@@ -156,7 +101,7 @@ class Sheet
      * @param string $name
      * @return bool TRUE if the name starts or ends with a single quote, FALSE otherwise.
      */
-    protected function doesStartOrEndWithSingleQuote($name)
+    private function doesStartOrEndWithSingleQuote($name)
     {
         $startsWithSingleQuote = ($this->stringHelper->getCharFirstOccurrencePosition('\'', $name) === 0);
         $endsWithSingleQuote = ($this->stringHelper->getCharLastOccurrencePosition('\'', $name) === ($this->stringHelper->getStringLength($name) - 1));
@@ -168,16 +113,37 @@ class Sheet
      * Returns whether the given name is unique.
      *
      * @param string $name
+     * @param Sheet $sheet The sheet whose future name is checked
      * @return bool TRUE if the name is unique, FALSE otherwise.
      */
-    protected function isNameUnique($name)
+    private function isNameUnique($name, Sheet $sheet)
     {
-        foreach (self::$SHEETS_NAME_USED[$this->associatedWorkbookId] as $sheetIndex => $sheetName) {
-            if ($sheetIndex !== $this->index && $sheetName === $name) {
+        foreach (self::$SHEETS_NAME_USED[$sheet->getAssociatedWorkbookId()] as $sheetIndex => $sheetName) {
+            if ($sheetIndex !== $sheet->getIndex() && $sheetName === $name) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * @param int $workbookId Workbook ID associated to a Sheet
+     * @return void
+     */
+    public function markWorkbookIdAsUsed($workbookId)
+    {
+        if (!isset(self::$SHEETS_NAME_USED[$workbookId])) {
+            self::$SHEETS_NAME_USED[$workbookId] = [];
+        }
+    }
+
+    /**
+     * @param Sheet $sheet
+     * @return void
+     */
+    public function markSheetNameAsUsed(Sheet $sheet)
+    {
+        self::$SHEETS_NAME_USED[$sheet->getAssociatedWorkbookId()][$sheet->getIndex()] = $sheet->getName();
     }
 }

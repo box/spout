@@ -3,10 +3,12 @@
 namespace Box\Spout\Writer;
 
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
+use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
+use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
 use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
@@ -49,7 +51,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * @api
      * @param bool $shouldCreateNewSheetsAutomatically Whether new sheets should be automatically created when the max rows limit per sheet is reached
      * @return WriterMultiSheetsAbstract
-     * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
+     * @throws WriterAlreadyOpenedException If the writer was already opened
      */
     public function setShouldCreateNewSheetsAutomatically($shouldCreateNewSheetsAutomatically)
     {
@@ -77,8 +79,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * Returns all the workbook's sheets
      *
      * @api
-     * @return Common\Sheet[] All the workbook's sheets
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
+     * @return Sheet[] All the workbook's sheets
+     * @throws WriterNotOpenedException If the writer has not been opened yet
      */
     public function getSheets()
     {
@@ -99,8 +101,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * Creates a new sheet and make it the current sheet. The data will now be written to this sheet.
      *
      * @api
-     * @return Common\Sheet The created sheet
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
+     * @return Sheet The created sheet
+     * @throws WriterNotOpenedException If the writer has not been opened yet
      */
     public function addNewSheetAndMakeItCurrent()
     {
@@ -114,8 +116,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * Returns the current sheet
      *
      * @api
-     * @return Common\Sheet The current sheet
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
+     * @return Sheet The current sheet
+     * @throws WriterNotOpenedException If the writer has not been opened yet
      */
     public function getCurrentSheet()
     {
@@ -128,10 +130,10 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * The writing will resume where it stopped (i.e. data won't be truncated).
      *
      * @api
-     * @param Common\Sheet $sheet The sheet to set as current
+     * @param Sheet $sheet The sheet to set as current
      * @return void
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
-     * @throws \Box\Spout\Writer\Exception\SheetNotFoundException If the given sheet does not exist in the workbook
+     * @throws WriterNotOpenedException If the writer has not been opened yet
+     * @throws SheetNotFoundException If the given sheet does not exist in the workbook
      */
     public function setCurrentSheet($sheet)
     {
@@ -143,7 +145,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * Checks if the workbook has been created. Throws an exception if not created yet.
      *
      * @return void
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the workbook is not created yet
+     * @throws WriterNotOpenedException If the workbook is not created yet
      */
     protected function throwIfWorkbookIsNotAvailable()
     {
@@ -161,7 +163,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @param \Box\Spout\Writer\Common\Entity\Style\Style $style Style to be applied to the row.
      * @return void
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the book is not created yet
+     * @throws WriterNotOpenedException If the book is not created yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
     protected function addRowToWriter(array $dataRow, $style)
