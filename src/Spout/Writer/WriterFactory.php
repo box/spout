@@ -7,7 +7,7 @@ use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Manager\StyleManager;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 /**
  * Class WriterFactory
@@ -55,9 +55,9 @@ class WriterFactory
     private static function getCSVWriter()
     {
         $optionsManager = new CSV\Manager\OptionsManager();
-        $styleManager = new StyleManager();
+        $styleMerger = new StyleMerger();
 
-        return new CSV\Writer($optionsManager, $styleManager);
+        return new CSV\Writer($optionsManager, $styleMerger);
     }
 
     /**
@@ -67,10 +67,10 @@ class WriterFactory
     {
         $styleBuilder = new StyleBuilder();
         $optionsManager = new XLSX\Manager\OptionsManager($styleBuilder);
-        $styleManager = new StyleManager();
+        $styleMerger = new StyleMerger();
         $generalFactory = new XLSX\Creator\InternalFactory(new EntityFactory());
 
-        return new XLSX\Writer($optionsManager, $styleManager, $generalFactory);
+        return new XLSX\Writer($optionsManager, $styleMerger, $generalFactory);
     }
 
     /**
@@ -80,9 +80,9 @@ class WriterFactory
     {
         $styleBuilder = new StyleBuilder();
         $optionsManager = new ODS\Manager\OptionsManager($styleBuilder);
-        $styleManager = new StyleManager();
+        $styleMerger = new StyleMerger();
         $generalFactory = new ODS\Creator\InternalFactory(new EntityFactory());
 
-        return new ODS\Writer($optionsManager, $styleManager, $generalFactory);
+        return new ODS\Writer($optionsManager, $styleMerger, $generalFactory);
     }
 }

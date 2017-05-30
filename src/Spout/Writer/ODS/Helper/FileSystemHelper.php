@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\ODS\Helper;
 use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\Common\Entity\Worksheet;
+use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 use Box\Spout\Writer\ODS\Manager\WorksheetManager;
 
 /**
@@ -175,19 +176,19 @@ EOD;
      * Creates the "content.xml" file under the root folder
      *
      * @param WorksheetManager $worksheetManager
+     * @param StyleManager $styleManager
      * @param Worksheet[] $worksheets
-     * @param StyleHelper $styleHelper
      * @return FileSystemHelper
      */
-    public function createContentFile($worksheetManager, $worksheets, $styleHelper)
+    public function createContentFile($worksheetManager, $styleManager, $worksheets)
     {
         $contentXmlFileContents = <<<EOD
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <office:document-content office:version="1.2" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:msoxl="http://schemas.microsoft.com/office/excel/formula" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:xlink="http://www.w3.org/1999/xlink">
 EOD;
 
-        $contentXmlFileContents .= $styleHelper->getContentXmlFontFaceSectionContent();
-        $contentXmlFileContents .= $styleHelper->getContentXmlAutomaticStylesSectionContent(count($worksheets));
+        $contentXmlFileContents .= $styleManager->getContentXmlFontFaceSectionContent();
+        $contentXmlFileContents .= $styleManager->getContentXmlAutomaticStylesSectionContent(count($worksheets));
 
         $contentXmlFileContents .= '<office:body><office:spreadsheet>';
 
@@ -246,13 +247,13 @@ EOD;
     /**
      * Creates the "styles.xml" file under the root folder
      *
-     * @param StyleHelper $styleHelper
+     * @param StyleManager $styleManager
      * @param int $numWorksheets Number of created worksheets
      * @return FileSystemHelper
      */
-    public function createStylesFile($styleHelper, $numWorksheets)
+    public function createStylesFile($styleManager, $numWorksheets)
     {
-        $stylesXmlFileContents = $styleHelper->getStylesXMLFileContent($numWorksheets);
+        $stylesXmlFileContents = $styleManager->getStylesXMLFileContent($numWorksheets);
         $this->createFileWithContents($this->rootFolder, self::STYLES_XML_FILE_NAME, $stylesXmlFileContents);
 
         return $this;

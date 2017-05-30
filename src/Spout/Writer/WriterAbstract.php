@@ -10,7 +10,7 @@ use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Manager\StyleManager;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 
@@ -37,14 +37,25 @@ abstract class WriterAbstract implements WriterInterface
     /** @var OptionsManagerInterface Writer options manager */
     protected $optionsManager;
 
-    /** @var StyleManager Style manager */
-    protected $styleManager;
+    /** @var StyleMerger Helps merge styles together */
+    protected $styleMerger;
 
     /** @var Style Style to be applied to the next written row(s) */
     protected $rowStyle;
 
     /** @var string Content-Type value for the header - to be defined by child class */
     protected static $headerContentType;
+
+    /**
+     * @param OptionsManagerInterface $optionsManager
+     * @param StyleMerger $styleMerger
+     */
+    public function __construct(OptionsManagerInterface $optionsManager, StyleMerger $styleMerger)
+    {
+        $this->optionsManager = $optionsManager;
+        $this->styleMerger = $styleMerger;
+        $this->resetRowStyleToDefault();
+    }
 
     /**
      * Opens the streamer and makes it ready to accept data.
@@ -70,17 +81,6 @@ abstract class WriterAbstract implements WriterInterface
      * @return void
      */
     abstract protected function closeWriter();
-
-    /**
-     * @param OptionsManagerInterface $optionsManager
-     * @param StyleManager $styleManager
-     */
-    public function __construct(OptionsManagerInterface $optionsManager, StyleManager $styleManager)
-    {
-        $this->optionsManager = $optionsManager;
-        $this->styleManager = $styleManager;
-        $this->resetRowStyleToDefault();
-    }
 
     /**
      * Sets the default styles for all rows added with "addRow".
@@ -327,7 +327,7 @@ abstract class WriterAbstract implements WriterInterface
     {
         // Merge given style with the default one to inherit custom properties
         $defaultRowStyle = $this->optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
-        $this->rowStyle = $this->styleManager->merge($style, $defaultRowStyle);
+        $this->rowStyle = $this->styleMerger->merge($style, $defaultRowStyle);
     }
 
     /**

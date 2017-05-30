@@ -5,7 +5,7 @@ namespace Box\Spout\Writer;
 use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
-use Box\Spout\Writer\Common\Manager\StyleManager;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
 use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
@@ -27,12 +27,12 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
 
     /**
      * @param OptionsManagerInterface $optionsManager
-     * @param StyleManager $styleManager
+     * @param StyleMerger $styleMerger
      * @param InternalFactoryInterface $internalFactory
      */
-    public function __construct(OptionsManagerInterface $optionsManager, StyleManager $styleManager, InternalFactoryInterface $internalFactory)
+    public function __construct(OptionsManagerInterface $optionsManager, StyleMerger $styleMerger, InternalFactoryInterface $internalFactory)
     {
-        parent::__construct($optionsManager, $styleManager);
+        parent::__construct($optionsManager, $styleMerger);
         $this->internalFactory = $internalFactory;
     }
 

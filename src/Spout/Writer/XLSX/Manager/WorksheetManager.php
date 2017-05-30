@@ -13,7 +13,7 @@ use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
-use Box\Spout\Writer\XLSX\Helper\StyleHelper;
+use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
 
 /**
  * Class WorksheetManager
@@ -39,11 +39,11 @@ EOD;
     /** @var bool Whether inline or shared strings should be used */
     protected $shouldUseInlineStrings;
 
+    /** @var StyleManager Manages styles */
+    private $styleManager;
+
     /** @var SharedStringsHelper Helper to write shared strings */
     private $sharedStringsHelper;
-
-    /** @var StyleHelper Helper to work with styles */
-    private $styleHelper;
 
     /** @var \Box\Spout\Common\Escaper\XLSX Strings escaper */
     private $stringsEscaper;
@@ -55,21 +55,21 @@ EOD;
      * WorksheetManager constructor.
      *
      * @param OptionsManagerInterface $optionsManager
+     * @param StyleManager $styleManager
      * @param SharedStringsHelper $sharedStringsHelper
-     * @param StyleHelper $styleHelper
      * @param \Box\Spout\Common\Escaper\XLSX $stringsEscaper
      * @param StringHelper $stringHelper
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
+        StyleManager $styleManager,
         SharedStringsHelper $sharedStringsHelper,
-        StyleHelper $styleHelper,
         \Box\Spout\Common\Escaper\XLSX $stringsEscaper,
         StringHelper $stringHelper)
     {
         $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
+        $this->styleManager = $styleManager;
         $this->sharedStringsHelper = $sharedStringsHelper;
-        $this->styleHelper = $styleHelper;
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
     }
@@ -211,7 +211,7 @@ EOD;
         } else if ($cell->isNumeric()) {
             $cellXML .= '><v>' . $cell->getValue() . '</v></c>';
         } else if ($cell->isEmpty()) {
-            if ($this->styleHelper->shouldApplyStyleOnEmptyCell($styleId)) {
+            if ($this->styleManager->shouldApplyStyleOnEmptyCell($styleId)) {
                 $cellXML .= '/>';
             } else {
                 // don't write empty cells that do no need styling

@@ -3,7 +3,7 @@
 namespace Box\Spout\Reader\XLSX\Helper;
 
 /**
- * Class StyleHelperTest
+ * Class StyleManagerTest
  *
  * @package Box\Spout\Reader\XLSX\Helper
  */

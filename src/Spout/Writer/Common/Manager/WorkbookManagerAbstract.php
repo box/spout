@@ -4,8 +4,8 @@ namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
-use Box\Spout\Writer\Common\Helper\StyleHelperInterface;
 use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Manager\Style\StyleManagerInterface;
 use Box\Spout\Writer\Common\Sheet;
 use Box\Spout\Writer\Common\Entity\Workbook;
 use Box\Spout\Writer\Common\Entity\Worksheet;
@@ -31,14 +31,14 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     /** @var WorksheetManagerInterface */
     protected $worksheetManager;
 
-    /** @var StyleHelperInterface */
-    protected $styleHelper;
+    /** @var StyleManagerInterface Manages styles */
+    protected $styleManager;
 
     /** @var FileSystemWithRootFolderHelperInterface Helper to perform file system operations */
     protected $fileSystemHelper;
 
     /** @var EntityFactory Factory to create entities */
-    private $entityFactory;
+    protected $entityFactory;
 
     /** @var Worksheet The worksheet where data will be written to */
     protected $currentWorksheet;
@@ -48,7 +48,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * @param Workbook $workbook
      * @param OptionsManagerInterface $optionsManager
      * @param WorksheetManagerInterface $worksheetManager
-     * @param StyleHelperInterface $styleHelper
+     * @param StyleManagerInterface $styleManager
      * @param FileSystemWithRootFolderHelperInterface $fileSystemHelper
      * @param EntityFactory $entityFactory
      */
@@ -56,14 +56,14 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         Workbook $workbook,
         OptionsManagerInterface $optionsManager,
         WorksheetManagerInterface $worksheetManager,
-        StyleHelperInterface $styleHelper,
+        StyleManagerInterface $styleManager,
         FileSystemWithRootFolderHelperInterface $fileSystemHelper,
         EntityFactory $entityFactory)
     {
         $this->workbook = $workbook;
         $this->optionManager = $optionsManager;
         $this->worksheetManager = $worksheetManager;
-        $this->styleHelper = $styleHelper;
+        $this->styleManager = $styleManager;
         $this->fileSystemHelper = $fileSystemHelper;
         $this->entityFactory = $entityFactory;
     }
@@ -244,8 +244,8 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      */
     private function addRowWithStyleToWorksheet(Worksheet $worksheet, $dataRow, Style $style)
     {
-        $updatedStyle = $this->styleHelper->applyExtraStylesIfNeeded($style, $dataRow);
-        $registeredStyle = $this->styleHelper->registerStyle($updatedStyle);
+        $updatedStyle = $this->styleManager->applyExtraStylesIfNeeded($style, $dataRow);
+        $registeredStyle = $this->styleManager->registerStyle($updatedStyle);
         $this->worksheetManager->addRow($worksheet, $dataRow, $registeredStyle);
 
         // update max num columns for the worksheet

@@ -6,6 +6,7 @@ use Box\Spout\Writer\Common\Sheet;
 use Box\Spout\Writer\Common\Manager\WorkbookManagerAbstract;
 use Box\Spout\Writer\ODS\Helper\FileSystemHelper;
 use Box\Spout\Writer\ODS\Helper\StyleHelper;
+use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 
 /**
  * Class WorkbookManager
@@ -27,11 +28,8 @@ class WorkbookManager extends WorkbookManagerAbstract
     /** @var FileSystemHelper Helper to perform file system operations */
     protected $fileSystemHelper;
 
-    /** @var StyleHelper Helper to apply styles */
-    protected $styleHelper;
-
-    /** @var int Maximum number of columns among all the written rows */
-    protected $maxNumColumns = 1;
+    /** @var StyleManager Manages styles */
+    protected $styleManager;
 
     /**
      * @return int Maximum number of rows/columns a sheet can contain
@@ -63,9 +61,9 @@ class WorkbookManager extends WorkbookManagerAbstract
         $numWorksheets = count($worksheets);
 
         $this->fileSystemHelper
-            ->createContentFile($this->worksheetManager, $worksheets, $this->styleHelper)
+            ->createContentFile($this->worksheetManager, $this->styleManager, $worksheets)
             ->deleteWorksheetTempFolder()
-            ->createStylesFile($this->styleHelper, $numWorksheets)
+            ->createStylesFile($this->styleManager, $numWorksheets)
             ->zipRootFolderAndCopyToStream($finalFilePointer);
     }
 }

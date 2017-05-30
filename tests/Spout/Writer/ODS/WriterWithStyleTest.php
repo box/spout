@@ -22,8 +22,8 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 {
     use TestUsingResource;
 
-    /** @var \Box\Spout\Writer\Common\Entity\Style\Style */
-    protected $defaultStyle;
+    /** @var Style */
+    private $defaultStyle;
 
     /**
      * @return void
