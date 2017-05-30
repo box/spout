@@ -29,6 +29,9 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper impleme
     const MIMETYPE_FILE_NAME = 'mimetype';
     const STYLES_XML_FILE_NAME = 'styles.xml';
 
+    /** @var ZipHelper Helper to perform tasks with Zip archive */
+    private $zipHelper;
+
     /** @var string Path to the root folder inside the temp folder where the files to create the ODS will be stored */
     protected $rootFolder;
 
@@ -37,6 +40,16 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper impleme
 
     /** @var string Path to the temp folder, inside the root folder, where specific sheets content will be written to */
     protected $sheetsContentTempFolder;
+
+    /**
+     * @param string $baseFolderPath The path of the base folder where all the I/O can occur
+     * @param ZipHelper $zipHelper Helper to perform tasks with Zip archive
+     */
+    public function __construct($baseFolderPath, $zipHelper)
+    {
+        parent::__construct($baseFolderPath);
+        $this->zipHelper = $zipHelper;
+    }
 
     /**
      * @return string
@@ -267,17 +280,19 @@ EOD;
      */
     public function zipRootFolderAndCopyToStream($streamPointer)
     {
-        $zipHelper = new ZipHelper($this->rootFolder);
+        $zip = $this->zipHelper->createZip($this->rootFolder);
+
+        $zipFilePath = $this->zipHelper->getZipFilePath($zip);
 
         // In order to have the file's mime type detected properly, files need to be added
         // to the zip file in a particular order.
         // @see http://www.jejik.com/articles/2010/03/how_to_correctly_create_odf_documents_using_zip/
-        $zipHelper->addUncompressedFileToArchive($this->rootFolder, self::MIMETYPE_FILE_NAME);
+        $this->zipHelper->addUncompressedFileToArchive($zip, $this->rootFolder, self::MIMETYPE_FILE_NAME);
 
-        $zipHelper->addFolderToArchive($this->rootFolder, ZipHelper::EXISTING_FILES_SKIP);
-        $zipHelper->closeArchiveAndCopyToStream($streamPointer);
+        $this->zipHelper->addFolderToArchive($zip, $this->rootFolder, ZipHelper::EXISTING_FILES_SKIP);
+        $this->zipHelper->closeArchiveAndCopyToStream($zip, $streamPointer);
 
         // once the zip is copied, remove it
-        $this->deleteFile($zipHelper->getZipFilePath());
+        $this->deleteFile($zipFilePath);
     }
 }

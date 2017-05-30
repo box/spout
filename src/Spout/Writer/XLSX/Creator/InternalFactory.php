@@ -7,6 +7,7 @@ use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
 use Box\Spout\Writer\XLSX\Manager\SharedStringsManager;
@@ -111,7 +112,17 @@ class InternalFactory implements InternalFactoryInterface
     private function createFileSystemHelper(OptionsManagerInterface $optionsManager)
     {
         $tempFolder = $optionsManager->getOption(Options::TEMP_FOLDER);
-        return new FileSystemHelper($tempFolder);
+        $zipHelper = $this->createZipHelper();
+
+        return new FileSystemHelper($tempFolder, $zipHelper);
+    }
+
+    /**
+     * @return ZipHelper
+     */
+    private function createZipHelper()
+    {
+        return new ZipHelper();
     }
 
     /**
