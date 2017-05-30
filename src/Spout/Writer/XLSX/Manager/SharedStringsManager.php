@@ -1,16 +1,17 @@
 <?php
 
-namespace Box\Spout\Writer\XLSX\Helper;
+namespace Box\Spout\Writer\XLSX\Manager;
 
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Common\Escaper;
 
 /**
- * Class SharedStringsHelper
- * This class provides helper functions to write shared strings
+ * Class SharedStringsManager
+ * This class provides functions to write shared strings
  *
- * @package Box\Spout\Writer\XLSX\Helper
+ * @package Box\Spout\Writer\XLSX\Manager
  */
-class SharedStringsHelper
+class SharedStringsManager
 {
     const SHARED_STRINGS_FILE_NAME = 'sharedStrings.xml';
 
@@ -31,13 +32,14 @@ EOD;
     /** @var int Number of shared strings already written */
     protected $numSharedStrings = 0;
 
-    /** @var \Box\Spout\Common\Escaper\XLSX Strings escaper */
+    /** @var Escaper\XLSX Strings escaper */
     protected $stringsEscaper;
 
     /**
      * @param string $xlFolder Path to the "xl" folder
+     * @param Escaper\XLSX $stringsEscaper Strings escaper
      */
-    public function __construct($xlFolder)
+    public function __construct($xlFolder, $stringsEscaper)
     {
         $sharedStringsFilePath = $xlFolder . '/' . self::SHARED_STRINGS_FILE_NAME;
         $this->sharedStringsFilePointer = fopen($sharedStringsFilePath, 'w');
@@ -48,8 +50,7 @@ EOD;
         $header = self::SHARED_STRINGS_XML_FILE_FIRST_PART_HEADER . ' ' . self::DEFAULT_STRINGS_COUNT_PART . '>';
         fwrite($this->sharedStringsFilePointer, $header);
 
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->stringsEscaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
+        $this->stringsEscaper = $stringsEscaper;
     }
 
     /**
