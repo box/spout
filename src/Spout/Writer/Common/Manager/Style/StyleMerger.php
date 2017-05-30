@@ -1,38 +1,19 @@
 <?php
 
-namespace Box\Spout\Writer\Common\Manager;
+namespace Box\Spout\Writer\Common\Manager\Style;
 
+use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\XLSX\Helper\BorderHelper;
 
 /**
- * Class StyleManager
- * Manages styles to be applied to a cell
+ * Class StyleMerger
+ * Takes care of merging styles together
  *
  * @package Box\Spout\Writer\Common\Manager\Style
  */
-class StyleManager
+class StyleMerger
 {
-    /**
-     * Serializes the style for future comparison with other styles.
-     * The ID is excluded from the comparison, as we only care about
-     * actual style properties.
-     *
-     * @param Style $style
-     * @return string The serialized style
-     */
-    public function serialize(Style $style)
-    {
-        // In order to be able to properly compare style, set static ID value
-        $currentId = $style->getId();
-        $style->setId(0);
-
-        $serializedStyle = serialize($style);
-
-        $style->setId($currentId);
-
-        return $serializedStyle;
-    }
-
     /**
      * Merges the current style with the given style, using the given style as a base. This means that:
      *   - if current style and base style both have property A set, use current style property's value

@@ -1,0 +1,32 @@
+<?php
+
+namespace Box\Spout\Writer\Common\Manager\Style;
+
+use Box\Spout\Writer\Common\Entity\Style\Style;
+
+/**
+ * Interface StyleHManagernterface
+ *
+ * @package Box\Spout\Writer\Common\Manager\Style
+ */
+interface StyleManagerInterface
+{
+    /**
+     * Registers the given style as a used style.
+     * Duplicate styles won't be registered more than once.
+     *
+     * @param Style $style The style to be registered
+     * @return Style The registered style, updated with an internal ID.
+     */
+    public function registerStyle($style);
+
+    /**
+     * Apply additional styles if the given row needs it.
+     * Typically, set "wrap text" if a cell contains a new line.
+     *
+     * @param Style $style The original style
+     * @param array $dataRow The row the style will be applied to
+     * @return Style The updated style
+     */
+    public function applyExtraStylesIfNeeded($style, $dataRow);
+}

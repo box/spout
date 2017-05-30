@@ -2,9 +2,10 @@
 
 namespace Box\Spout\Writer\XLSX\Helper;
 
+use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
-use Box\Spout\Writer\Common\Entity\Worksheet;
+use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
 
 /**
  * Class FileSystemHelper
@@ -335,12 +336,12 @@ EOD;
     /**
      * Creates the "styles.xml" file under the "xl" folder
      *
-     * @param StyleHelper $styleHelper
+     * @param StyleManager $styleManager
      * @return FileSystemHelper
      */
-    public function createStylesFile($styleHelper)
+    public function createStylesFile($styleManager)
     {
-        $stylesXmlFileContents = $styleHelper->getStylesXMLFileContent();
+        $stylesXmlFileContents = $styleManager->getStylesXMLFileContent();
         $this->createFileWithContents($this->xlFolder, self::STYLES_XML_FILE_NAME, $stylesXmlFileContents);
 
         return $this;

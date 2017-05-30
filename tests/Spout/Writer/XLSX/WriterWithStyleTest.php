@@ -10,7 +10,7 @@ use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Manager\StyleManager;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Manager\OptionsManager;
 
@@ -24,7 +24,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     use TestUsingResource;
 
     /** @var \Box\Spout\Writer\Common\Entity\Style\Style */
-    protected $defaultStyle;
+    private $defaultStyle;
 
     /**
      * @return void
@@ -463,7 +463,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $fontStyle = (new StyleBuilder())->setFontBold()->build();
         $emptyStyle = (new StyleBuilder())->build();
 
-        $borderRightFontBoldStyle = (new StyleManager())->merge($borderRightStyle, $fontStyle);
+        $borderRightFontBoldStyle = (new StyleMerger())->merge($borderRightStyle, $fontStyle);
 
         $dataRows = [
             ['Border-Left'],

@@ -7,9 +7,9 @@ use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
-use Box\Spout\Writer\Common\Manager\StyleManager;
 use Box\Spout\Writer\ODS\Helper\FileSystemHelper;
-use Box\Spout\Writer\ODS\Helper\StyleHelper;
+use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
+use Box\Spout\Writer\ODS\Manager\Style\StyleRegistry;
 use Box\Spout\Writer\ODS\Manager\WorkbookManager;
 use Box\Spout\Writer\ODS\Manager\WorksheetManager;
 use \Box\Spout\Common\Escaper;
@@ -46,22 +46,41 @@ class InternalFactory implements InternalFactoryInterface
         $fileSystemHelper = $this->createFileSystemHelper($optionsManager);
         $fileSystemHelper->createBaseFilesAndFolders();
 
-        $styleHelper = $this->createStyleHelper($optionsManager);
-        $worksheetManager = $this->createWorksheetManager($styleHelper);
+        $styleManager = $this->createStyleManager($optionsManager);
+        $worksheetManager = $this->createWorksheetManager();
 
-        return new WorkbookManager($workbook, $optionsManager, $worksheetManager, $styleHelper, $fileSystemHelper, $this->entityFactory);
+        return new WorkbookManager($workbook, $optionsManager, $worksheetManager, $styleManager, $fileSystemHelper, $this->entityFactory);
     }
 
     /**
-     * @param StyleHelper $styleHelper
      * @return WorksheetManager
      */
-    private function createWorksheetManager(StyleHelper $styleHelper)
+    private function createWorksheetManager()
     {
         $stringsEscaper = $this->createStringsEscaper();
         $stringsHelper = $this->createStringHelper();
 
-        return new WorksheetManager($styleHelper, $stringsEscaper, $stringsHelper);
+        return new WorksheetManager($stringsEscaper, $stringsHelper);
+    }
+
+    /**
+     * @param OptionsManagerInterface $optionsManager
+     * @return StyleManager
+     */
+    private function createStyleManager(OptionsManagerInterface $optionsManager)
+    {
+        $styleRegistry = $this->createStyleRegistry($optionsManager);
+        return new StyleManager($styleRegistry);
+    }
+
+    /**
+     * @param OptionsManagerInterface $optionsManager
+     * @return StyleRegistry
+     */
+    private function createStyleRegistry(OptionsManagerInterface $optionsManager)
+    {
+        $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
+        return new StyleRegistry($defaultRowStyle);
     }
 
     /**
@@ -72,26 +91,6 @@ class InternalFactory implements InternalFactoryInterface
     {
         $tempFolder = $optionsManager->getOption(Options::TEMP_FOLDER);
         return new FileSystemHelper($tempFolder);
-    }
-
-    /**
-     * @param OptionsManagerInterface $optionsManager
-     * @return StyleHelper
-     */
-    private function createStyleHelper(OptionsManagerInterface $optionsManager)
-    {
-        $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
-        $styleManager = $this->createStyleManager();
-
-        return new StyleHelper($defaultRowStyle, $styleManager);
-    }
-
-    /**
-     * @return StyleManager
-     */
-    private function createStyleManager()
-    {
-        return new StyleManager();
     }
 
     /**

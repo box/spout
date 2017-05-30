@@ -1,41 +1,20 @@
 <?php
 
-namespace Box\Spout\Writer\ODS\Helper;
+namespace Box\Spout\Writer\ODS\Manager\Style;
 
-use Box\Spout\Writer\Common\Helper\StyleHelperAbstract;
 use Box\Spout\Writer\Common\Entity\Style\BorderPart;
+use Box\Spout\Writer\ODS\Helper\BorderHelper;
 
 /**
- * Class StyleHelper
- * This class provides helper functions to manage styles
+ * Class StyleManager
+ * Manages styles to be applied to a cell
  *
- * @package Box\Spout\Writer\ODS\Helper
+ * @package Box\Spout\Writer\ODS\Manager\Style
  */
-class StyleHelper extends StyleHelperAbstract
+class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
 {
-    /** @var string[] [FONT_NAME] => [] Map whose keys contain all the fonts used */
-    protected $usedFontsSet = [];
-
-    /**
-     * Registers the given style as a used style.
-     * Duplicate styles won't be registered more than once.
-     *
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style The style to be registered
-     * @return \Box\Spout\Writer\Common\Entity\Style\Style The registered style, updated with an internal ID.
-     */
-    public function registerStyle($style)
-    {
-        $this->usedFontsSet[$style->getFontName()] = true;
-        return parent::registerStyle($style);
-    }
-
-    /**
-     * @return string[] List of used fonts name
-     */
-    protected function getUsedFonts()
-    {
-        return array_keys($this->usedFontsSet);
-    }
+    /** @var StyleRegistry */
+    protected $styleRegistry;
 
     /**
      * Returns the content of the "styles.xml" file, given a list of styles.
@@ -70,7 +49,7 @@ EOD;
     protected function getFontFaceSectionContent()
     {
         $content = '<office:font-face-decls>';
-        foreach ($this->getUsedFonts() as $fontName) {
+        foreach ($this->styleRegistry->getUsedFonts() as $fontName) {
             $content .= '<style:font-face style:name="' . $fontName . '" svg:font-family="' . $fontName . '"/>';
         }
         $content .= '</office:font-face-decls>';
@@ -162,7 +141,7 @@ EOD;
     public function getContentXmlFontFaceSectionContent()
     {
         $content = '<office:font-face-decls>';
-        foreach ($this->getUsedFonts() as $fontName) {
+        foreach ($this->styleRegistry->getUsedFonts() as $fontName) {
             $content .= '<style:font-face style:name="' . $fontName . '" svg:font-family="' . $fontName . '"/>';
         }
         $content .= '</office:font-face-decls>';
@@ -180,7 +159,7 @@ EOD;
     {
         $content = '<office:automatic-styles>';
 
-        foreach ($this->getRegisteredStyles() as $style) {
+        foreach ($this->styleRegistry->getRegisteredStyles() as $style) {
             $content .= $this->getStyleSectionContent($style);
         }
 

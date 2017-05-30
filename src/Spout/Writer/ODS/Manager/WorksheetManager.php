@@ -8,8 +8,8 @@ use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
-use Box\Spout\Writer\ODS\Helper\StyleHelper;
 use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 
 /**
  * Class WorksheetManager
@@ -19,9 +19,6 @@ use Box\Spout\Writer\Common\Entity\Style\Style;
  */
 class WorksheetManager implements WorksheetManagerInterface
 {
-    /** @var StyleHelper Helper to work with styles */
-    private $styleHelper;
-
     /** @var \Box\Spout\Common\Escaper\ODS Strings escaper */
     private $stringsEscaper;
 
@@ -31,16 +28,13 @@ class WorksheetManager implements WorksheetManagerInterface
     /**
      * WorksheetManager constructor.
      *
-     * @param StyleHelper $styleHelper
      * @param \Box\Spout\Common\Escaper\ODS $stringsEscaper
      * @param StringHelper $stringHelper
      */
     public function __construct(
-        StyleHelper $styleHelper,
         \Box\Spout\Common\Escaper\ODS $stringsEscaper,
         StringHelper $stringHelper)
     {
-        $this->styleHelper = $styleHelper;
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
     }

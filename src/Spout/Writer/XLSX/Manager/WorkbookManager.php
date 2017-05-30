@@ -5,7 +5,7 @@ namespace Box\Spout\Writer\XLSX\Manager;
 use Box\Spout\Writer\Common\Sheet;
 use Box\Spout\Writer\Common\Manager\WorkbookManagerAbstract;
 use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
-use Box\Spout\Writer\XLSX\Helper\StyleHelper;
+use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
 
 /**
  * Class WorkbookManager
@@ -24,11 +24,11 @@ class WorkbookManager extends WorkbookManagerAbstract
     /** @var WorksheetManager Object used to manage worksheets */
     protected $worksheetManager;
 
+    /** @var StyleManager Manages styles */
+    protected $styleManager;
+
     /** @var FileSystemHelper Helper to perform file system operations */
     protected $fileSystemHelper;
-
-    /** @var StyleHelper Helper to apply styles */
-    protected $styleHelper;
 
     /**
      * @return int Maximum number of rows/columns a sheet can contain
@@ -72,7 +72,7 @@ class WorkbookManager extends WorkbookManagerAbstract
             ->createContentTypesFile($worksheets)
             ->createWorkbookFile($worksheets)
             ->createWorkbookRelsFile($worksheets)
-            ->createStylesFile($this->styleHelper)
+            ->createStylesFile($this->styleManager)
             ->zipRootFolderAndCopyToStream($finalFilePointer);
     }
 }

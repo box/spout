@@ -4,16 +4,14 @@ namespace Box\Spout\Writer\XLSX\Creator;
 
 use Box\Spout\Common\Escaper;
 use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
-use Box\Spout\Writer\Common\Creator\WorkbookFactory;
-use Box\Spout\Writer\Common\Creator\WorksheetFactory;
-use Box\Spout\Writer\Common\Manager\StyleManager;
+use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
 use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
-use Box\Spout\Writer\XLSX\Helper\StyleHelper;
+use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
+use Box\Spout\Writer\XLSX\Manager\Style\StyleRegistry;
 use Box\Spout\Writer\XLSX\Manager\WorkbookManager;
 use Box\Spout\Writer\XLSX\Manager\WorksheetManager;
 
@@ -52,29 +50,48 @@ class InternalFactory implements InternalFactoryInterface
         $xlFolder = $fileSystemHelper->getXlFolder();
         $sharedStringsHelper = $this->createSharedStringsHelper($xlFolder);
 
-        $styleHelper = $this->createStyleHelper($optionsManager);
+        $styleManager = $this->createStyleManager($optionsManager);
+        $worksheetManager = $this->createWorksheetManager($optionsManager, $styleManager, $sharedStringsHelper);
 
-        $worksheetManager = $this->createWorksheetManager($optionsManager, $sharedStringsHelper, $styleHelper);
-
-        return new WorkbookManager($workbook, $optionsManager, $worksheetManager, $styleHelper, $fileSystemHelper, $this->entityFactory);
+        return new WorkbookManager($workbook, $optionsManager, $worksheetManager, $styleManager, $fileSystemHelper, $this->entityFactory);
     }
 
     /**
      * @param OptionsManagerInterface $optionsManager
+     * @param StyleManager $styleManager
      * @param SharedStringsHelper $sharedStringsHelper
-     * @param StyleHelper $styleHelper
      * @return WorksheetManager
      */
     private function createWorksheetManager(
         OptionsManagerInterface $optionsManager,
-        SharedStringsHelper $sharedStringsHelper,
-        StyleHelper $styleHelper
+        StyleManager $styleManager,
+        SharedStringsHelper $sharedStringsHelper
     )
     {
         $stringsEscaper = $this->createStringsEscaper();
         $stringsHelper = $this->createStringHelper();
 
-        return new WorksheetManager($optionsManager, $sharedStringsHelper, $styleHelper, $stringsEscaper, $stringsHelper);
+        return new WorksheetManager($optionsManager, $styleManager, $sharedStringsHelper, $stringsEscaper, $stringsHelper);
+    }
+
+    /**
+     * @param OptionsManagerInterface $optionsManager
+     * @return StyleManager
+     */
+    private function createStyleManager(OptionsManagerInterface $optionsManager)
+    {
+        $styleRegistry = $this->createStyleRegistry($optionsManager);
+        return new StyleManager($styleRegistry);
+    }
+
+    /**
+     * @param OptionsManagerInterface $optionsManager
+     * @return StyleRegistry
+     */
+    private function createStyleRegistry(OptionsManagerInterface $optionsManager)
+    {
+        $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
+        return new StyleRegistry($defaultRowStyle);
     }
 
     /**
@@ -94,26 +111,6 @@ class InternalFactory implements InternalFactoryInterface
     {
         $tempFolder = $optionsManager->getOption(Options::TEMP_FOLDER);
         return new FileSystemHelper($tempFolder);
-    }
-
-    /**
-     * @param OptionsManagerInterface $optionsManager
-     * @return StyleHelper
-     */
-    private function createStyleHelper(OptionsManagerInterface $optionsManager)
-    {
-        $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
-        $styleManager = $this->createStyleManager();
-
-        return new StyleHelper($defaultRowStyle, $styleManager);
-    }
-
-    /**
-     * @return StyleManager
-     */
-    private function createStyleManager()
-    {
-        return new StyleManager();
     }
 
     /**
