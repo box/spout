@@ -344,20 +344,25 @@ abstract class WriterAbstract implements WriterInterface
             throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
         }
 
-        $this->addRows(array_map(function ($row) use ($style) {
+        foreach($dataRows as $row) {
+
             if (is_array($row)) {
-                return $this->createRowFromArray($row, $style);
+                $row = $this->createRowFromArray($row, $style);
             } elseif ($row instanceof Row) {
-                return $row;
+                $row->setStyle($style);
             } else {
                 throw new InvalidArgumentException();
             }
-        }, $dataRows));
+
+            $this->addRow($row);
+        }
 
         return $this;
     }
 
     /**
+     * @TODO: Move this into styleMerger
+     *
      * @param Row $row
      * @return $this
      */
@@ -367,9 +372,8 @@ abstract class WriterAbstract implements WriterInterface
         if (null === $defaultRowStyle) {
             return $this;
         }
-        $merged = $this->styleMerger->merge($row->getStyle(), $defaultRowStyle);
-        $row->setStyle($merged);
-        return $this;
+        $mergedStyle = $this->styleMerger->merge($row->getStyle(), $defaultRowStyle);
+        $row->setStyle($mergedStyle);
     }
 
     /**

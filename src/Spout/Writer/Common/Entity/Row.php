@@ -26,7 +26,7 @@ class Row
 
     /**
      * Row constructor.
-     * @param array $cells
+     * @param Cell[] $cells
      * @param Style|null $style
      */
     public function __construct(array $cells = [], Style $style = null)
@@ -39,7 +39,7 @@ class Row
     }
 
     /**
-     * @return array
+     * @return Cell[] $cells
      */
     public function getCells()
     {
@@ -48,9 +48,9 @@ class Row
 
     /**
      * @param array $cells
-     * @return Row
+     * @return $this
      */
-    public function setCells($cells)
+    public function setCells(array $cells)
     {
         $this->cells = [];
         foreach ($cells as $cell) {
@@ -82,7 +82,7 @@ class Row
 
     /**
      * @param Style $style|null
-     * @return $this
+     * @return Row
      */
     public function applyStyle(Style $style = null)
     {

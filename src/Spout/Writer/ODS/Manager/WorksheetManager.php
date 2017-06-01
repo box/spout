@@ -30,7 +30,7 @@ class WorksheetManager implements WorksheetManagerInterface
 
     /**
      * WorksheetManager constructor.
-     *
+     * @param StyleManager $styleManager
      * @param \Box\Spout\Common\Escaper\ODS $stringsEscaper
      * @param StringHelper $stringHelper
      */
@@ -92,7 +92,6 @@ class WorksheetManager implements WorksheetManagerInterface
     }
 
     /**
-    /**
      * Adds a row to the worksheet.
      *
      * @param Worksheet $worksheet The worksheet to add the row to
@@ -116,7 +115,7 @@ class WorksheetManager implements WorksheetManagerInterface
         for ($i = 0; $i < $cellsCount; $i++) {
 
             /** @var Cell $cell */
-            $cell = $row->getCells()[$currentCellIndex];
+            $cell = $cells[$currentCellIndex];
             /** @var Cell|null $nextCell */
             $nextCell = isset($cells[$nextCellIndex]) ? $cells[$nextCellIndex] : null;
 
