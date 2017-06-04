@@ -125,7 +125,7 @@ class Writer extends AbstractMultiSheetsWriter
      */
     protected function closeWriter()
     {
-        if ($this->book) {
+        if ($this->book && $this->isWriterOpened) {
             $this->book->close($this->filePointer);
         }
     }

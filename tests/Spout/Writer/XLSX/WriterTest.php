@@ -508,6 +508,19 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testCloseIsNotAppliedWhenWriterIsNotOpened()
+    {
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
+        $writer = WriterFactory::create(Type::XLSX);
+        $writer->openToFile('test_close.xlsx');
+        $writer->addRow(['foo']);
+        $writer->close();
+        $writer->close();
+    }
+
+    /**
      * @param array $allRows
      * @param string $fileName
      * @param bool $shouldUseInlineStrings
