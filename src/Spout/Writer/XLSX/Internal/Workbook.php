@@ -5,6 +5,8 @@ namespace Box\Spout\Writer\XLSX\Internal;
 use Box\Spout\Writer\Common\Internal\AbstractWorkbook;
 use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
 use Box\Spout\Writer\XLSX\Helper\SharedStringsHelper;
+use Box\Spout\Writer\XLSX\Helper\SizeCalculator;
+use Box\Spout\Writer\XLSX\Helper\SizeCollection;
 use Box\Spout\Writer\XLSX\Helper\StyleHelper;
 use Box\Spout\Writer\Common\Sheet;
 
@@ -26,6 +28,9 @@ class Workbook extends AbstractWorkbook
     /** @var bool Whether inline or shared strings should be used */
     protected $shouldUseInlineStrings;
 
+    /** @var bool Determine whether cell widths and heights should be calculated */
+    protected $shouldUseCellAutosizing;
+
     /** @var \Box\Spout\Writer\XLSX\Helper\FileSystemHelper Helper to perform file system operations */
     protected $fileSystemHelper;
 
@@ -35,23 +40,29 @@ class Workbook extends AbstractWorkbook
     /** @var \Box\Spout\Writer\XLSX\Helper\StyleHelper Helper to apply styles */
     protected $styleHelper;
 
+    /** @var \Box\Spout\Writer\XLSX\Helper\SizeCalculator To calculate cell sizes */
+    protected $sizeCalculator;
+
     /**
      * @param string $tempFolder
      * @param bool $shouldUseInlineStrings
+     * @param bool $shouldUseCellAutosizing
      * @param bool $shouldCreateNewSheetsAutomatically
      * @param \Box\Spout\Writer\Style\Style $defaultRowStyle
      * @throws \Box\Spout\Common\Exception\IOException If unable to create at least one of the base folders
      */
-    public function __construct($tempFolder, $shouldUseInlineStrings, $shouldCreateNewSheetsAutomatically, $defaultRowStyle)
+    public function __construct($tempFolder, $shouldUseInlineStrings, $shouldUseCellAutosizing, $shouldCreateNewSheetsAutomatically, $defaultRowStyle)
     {
         parent::__construct($shouldCreateNewSheetsAutomatically, $defaultRowStyle);
 
         $this->shouldUseInlineStrings = $shouldUseInlineStrings;
+        $this->shouldUseCellAutosizing = $shouldUseCellAutosizing;
 
         $this->fileSystemHelper = new FileSystemHelper($tempFolder);
         $this->fileSystemHelper->createBaseFilesAndFolders();
 
         $this->styleHelper = new StyleHelper($defaultRowStyle);
+        $this->sizeCalculator = new SizeCalculator(new SizeCollection());
 
         // This helper will be shared by all sheets
         $xlFolder = $this->fileSystemHelper->getXlFolder();
@@ -86,7 +97,15 @@ class Workbook extends AbstractWorkbook
         $sheet = new Sheet($newSheetIndex, $this->internalId);
 
         $worksheetFilesFolder = $this->fileSystemHelper->getXlWorksheetsFolder();
-        $worksheet = new Worksheet($sheet, $worksheetFilesFolder, $this->sharedStringsHelper, $this->styleHelper, $this->shouldUseInlineStrings);
+        $worksheet = new Worksheet(
+            $sheet,
+            $worksheetFilesFolder,
+            $this->sharedStringsHelper,
+            $this->styleHelper,
+            $this->sizeCalculator,
+            $this->shouldUseInlineStrings,
+            $this->shouldUseCellAutosizing
+        );
         $this->worksheets[] = $worksheet;
 
         return $worksheet;
@@ -99,6 +118,7 @@ class Workbook extends AbstractWorkbook
      *
      * @param resource $finalFilePointer Pointer to the XLSX that will be created
      * @return void
+     * @throws \Box\Spout\Common\Exception\IOException
      */
     public function close($finalFilePointer)
     {
@@ -126,6 +146,7 @@ class Workbook extends AbstractWorkbook
      * Deletes the root folder created in the temp folder and all its contents.
      *
      * @return void
+     * @throws \Box\Spout\Common\Exception\IOException
      */
     protected function cleanupTempFolder()
     {
