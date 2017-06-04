@@ -92,6 +92,28 @@ class SheetHelper
     }
 
     /**
+     * Get active sheet index
+     *
+     * @return int index of active sheet
+     */
+    public function getActiveSheetIndex()
+    {
+        $activeSheetIndex = 0;
+
+        $xmlReader = new XMLReader();
+        if ($xmlReader->openFileInZip($this->filePath, self::WORKBOOK_XML_FILE_PATH)) {
+            while ($xmlReader->read()) {
+                if ($xmlReader->isPositionedOnStartingNode('workbookView')) {
+                    $activeSheetIndex = (int) $xmlReader->getAttribute('activeTab');
+                }
+            }
+            $xmlReader->close();
+        }
+
+        return $activeSheetIndex;
+    }
+
+    /**
      * Returns an instance of a sheet, given the XML node describing the sheet - from "workbook.xml".
      * We can find the XML file path describing the sheet inside "workbook.xml.res", by mapping with the sheet ID
      * ("r:id" in "workbook.xml", "Id" in "workbook.xml.res").

@@ -20,6 +20,9 @@ class SheetIterator implements IteratorInterface
     /** @var int The index of the sheet being read (zero-based) */
     protected $currentSheetIndex;
 
+    /** @var  int The index of the sheet which is active */
+    protected $activeSheetIndex;
+
     /**
      * @param string $filePath Path of the file to be read
      * @param \Box\Spout\Reader\XLSX\ReaderOptions $options Reader's current options
@@ -32,10 +35,21 @@ class SheetIterator implements IteratorInterface
         // Fetch all available sheets
         $sheetHelper = new SheetHelper($filePath, $options, $sharedStringsHelper, $globalFunctionsHelper);
         $this->sheets = $sheetHelper->getSheets();
+        $this->activeSheetIndex = $sheetHelper->getActiveSheetIndex();
 
         if (count($this->sheets) === 0) {
             throw new NoSheetsFoundException('The file must contain at least one sheet.');
         }
+    }
+
+    /**
+     * Retrieve active sheet
+     *
+     * @return Sheet
+     */
+    public function getActiveSheet()
+    {
+        return $this->sheets[$this->activeSheetIndex];
     }
 
     /**
