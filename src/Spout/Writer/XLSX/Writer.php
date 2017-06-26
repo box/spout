@@ -19,7 +19,7 @@ class Writer extends AbstractMultiSheetsWriter
     const DEFAULT_FONT_NAME = 'Calibri';
 
     /** @var string Content-Type value for the header */
-    protected static $headerContentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    protected $headerContentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     /** @var string Temporary folder where the files to create the XLSX will be stored */
     protected $tempFolder;

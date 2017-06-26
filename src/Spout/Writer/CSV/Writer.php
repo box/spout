@@ -18,7 +18,7 @@ class Writer extends AbstractWriter
     const FLUSH_THRESHOLD = 500;
 
     /** @var string Content-Type value for the header */
-    protected static $headerContentType = 'text/csv; charset=UTF-8';
+    protected $headerContentType = 'text/csv; charset=UTF-8';
 
     /** @var string Defines the character used to delimit fields (one character only) */
     protected $fieldDelimiter = ',';
@@ -55,6 +55,18 @@ class Writer extends AbstractWriter
     public function setFieldEnclosure($fieldEnclosure)
     {
         $this->fieldEnclosure = $fieldEnclosure;
+        return $this;
+    }
+
+    /**
+     * Set the header content type.
+     *
+     * @param string $headerContentType Content-Type value for the header if different than default UTF-8.
+     * @return Writer
+     */
+    public function setHeaderContentType($headerContentType)
+    {
+        $this->headerContentType = $headerContentType;
         return $this;
     }
 

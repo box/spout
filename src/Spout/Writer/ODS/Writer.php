@@ -15,7 +15,7 @@ use Box\Spout\Writer\ODS\Internal\Workbook;
 class Writer extends AbstractMultiSheetsWriter
 {
     /** @var string Content-Type value for the header */
-    protected static $headerContentType = 'application/vnd.oasis.opendocument.spreadsheet';
+    protected $headerContentType = 'application/vnd.oasis.opendocument.spreadsheet';
 
     /** @var string Temporary folder where the files to create the ODS will be stored */
     protected $tempFolder;

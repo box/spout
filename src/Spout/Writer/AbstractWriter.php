@@ -37,7 +37,7 @@ abstract class AbstractWriter implements WriterInterface
     protected $defaultRowStyle;
 
     /** @var string Content-Type value for the header - to be defined by child class */
-    protected static $headerContentType;
+    protected $headerContentType;
 
     /**
      * Opens the streamer and makes it ready to accept data.
@@ -143,7 +143,7 @@ abstract class AbstractWriter implements WriterInterface
         $this->globalFunctionsHelper->ob_end_clean();
 
         // Set headers
-        $this->globalFunctionsHelper->header('Content-Type: ' . static::$headerContentType);
+        $this->globalFunctionsHelper->header('Content-Type: ' . $this->headerContentType);
         $this->globalFunctionsHelper->header('Content-Disposition: attachment; filename="' . $this->outputFilePath . '"');
 
         /*
