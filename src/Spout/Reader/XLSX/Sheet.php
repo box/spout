@@ -24,6 +24,9 @@ class Sheet implements SheetInterface
     /** @var bool Whether the sheet was the active one */
     protected $isActive;
 
+    /** @var bool Whether the sheet was visible or not */
+    protected $isVisible;
+
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
@@ -33,12 +36,13 @@ class Sheet implements SheetInterface
      * @param \Box\Spout\Reader\XLSX\ReaderOptions $options Reader's current options
      * @param Helper\SharedStringsHelper Helper to work with shared strings
      */
-    public function __construct($filePath, $sheetDataXMLFilePath, $sheetIndex, $sheetName, $isSheetActive, $options, $sharedStringsHelper)
+    public function __construct($filePath, $sheetDataXMLFilePath, $sheetIndex, $sheetName, $isSheetActive, $isSheetVisible, $options, $sharedStringsHelper)
     {
         $this->rowIterator = new RowIterator($filePath, $sheetDataXMLFilePath, $options, $sharedStringsHelper);
         $this->index = $sheetIndex;
         $this->name = $sheetName;
         $this->isActive = $isSheetActive;
+        $this->isVisible = $isSheetVisible;
     }
 
     /**
@@ -75,5 +79,14 @@ class Sheet implements SheetInterface
     public function isActive()
     {
         return $this->isActive;
+    }
+
+     /**
+     * @api
+     * @return bool Whether the sheet was visible or not
+     */
+    public function isVisible()
+    {
+        return $this->isVisible;
     }
 }
