@@ -289,8 +289,10 @@ EOD;
         /** @var Worksheet $worksheet */
         foreach ($worksheets as $worksheet) {
             $worksheetName = $worksheet->getExternalSheet()->getName();
+            $worksheetState = ( $worksheet->getExternalSheet()->isVisible() ) ? 'visible' : 'hidden';
+
             $worksheetId = $worksheet->getId();
-            $workbookXmlFileContents .= '<sheet name="' . $escaper->escape($worksheetName) . '" sheetId="' . $worksheetId . '" r:id="rIdSheet' . $worksheetId . '"/>';
+            $workbookXmlFileContents .= '<sheet name="' . $escaper->escape($worksheetName) . '" sheetId="' . $worksheetId . '" state="' . $worksheetState. '" r:id="rIdSheet' . $worksheetId . '"/>';
         }
 
         $workbookXmlFileContents .= <<<EOD

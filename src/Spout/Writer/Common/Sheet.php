@@ -33,6 +33,9 @@ class Sheet
     /** @var string Name of the sheet */
     protected $name;
 
+     /** @var bool isVisible visibility of the sheet */
+    protected $isVisible;
+
     /** @var \Box\Spout\Common\Helper\StringHelper */
     protected $stringHelper;
 
@@ -50,6 +53,7 @@ class Sheet
 
         $this->stringHelper = new StringHelper();
         $this->setName(self::DEFAULT_SHEET_NAME_PREFIX . ($sheetIndex + 1));
+        $this->setVisibility();
     }
 
     /**
@@ -69,6 +73,23 @@ class Sheet
     {
         return $this->name;
     }
+
+    /**
+     * @api
+     * @return bool isVisible visibility of the sheet
+     */
+    public function isVisible()
+    {
+        return $this->isVisible;
+    }
+
+    public function setVisibility($visibility = true)
+    {
+        $this->isVisible = $visibility;
+
+        return $this;
+    }
+
 
     /**
      * Sets the name of the sheet. Note that Excel has some restrictions on the name:
