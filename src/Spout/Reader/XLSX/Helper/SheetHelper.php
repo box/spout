@@ -117,7 +117,7 @@ class SheetHelper
 
         return new Sheet(
             $this->filePath, $sheetDataXMLFilePath,
-            $sheetIndexZeroBased, $sheetName, $isSheetActive,
+            $sheetIndexZeroBased, $sheetName, $isSheetActive, $sheetVisible,
             $this->options, $this->sharedStringsHelper
         );
     }
