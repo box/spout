@@ -51,4 +51,17 @@ class SheetTest extends \PHPUnit_Framework_TestCase
 
         return $sheets;
     }
+
+    /**
+     * @return void
+     */
+    public function testReaderShouldReturnCorrectSheetVisibility()
+    {
+       
+        $sheets = $this->openFileAndReturnSheets('two_sheets_one_hidden_one_not.xlsx');
+
+        $this->assertFalse($sheets[0]->isVisible());
+
+        $this->assertTrue($sheets[1]->isVisible());
+    }
 }
