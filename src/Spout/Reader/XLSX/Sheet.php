@@ -24,7 +24,7 @@ class Sheet implements SheetInterface
     /** @var bool Whether the sheet was the active one */
     protected $isActive;
 
-    /** @var bool Whether the sheet was visible or not */
+    /** @var bool Whether the sheet is visible or not */
     protected $isVisible;
 
     /**
@@ -83,7 +83,7 @@ class Sheet implements SheetInterface
 
      /**
      * @api
-     * @return bool Whether the sheet was visible or not
+     * @return bool Whether the sheet is visible or not
      */
     public function isVisible()
     {

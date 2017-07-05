@@ -33,7 +33,7 @@ class Sheet
     /** @var string Name of the sheet */
     protected $name;
 
-     /** @var bool isVisible visibility of the sheet */
+     /** @var bool Visibility of the sheet */
     protected $isVisible;
 
     /** @var \Box\Spout\Common\Helper\StringHelper */
@@ -83,6 +83,11 @@ class Sheet
         return $this->isVisible;
     }
 
+    /**
+     * @api
+     * @param string $visibility Visibility of the sheet
+     * @return Sheet
+     */
     public function setVisibility($visibility = true)
     {
         $this->isVisible = $visibility;
