@@ -53,7 +53,7 @@ class Sheet
 
         $this->stringHelper = new StringHelper();
         $this->setName(self::DEFAULT_SHEET_NAME_PREFIX . ($sheetIndex + 1));
-        $this->setVisibility();
+        $this->setIsVisible(true);
     }
 
     /**
@@ -88,7 +88,7 @@ class Sheet
      * @param string $visibility Visibility of the sheet
      * @return Sheet
      */
-    public function setVisibility($visibility = true)
+    public function setIsVisible($visibility = true)
     {
         $this->isVisible = $visibility;
 
