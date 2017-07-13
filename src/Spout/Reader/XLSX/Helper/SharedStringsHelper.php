@@ -80,8 +80,6 @@ class SharedStringsHelper
      *
      * The XML file can be really big with sheets containing a lot of data. That is why
      * we need to use a XML reader that provides streaming like the XMLReader library.
-     * Please note that SimpleXML does not provide such a functionality but since it is faster
-     * and more handy to parse few XML nodes, it is used in combination with XMLReader for that purpose.
      *
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If sharedStrings.xml can't be read
@@ -91,8 +89,7 @@ class SharedStringsHelper
         $xmlReader = new XMLReader();
         $sharedStringIndex = 0;
 
-        $sharedStringsFilePath = $this->getSharedStringsFilePath();
-        if ($xmlReader->open($sharedStringsFilePath) === false) {
+        if ($xmlReader->openFileInZip($this->filePath, self::SHARED_STRINGS_XML_FILE_PATH) === false) {
             throw new IOException('Could not open "' . self::SHARED_STRINGS_XML_FILE_PATH . '".');
         }
 
@@ -117,14 +114,6 @@ class SharedStringsHelper
         }
 
         $xmlReader->close();
-    }
-
-    /**
-     * @return string The path to the shared strings XML file
-     */
-    protected function getSharedStringsFilePath()
-    {
-        return 'zip://' . $this->filePath . '#' . self::SHARED_STRINGS_XML_FILE_PATH;
     }
 
     /**
