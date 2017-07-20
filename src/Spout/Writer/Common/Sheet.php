@@ -88,9 +88,9 @@ class Sheet
      * @param string $visibility Visibility of the sheet
      * @return Sheet
      */
-    public function setIsVisible($visibility = true)
+    public function setIsVisible($isVisible = true)
     {
-        $this->isVisible = $visibility;
+        $this->isVisible = $isVisible;
 
         return $this;
     }

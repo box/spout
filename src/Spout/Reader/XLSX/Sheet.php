@@ -32,6 +32,7 @@ class Sheet implements SheetInterface
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $sheetName Name of the sheet
+     * @param bool $isSheetVisible Whether the sheet is visible or not
      * @param bool $isSheetActive Whether the sheet was defined as active
      * @param \Box\Spout\Reader\XLSX\ReaderOptions $options Reader's current options
      * @param Helper\SharedStringsHelper Helper to work with shared strings
