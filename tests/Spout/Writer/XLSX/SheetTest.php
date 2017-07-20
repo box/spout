@@ -47,7 +47,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_set_name_should_create_sheet_with_custom_name.xlsx';
         $customSheetName = 'CustomName';
-        $this->writeDataAndReturnSheetWithCustomName($fileName, $customSheetName);
+        $this->writeDataToSheetWithCustomName($fileName, $customSheetName);
 
         $this->assertSheetNameEquals($customSheetName, $fileName, "The sheet name should have been changed to '$customSheetName'");
     }
@@ -82,10 +82,9 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     public function testSetSheetVisibilityShouldCreateSheetHidden()
     {
         $fileName = 'test_set_visibility_should_create_sheet_hidden.xlsx';
-        // $customSheetName = 'CustomName';
-        $this->writeDataAndReturnSheetHidden($fileName);
+        $this->writeDataToHiddenSheet($fileName);
 
-        $this->assertSheetVisibilityEquals(false,  $fileName, "The sheet visibility should have been changed to 'false'");
+        $this->assertIsHiddenSheet( $fileName, "The sheet visibility should have been changed to 'hidden'");
     }
 
     /**
@@ -93,7 +92,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      * @param string $sheetName
      * @return Sheet
      */
-    private function writeDataAndReturnSheetWithCustomName($fileName, $sheetName)
+    private function writeDataToSheetWithCustomName($fileName, $sheetName)
     {
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -132,9 +131,9 @@ class SheetTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $fileName
-     * @return Sheet
+     * @return void
      */
-    private function writeDataAndReturnSheetHidden($fileName)
+    private function writeDataToHiddenSheet($fileName)
     {
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -170,7 +169,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      * @param string $message
      * @return void
      */
-    private function assertSheetVisibilityEquals($expectedVisibility, $fileName, $message = '')
+    private function assertIsHiddenSheet( $fileName, $message = '')
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $pathToWorkbookFile = $resourcePath . '#xl/workbook.xml';
