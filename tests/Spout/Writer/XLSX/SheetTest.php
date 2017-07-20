@@ -164,7 +164,6 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $expectedVisibility
      * @param string $fileName
      * @param string $message
      * @return void
