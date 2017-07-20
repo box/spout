@@ -31,7 +31,7 @@ class SheetHelper
     const XML_ATTRIBUTE_ID = 'Id';
     const XML_ATTRIBUTE_TARGET = 'Target';
     
-    const SHEET_STATUS_VISIBLE = 'visible';
+    const SHEET_STATE_VISIBLE = 'visible';
 
     /** @var string Path of the XLSX file being read */
     protected $filePath;
@@ -113,7 +113,7 @@ class SheetHelper
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
         $sheetName = $escaper->unescape($escapedSheetName);
-        $sheetVisible = ($sheetState === self::SHEET_STATUS_VISIBLE) ? true : false;
+        $isSheetVisible = ($sheetState === self::SHEET_STATE_VISIBLE);
 
         $sheetDataXMLFilePath = $this->getSheetDataXMLFilePathForSheetId($sheetId);
 
