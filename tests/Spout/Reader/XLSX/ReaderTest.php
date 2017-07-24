@@ -115,6 +115,22 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportPrefixedSharedStringsXML()
+    {
+        // The sharedStrings.xml file of this spreadsheet is prefixed.
+        // For instance, they use "<x:sst>" instead of "<sst>", etc.
+        $allRows = $this->getAllRowsForFile('sheet_with_prefixed_shared_strings_xml.xlsx');
+
+        $expectedRows = [
+            ['s1--A1', 's1--B1', 's1--C1', 's1--D1', 's1--E1'],
+            ['s1--A2', 's1--B2', 's1--C2', 's1--D2', 's1--E2'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldSupportSheetWithSharedStringsMissingUniqueCountAttribute()
     {
         $allRows = $this->getAllRowsForFile('one_sheet_with_shared_strings_missing_unique_count.xlsx');
@@ -165,6 +181,21 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         $expectedRows = [
             ['s1--A1'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadShouldSupportFilesWithRowsNotStartingAtColumnA()
+    {
+        // file where the row starts at column C:
+        // <row r="1"><c r="C1" s="0" t="s"><v>0</v></c>...
+        $allRows = $this->getAllRowsForFile('sheet_with_row_not_starting_at_column_a.xlsx');
+
+        $expectedRows = [
+            ['', '', 's1--C1', 's1--D1', 's1--E1'],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }

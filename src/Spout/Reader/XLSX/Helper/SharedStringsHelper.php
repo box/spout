@@ -99,7 +99,7 @@ class SharedStringsHelper
 
             $xmlReader->readUntilNodeFound(self::XML_NODE_SI);
 
-            while ($xmlReader->name === self::XML_NODE_SI) {
+            while ($xmlReader->getCurrentNodeName() === self::XML_NODE_SI) {
                 $this->processSharedStringsItem($xmlReader, $sharedStringIndex);
                 $sharedStringIndex++;
 
@@ -128,7 +128,7 @@ class SharedStringsHelper
         $xmlReader->next(self::XML_NODE_SST);
 
         // Iterate over the "sst" elements to get the actual "sst ELEMENT" (skips any DOCTYPE)
-        while ($xmlReader->name === self::XML_NODE_SST && $xmlReader->nodeType !== XMLReader::ELEMENT) {
+        while ($xmlReader->getCurrentNodeName() === self::XML_NODE_SST && $xmlReader->nodeType !== XMLReader::ELEMENT) {
             $xmlReader->read();
         }
 
