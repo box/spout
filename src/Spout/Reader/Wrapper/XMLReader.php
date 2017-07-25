@@ -164,4 +164,12 @@ class XMLReader extends \XMLReader
 
         return ($this->nodeType === $nodeType && $currentNodeName === $nodeName);
     }
+
+    /**
+     * @return string The name of the current node, un-prefixed
+     */
+    public function getCurrentNodeName()
+    {
+        return $this->localName;
+    }
 }
