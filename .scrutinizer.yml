@@ -4,7 +4,7 @@ filter:
 tools:
     external_code_coverage:
         timeout: 600 # Wait 10 minutes for results
-        runs: 3 # Merge results for 5.4, 5.5 and 5.6 jobs
+        runs: 1 # Results are only coming from the PHP 7.1 job
     php_mess_detector: true
     php_code_sniffer:
         config:
