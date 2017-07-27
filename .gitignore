@@ -1,3 +1,9 @@
-.sass-cache/
-.idea/
-_site/
+/.idea
+*.iml
+
+/tests/resources/generated
+/tests/coverage
+/vendor
+
+/.sass-cache
+/_site
