@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\Common\Entity;
 
 use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Manager\RowManager;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 class Row
@@ -20,22 +21,24 @@ class Row
     protected $style = null;
 
     /**
-     * @var StyleMerger
+     * Thw row manager
+     * @var RowManager
      */
-    protected $styleMerger;
+    protected $rowManager;
 
     /**
      * Row constructor.
      * @param Cell[] $cells
      * @param Style|null $style
+     * @param RowManager $rowManager
      */
-    public function __construct(array $cells = [], Style $style = null)
+    public function __construct(array $cells = [], Style $style = null, RowManager $rowManager)
     {
         $this
             ->setCells($cells)
             ->setStyle($style);
 
-        $this->styleMerger = new StyleMerger();
+        $this->rowManager = $rowManager;
     }
 
     /**
@@ -86,11 +89,7 @@ class Row
      */
     public function applyStyle(Style $style = null)
     {
-        if ($style === null) {
-            return $this;
-        }
-        $merged = $this->styleMerger->merge($this->getStyle(), $style);
-        $this->setStyle($merged);
+        $this->rowManager->applyStyle($this, $style);
         return $this;
     }
 
@@ -112,6 +111,6 @@ class Row
      */
     public function isEmpty()
     {
-        return count($this->cells) === 0 || (count($this->cells) === 1 && $this->cells[0]->isEmpty());
+        return $this->rowManager->isEmpty($this);
     }
 }

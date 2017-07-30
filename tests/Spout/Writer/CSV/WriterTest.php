@@ -5,6 +5,8 @@ namespace Box\Spout\Writer\CSV;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Common\Type;
 use Box\Spout\Common\Helper\EncodingHelper;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\ManagerFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\WriterFactory;
 
@@ -18,6 +20,17 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     use TestUsingResource;
 
     /**
+     * @var EntityFactory
+     */
+    protected $entityFactory;
+
+    protected function setUp()
+    {
+        $this->entityFactory = new EntityFactory(new ManagerFactory());
+        parent::setUp();
+    }
+
+    /**
      * @expectedException \Box\Spout\Common\Exception\IOException
      */
     public function testWriteShouldThrowExceptionIfCannotOpenFileForWriting()
@@ -28,7 +41,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $writer = WriterFactory::create(Type::CSV);
         @$writer->openToFile($filePath);
-        $writer->addRow(['csv--11', 'csv--12']);
+        $row = $this->entityFactory->createRow([
+            new Cell('csv--11'),
+            new Cell('csv--12')
+        ]);
+        $writer->addRow($row);
         $writer->close();
     }
 
@@ -38,7 +55,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testWriteShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::CSV);
-        $writer->addRow(['csv--11', 'csv--12']);
+        $row = $this->entityFactory->createRow([
+            new Cell('csv--11'),
+            new Cell('csv--12')
+        ]);
+        $writer->addRow($row);
         $writer->close();
     }
 
@@ -48,17 +69,24 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testWriteShouldThrowExceptionIfCallAddRowsBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::CSV);
-        $writer->addRows([['csv--11', 'csv--12']]);
+        $row = $this->entityFactory->createRow([
+            new Cell('csv--11'),
+            new Cell('csv--12')
+        ]);
+        $writer->addRows([$row]);
         $writer->close();
     }
 
-    /**
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
-     */
-    public function testAddRowsShouldThrowExceptionIfRowsAreNotArrayOfArrays()
+    public function testAddRowsShouldThrowExceptionIfRowsAreNotArrayOfRows()
     {
+        if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
+            $this->expectException(\TypeError::class);
+        } else {
+            $this->markTestSkipped('PHP > 7.0 only');
+        }
         $writer = WriterFactory::create(Type::CSV);
-        $writer->addRows(['csv--11', 'csv--12']);
+        $row = new \stdClass();
+        $writer->addRows([$row]);
         $writer->close();
     }
 
@@ -192,11 +220,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array  $allRows
+     * @param array $allRows
      * @param string $fileName
      * @param string $fieldDelimiter
      * @param string $fieldEnclosure
-     * @param bool   $shouldAddBOM
+     * @param bool $shouldAddBOM
      * @return null|string
      */
     private function writeToCsvFileAndReturnWrittenContent($allRows, $fileName, $fieldDelimiter = ',', $fieldEnclosure = '"', $shouldAddBOM = true)
@@ -211,7 +239,13 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer->setShouldAddBOM($shouldAddBOM);
 
         $writer->openToFile($resourcePath);
-        $writer->addRows($allRows);
+
+        $writer->addRows(array_map(function ($oneRow) {
+            $row = $this->entityFactory->createRow(array_map(function ($value) {
+                return new Cell($value);
+            }, $oneRow));
+            return $row;
+        }, $allRows));
         $writer->close();
 
         return file_get_contents($resourcePath);

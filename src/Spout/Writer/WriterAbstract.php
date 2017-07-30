@@ -54,7 +54,8 @@ abstract class WriterAbstract implements WriterInterface
         OptionsManagerInterface $optionsManager,
         StyleMerger $styleMerger,
         GlobalFunctionsHelper $globalFunctionsHelper
-    ) {
+    )
+    {
         $this->optionsManager = $optionsManager;
         $this->styleMerger = $styleMerger;
         $this->globalFunctionsHelper = $globalFunctionsHelper;

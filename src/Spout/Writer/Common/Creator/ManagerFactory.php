@@ -3,7 +3,10 @@
 namespace Box\Spout\Writer\Common\Creator;
 
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Writer\Common\Manager\CellManager;
+use Box\Spout\Writer\Common\Manager\RowManager;
 use Box\Spout\Writer\Common\Manager\SheetManager;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 /**
  * Class ManagerFactory
@@ -13,6 +16,24 @@ use Box\Spout\Writer\Common\Manager\SheetManager;
  */
 class ManagerFactory
 {
+    /**
+     * @return CellManager
+     */
+    public function createCellManager()
+    {
+        $styleMerger = new StyleMerger();
+        return new CellManager($styleMerger);
+    }
+
+    /**
+     * @return RowManager
+     */
+    public function createRowManager()
+    {
+        $styleMerger = new StyleMerger();
+        return new RowManager($styleMerger);
+    }
+
     /**
      * @return SheetManager
      */

@@ -2,7 +2,9 @@
 
 namespace Box\Spout\Writer\Common\Creator;
 
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Sheet;
+use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Workbook;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 
@@ -54,5 +56,16 @@ class EntityFactory
     {
         $sheetManager = $this->managerFactory->createSheetManager();
         return new Sheet($sheetIndex, $associatedWorkbookId, $sheetManager);
+    }
+
+    /**
+     * @param array $cells
+     * @param Style|null $style
+     * @return Row
+     */
+    public function createRow(array $cells, Style $style = null)
+    {
+        $rowManager = $this->managerFactory->createRowManager();
+        return new Row($cells, $style, $rowManager);
     }
 }
