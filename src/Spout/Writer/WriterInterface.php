@@ -39,7 +39,7 @@ interface WriterInterface
      * @param Row $row The row to be appended to the stream
      * @return WriterInterface
      */
-    public function addRow($row);
+    public function addRow(Row $row);
 
     /**
      * Write given data to the output with a closure function. New data will be appended to the end of the stream.

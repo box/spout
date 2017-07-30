@@ -53,8 +53,8 @@ abstract class WriterAbstract implements WriterInterface
     public function __construct(
         OptionsManagerInterface $optionsManager,
         StyleMerger $styleMerger,
-        GlobalFunctionsHelper $globalFunctionsHelper)
-    {
+        GlobalFunctionsHelper $globalFunctionsHelper
+    ) {
         $this->optionsManager = $optionsManager;
         $this->styleMerger = $styleMerger;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
@@ -84,9 +84,7 @@ abstract class WriterAbstract implements WriterInterface
     abstract protected function closeWriter();
 
     /**
-     * Sets the default styles for all rows added with "addRow".
-     * Overriding the default style instead of using "addRowWithStyle" improves performance by 20%.
-     * @see https://github.com/box/spout/issues/272
+     * Sets the default styles for all rows added with "addRow"
      *
      * @param Style $defaultStyle
      * @return WriterAbstract
@@ -98,13 +96,7 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * Inits the writer and opens it to accept data.
-     * By using this method, the data will be written to a file.
-     *
-     * @api
-     * @param  string $outputFilePath Path of the output file that will contain the data
-     * @return WriterAbstract
-     * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened or if the given path is not writable
+     * @inheritdoc
      */
     public function openToFile($outputFilePath)
     {
@@ -120,15 +112,7 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * Inits the writer and opens it to accept data.
-     * By using this method, the data will be outputted directly to the browser.
-     *
-     * @codeCoverageIgnore
-     *
-     * @api
-     * @param  string $outputFileName Name of the output file that will contain the data. If a path is passed in, only the file name will be kept
-     * @return WriterAbstract
-     * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened
+     * @inheritdoc
      */
     public function openToBrowser($outputFileName)
     {
@@ -191,32 +175,12 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * Write given data to the output. New data will be appended to end of stream.
-     *
-     * @param array|\Box\Spout\Writer\Common\Entity\Row $row The row to be appended to the stream
-     * @return WriterInterface
-     * @internal param array $row Array containing data to be streamed.
-     *          Example $row= ['data1', 1234, null, '', 'data5'];
-     * @internal param \Box\Spout\Writer\Common\Entity\Row $row A Row object with cells and styles
-     *          Example $row = (new Row())->addCell('data1');
-     *
-     * @throws SpoutException If anything else goes wrong while writing data
-     * @throws WriterNotOpenedException If this function is called before opening the writer
-     *
-     * @api
+     * @inheritdoc
      */
-    public function addRow($row)
+    public function addRow(Row $row)
     {
-        if (!is_array($row) && !$row instanceof Row) {
-            throw new InvalidArgumentException('addRow accepts an array with scalar values or a Row object');
-        }
-
-        if (is_array($row) && !empty($row)) {
-            $row = $this->createRowFromArray($row, null);
-        }
-
         if ($this->isWriterOpened) {
-            if (!empty($row)) {
+            if (!$row->isEmpty()) {
                 try {
                     $this->applyDefaultRowStyle($row);
                     $this->addRowToWriter($row);
@@ -236,8 +200,6 @@ abstract class WriterAbstract implements WriterInterface
 
     /**
      * @inheritdoc
-     *
-     * @api
      */
     public function withRow(\Closure $callback)
     {
@@ -245,119 +207,35 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * Write given data to the output and apply the given style.
-     * @see addRow
-     *
-     * @param array|\Box\Spout\Writer\Common\Entity\Row $row The row to be appended to the stream
-     * @param Style $style Style to be applied to the row.
-     * @return WriterInterface
-     * @internal param array $row Array containing data to be streamed.
-     *          Example $row= ['data1', 1234, null, '', 'data5'];
-     * @internal param \Box\Spout\Writer\Common\Entity\Row $row A Row object with cells and styles
-     *          Example $row = (new Row())->addCell('data1');
-     * @api
-     * @throws InvalidArgumentException If the input param is not valid
+     * @inheritdoc
      */
-    public function addRowWithStyle($row, $style)
+    public function addRows(array $dataRows)
     {
-        if (!is_array($row) && !$row instanceof Row) {
-            throw new InvalidArgumentException('addRowWithStyle accepts an array with scalar values or a Row object');
+        foreach ($dataRows as $dataRow) {
+            $this->addRow($dataRow);
         }
-
-        if (!$style instanceof Style) {
-            throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
-        }
-
-        if (is_array($row)) {
-            $row = $this->createRowFromArray($row, $style);
-        }
-
-        $this->addRow($row);
         return $this;
     }
 
     /**
-     * @param array $dataRows
+     * @param array $dataRow
      * @param Style|null $style
      * @return Row
      */
-    protected function createRowFromArray(array $dataRows, Style $style = null)
+    protected function createRowFromArray(array $dataRow, Style $style = null)
     {
         $row = (new Row())->setCells(array_map(function ($value) {
             if ($value instanceof Cell) {
                 return $value;
             }
             return new Cell($value);
-        }, $dataRows));
+        }, $dataRow));
 
         if ($style !== null) {
             $row->setStyle($style);
         }
 
         return $row;
-    }
-
-    /**
-     * Write given data to the output. New data will be appended to end of stream.
-     *
-     * @api
-     * @param  array $dataRows Array of array containing data to be streamed.
-     *                         If a row is empty, it won't be added (i.e. not even as a blank row)
-     *                         Example: $dataRows = [
-     *                             ['data11', 12, , '', 'data13'],
-     *                             ['data21', 'data22', null, false],
-     *                         ];
-     * @return WriterAbstract
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
-     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
-     */
-    public function addRows(array $dataRows)
-    {
-        if (!empty($dataRows)) {
-            $firstRow = reset($dataRows);
-            if (!is_array($firstRow) && !$firstRow instanceof Row) {
-                throw new InvalidArgumentException('The input should be an array of arrays or row objects');
-            }
-            foreach ($dataRows as $dataRow) {
-                $this->addRow($dataRow);
-            }
-        }
-        return $this;
-    }
-
-    /**
-     * Write given data to the output and apply the given style.
-     * @see addRows
-     *
-     * @api
-     * @param array $dataRows Array of array containing data to be streamed.
-     * @param Style $style Style to be applied to the rows.
-     * @return WriterAbstract
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
-     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
-     */
-    public function addRowsWithStyle(array $dataRows, $style)
-    {
-        if (!$style instanceof Style) {
-            throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
-        }
-
-        foreach($dataRows as $row) {
-
-            if (is_array($row)) {
-                $row = $this->createRowFromArray($row, $style);
-            } elseif ($row instanceof Row) {
-                $row->setStyle($style);
-            } else {
-                throw new InvalidArgumentException();
-            }
-
-            $this->addRow($row);
-        }
-
-        return $this;
     }
 
     /**
