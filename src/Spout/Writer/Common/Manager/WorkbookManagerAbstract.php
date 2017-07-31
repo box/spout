@@ -212,12 +212,12 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
             if ($this->optionManager->getOption(Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY)) {
                 $currentWorksheet = $this->addNewSheetAndMakeItCurrent();
 
-                $this->addRowWithStyleToWorksheet($currentWorksheet, $row);
+                $this->addRowToWorksheet($currentWorksheet, $row);
             } else {
                 // otherwise, do nothing as the data won't be written anyways
             }
         } else {
-            $this->addRowWithStyleToWorksheet($currentWorksheet, $row);
+            $this->addRowToWorksheet($currentWorksheet, $row);
         }
     }
 
@@ -234,12 +234,11 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * Adds data with the given style to the given sheet.
      *
      * @param Worksheet $worksheet Worksheet to write the row to
-     * @param array $dataRow Array containing data to be written. Cannot be empty.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
+     * @param Row $row The row to be added
      * @return void
      * @throws WriterException If unable to write data
      */
-    private function addRowWithStyleToWorksheet(Worksheet $worksheet, Row $row)
+    private function addRowToWorksheet(Worksheet $worksheet, Row $row)
     {
         $this->worksheetManager->addRow($worksheet, $row);
 
