@@ -77,13 +77,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer->close();
     }
 
+    /**
+     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
+     */
     public function testAddRowsShouldThrowExceptionIfRowsAreNotArrayOfRows()
     {
-        if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
-            $this->expectException(\TypeError::class);
-        } else {
-            $this->markTestSkipped('PHP > 7.0 only');
-        }
         $writer = WriterFactory::create(Type::CSV);
         $row = new \stdClass();
         $writer->addRows([$row]);

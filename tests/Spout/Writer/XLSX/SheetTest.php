@@ -4,6 +4,9 @@ namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\ManagerFactory;
+use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\WriterFactory;
 
@@ -15,6 +18,19 @@ use Box\Spout\Writer\WriterFactory;
 class SheetTest extends \PHPUnit_Framework_TestCase
 {
     use TestUsingResource;
+
+    /**
+     * @var EntityFactory
+     */
+    protected $entityFactory;
+
+    /**
+     * @return void
+     */
+    public function setUp()
+    {
+        $this->entityFactory = new EntityFactory(new ManagerFactory());
+    }
 
     /**
      * @return void
@@ -93,7 +109,11 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $sheet = $writer->getCurrentSheet();
         $sheet->setName($sheetName);
 
-        $writer->addRow(['xlsx--11', 'xlsx--12']);
+        $row = $this->entityFactory->createRow([
+            new Cell('xlsx--11'),
+            new Cell('xlsx--12'),
+        ]);
+        $writer->addRow($row);
         $writer->close();
 
         return $sheet;
@@ -112,9 +132,20 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
 
-        $writer->addRow(['xlsx--sheet1--11', 'xlsx--sheet1--12']);
+        $row = $this->entityFactory->createRow([
+            new Cell('xlsx--sheet1--11'),
+            new Cell('xlsx--sheet1--12'),
+        ]);
+        $writer->addRow($row);
+
         $writer->addNewSheetAndMakeItCurrent();
-        $writer->addRow(['xlsx--sheet2--11', 'xlsx--sheet2--12', 'xlsx--sheet2--13']);
+
+        $row = $this->entityFactory->createRow([
+            new Cell('xlsx--sheet2--11'),
+            new Cell('xlsx--sheet2--12'),
+            new Cell('xlsx--sheet2--13'),
+        ]);
+        $writer->addRow($row);
 
         $writer->close();
 

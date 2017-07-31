@@ -213,6 +213,12 @@ abstract class WriterAbstract implements WriterInterface
     public function addRows(array $dataRows)
     {
         foreach ($dataRows as $dataRow) {
+
+            if(!$dataRow instanceof Row) {
+                $this->closeAndAttemptToCleanupAllFiles();
+                throw new InvalidArgumentException();
+            }
+
             $this->addRow($dataRow);
         }
         return $this;
