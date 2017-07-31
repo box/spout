@@ -204,7 +204,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     public function addRowToCurrentWorksheet(Row $row)
     {
         $currentWorksheet = $this->getCurrentWorksheet();
-        $hasReachedMaxRows = $this->hasCurrentWorkseetReachedMaxRows();
+        $hasReachedMaxRows = $this->hasCurrentWorksheetReachedMaxRows();
 
         // if we reached the maximum number of rows for the current sheet...
         if ($hasReachedMaxRows) {
@@ -224,7 +224,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     /**
      * @return bool Whether the current worksheet has reached the maximum number of rows per sheet.
      */
-    private function hasCurrentWorkseetReachedMaxRows()
+    private function hasCurrentWorksheetReachedMaxRows()
     {
         $currentWorksheet = $this->getCurrentWorksheet();
         return ($currentWorksheet->getLastWrittenRowIndex() >= $this->getMaxRowsPerWorksheet());
