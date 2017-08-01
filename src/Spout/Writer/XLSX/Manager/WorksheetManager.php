@@ -149,6 +149,7 @@ EOD;
 
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
+        // @TODO refactoring: move this to its own method
         /** @var Cell $cell */
         foreach($row->getCells() as $cell) {
             // Apply styles - the row style is merged at this point

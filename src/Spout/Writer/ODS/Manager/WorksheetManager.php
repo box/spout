@@ -119,6 +119,7 @@ class WorksheetManager implements WorksheetManagerInterface
             /** @var Cell|null $nextCell */
             $nextCell = isset($cells[$nextCellIndex]) ? $cells[$nextCellIndex] : null;
 
+            // @TODO refactoring: move this to its own method
             if (null === $nextCell || $cell->getValue() !== $nextCell->getValue()) {
 
                 // Apply styles - the row style is merged at this point

@@ -70,15 +70,12 @@ class Cell
     /**
      * Cell constructor.
      * @param $value mixed
-     * @param $style Style
+     * @param $style|null Style
      */
     public function __construct($value, Style $style = null)
     {
         $this->setValue($value);
-        if ($style) {
-            $this->setStyle($style);
-        }
-
+        $this->setStyle($style);
         $this->styleMerger = new StyleMerger();
     }
 
@@ -108,7 +105,7 @@ class Cell
     }
 
     /**
-     * @return Style
+     * @return Style|null
      */
     public function getStyle()
     {
@@ -205,15 +202,15 @@ class Cell
 
     /**
      * @param Style $style|null
-     * @return $this
+     * @return Cell
      */
     public function applyStyle(Style $style = null)
     {
         if ($style === null) {
             return $this;
         }
-        $merged = $this->styleMerger->merge($this->getStyle(), $style);
-        $this->setStyle($merged);
+        $mergedStyle = $this->styleMerger->merge($this->getStyle(), $style);
+        $this->setStyle($mergedStyle);
         return $this;
     }
 }
