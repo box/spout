@@ -97,9 +97,9 @@ class Cell
     }
 
     /**
-     * @param Style $style
+     * @param Style $style|null
      */
-    public function setStyle(Style $style)
+    public function setStyle(Style $style = null)
     {
         $this->style = $style;
     }
