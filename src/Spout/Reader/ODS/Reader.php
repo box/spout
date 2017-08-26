@@ -3,7 +3,8 @@
 namespace Box\Spout\Reader\ODS;
 
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Reader\AbstractReader;
+use Box\Spout\Reader\ODS\Creator\EntityFactory;
+use Box\Spout\Reader\ReaderAbstract;
 
 /**
  * Class Reader
@@ -11,26 +12,13 @@ use Box\Spout\Reader\AbstractReader;
  *
  * @package Box\Spout\Reader\ODS
  */
-class Reader extends AbstractReader
+class Reader extends ReaderAbstract
 {
     /** @var \ZipArchive */
     protected $zip;
 
     /** @var SheetIterator To iterator over the ODS sheets */
     protected $sheetIterator;
-
-    /**
-     * Returns the reader's current options
-     *
-     * @return ReaderOptions
-     */
-    protected function getOptions()
-    {
-        if (!isset($this->options)) {
-            $this->options = new ReaderOptions();
-        }
-        return $this->options;
-    }
 
     /**
      * Returns whether stream wrappers are supported
@@ -52,10 +40,15 @@ class Reader extends AbstractReader
      */
     protected function openReader($filePath)
     {
-        $this->zip = new \ZipArchive();
+        /** @var EntityFactory $entityFactory */
+        $entityFactory = $this->entityFactory;
+
+        $this->zip = $entityFactory->createZipArchive();
 
         if ($this->zip->open($filePath) === true) {
-            $this->sheetIterator = new SheetIterator($filePath, $this->getOptions());
+            /** @var EntityFactory $entityFactory */
+            $entityFactory = $this->entityFactory;
+            $this->sheetIterator = $entityFactory->createSheetIterator($filePath, $this->optionsManager);
         } else {
             throw new IOException("Could not open $filePath for reading.");
         }

@@ -3,7 +3,7 @@
 namespace Box\Spout\Writer\XLSX\Manager;
 
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Common\Escaper;
+use Box\Spout\Common\Helper\Escaper;
 
 /**
  * Class SharedStringsManager

@@ -3,6 +3,7 @@
 namespace Box\Spout\Reader\XLSX\Helper;
 
 use Box\Spout\Reader\Wrapper\XMLReader;
+use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 use Box\Spout\Reader\XLSX\Sheet;
 
 /**
@@ -33,8 +34,8 @@ class SheetHelper
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
-    /** @var \Box\Spout\Reader\XLSX\ReaderOptions Reader's current options */
-    protected $options;
+    /** @var \Box\Spout\Common\Manager\OptionsManagerInterface Reader's options manager */
+    protected $optionsManager;
 
     /** @var \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings */
     protected $sharedStringsHelper;
@@ -42,18 +43,28 @@ class SheetHelper
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
+    /** @var EntityFactory Factory to create entities */
+    protected $entityFactory;
+
+    /** @var \Box\Spout\Common\Helper\Escaper\XLSX Used to unescape XML data */
+    protected $escaper;
+
     /**
      * @param string $filePath Path of the XLSX file being read
-     * @param \Box\Spout\Reader\XLSX\ReaderOptions $options Reader's current options
+     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
      * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
+     * @param \Box\Spout\Common\Helper\Escaper\XLSX $escaper Used to unescape XML data
+     * @param EntityFactory $entityFactory Factory to create entities
      */
-    public function __construct($filePath, $options, $sharedStringsHelper, $globalFunctionsHelper)
+    public function __construct($filePath, $optionsManager, $sharedStringsHelper, $globalFunctionsHelper, $escaper, $entityFactory)
     {
         $this->filePath = $filePath;
-        $this->options = $options;
+        $this->optionsManager = $optionsManager;
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
+        $this->escaper = $escaper;
+        $this->entityFactory = $entityFactory;
     }
 
     /**
@@ -68,7 +79,8 @@ class SheetHelper
         $sheetIndex = 0;
         $activeSheetIndex = 0; // By default, the first sheet is active
 
-        $xmlReader = new XMLReader();
+        $xmlReader = $this->entityFactory->createXMLReader();
+
         if ($xmlReader->openFileInZip($this->filePath, self::WORKBOOK_XML_FILE_PATH)) {
             while ($xmlReader->read()) {
                 if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_WORKBOOK_VIEW)) {
@@ -105,17 +117,18 @@ class SheetHelper
     {
         $sheetId = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_R_ID);
         $escapedSheetName = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_NAME);
-
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
-        $sheetName = $escaper->unescape($escapedSheetName);
+        $sheetName = $this->escaper->unescape($escapedSheetName);
 
         $sheetDataXMLFilePath = $this->getSheetDataXMLFilePathForSheetId($sheetId);
 
-        return new Sheet(
-            $this->filePath, $sheetDataXMLFilePath,
-            $sheetIndexZeroBased, $sheetName, $isSheetActive,
-            $this->options, $this->sharedStringsHelper
+        return $this->entityFactory->createSheet(
+            $this->filePath,
+            $sheetDataXMLFilePath,
+            $sheetIndexZeroBased,
+            $sheetName,
+            $isSheetActive,
+            $this->optionsManager,
+            $this->sharedStringsHelper
         );
     }
 
@@ -128,7 +141,7 @@ class SheetHelper
         $sheetDataXMLFilePath = '';
 
         // find the file path of the sheet, by looking at the "workbook.xml.res" file
-        $xmlReader = new XMLReader();
+        $xmlReader = $this->entityFactory->createXMLReader();
         if ($xmlReader->openFileInZip($this->filePath, self::WORKBOOK_XML_RELS_FILE_PATH)) {
             while ($xmlReader->read()) {
                 if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_RELATIONSHIP)) {

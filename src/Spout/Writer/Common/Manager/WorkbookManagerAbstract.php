@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Manager\Style\StyleManagerInterface;

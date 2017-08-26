@@ -5,6 +5,8 @@ namespace Box\Spout\Reader\XLSX\Helper;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\Wrapper\XMLReader;
+use Box\Spout\Reader\XLSX\Creator\EntityFactory;
+use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyInterface;
 
@@ -40,17 +42,32 @@ class SharedStringsHelper
     /** @var string Temporary folder where the temporary files to store shared strings will be stored */
     protected $tempFolder;
 
+    /** @var EntityFactory Factory to create entities */
+    protected $entityFactory;
+
+    /** @var HelperFactory $helperFactory Factory to create helpers */
+    protected $helperFactory;
+
+    /** @var CachingStrategyFactory Factory to create shared strings caching strategies */
+    protected $cachingStrategyFactory;
+
     /** @var CachingStrategyInterface The best caching strategy for storing shared strings */
     protected $cachingStrategy;
 
     /**
      * @param string $filePath Path of the XLSX file being read
-     * @param string|null|void $tempFolder Temporary folder where the temporary files to store shared strings will be stored
+     * @param string $tempFolder Temporary folder where the temporary files to store shared strings will be stored
+     * @param EntityFactory $entityFactory Factory to create entities
+     * @param HelperFactory $helperFactory Factory to create helpers
+     * @param CachingStrategyFactory $cachingStrategyFactory Factory to create shared strings caching strategies
      */
-    public function __construct($filePath, $tempFolder = null)
+    public function __construct($filePath, $tempFolder, $entityFactory, $helperFactory, $cachingStrategyFactory)
     {
         $this->filePath = $filePath;
         $this->tempFolder = $tempFolder;
+        $this->entityFactory = $entityFactory;
+        $this->helperFactory = $helperFactory;
+        $this->cachingStrategyFactory = $cachingStrategyFactory;
     }
 
     /**
@@ -61,7 +78,7 @@ class SharedStringsHelper
     public function hasSharedStrings()
     {
         $hasSharedStrings = false;
-        $zip = new \ZipArchive();
+        $zip = $this->entityFactory->createZipArchive();
 
         if ($zip->open($this->filePath) === true) {
             $hasSharedStrings = ($zip->locateName(self::SHARED_STRINGS_XML_FILE_PATH) !== false);
@@ -86,7 +103,7 @@ class SharedStringsHelper
      */
     public function extractSharedStrings()
     {
-        $xmlReader = new XMLReader();
+        $xmlReader = $this->entityFactory->createXMLReader();
         $sharedStringIndex = 0;
 
         if ($xmlReader->openFileInZip($this->filePath, self::SHARED_STRINGS_XML_FILE_PATH) === false) {
@@ -151,8 +168,8 @@ class SharedStringsHelper
      */
     protected function getBestSharedStringsCachingStrategy($sharedStringsUniqueCount)
     {
-        return CachingStrategyFactory::getInstance()
-                ->getBestCachingStrategy($sharedStringsUniqueCount, $this->tempFolder);
+        return $this->cachingStrategyFactory
+                ->createBestCachingStrategy($sharedStringsUniqueCount, $this->tempFolder, $this->helperFactory);
     }
 
     /**

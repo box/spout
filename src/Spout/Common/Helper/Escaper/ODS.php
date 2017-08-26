@@ -1,19 +1,15 @@
 <?php
 
-namespace Box\Spout\Common\Escaper;
-
-use Box\Spout\Common\Singleton;
+namespace Box\Spout\Common\Helper\Escaper;
 
 /**
  * Class ODS
  * Provides functions to escape and unescape data for ODS files
  *
- * @package Box\Spout\Common\Escaper
+ * @package Box\Spout\Common\Helper\Escaper
  */
 class ODS implements EscaperInterface
 {
-    use Singleton;
-
     /**
      * Escapes the given string to make it compatible with XLSX
      *

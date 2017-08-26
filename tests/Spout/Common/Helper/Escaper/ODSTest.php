@@ -1,11 +1,13 @@
 <?php
 
-namespace Box\Spout\Common\Escaper;
+namespace Box\Spout\Common\Helper\Escaper;
+
+use Box\Spout\Common\Helper\Escaper;
 
 /**
  * Class ODSTest
  *
- * @package Box\Spout\Common\Escaper
+ * @package Box\Spout\Common\Helper\Escaper
  */
 class ODSTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,7 +36,7 @@ class ODSTest extends \PHPUnit_Framework_TestCase
      */
     public function testEscape($stringToEscape, $expectedEscapedString)
     {
-        $escaper = \Box\Spout\Common\Escaper\ODS::getInstance();
+        $escaper = new Escaper\ODS();
         $escapedString = $escaper->escape($stringToEscape);
 
         $this->assertEquals($expectedEscapedString, $escapedString, 'Incorrect escaped string');

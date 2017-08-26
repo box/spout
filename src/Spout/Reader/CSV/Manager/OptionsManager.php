@@ -1,15 +1,16 @@
 <?php
 
-namespace Box\Spout\Writer\CSV\Manager;
+namespace Box\Spout\Reader\CSV\Manager;
 
-use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Manager\OptionsManagerAbstract;
+use Box\Spout\Reader\Common\Entity\Options;
 
 /**
  * Class OptionsManager
- * CSV Writer options manager
+ * CSV Reader options manager
  *
- * @package Box\Spout\Writer\CSV\Manager
+ * @package Box\Spout\Reader\CSV\Manager
  */
 class OptionsManager extends OptionsManagerAbstract
 {
@@ -19,9 +20,11 @@ class OptionsManager extends OptionsManagerAbstract
     protected function getSupportedOptions()
     {
         return [
+            Options::SHOULD_FORMAT_DATES,
+            Options::SHOULD_PRESERVE_EMPTY_ROWS,
             Options::FIELD_DELIMITER,
             Options::FIELD_ENCLOSURE,
-            Options::SHOULD_ADD_BOM,
+            Options::ENCODING,
         ];
     }
 
@@ -30,8 +33,10 @@ class OptionsManager extends OptionsManagerAbstract
      */
     protected function setDefaultOptions()
     {
+        $this->setOption(Options::SHOULD_FORMAT_DATES, false);
+        $this->setOption(Options::SHOULD_PRESERVE_EMPTY_ROWS, false);
         $this->setOption(Options::FIELD_DELIMITER, ',');
         $this->setOption(Options::FIELD_ENCLOSURE, '"');
-        $this->setOption(Options::SHOULD_ADD_BOM, true);
+        $this->setOption(Options::ENCODING, EncodingHelper::ENCODING_UTF8);
     }
 }

@@ -1,6 +1,9 @@
 <?php
 
 namespace Box\Spout\Reader\XLSX\Helper;
+use Box\Spout\Reader\XLSX\Creator\EntityFactory;
+use Box\Spout\Reader\XLSX\Creator\HelperFactory;
+use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyFactory;
 
 /**
  * Class StyleManagerTest
@@ -17,9 +20,11 @@ class StyleHelperTest extends \PHPUnit_Framework_TestCase
      */
     private function getStyleHelperMock($styleAttributes = [], $customNumberFormats = [])
     {
+        $entityFactory = new EntityFactory(new HelperFactory(new CachingStrategyFactory()));
+
         /** @var StyleHelper $styleHelper */
         $styleHelper = $this->getMockBuilder('\Box\Spout\Reader\XLSX\Helper\StyleHelper')
-                            ->setConstructorArgs(['/path/to/file.xlsx'])
+                            ->setConstructorArgs(['/path/to/file.xlsx', $entityFactory])
                             ->setMethods(['getCustomNumberFormats', 'getStylesAttributes'])
                             ->getMock();
 

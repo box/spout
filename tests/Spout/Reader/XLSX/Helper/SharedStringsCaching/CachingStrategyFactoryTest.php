@@ -1,6 +1,7 @@
 <?php
 
 namespace Box\Spout\Reader\XLSX\Helper\SharedStringsCaching;
+use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 
 /**
  * Class CachingStrategyFactoryTest
@@ -12,7 +13,7 @@ class CachingStrategyFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function dataProviderForTestGetBestCachingStrategy()
+    public function dataProviderForTestCreateBestCachingStrategy()
     {
         return [
             [null, -1, 'FileBasedStrategy'],
@@ -26,14 +27,14 @@ class CachingStrategyFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider dataProviderForTestGetBestCachingStrategy
+     * @dataProvider dataProviderForTestCreateBestCachingStrategy
      *
      * @param int|null $sharedStringsUniqueCount
      * @param int $memoryLimitInKB
      * @param string $expectedStrategyClassName
      * @return void
      */
-    public function testGetBestCachingStrategy($sharedStringsUniqueCount, $memoryLimitInKB, $expectedStrategyClassName)
+    public function testCreateBestCachingStrategy($sharedStringsUniqueCount, $memoryLimitInKB, $expectedStrategyClassName)
     {
         /** @var CachingStrategyFactory|\PHPUnit_Framework_MockObject_MockObject $factoryStub */
         $factoryStub = $this
@@ -44,15 +45,14 @@ class CachingStrategyFactoryTest extends \PHPUnit_Framework_TestCase
 
         $factoryStub->method('getMemoryLimitInKB')->willReturn($memoryLimitInKB);
 
-        \ReflectionHelper::setStaticValue('\Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyFactory', 'instance', $factoryStub);
-
-        $strategy = $factoryStub->getBestCachingStrategy($sharedStringsUniqueCount, null);
+        $tempFolder = sys_get_temp_dir();
+        $helperFactory = new HelperFactory($factoryStub);
+        $strategy = $factoryStub->createBestCachingStrategy($sharedStringsUniqueCount, $tempFolder, $helperFactory);
 
         $fullExpectedStrategyClassName = 'Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\\' . $expectedStrategyClassName;
         $this->assertEquals($fullExpectedStrategyClassName, get_class($strategy));
 
         $strategy->clearCache();
-        \ReflectionHelper::reset();
     }
 
     /**

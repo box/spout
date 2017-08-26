@@ -3,6 +3,7 @@
 namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Reader\SheetInterface;
+use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 
 /**
  * Class Sheet
@@ -30,12 +31,20 @@ class Sheet implements SheetInterface
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $sheetName Name of the sheet
      * @param bool $isSheetActive Whether the sheet was defined as active
-     * @param \Box\Spout\Reader\XLSX\ReaderOptions $options Reader's current options
-     * @param Helper\SharedStringsHelper Helper to work with shared strings
+     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
+     * @param Helper\SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
+     * @param EntityFactory $entityFactory Factory to create entities
      */
-    public function __construct($filePath, $sheetDataXMLFilePath, $sheetIndex, $sheetName, $isSheetActive, $options, $sharedStringsHelper)
+    public function __construct(
+        $filePath,
+        $sheetDataXMLFilePath,
+        $sheetIndex, $sheetName,
+        $isSheetActive,
+        $optionsManager,
+        $sharedStringsHelper,
+        $entityFactory)
     {
-        $this->rowIterator = new RowIterator($filePath, $sheetDataXMLFilePath, $options, $sharedStringsHelper);
+        $this->rowIterator = $entityFactory->createRowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsHelper);
         $this->index = $sheetIndex;
         $this->name = $sheetName;
         $this->isActive = $isSheetActive;

@@ -2,6 +2,9 @@
 
 namespace Box\Spout\Reader\CSV;
 
+use Box\Spout\Common\Creator\HelperFactory;
+use Box\Spout\Reader\Common\Entity\Options;
+use Box\Spout\Reader\CSV\Creator\EntityFactory;
 use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Common\Helper\EncodingHelper;
 
@@ -39,9 +42,6 @@ class RowIterator implements IteratorInterface
     /** @var string Encoding of the CSV file to be read */
     protected $encoding;
 
-    /** @var string End of line delimiter, given by the user as input. */
-    protected $inputEOLDelimiter;
-
     /** @var bool Whether empty rows should be returned or skipped */
     protected $shouldPreserveEmptyRows;
 
@@ -51,25 +51,21 @@ class RowIterator implements IteratorInterface
     /** @var \Box\Spout\Common\Helper\EncodingHelper Helper to work with different encodings */
     protected $encodingHelper;
 
-    /** @var string End of line delimiter, encoded using the same encoding as the CSV */
-    protected $encodedEOLDelimiter;
-
     /**
      * @param resource $filePointer Pointer to the CSV file to read
-     * @param \Box\Spout\Reader\CSV\ReaderOptions $options
+     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager
+     * @param \Box\Spout\Common\Helper\EncodingHelper $encodingHelper
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $options, $globalFunctionsHelper)
+    public function __construct($filePointer, $optionsManager, $encodingHelper, $globalFunctionsHelper)
     {
         $this->filePointer = $filePointer;
-        $this->fieldDelimiter = $options->getFieldDelimiter();
-        $this->fieldEnclosure = $options->getFieldEnclosure();
-        $this->encoding = $options->getEncoding();
-        $this->inputEOLDelimiter = $options->getEndOfLineCharacter();
-        $this->shouldPreserveEmptyRows = $options->shouldPreserveEmptyRows();
+        $this->fieldDelimiter = $optionsManager->getOption(Options::FIELD_DELIMITER);
+        $this->fieldEnclosure = $optionsManager->getOption(Options::FIELD_ENCLOSURE);
+        $this->encoding = $optionsManager->getOption(Options::ENCODING);
+        $this->shouldPreserveEmptyRows = $optionsManager->getOption(Options::SHOULD_PRESERVE_EMPTY_ROWS);
+        $this->encodingHelper = $encodingHelper;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
-
-        $this->encodingHelper = new EncodingHelper($globalFunctionsHelper);
     }
 
     /**
@@ -200,21 +196,6 @@ class RowIterator implements IteratorInterface
         }
 
         return $encodedRowData;
-    }
-
-    /**
-     * Returns the end of line delimiter, encoded using the same encoding as the CSV.
-     * The return value is cached.
-     *
-     * @return string
-     */
-    protected function getEncodedEOLDelimiter()
-    {
-        if (!isset($this->encodedEOLDelimiter)) {
-            $this->encodedEOLDelimiter = $this->encodingHelper->attemptConversionFromUTF8($this->inputEOLDelimiter, $this->encoding);
-        }
-
-        return $this->encodedEOLDelimiter;
     }
 
     /**

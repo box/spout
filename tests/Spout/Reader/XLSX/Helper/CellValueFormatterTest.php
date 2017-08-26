@@ -2,6 +2,8 @@
 
 namespace Box\Spout\Reader\XLSX\Helper;
 
+use Box\Spout\Common\Helper\Escaper;
+
 /**
  * Class CellValueFormatterTest
  *
@@ -71,7 +73,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->with(123)
             ->will($this->returnValue(true));
 
-        $formatter = new CellValueFormatter(null, $styleHelperMock, false);
+        $formatter = new CellValueFormatter(null, $styleHelperMock, false, new Escaper\XLSX());
         $result = $formatter->extractAndFormatNodeValue($nodeMock);
 
         if ($expectedDateAsString === null) {
@@ -124,7 +126,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->method('shouldFormatNumericValueAsDate')
             ->will($this->returnValue(false));
 
-        $formatter = new CellValueFormatter(null, $styleHelperMock, false);
+        $formatter = new CellValueFormatter(null, $styleHelperMock, false, new Escaper\XLSX());
         $formattedValue = \ReflectionHelper::callMethodOnObject($formatter, 'formatNumericCellValue', $value, 0);
 
         $this->assertEquals($expectedFormattedValue, $formattedValue);
@@ -167,7 +169,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->with(CellValueFormatter::XML_NODE_INLINE_STRING_VALUE)
             ->will($this->returnValue($nodeListMock));
 
-        $formatter = new CellValueFormatter(null, null, false);
+        $formatter = new CellValueFormatter(null, null, false, new Escaper\XLSX());
         $formattedValue = \ReflectionHelper::callMethodOnObject($formatter, 'formatInlineStringCellValue', $nodeMock);
 
         $this->assertEquals($expectedFormattedValue, $formattedValue);

@@ -6,7 +6,7 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Helper\CellHelper;
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Worksheet;
@@ -44,7 +44,7 @@ EOD;
     /** @var SharedStringsManager Helper to write shared strings */
     private $sharedStringsManager;
 
-    /** @var \Box\Spout\Common\Escaper\XLSX Strings escaper */
+    /** @var \Box\Spout\Common\Helper\Escaper\XLSX Strings escaper */
     private $stringsEscaper;
 
     /** @var StringHelper String helper */
@@ -56,14 +56,14 @@ EOD;
      * @param OptionsManagerInterface $optionsManager
      * @param StyleManager $styleManager
      * @param SharedStringsManager $sharedStringsManager
-     * @param \Box\Spout\Common\Escaper\XLSX $stringsEscaper
+     * @param \Box\Spout\Common\Helper\Escaper\XLSX $stringsEscaper
      * @param StringHelper $stringHelper
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
         StyleManager $styleManager,
         SharedStringsManager $sharedStringsManager,
-        \Box\Spout\Common\Escaper\XLSX $stringsEscaper,
+        \Box\Spout\Common\Helper\Escaper\XLSX $stringsEscaper,
         StringHelper $stringHelper)
     {
         $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);

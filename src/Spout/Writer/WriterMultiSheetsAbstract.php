@@ -4,7 +4,7 @@ namespace Box\Spout\Writer;
 
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Writer\Common\Entity\Sheet;
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
