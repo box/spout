@@ -2,14 +2,11 @@
 
 namespace Box\Spout\Writer\XLSX\Creator;
 
-use Box\Spout\Common\Helper\Escaper;
-use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
+use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
-use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
+use Box\Spout\Writer\Common\Manager\SheetManager;
 use Box\Spout\Writer\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
 use Box\Spout\Writer\XLSX\Manager\Style\StyleRegistry;
@@ -17,24 +14,27 @@ use Box\Spout\Writer\XLSX\Manager\WorkbookManager;
 use Box\Spout\Writer\XLSX\Manager\WorksheetManager;
 
 /**
- * Class InternalFactory
- * Factory for all useful types of objects needed by the XLSX Writer
+ * Class ManagerFactory
+ * Factory for managers needed by the XLSX Writer
  *
  * @package Box\Spout\Writer\XLSX\Creator
  */
-class InternalFactory implements InternalFactoryInterface
+class ManagerFactory implements ManagerFactoryInterface
 {
     /** @var EntityFactory */
-    private $entityFactory;
+    protected $entityFactory;
+
+    /** @var HelperFactory $helperFactory */
+    protected $helperFactory;
 
     /**
-     * InternalFactory constructor.
-     *
      * @param EntityFactory $entityFactory
+     * @param HelperFactory $helperFactory
      */
-    public function __construct(EntityFactory $entityFactory)
+    public function __construct(EntityFactory $entityFactory, HelperFactory $helperFactory)
     {
         $this->entityFactory = $entityFactory;
+        $this->helperFactory = $helperFactory;
     }
 
     /**
@@ -45,7 +45,7 @@ class InternalFactory implements InternalFactoryInterface
     {
         $workbook = $this->entityFactory->createWorkbook();
 
-        $fileSystemHelper = $this->createFileSystemHelper($optionsManager);
+        $fileSystemHelper = $this->helperFactory->createSpecificFileSystemHelper($optionsManager, $this->entityFactory);
         $fileSystemHelper->createBaseFilesAndFolders();
 
         $xlFolder = $fileSystemHelper->getXlFolder();
@@ -54,7 +54,15 @@ class InternalFactory implements InternalFactoryInterface
         $styleManager = $this->createStyleManager($optionsManager);
         $worksheetManager = $this->createWorksheetManager($optionsManager, $styleManager, $sharedStringsManager);
 
-        return new WorkbookManager($workbook, $optionsManager, $worksheetManager, $styleManager, $fileSystemHelper, $this->entityFactory);
+        return new WorkbookManager(
+            $workbook,
+            $optionsManager,
+            $worksheetManager,
+            $styleManager,
+            $fileSystemHelper,
+            $this->entityFactory,
+            $this
+        );
     }
 
     /**
@@ -69,10 +77,19 @@ class InternalFactory implements InternalFactoryInterface
         SharedStringsManager $sharedStringsManager
     )
     {
-        $stringsEscaper = $this->createStringsEscaper();
-        $stringsHelper = $this->createStringHelper();
+        $stringsEscaper = $this->helperFactory->createStringsEscaper();
+        $stringsHelper = $this->helperFactory->createStringHelper();
 
-        return new WorksheetManager($optionsManager, $styleManager, $sharedStringsManager, $stringsEscaper, $stringsHelper);
+        return new WorksheetManager($optionsManager, $styleManager, $sharedStringsManager, $stringsEscaper, $stringsHelper, $this->entityFactory);
+    }
+
+    /**
+     * @return SheetManager
+     */
+    public function createSheetManager()
+    {
+        $stringHelper = $this->helperFactory->createStringHelper();
+        return new SheetManager($stringHelper);
     }
 
     /**
@@ -101,44 +118,7 @@ class InternalFactory implements InternalFactoryInterface
      */
     private function createSharedStringsManager($xlFolder)
     {
-        $stringEscaper = $this->createStringsEscaper();
+        $stringEscaper = $this->helperFactory->createStringsEscaper();
         return new SharedStringsManager($xlFolder, $stringEscaper);
-    }
-
-    /**
-     * @param OptionsManagerInterface $optionsManager
-     * @return FileSystemHelper
-     */
-    private function createFileSystemHelper(OptionsManagerInterface $optionsManager)
-    {
-        $tempFolder = $optionsManager->getOption(Options::TEMP_FOLDER);
-        $zipHelper = $this->createZipHelper();
-        $escaper = $this->createStringsEscaper();
-
-        return new FileSystemHelper($tempFolder, $zipHelper, $escaper);
-    }
-
-    /**
-     * @return ZipHelper
-     */
-    private function createZipHelper()
-    {
-        return new ZipHelper();
-    }
-
-    /**
-     * @return Escaper\XLSX
-     */
-    private function createStringsEscaper()
-    {
-        return new Escaper\XLSX();
-    }
-
-    /**
-     * @return StringHelper
-     */
-    private function createStringHelper()
-    {
-        return new StringHelper();
     }
 }

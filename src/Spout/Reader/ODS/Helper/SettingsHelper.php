@@ -3,6 +3,7 @@
 namespace Box\Spout\Reader\ODS\Helper;
 
 use Box\Spout\Reader\Exception\XMLProcessingException;
+use Box\Spout\Reader\ODS\Creator\EntityFactory;
 use Box\Spout\Reader\Wrapper\XMLReader;
 
 /**
@@ -20,13 +21,24 @@ class SettingsHelper
     const XML_ATTRIBUTE_CONFIG_NAME = 'config:name';
     const XML_ATTRIBUTE_VALUE_ACTIVE_TABLE = 'ActiveTable';
 
+    /** @var EntityFactory Factory to create entities */
+    private $entityFactory;
+
+    /**
+     * @param EntityFactory $entityFactory Factory to create entities
+     */
+    public function __construct($entityFactory)
+    {
+        $this->entityFactory = $entityFactory;
+    }
+
     /**
      * @param string $filePath Path of the file to be read
      * @return string|null Name of the sheet that was defined as active or NULL if none found
      */
     public function getActiveSheetName($filePath)
     {
-        $xmlReader = new XMLReader();
+        $xmlReader = $this->entityFactory->createXMLReader();
         if ($xmlReader->openFileInZip($filePath, self::SETTINGS_XML_FILE_PATH) === false) {
             return null;
         }

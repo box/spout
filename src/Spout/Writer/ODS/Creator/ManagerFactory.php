@@ -2,38 +2,38 @@
 
 namespace Box\Spout\Writer\ODS\Creator;
 
-use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
-use Box\Spout\Writer\ODS\Helper\FileSystemHelper;
+use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
+use Box\Spout\Writer\Common\Manager\SheetManager;
 use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 use Box\Spout\Writer\ODS\Manager\Style\StyleRegistry;
 use Box\Spout\Writer\ODS\Manager\WorkbookManager;
 use Box\Spout\Writer\ODS\Manager\WorksheetManager;
-use Box\Spout\Common\Helper\Escaper;
 
 /**
- * Class InternalFactory
- * Factory for all useful types of objects needed by the ODS Writer
+ * Class ManagerFactory
+ * Factory for managers needed by the ODS Writer
  *
  * @package Box\Spout\Writer\ODS\Creator
  */
-class InternalFactory implements InternalFactoryInterface
+class ManagerFactory implements ManagerFactoryInterface
 {
     /** @var EntityFactory */
-    private $entityFactory;
+    protected $entityFactory;
+
+    /** @var HelperFactory $helperFactory */
+    protected $helperFactory;
 
     /**
-     * InternalFactory constructor.
-     *
      * @param EntityFactory $entityFactory
+     * @param HelperFactory $helperFactory
      */
-    public function __construct(EntityFactory $entityFactory)
+    public function __construct(EntityFactory $entityFactory, HelperFactory $helperFactory)
     {
         $this->entityFactory = $entityFactory;
+        $this->helperFactory = $helperFactory;
     }
 
     /**
@@ -44,13 +44,21 @@ class InternalFactory implements InternalFactoryInterface
     {
         $workbook = $this->entityFactory->createWorkbook();
 
-        $fileSystemHelper = $this->createFileSystemHelper($optionsManager);
+        $fileSystemHelper = $this->helperFactory->createSpecificFileSystemHelper($optionsManager, $this->entityFactory);
         $fileSystemHelper->createBaseFilesAndFolders();
 
         $styleManager = $this->createStyleManager($optionsManager);
         $worksheetManager = $this->createWorksheetManager();
 
-        return new WorkbookManager($workbook, $optionsManager, $worksheetManager, $styleManager, $fileSystemHelper, $this->entityFactory);
+        return new WorkbookManager(
+            $workbook,
+            $optionsManager,
+            $worksheetManager,
+            $styleManager,
+            $fileSystemHelper,
+            $this->entityFactory,
+            $this
+        );
     }
 
     /**
@@ -58,10 +66,19 @@ class InternalFactory implements InternalFactoryInterface
      */
     private function createWorksheetManager()
     {
-        $stringsEscaper = $this->createStringsEscaper();
-        $stringsHelper = $this->createStringHelper();
+        $stringsEscaper = $this->helperFactory->createStringsEscaper();
+        $stringsHelper = $this->helperFactory->createStringHelper();
 
-        return new WorksheetManager($stringsEscaper, $stringsHelper);
+        return new WorksheetManager($stringsEscaper, $stringsHelper, $this->entityFactory);
+    }
+
+    /**
+     * @return SheetManager
+     */
+    public function createSheetManager()
+    {
+        $stringHelper = $this->helperFactory->createStringHelper();
+        return new SheetManager($stringHelper);
     }
 
     /**
@@ -82,41 +99,5 @@ class InternalFactory implements InternalFactoryInterface
     {
         $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
         return new StyleRegistry($defaultRowStyle);
-    }
-
-    /**
-     * @param OptionsManagerInterface $optionsManager
-     * @return FileSystemHelper
-     */
-    public function createFileSystemHelper(OptionsManagerInterface $optionsManager)
-    {
-        $tempFolder = $optionsManager->getOption(Options::TEMP_FOLDER);
-        $zipHelper = $this->createZipHelper();
-
-        return new FileSystemHelper($tempFolder, $zipHelper);
-    }
-
-    /**
-     * @return ZipHelper
-     */
-    private function createZipHelper()
-    {
-        return new ZipHelper();
-    }
-
-    /**
-     * @return Escaper\ODS
-     */
-    private function createStringsEscaper()
-    {
-        return new Escaper\ODS();
-    }
-
-    /**
-     * @return StringHelper
-     */
-    private function createStringHelper()
-    {
-        return new StringHelper();
     }
 }

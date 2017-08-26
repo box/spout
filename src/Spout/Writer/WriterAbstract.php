@@ -2,10 +2,10 @@
 
 namespace Box\Spout\Writer;
 
+use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
-use Box\Spout\Common\Helper\FileSystemHelper;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Style\Style;
@@ -34,6 +34,9 @@ abstract class WriterAbstract implements WriterInterface
     /** @var GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
+    /** @var HelperFactory $helperFactory */
+    protected $helperFactory;
+
     /** @var OptionsManagerInterface Writer options manager */
     protected $optionsManager;
 
@@ -50,15 +53,18 @@ abstract class WriterAbstract implements WriterInterface
      * @param OptionsManagerInterface $optionsManager
      * @param StyleMerger $styleMerger
      * @param GlobalFunctionsHelper $globalFunctionsHelper
+     * @param HelperFactory $helperFactory
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
         StyleMerger $styleMerger,
-        GlobalFunctionsHelper $globalFunctionsHelper)
+        GlobalFunctionsHelper $globalFunctionsHelper,
+        HelperFactory $helperFactory)
     {
         $this->optionsManager = $optionsManager;
         $this->styleMerger = $styleMerger;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
+        $this->helperFactory = $helperFactory;
 
         $this->resetRowStyleToDefault();
     }
@@ -372,7 +378,7 @@ abstract class WriterAbstract implements WriterInterface
         // remove output file if it was created
         if ($this->globalFunctionsHelper->file_exists($this->outputFilePath)) {
             $outputFolderPath = dirname($this->outputFilePath);
-            $fileSystemHelper = new FileSystemHelper($outputFolderPath);
+            $fileSystemHelper = $this->helperFactory->createFileSystemHelper($outputFolderPath);
             $fileSystemHelper->deleteFile($this->outputFilePath);
         }
     }

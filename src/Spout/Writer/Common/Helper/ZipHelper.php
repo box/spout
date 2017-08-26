@@ -2,6 +2,8 @@
 
 namespace Box\Spout\Writer\Common\Helper;
 
+use Box\Spout\Writer\Common\Creator\EntityFactory;
+
 /**
  * Class ZipHelper
  * This class provides helper functions to create zip files
@@ -16,6 +18,17 @@ class ZipHelper
     const EXISTING_FILES_SKIP = 'skip';
     const EXISTING_FILES_OVERWRITE = 'overwrite';
 
+    /** @var EntityFactory Factory to create entities */
+    private $entityFactory;
+
+    /**
+     * @param EntityFactory $entityFactory Factory to create entities
+     */
+    public function __construct($entityFactory)
+    {
+        $this->entityFactory = $entityFactory;
+    }
+
     /**
      * Returns a new ZipArchive instance pointing at the given path.
      *
@@ -24,7 +37,7 @@ class ZipHelper
      */
     public function createZip($tmpFolderPath)
     {
-        $zip = new \ZipArchive();
+        $zip = $this->entityFactory->createZipArchive();
         $zipFilePath = $tmpFolderPath . self::ZIP_EXTENSION;
 
         $zip->open($zipFilePath, \ZipArchive::CREATE|\ZipArchive::OVERWRITE);

@@ -5,6 +5,7 @@ namespace Box\Spout\Common\Creator;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Helper\FileSystemHelper;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
+use Box\Spout\Common\Helper\StringHelper;
 
 /**
  * Class HelperFactory
@@ -38,5 +39,13 @@ class HelperFactory
     public function createEncodingHelper(GlobalFunctionsHelper $globalFunctionsHelper)
     {
         return new EncodingHelper($globalFunctionsHelper);
+    }
+
+    /**
+     * @return StringHelper
+     */
+    public function createStringHelper()
+    {
+        return new StringHelper();
     }
 }

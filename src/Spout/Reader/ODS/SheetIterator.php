@@ -63,7 +63,7 @@ class SheetIterator implements IteratorInterface
 
         $this->escaper = $helperFactory->createStringsEscaper();
 
-        $settingsHelper = $helperFactory->createSettingsHelper();
+        $settingsHelper = $helperFactory->createSettingsHelper($entityFactory);
         $this->activeSheetName = $settingsHelper->getActiveSheetName($filePath);
     }
 

@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer;
 
+use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
@@ -9,8 +10,9 @@ use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
+use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
-use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
+use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
 
 /**
@@ -21,9 +23,8 @@ use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
  */
 abstract class WriterMultiSheetsAbstract extends WriterAbstract
 {
-
-    /** @var InternalFactoryInterface */
-    private $internalFactory;
+    /** @var ManagerFactoryInterface */
+    private $managerFactory;
 
     /** @var WorkbookManagerInterface */
     private $workbookManager;
@@ -32,16 +33,18 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * @param OptionsManagerInterface $optionsManager
      * @param StyleMerger $styleMerger
      * @param GlobalFunctionsHelper $globalFunctionsHelper
-     * @param InternalFactoryInterface $internalFactory
+     * @param HelperFactory $helperFactory
+     * @param ManagerFactoryInterface $managerFactory
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
         StyleMerger $styleMerger,
         GlobalFunctionsHelper $globalFunctionsHelper,
-        InternalFactoryInterface $internalFactory)
+        HelperFactory $helperFactory,
+        ManagerFactoryInterface $managerFactory)
     {
-        parent::__construct($optionsManager, $styleMerger, $globalFunctionsHelper);
-        $this->internalFactory = $internalFactory;
+        parent::__construct($optionsManager, $styleMerger, $globalFunctionsHelper, $helperFactory);
+        $this->managerFactory = $managerFactory;
     }
 
     /**
@@ -70,7 +73,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     protected function openWriter()
     {
         if (!$this->workbookManager) {
-            $this->workbookManager = $this->internalFactory->createWorkbookManager($this->optionsManager);
+            $this->workbookManager = $this->managerFactory->createWorkbookManager($this->optionsManager);
             $this->workbookManager->addNewSheetAndMakeItCurrent();
         }
     }

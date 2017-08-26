@@ -2,11 +2,11 @@
 
 namespace Box\Spout\Writer;
 
+use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Creator\ManagerFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
@@ -47,7 +47,9 @@ class WriterFactory
         $styleMerger = new StyleMerger();
         $globalFunctionsHelper = new GlobalFunctionsHelper();
 
-        return new CSV\Writer($optionsManager, $styleMerger, $globalFunctionsHelper);
+        $helperFactory = new HelperFactory();
+
+        return new CSV\Writer($optionsManager, $styleMerger, $globalFunctionsHelper, $helperFactory);
     }
 
     /**
@@ -60,10 +62,10 @@ class WriterFactory
         $styleMerger = new StyleMerger();
         $globalFunctionsHelper = new GlobalFunctionsHelper();
 
-        $entityFactory = new EntityFactory(new ManagerFactory());
-        $internalFactory = new XLSX\Creator\InternalFactory($entityFactory);
+        $helperFactory = new XLSX\Creator\HelperFactory();
+        $managerFactory = new XLSX\Creator\ManagerFactory(new EntityFactory(), $helperFactory);
 
-        return new XLSX\Writer($optionsManager, $styleMerger, $globalFunctionsHelper, $internalFactory);
+        return new XLSX\Writer($optionsManager, $styleMerger, $globalFunctionsHelper, $helperFactory, $managerFactory);
     }
 
     /**
@@ -76,9 +78,9 @@ class WriterFactory
         $styleMerger = new StyleMerger();
         $globalFunctionsHelper = new GlobalFunctionsHelper();
 
-        $entityFactory = new EntityFactory(new ManagerFactory());
-        $internalFactory = new ODS\Creator\InternalFactory($entityFactory);
+        $helperFactory = new ODS\Creator\HelperFactory();
+        $managerFactory = new ODS\Creator\ManagerFactory(new EntityFactory(), $helperFactory);
 
-        return new ODS\Writer($optionsManager, $styleMerger, $globalFunctionsHelper, $internalFactory);
+        return new ODS\Writer($optionsManager, $styleMerger, $globalFunctionsHelper, $helperFactory, $managerFactory);
     }
 }
