@@ -29,7 +29,7 @@ class Sheet
     /**
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $associatedWorkbookId ID of the sheet's associated workbook
-     * @param SheetManager $sheetManager
+     * @param SheetManager $sheetManager To manage sheets
      */
     public function __construct($sheetIndex, $associatedWorkbookId, SheetManager $sheetManager)
     {

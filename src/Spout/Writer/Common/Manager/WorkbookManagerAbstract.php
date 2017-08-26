@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Manager\Style\StyleManagerInterface;
@@ -41,6 +42,9 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     /** @var EntityFactory Factory to create entities */
     protected $entityFactory;
 
+    /** @var ManagerFactoryInterface $managerFactory Factory to create managers */
+    protected $managerFactory;
+
     /** @var Worksheet The worksheet where data will be written to */
     protected $currentWorksheet;
 
@@ -52,6 +56,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * @param StyleManagerInterface $styleManager
      * @param FileSystemWithRootFolderHelperInterface $fileSystemHelper
      * @param EntityFactory $entityFactory
+     * @param ManagerFactoryInterface $managerFactory
      */
     public function __construct(
         Workbook $workbook,
@@ -59,7 +64,8 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         WorksheetManagerInterface $worksheetManager,
         StyleManagerInterface $styleManager,
         FileSystemWithRootFolderHelperInterface $fileSystemHelper,
-        EntityFactory $entityFactory)
+        EntityFactory $entityFactory,
+        ManagerFactoryInterface $managerFactory)
     {
         $this->workbook = $workbook;
         $this->optionManager = $optionsManager;
@@ -67,6 +73,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         $this->styleManager = $styleManager;
         $this->fileSystemHelper = $fileSystemHelper;
         $this->entityFactory = $entityFactory;
+        $this->managerFactory = $managerFactory;
     }
 
     /**
@@ -114,7 +121,8 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         $worksheets = $this->getWorksheets();
 
         $newSheetIndex = count($worksheets);
-        $sheet = $this->entityFactory->createSheet($newSheetIndex, $this->workbook->getInternalId());
+        $sheetManager = $this->managerFactory->createSheetManager();
+        $sheet = $this->entityFactory->createSheet($newSheetIndex, $this->workbook->getInternalId(), $sheetManager);
 
         $worksheetFilePath = $this->getWorksheetFilePath($sheet);
         $worksheet = $this->entityFactory->createWorksheet($worksheetFilePath, $sheet);
