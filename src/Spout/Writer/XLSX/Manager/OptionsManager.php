@@ -3,7 +3,7 @@
 namespace Box\Spout\Writer\XLSX\Manager;
 
 use Box\Spout\Writer\Common\Entity\Options;
-use Box\Spout\Writer\Common\Manager\OptionsManagerAbstract;
+use Box\Spout\Common\Manager\OptionsManagerAbstract;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 
 /**

@@ -3,9 +3,12 @@
 namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Reader\Wrapper\XMLReader;
+use Box\Spout\Reader\XLSX\Creator\EntityFactory;
+use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 use Box\Spout\Reader\XLSX\Helper\CellHelper;
 use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
 use Box\Spout\Reader\XLSX\Helper\StyleHelper;
@@ -81,23 +84,25 @@ class RowIterator implements IteratorInterface
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
-     * @param \Box\Spout\Reader\XLSX\ReaderOptions $options Reader's current options
+     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
      * @param Helper\SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
+     * @param EntityFactory $entityFactory Factory to create entities
+     * @param HelperFactory $helperFactory Factory to create helpers
      */
-    public function __construct($filePath, $sheetDataXMLFilePath, $options, $sharedStringsHelper)
+    public function __construct($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsHelper, $entityFactory, $helperFactory)
     {
         $this->filePath = $filePath;
         $this->sheetDataXMLFilePath = $this->normalizeSheetDataXMLFilePath($sheetDataXMLFilePath);
 
-        $this->xmlReader = new XMLReader();
+        $this->xmlReader = $entityFactory->createXMLReader();
 
-        $this->styleHelper = new StyleHelper($filePath);
-        $this->cellValueFormatter = new CellValueFormatter($sharedStringsHelper, $this->styleHelper, $options->shouldFormatDates());
+        $this->styleHelper = $helperFactory->createStyleHelper($filePath, $entityFactory);
+        $this->cellValueFormatter = $helperFactory->createCellValueFormatter($sharedStringsHelper, $this->styleHelper, $optionsManager->getOption(Options::SHOULD_FORMAT_DATES));
 
-        $this->shouldPreserveEmptyRows = $options->shouldPreserveEmptyRows();
+        $this->shouldPreserveEmptyRows = $optionsManager->getOption(Options::SHOULD_PRESERVE_EMPTY_ROWS);
 
         // Register all callbacks to process different nodes when reading the XML file
-        $this->xmlProcessor = new XMLProcessor($this->xmlReader);
+        $this->xmlProcessor = $entityFactory->createXMLProcessor($this->xmlReader);
         $this->xmlProcessor->registerCallback(self::XML_NODE_DIMENSION, XMLProcessor::NODE_TYPE_START, [$this, 'processDimensionStartingNode']);
         $this->xmlProcessor->registerCallback(self::XML_NODE_ROW, XMLProcessor::NODE_TYPE_START, [$this, 'processRowStartingNode']);
         $this->xmlProcessor->registerCallback(self::XML_NODE_CELL, XMLProcessor::NODE_TYPE_START, [$this, 'processCellStartingNode']);

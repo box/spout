@@ -1,6 +1,7 @@
 <?php
 
 namespace Box\Spout\Reader\XLSX\Helper\SharedStringsCaching;
+use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 
 /**
  * Class CachingStrategyFactory
@@ -50,44 +51,22 @@ class CachingStrategyFactory
      */
     const MAX_NUM_STRINGS_PER_TEMP_FILE = 10000;
 
-    /** @var CachingStrategyFactory|null Singleton instance */
-    protected static $instance = null;
-
-    /**
-     * Private constructor for singleton
-     */
-    private function __construct()
-    {
-    }
-
-    /**
-     * Returns the singleton instance of the factory
-     *
-     * @return CachingStrategyFactory
-     */
-    public static function getInstance()
-    {
-        if (self::$instance === null) {
-            self::$instance = new CachingStrategyFactory();
-        }
-
-        return self::$instance;
-    }
 
     /**
      * Returns the best caching strategy, given the number of unique shared strings
      * and the amount of memory available.
      *
      * @param int|null $sharedStringsUniqueCount Number of unique shared strings (NULL if unknown)
-     * @param string|void $tempFolder Temporary folder where the temporary files to store shared strings will be stored
+     * @param string $tempFolder Temporary folder where the temporary files to store shared strings will be stored
+     * @param HelperFactory $helperFactory Factory to create helpers
      * @return CachingStrategyInterface The best caching strategy
      */
-    public function getBestCachingStrategy($sharedStringsUniqueCount, $tempFolder = null)
+    public function createBestCachingStrategy($sharedStringsUniqueCount, $tempFolder, $helperFactory)
     {
         if ($this->isInMemoryStrategyUsageSafe($sharedStringsUniqueCount)) {
             return new InMemoryStrategy($sharedStringsUniqueCount);
         } else {
-            return new FileBasedStrategy($tempFolder, self::MAX_NUM_STRINGS_PER_TEMP_FILE);
+            return new FileBasedStrategy($tempFolder, self::MAX_NUM_STRINGS_PER_TEMP_FILE, $helperFactory);
         }
     }
 

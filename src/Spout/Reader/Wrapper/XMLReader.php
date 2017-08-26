@@ -1,7 +1,6 @@
 <?php
 
 namespace Box\Spout\Reader\Wrapper;
-use DOMNode;
 
 
 /**

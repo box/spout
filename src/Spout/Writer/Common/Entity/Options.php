@@ -4,7 +4,7 @@ namespace Box\Spout\Writer\Common\Entity;
 
 /**
  * Class Options
- * Writer' options holder
+ * Writers' options holder
  *
  * @package Box\Spout\Writer\Common\Entity
  */

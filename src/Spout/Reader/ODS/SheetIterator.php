@@ -5,6 +5,8 @@ namespace Box\Spout\Reader\ODS;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
+use Box\Spout\Reader\ODS\Creator\EntityFactory;
+use Box\Spout\Reader\ODS\Creator\HelperFactory;
 use Box\Spout\Reader\ODS\Helper\SettingsHelper;
 use Box\Spout\Reader\Wrapper\XMLReader;
 
@@ -25,8 +27,11 @@ class SheetIterator implements IteratorInterface
     /** @var string $filePath Path of the file to be read */
     protected $filePath;
 
-    /** @var \Box\Spout\Reader\ODS\ReaderOptions Reader's current options */
-    protected $options;
+    /** @var \Box\Spout\Common\Manager\OptionsManagerInterface Reader's options manager */
+    protected $optionsManager;
+
+    /** @var EntityFactory $entityFactory Factory to create entities */
+    protected $entityFactory;
 
     /** @var XMLReader The XMLReader object that will help read sheet's XML data */
     protected $xmlReader;
@@ -45,19 +50,21 @@ class SheetIterator implements IteratorInterface
 
     /**
      * @param string $filePath Path of the file to be read
-     * @param \Box\Spout\Reader\ODS\ReaderOptions $options Reader's current options
-     * @throws \Box\Spout\Reader\Exception\NoSheetsFoundException If there are no sheets in the file
+     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager
+     * @param EntityFactory $entityFactory Factory to create entities
+     * @param HelperFactory $helperFactory Factory to create helpers
      */
-    public function __construct($filePath, $options)
+    public function __construct($filePath, $optionsManager, $entityFactory, $helperFactory)
     {
         $this->filePath = $filePath;
-        $this->options = $options;
-        $this->xmlReader = new XMLReader();
+        $this->optionsManager = $optionsManager;
+        $this->entityFactory = $entityFactory;
+        $this->xmlReader = $entityFactory->createXMLReader();
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $this->escaper = \Box\Spout\Common\Escaper\ODS::getInstance();
 
-        $settingsHelper = new SettingsHelper();
+        $settingsHelper = $helperFactory->createSettingsHelper();
         $this->activeSheetName = $settingsHelper->getActiveSheetName($filePath);
     }
 
@@ -124,7 +131,7 @@ class SheetIterator implements IteratorInterface
         $sheetName = $this->escaper->unescape($escapedSheetName);
         $isActiveSheet = $this->isActiveSheet($sheetName, $this->currentSheetIndex, $this->activeSheetName);
 
-        return new Sheet($this->xmlReader, $this->currentSheetIndex, $sheetName, $isActiveSheet, $this->options);
+        return $this->entityFactory->createSheet($this->xmlReader, $this->currentSheetIndex, $sheetName, $isActiveSheet, $this->optionsManager);
     }
 
     /**

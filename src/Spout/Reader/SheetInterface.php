@@ -12,7 +12,7 @@ interface SheetInterface
     /**
      * Returns an iterator to iterate over the sheet's rows.
      *
-     * @return \Iterator
+     * @return IteratorInterface
      */
     public function getRowIterator();
 }

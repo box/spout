@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\Common\Creator;
 
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
 
 /**

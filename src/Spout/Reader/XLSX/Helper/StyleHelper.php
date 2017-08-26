@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Reader\XLSX\Helper;
 
-use Box\Spout\Reader\Wrapper\XMLReader;
+use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 
 /**
  * Class StyleHelper
@@ -53,6 +53,9 @@ class StyleHelper
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
+    /** @var EntityFactory Factory to create entities */
+    protected $entityFactory;
+
     /** @var array Array containing the IDs of built-in number formats indicating a date */
     protected $builtinNumFmtIdIndicatingDates;
 
@@ -67,10 +70,12 @@ class StyleHelper
 
     /**
      * @param string $filePath Path of the XLSX file being read
+     * @param EntityFactory $entityFactory Factory to create entities
      */
-    public function __construct($filePath)
+    public function __construct($filePath, $entityFactory)
     {
         $this->filePath = $filePath;
+        $this->entityFactory = $entityFactory;
         $this->builtinNumFmtIdIndicatingDates = array_keys(self::$builtinNumFmtIdToNumFormatMapping);
     }
 
@@ -107,7 +112,7 @@ class StyleHelper
         $this->customNumberFormats = [];
         $this->stylesAttributes = [];
 
-        $xmlReader = new XMLReader();
+        $xmlReader = $this->entityFactory->createXMLReader();
 
         if ($xmlReader->openFileInZip($this->filePath, self::STYLES_XML_FILE_PATH)) {
             while ($xmlReader->read()) {

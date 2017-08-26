@@ -6,7 +6,7 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Helper\CellHelper;
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Worksheet;

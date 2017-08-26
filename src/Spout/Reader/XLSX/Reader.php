@@ -3,8 +3,13 @@
 namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Reader\AbstractReader;
-use Box\Spout\Reader\XLSX\Helper\SharedStringsHelper;
+use Box\Spout\Common\Helper\GlobalFunctionsHelper;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
+use Box\Spout\Reader\Common\Entity\Options;
+use Box\Spout\Reader\ReaderAbstract;
+use Box\Spout\Reader\XLSX\Creator\EntityFactory;
+use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 
 /**
  * Class Reader
@@ -12,8 +17,11 @@ use Box\Spout\Reader\XLSX\Helper\SharedStringsHelper;
  *
  * @package Box\Spout\Reader\XLSX
  */
-class Reader extends AbstractReader
+class Reader extends ReaderAbstract
 {
+    /** @var HelperFactory */
+    protected $helperFactory;
+
     /** @var \ZipArchive */
     protected $zip;
 
@@ -25,16 +33,19 @@ class Reader extends AbstractReader
 
 
     /**
-     * Returns the reader's current options
-     *
-     * @return ReaderOptions
+     * @param OptionsManagerInterface $optionsManager
+     * @param GlobalFunctionsHelper $globalFunctionsHelper
+     * @param EntityFactoryInterface $entityFactory
+     * @param HelperFactory $helperFactory
      */
-    protected function getOptions()
+    public function __construct(
+        OptionsManagerInterface $optionsManager,
+        GlobalFunctionsHelper $globalFunctionsHelper,
+        EntityFactoryInterface $entityFactory,
+        HelperFactory $helperFactory)
     {
-        if (!isset($this->options)) {
-            $this->options = new ReaderOptions();
-        }
-        return $this->options;
+        parent::__construct($optionsManager, $globalFunctionsHelper, $entityFactory);
+        $this->helperFactory = $helperFactory;
     }
 
     /**
@@ -43,7 +54,7 @@ class Reader extends AbstractReader
      */
     public function setTempFolder($tempFolder)
     {
-        $this->getOptions()->setTempFolder($tempFolder);
+        $this->optionsManager->setOption(Options::TEMP_FOLDER, $tempFolder);
         return $this;
     }
 
@@ -69,17 +80,21 @@ class Reader extends AbstractReader
      */
     protected function openReader($filePath)
     {
-        $this->zip = new \ZipArchive();
+        /** @var EntityFactory $entityFactory */
+        $entityFactory = $this->entityFactory;
+
+        $this->zip = $entityFactory->createZipArchive();
 
         if ($this->zip->open($filePath) === true) {
-            $this->sharedStringsHelper = new SharedStringsHelper($filePath, $this->getOptions()->getTempFolder());
+            $tempFolder = $this->optionsManager->getOption(Options::TEMP_FOLDER);
+            $this->sharedStringsHelper = $this->helperFactory->createSharedStringsHelper($filePath, $tempFolder, $entityFactory);
 
             if ($this->sharedStringsHelper->hasSharedStrings()) {
                 // Extracts all the strings from the sheets for easy access in the future
                 $this->sharedStringsHelper->extractSharedStrings();
             }
 
-            $this->sheetIterator = new SheetIterator($filePath, $this->getOptions(), $this->sharedStringsHelper, $this->globalFunctionsHelper);
+            $this->sheetIterator = $entityFactory->createSheetIterator($filePath, $this->optionsManager, $this->sharedStringsHelper, $this->globalFunctionsHelper);
         } else {
             throw new IOException("Could not open $filePath for reading.");
         }

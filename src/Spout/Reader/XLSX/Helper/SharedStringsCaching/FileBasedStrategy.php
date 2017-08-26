@@ -5,6 +5,7 @@ namespace Box\Spout\Reader\XLSX\Helper\SharedStringsCaching;
 use Box\Spout\Common\Helper\FileSystemHelper;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Reader\Exception\SharedStringNotFoundException;
+use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 
 /**
  * Class FileBasedStrategy
@@ -51,18 +52,18 @@ class FileBasedStrategy implements CachingStrategyInterface
     protected $inMemoryTempFileContents;
 
     /**
-     * @param string|null $tempFolder Temporary folder where the temporary files to store shared strings will be stored
+     * @param string $tempFolder Temporary folder where the temporary files to store shared strings will be stored
      * @param int $maxNumStringsPerTempFile Maximum number of strings that can be stored in one temp file
+     * @param HelperFactory $helperFactory Factory to create helpers
      */
-    public function __construct($tempFolder, $maxNumStringsPerTempFile)
+    public function __construct($tempFolder, $maxNumStringsPerTempFile, $helperFactory)
     {
-        $rootTempFolder = ($tempFolder) ?: sys_get_temp_dir();
-        $this->fileSystemHelper = new FileSystemHelper($rootTempFolder);
-        $this->tempFolder = $this->fileSystemHelper->createFolder($rootTempFolder, uniqid('sharedstrings'));
+        $this->fileSystemHelper = $helperFactory->createFileSystemHelper($tempFolder);
+        $this->tempFolder = $this->fileSystemHelper->createFolder($tempFolder, uniqid('sharedstrings'));
 
         $this->maxNumStringsPerTempFile = $maxNumStringsPerTempFile;
 
-        $this->globalFunctionsHelper = new GlobalFunctionsHelper();
+        $this->globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
         $this->tempFilePointer = null;
     }
 

@@ -3,10 +3,12 @@
 namespace Box\Spout\Reader\ODS;
 
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Exception\IteratorNotRewindableException;
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
-use Box\Spout\Reader\ODS\Helper\CellValueFormatter;
+use Box\Spout\Reader\ODS\Creator\EntityFactory;
+use Box\Spout\Reader\ODS\Creator\HelperFactory;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\Common\XMLProcessor;
 
@@ -72,16 +74,18 @@ class RowIterator implements IteratorInterface
 
     /**
      * @param XMLReader $xmlReader XML Reader, positioned on the "<table:table>" element
-     * @param \Box\Spout\Reader\ODS\ReaderOptions $options Reader's current options
+     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
+     * @param EntityFactory $entityFactory Factory to create entities
+     * @param HelperFactory $helperFactory Factory to create helpers
      */
-    public function __construct($xmlReader, $options)
+    public function __construct($xmlReader, $optionsManager, $entityFactory, $helperFactory)
     {
         $this->xmlReader = $xmlReader;
-        $this->shouldPreserveEmptyRows = $options->shouldPreserveEmptyRows();
-        $this->cellValueFormatter = new CellValueFormatter($options->shouldFormatDates());
+        $this->shouldPreserveEmptyRows = $optionsManager->getOption(Options::SHOULD_PRESERVE_EMPTY_ROWS);
+        $this->cellValueFormatter = $helperFactory->createCellValueFormatter($optionsManager->getOption(Options::SHOULD_FORMAT_DATES));
 
         // Register all callbacks to process different nodes when reading the XML file
-        $this->xmlProcessor = new XMLProcessor($this->xmlReader);
+        $this->xmlProcessor = $entityFactory->createXMLProcessor($this->xmlReader);
         $this->xmlProcessor->registerCallback(self::XML_NODE_ROW, XMLProcessor::NODE_TYPE_START, [$this, 'processRowStartingNode']);
         $this->xmlProcessor->registerCallback(self::XML_NODE_CELL, XMLProcessor::NODE_TYPE_START, [$this, 'processCellStartingNode']);
         $this->xmlProcessor->registerCallback(self::XML_NODE_ROW, XMLProcessor::NODE_TYPE_END, [$this, 'processRowEndingNode']);

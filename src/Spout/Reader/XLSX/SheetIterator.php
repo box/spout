@@ -3,6 +3,8 @@
 namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Reader\IteratorInterface;
+use Box\Spout\Reader\XLSX\Creator\EntityFactory;
+use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 use Box\Spout\Reader\XLSX\Helper\SheetHelper;
 use Box\Spout\Reader\Exception\NoSheetsFoundException;
 
@@ -22,15 +24,23 @@ class SheetIterator implements IteratorInterface
 
     /**
      * @param string $filePath Path of the file to be read
-     * @param \Box\Spout\Reader\XLSX\ReaderOptions $options Reader's current options
+     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
      * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper $sharedStringsHelper
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
+     * @param EntityFactory $entityFactory Factory to create entities
+     * @param HelperFactory $helperFactory Factory to create helpers
      * @throws \Box\Spout\Reader\Exception\NoSheetsFoundException If there are no sheets in the file
      */
-    public function __construct($filePath, $options, $sharedStringsHelper, $globalFunctionsHelper)
+    public function __construct(
+        $filePath,
+        $optionsManager,
+        $sharedStringsHelper,
+        $globalFunctionsHelper,
+        $entityFactory,
+        $helperFactory)
     {
         // Fetch all available sheets
-        $sheetHelper = new SheetHelper($filePath, $options, $sharedStringsHelper, $globalFunctionsHelper);
+        $sheetHelper = $helperFactory->createSheetHelper($filePath, $optionsManager, $sharedStringsHelper, $globalFunctionsHelper, $entityFactory);
         $this->sheets = $sheetHelper->getSheets();
 
         if (count($this->sheets) === 0) {

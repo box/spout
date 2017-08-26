@@ -4,7 +4,7 @@ namespace Box\Spout\Writer\ODS\Creator;
 
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;

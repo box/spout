@@ -8,7 +8,7 @@ use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\XLSX\Helper\FileSystemHelper;
 use Box\Spout\Writer\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;

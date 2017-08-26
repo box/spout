@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Reader\ODS;
 
+use Box\Spout\Reader\ODS\Creator\EntityFactory;
 use Box\Spout\Reader\SheetInterface;
 use Box\Spout\Reader\Wrapper\XMLReader;
 
@@ -33,11 +34,12 @@ class Sheet implements SheetInterface
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $sheetName Name of the sheet
      * @param bool $isSheetActive Whether the sheet was defined as active
-     * @param \Box\Spout\Reader\ODS\ReaderOptions $options Reader's current options
+     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
+     * @param EntityFactory $entityFactory Factory to create entities
      */
-    public function __construct($xmlReader, $sheetIndex, $sheetName, $isSheetActive, $options)
+    public function __construct($xmlReader, $sheetIndex, $sheetName, $isSheetActive, $optionsManager, $entityFactory)
     {
-        $this->rowIterator = new RowIterator($xmlReader, $options);
+        $this->rowIterator = $entityFactory->createRowIterator($xmlReader, $optionsManager);
         $this->index = $sheetIndex;
         $this->name = $sheetName;
         $this->isActive = $isSheetActive;

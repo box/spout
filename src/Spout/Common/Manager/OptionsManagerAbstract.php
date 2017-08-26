@@ -1,12 +1,11 @@
 <?php
 
-namespace Box\Spout\Writer\Common\Manager;
+namespace Box\Spout\Common\Manager;
 
 /**
  * Class OptionsManager
- * Writer' options manager
  *
- * @package Box\Spout\Writer\Common\Manager
+ * @package Box\Spout\Common\Manager
  */
 abstract class OptionsManagerAbstract implements OptionsManagerInterface
 {
@@ -19,7 +18,7 @@ abstract class OptionsManagerAbstract implements OptionsManagerInterface
     private $options = [];
 
     /**
-     * WriterOptions constructor.
+     * OptionsManagerAbstract constructor.
      */
     public function __construct()
     {

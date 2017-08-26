@@ -3,31 +3,31 @@
 namespace Box\Spout\Reader;
 
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Common\Helper\GlobalFunctionsHelper;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
+use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Exception\ReaderNotOpenedException;
 
 /**
- * Class AbstractReader
+ * Class ReaderAbstract
  *
  * @package Box\Spout\Reader
  * @abstract
  */
-abstract class AbstractReader implements ReaderInterface
+abstract class ReaderAbstract implements ReaderInterface
 {
     /** @var bool Indicates whether the stream is currently open */
     protected $isStreamOpened = false;
 
+    /** @var EntityFactoryInterface Factory to create entities */
+    protected $entityFactory;
+
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var \Box\Spout\Reader\Common\ReaderOptions Reader's customized options */
-    protected $options;
-
-    /**
-     * Returns the reader's current options
-     *
-     * @return \Box\Spout\Reader\Common\ReaderOptions
-     */
-    abstract protected function getOptions();
+    /** @var OptionsManagerInterface Writer options manager */
+    protected $optionsManager;
 
     /**
      * Returns whether stream wrappers are supported
@@ -47,25 +47,30 @@ abstract class AbstractReader implements ReaderInterface
     /**
      * Returns an iterator to iterate over sheets.
      *
-     * @return \Iterator To iterate over sheets
+     * @return IteratorInterface To iterate over sheets
      */
     abstract protected function getConcreteSheetIterator();
 
     /**
      * Closes the reader. To be used after reading the file.
      *
-     * @return AbstractReader
+     * @return ReaderAbstract
      */
     abstract protected function closeReader();
 
     /**
-     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
-     * @return AbstractReader
+     * @param OptionsManagerInterface $optionsManager
+     * @param GlobalFunctionsHelper $globalFunctionsHelper
+     * @param EntityFactoryInterface $entityFactory
      */
-    public function setGlobalFunctionsHelper($globalFunctionsHelper)
+    public function __construct(
+        OptionsManagerInterface $optionsManager,
+        GlobalFunctionsHelper $globalFunctionsHelper,
+        EntityFactoryInterface $entityFactory)
     {
+        $this->optionsManager = $optionsManager;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
-        return $this;
+        $this->entityFactory = $entityFactory;
     }
 
     /**
@@ -73,11 +78,11 @@ abstract class AbstractReader implements ReaderInterface
      *
      * @api
      * @param bool $shouldFormatDates
-     * @return AbstractReader
+     * @return ReaderAbstract
      */
     public function setShouldFormatDates($shouldFormatDates)
     {
-        $this->getOptions()->setShouldFormatDates($shouldFormatDates);
+        $this->optionsManager->setOption(Options::SHOULD_FORMAT_DATES, $shouldFormatDates);
         return $this;
     }
 
@@ -86,11 +91,11 @@ abstract class AbstractReader implements ReaderInterface
      *
      * @api
      * @param bool $shouldPreserveEmptyRows
-     * @return AbstractReader
+     * @return ReaderAbstract
      */
     public function setShouldPreserveEmptyRows($shouldPreserveEmptyRows)
     {
-        $this->getOptions()->setShouldPreserveEmptyRows($shouldPreserveEmptyRows);
+        $this->optionsManager->setOption(Options::SHOULD_PRESERVE_EMPTY_ROWS, $shouldPreserveEmptyRows);
         return $this;
     }
 

@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Reader\CSV;
 
+use Box\Spout\Reader\CSV\Creator\EntityFactory;
 use Box\Spout\Reader\SheetInterface;
 
 /**
@@ -16,12 +17,13 @@ class Sheet implements SheetInterface
 
     /**
      * @param resource $filePointer Pointer to the CSV file to read
-     * @param \Box\Spout\Reader\CSV\ReaderOptions $options
+     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
+     * @param EntityFactory $entityFactory Factory to create entities
      */
-    public function __construct($filePointer, $options, $globalFunctionsHelper)
+    public function __construct($filePointer, $optionsManager, $globalFunctionsHelper, $entityFactory)
     {
-        $this->rowIterator = new RowIterator($filePointer, $options, $globalFunctionsHelper);
+        $this->rowIterator = $entityFactory->createRowIterator($filePointer, $optionsManager, $globalFunctionsHelper);
     }
 
     /**

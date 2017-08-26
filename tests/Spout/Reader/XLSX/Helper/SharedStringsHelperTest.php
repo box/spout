@@ -2,6 +2,8 @@
 
 namespace Box\Spout\Reader\XLSX\Helper;
 
+use Box\Spout\Reader\XLSX\Creator\EntityFactory;
+use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\FileBasedStrategy;
 use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\InMemoryStrategy;
@@ -24,8 +26,7 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $resourcePath = $this->getResourcePath('one_sheet_with_shared_strings.xlsx');
-        $this->sharedStringsHelper = new SharedStringsHelper($resourcePath);
+        $this->sharedStringsHelper = null;
     }
 
     /**
@@ -33,7 +34,26 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        $this->sharedStringsHelper->cleanup();
+        if ($this->sharedStringsHelper !== null) {
+            $this->sharedStringsHelper->cleanup();
+        }
+    }
+
+    /**
+     * @param string $resourceName
+     * @return SharedStringsHelper
+     */
+    private function createSharedStringsHelper($resourceName = 'one_sheet_with_shared_strings.xlsx')
+    {
+        $resourcePath = $this->getResourcePath($resourceName);
+        $tempFolder = sys_get_temp_dir();
+        $cachingStrategyFactory = new CachingStrategyFactory();
+        $helperFactory = new HelperFactory($cachingStrategyFactory);
+        $entityFactory = new EntityFactory($helperFactory);
+
+        $this->sharedStringsHelper = new SharedStringsHelper($resourcePath, $tempFolder, $entityFactory, $helperFactory, $cachingStrategyFactory);
+
+        return $this->sharedStringsHelper;
     }
 
     /**
@@ -42,8 +62,9 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetStringAtIndexShouldThrowExceptionIfStringNotFound()
     {
-        $this->sharedStringsHelper->extractSharedStrings();
-        $this->sharedStringsHelper->getStringAtIndex(PHP_INT_MAX);
+        $sharedStringsHelper = $this->createSharedStringsHelper();
+        $sharedStringsHelper->extractSharedStrings();
+        $sharedStringsHelper->getStringAtIndex(PHP_INT_MAX);
     }
 
     /**
@@ -51,15 +72,16 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetStringAtIndexShouldReturnTheCorrectStringIfFound()
     {
-        $this->sharedStringsHelper->extractSharedStrings();
+        $sharedStringsHelper = $this->createSharedStringsHelper();
+        $sharedStringsHelper->extractSharedStrings();
 
-        $sharedString = $this->sharedStringsHelper->getStringAtIndex(0);
+        $sharedString = $sharedStringsHelper->getStringAtIndex(0);
         $this->assertEquals('s1--A1', $sharedString);
 
-        $sharedString = $this->sharedStringsHelper->getStringAtIndex(24);
+        $sharedString = $sharedStringsHelper->getStringAtIndex(24);
         $this->assertEquals('s1--E5', $sharedString);
 
-        $usedCachingStrategy = \ReflectionHelper::getValueOnObject($this->sharedStringsHelper, 'cachingStrategy');
+        $usedCachingStrategy = \ReflectionHelper::getValueOnObject($sharedStringsHelper, 'cachingStrategy');
         $this->assertTrue($usedCachingStrategy instanceof InMemoryStrategy);
     }
 
@@ -68,8 +90,7 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetStringAtIndexShouldWorkWithMultilineStrings()
     {
-        $resourcePath = $this->getResourcePath('one_sheet_with_shared_multiline_strings.xlsx');
-        $sharedStringsHelper = new SharedStringsHelper($resourcePath);
+        $sharedStringsHelper = $this->createSharedStringsHelper('one_sheet_with_shared_multiline_strings.xlsx');
 
         $sharedStringsHelper->extractSharedStrings();
 
@@ -78,8 +99,6 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
 
         $sharedString = $sharedStringsHelper->getStringAtIndex(24);
         $this->assertEquals("s1\nE5", $sharedString);
-
-        $sharedStringsHelper->cleanup();
     }
 
     /**
@@ -87,15 +106,12 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetStringAtIndexShouldWorkWithStringsContainingTextAndHyperlinkInSameCell()
     {
-        $resourcePath = $this->getResourcePath('one_sheet_with_shared_strings_containing_text_and_hyperlink_in_same_cell.xlsx');
-        $sharedStringsHelper = new SharedStringsHelper($resourcePath);
+        $sharedStringsHelper = $this->createSharedStringsHelper('one_sheet_with_shared_strings_containing_text_and_hyperlink_in_same_cell.xlsx');
 
         $sharedStringsHelper->extractSharedStrings();
 
         $sharedString = $sharedStringsHelper->getStringAtIndex(0);
         $this->assertEquals('go to https://github.com please', $sharedString);
-
-        $sharedStringsHelper->cleanup();
     }
 
     /**
@@ -103,15 +119,12 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetStringAtIndexShouldNotDoubleDecodeHTMLEntities()
     {
-        $resourcePath = $this->getResourcePath('one_sheet_with_pre_encoded_html_entities.xlsx');
-        $sharedStringsHelper = new SharedStringsHelper($resourcePath);
+        $sharedStringsHelper = $this->createSharedStringsHelper('one_sheet_with_pre_encoded_html_entities.xlsx');
 
         $sharedStringsHelper->extractSharedStrings();
 
         $sharedString = $sharedStringsHelper->getStringAtIndex(0);
         $this->assertEquals('quote: &#34; - ampersand: &amp;', $sharedString);
-
-        $sharedStringsHelper->cleanup();
     }
 
     /**
@@ -123,8 +136,7 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
         $originalMemoryLimit = ini_get('memory_limit');
         ini_set('memory_limit', '-1');
 
-        $resourcePath = $this->getResourcePath('sheet_with_lots_of_shared_strings.xlsx');
-        $sharedStringsHelper = new SharedStringsHelper($resourcePath);
+        $sharedStringsHelper = $this->createSharedStringsHelper('sheet_with_lots_of_shared_strings.xlsx');
 
         $sharedStringsHelper->extractSharedStrings();
 
@@ -136,8 +148,6 @@ class SharedStringsHelperTest extends \PHPUnit_Framework_TestCase
 
         $usedCachingStrategy = \ReflectionHelper::getValueOnObject($sharedStringsHelper, 'cachingStrategy');
         $this->assertTrue($usedCachingStrategy instanceof FileBasedStrategy);
-
-        $sharedStringsHelper->cleanup();
 
         ini_set('memory_limit', $originalMemoryLimit);
     }
