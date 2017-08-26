@@ -34,6 +34,9 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper impleme
     /** @var ZipHelper Helper to perform tasks with Zip archive */
     private $zipHelper;
 
+    /** @var \Box\Spout\Common\Helper\Escaper\XLSX Used to escape XML data */
+    private $escaper;
+
     /** @var string Path to the root folder inside the temp folder where the files to create the XLSX will be stored */
     private $rootFolder;
 
@@ -55,11 +58,13 @@ class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper impleme
     /**
      * @param string $baseFolderPath The path of the base folder where all the I/O can occur
      * @param ZipHelper $zipHelper Helper to perform tasks with Zip archive
+     * @param \Box\Spout\Common\Helper\Escaper\XLSX $escaper Used to escape XML data
      */
-    public function __construct($baseFolderPath, $zipHelper)
+    public function __construct($baseFolderPath, $zipHelper, $escaper)
     {
         parent::__construct($baseFolderPath);
         $this->zipHelper = $zipHelper;
+        $this->escaper = $escaper;
     }
 
     /**
@@ -298,14 +303,11 @@ EOD;
     <sheets>
 EOD;
 
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
-
         /** @var Worksheet $worksheet */
         foreach ($worksheets as $worksheet) {
             $worksheetName = $worksheet->getExternalSheet()->getName();
             $worksheetId = $worksheet->getId();
-            $workbookXmlFileContents .= '<sheet name="' . $escaper->escape($worksheetName) . '" sheetId="' . $worksheetId . '" r:id="rIdSheet' . $worksheetId . '"/>';
+            $workbookXmlFileContents .= '<sheet name="' . $this->escaper->escape($worksheetName) . '" sheetId="' . $worksheetId . '" r:id="rIdSheet' . $worksheetId . '"/>';
         }
 
         $workbookXmlFileContents .= <<<EOD

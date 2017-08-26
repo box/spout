@@ -19,7 +19,7 @@ use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
  */
 class WorksheetManager implements WorksheetManagerInterface
 {
-    /** @var \Box\Spout\Common\Escaper\ODS Strings escaper */
+    /** @var \Box\Spout\Common\Helper\Escaper\ODS Strings escaper */
     private $stringsEscaper;
 
     /** @var StringHelper String helper */
@@ -28,11 +28,11 @@ class WorksheetManager implements WorksheetManagerInterface
     /**
      * WorksheetManager constructor.
      *
-     * @param \Box\Spout\Common\Escaper\ODS $stringsEscaper
+     * @param \Box\Spout\Common\Helper\Escaper\ODS $stringsEscaper
      * @param StringHelper $stringHelper
      */
     public function __construct(
-        \Box\Spout\Common\Escaper\ODS $stringsEscaper,
+        \Box\Spout\Common\Helper\Escaper\ODS $stringsEscaper,
         StringHelper $stringHelper)
     {
         $this->stringsEscaper = $stringsEscaper;

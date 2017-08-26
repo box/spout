@@ -38,18 +38,17 @@ class CellValueFormatter
     /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
     protected $shouldFormatDates;
 
-    /** @var \Box\Spout\Common\Escaper\ODS Used to unescape XML data */
+    /** @var \Box\Spout\Common\Helper\Escaper\ODS Used to unescape XML data */
     protected $escaper;
 
     /**
      * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param \Box\Spout\Common\Helper\Escaper\ODS $escaper Used to unescape XML data
      */
-    public function __construct($shouldFormatDates)
+    public function __construct($shouldFormatDates, $escaper)
     {
         $this->shouldFormatDates = $shouldFormatDates;
-
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->escaper = \Box\Spout\Common\Escaper\ODS::getInstance();
+        $this->escaper = $escaper;
     }
 
     /**

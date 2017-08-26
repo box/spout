@@ -1,11 +1,13 @@
 <?php
 
-namespace Box\Spout\Common\Escaper;
+namespace Box\Spout\Common\Helper\Escaper;
+
+use Box\Spout\Common\Helper\Escaper;
 
 /**
  * Class XLSXTest
  *
- * @package Box\Spout\Common\Escaper
+ * @package Box\Spout\Common\Helper\Escaper
  */
 class XLSXTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,8 +40,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
      */
     public function testEscape($stringToEscape, $expectedEscapedString)
     {
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
+        $escaper = new Escaper\XLSX();
         $escapedString = $escaper->escape($stringToEscape);
 
         $this->assertEquals($expectedEscapedString, $escapedString, 'Incorrect escaped string');
@@ -74,8 +75,7 @@ class XLSXTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnescape($stringToUnescape, $expectedUnescapedString)
     {
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
+        $escaper = new Escaper\XLSX();
         $unescapedString = $escaper->unescape($stringToUnescape);
 
         $this->assertEquals($expectedUnescapedString, $unescapedString, 'Incorrect escaped string');

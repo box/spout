@@ -47,22 +47,21 @@ class CellValueFormatter
     /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
     protected $shouldFormatDates;
 
-    /** @var \Box\Spout\Common\Escaper\XLSX Used to unescape XML data */
+    /** @var \Box\Spout\Common\Helper\Escaper\XLSX Used to unescape XML data */
     protected $escaper;
 
     /**
      * @param SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
      * @param StyleHelper $styleHelper Helper to work with styles
      * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param \Box\Spout\Common\Helper\Escaper\XLSX $escaper Used to unescape XML data
      */
-    public function __construct($sharedStringsHelper, $styleHelper, $shouldFormatDates)
+    public function __construct($sharedStringsHelper, $styleHelper, $shouldFormatDates, $escaper)
     {
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->styleHelper = $styleHelper;
         $this->shouldFormatDates = $shouldFormatDates;
-
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
+        $this->escaper = $escaper;
     }
 
     /**

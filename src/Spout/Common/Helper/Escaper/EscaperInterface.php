@@ -1,11 +1,11 @@
 <?php
 
-namespace Box\Spout\Common\Escaper;
+namespace Box\Spout\Common\Helper\Escaper;
 
 /**
  * Interface EscaperInterface
  *
- * @package Box\Spout\Common\Escaper
+ * @package Box\Spout\Common\Helper\Escaper
  */
 interface EscaperInterface
 {

@@ -46,19 +46,24 @@ class SheetHelper
     /** @var EntityFactory Factory to create entities */
     protected $entityFactory;
 
+    /** @var \Box\Spout\Common\Helper\Escaper\XLSX Used to unescape XML data */
+    protected $escaper;
+
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
      * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
+     * @param \Box\Spout\Common\Helper\Escaper\XLSX $escaper Used to unescape XML data
      * @param EntityFactory $entityFactory Factory to create entities
      */
-    public function __construct($filePath, $optionsManager, $sharedStringsHelper, $globalFunctionsHelper, $entityFactory)
+    public function __construct($filePath, $optionsManager, $sharedStringsHelper, $globalFunctionsHelper, $escaper, $entityFactory)
     {
         $this->filePath = $filePath;
         $this->optionsManager = $optionsManager;
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
+        $this->escaper = $escaper;
         $this->entityFactory = $entityFactory;
     }
 
@@ -112,10 +117,7 @@ class SheetHelper
     {
         $sheetId = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_R_ID);
         $escapedSheetName = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_NAME);
-
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
-        $sheetName = $escaper->unescape($escapedSheetName);
+        $sheetName = $this->escaper->unescape($escapedSheetName);
 
         $sheetDataXMLFilePath = $this->getSheetDataXMLFilePathForSheetId($sheetId);
 

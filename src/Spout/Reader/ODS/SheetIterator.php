@@ -36,7 +36,7 @@ class SheetIterator implements IteratorInterface
     /** @var XMLReader The XMLReader object that will help read sheet's XML data */
     protected $xmlReader;
 
-    /** @var \Box\Spout\Common\Escaper\ODS Used to unescape XML data */
+    /** @var \Box\Spout\Common\Helper\Escaper\ODS Used to unescape XML data */
     protected $escaper;
 
     /** @var bool Whether there are still at least a sheet to be read */
@@ -61,8 +61,7 @@ class SheetIterator implements IteratorInterface
         $this->entityFactory = $entityFactory;
         $this->xmlReader = $entityFactory->createXMLReader();
 
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
-        $this->escaper = \Box\Spout\Common\Escaper\ODS::getInstance();
+        $this->escaper = $helperFactory->createStringsEscaper();
 
         $settingsHelper = $helperFactory->createSettingsHelper();
         $this->activeSheetName = $settingsHelper->getActiveSheetName($filePath);

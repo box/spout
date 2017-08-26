@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Reader\XLSX\Creator;
 
+use Box\Spout\Common\Helper\Escaper;
 use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
 use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Helper\SharedStringsHelper;
@@ -49,7 +50,8 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
      */
     public function createSheetHelper($filePath, $optionsManager, $sharedStringsHelper, $globalFunctionsHelper, $entityFactory)
     {
-        return new SheetHelper($filePath, $optionsManager, $sharedStringsHelper, $globalFunctionsHelper, $entityFactory);
+        $escaper = $this->createStringsEscaper();
+        return new SheetHelper($filePath, $optionsManager, $sharedStringsHelper, $globalFunctionsHelper, $escaper, $entityFactory);
     }
 
     /**
@@ -70,6 +72,16 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
      */
     public function createCellValueFormatter($sharedStringsHelper, $styleHelper, $shouldFormatDates)
     {
-        return new CellValueFormatter($sharedStringsHelper, $styleHelper, $shouldFormatDates);
+        $escaper = $this->createStringsEscaper();
+        return new CellValueFormatter($sharedStringsHelper, $styleHelper, $shouldFormatDates, $escaper);
+    }
+
+    /**
+     * @return Escaper\XLSX
+     */
+    public function createStringsEscaper()
+    {
+        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
+        return new Escaper\XLSX();
     }
 }

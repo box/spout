@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\XLSX\Creator;
 
-use Box\Spout\Common\Escaper;
+use Box\Spout\Common\Helper\Escaper;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\InternalFactoryInterface;
@@ -113,8 +113,9 @@ class InternalFactory implements InternalFactoryInterface
     {
         $tempFolder = $optionsManager->getOption(Options::TEMP_FOLDER);
         $zipHelper = $this->createZipHelper();
+        $escaper = $this->createStringsEscaper();
 
-        return new FileSystemHelper($tempFolder, $zipHelper);
+        return new FileSystemHelper($tempFolder, $zipHelper, $escaper);
     }
 
     /**
@@ -130,7 +131,7 @@ class InternalFactory implements InternalFactoryInterface
      */
     private function createStringsEscaper()
     {
-        return Escaper\XLSX::getInstance();
+        return new Escaper\XLSX();
     }
 
     /**

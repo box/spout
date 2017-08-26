@@ -13,7 +13,7 @@ use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 use Box\Spout\Writer\ODS\Manager\Style\StyleRegistry;
 use Box\Spout\Writer\ODS\Manager\WorkbookManager;
 use Box\Spout\Writer\ODS\Manager\WorksheetManager;
-use \Box\Spout\Common\Escaper;
+use Box\Spout\Common\Helper\Escaper;
 
 /**
  * Class InternalFactory
@@ -109,7 +109,7 @@ class InternalFactory implements InternalFactoryInterface
      */
     private function createStringsEscaper()
     {
-        return Escaper\ODS::getInstance();
+        return new Escaper\ODS();
     }
 
     /**

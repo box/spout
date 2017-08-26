@@ -20,7 +20,8 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
      */
     public function createCellValueFormatter($shouldFormatDates)
     {
-        return new CellValueFormatter($shouldFormatDates);
+        $escaper = $this->createStringsEscaper();
+        return new CellValueFormatter($shouldFormatDates, $escaper);
     }
 
     /**
@@ -29,5 +30,14 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
     public function createSettingsHelper()
     {
         return new SettingsHelper();
+    }
+
+    /**
+     * @return \Box\Spout\Common\Helper\Escaper\ODS
+     */
+    public function createStringsEscaper()
+    {
+        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
+        return new \Box\Spout\Common\Helper\Escaper\ODS();
     }
 }

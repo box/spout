@@ -1,36 +1,39 @@
 <?php
 
-namespace Box\Spout\Common\Escaper;
-
-use Box\Spout\Common\Singleton;
+namespace Box\Spout\Common\Helper\Escaper;
 
 /**
  * Class XLSX
  * Provides functions to escape and unescape data for XLSX files
  *
- * @package Box\Spout\Common\Escaper
+ * @package Box\Spout\Common\Helper\Escaper
  */
 class XLSX implements EscaperInterface
 {
-    use Singleton;
+    /** @var bool Whether the escaper has already been initialized */
+    private $isAlreadyInitialized = false;
 
     /** @var string Regex pattern to detect control characters that need to be escaped */
-    protected $escapableControlCharactersPattern;
+    private $escapableControlCharactersPattern;
 
     /** @var string[] Map containing control characters to be escaped (key) and their escaped value (value) */
-    protected $controlCharactersEscapingMap;
+    private $controlCharactersEscapingMap;
 
     /** @var string[] Map containing control characters to be escaped (value) and their escaped value (key) */
-    protected $controlCharactersEscapingReverseMap;
+    private $controlCharactersEscapingReverseMap;
 
     /**
-     * Initializes the singleton instance
+     * Initializes the control characters if not already done
      */
-    protected function init()
+    protected function initIfNeeded()
     {
-        $this->escapableControlCharactersPattern = $this->getEscapableControlCharactersPattern();
-        $this->controlCharactersEscapingMap = $this->getControlCharactersEscapingMap();
-        $this->controlCharactersEscapingReverseMap = array_flip($this->controlCharactersEscapingMap);
+        if (!$this->isAlreadyInitialized) {
+            $this->escapableControlCharactersPattern = $this->getEscapableControlCharactersPattern();
+            $this->controlCharactersEscapingMap = $this->getControlCharactersEscapingMap();
+            $this->controlCharactersEscapingReverseMap = array_flip($this->controlCharactersEscapingMap);
+
+            $this->isAlreadyInitialized = true;
+        }
     }
 
     /**
@@ -41,6 +44,8 @@ class XLSX implements EscaperInterface
      */
     public function escape($string)
     {
+        $this->initIfNeeded();
+
         $escapedString = $this->escapeControlCharacters($string);
         // @NOTE: Using ENT_NOQUOTES as only XML entities ('<', '>', '&') need to be encoded.
         //        Single and double quotes can be left as is.
@@ -57,6 +62,8 @@ class XLSX implements EscaperInterface
      */
     public function unescape($string)
     {
+        $this->initIfNeeded();
+
         // ==============
         // =   WARNING  =
         // ==============
