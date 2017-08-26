@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\Common\Creator;
 
+use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Workbook;
 use Box\Spout\Writer\Common\Entity\Worksheet;
@@ -54,5 +55,22 @@ class EntityFactory
     {
         $sheetManager = $this->managerFactory->createSheetManager();
         return new Sheet($sheetIndex, $associatedWorkbookId, $sheetManager);
+    }
+
+    /**
+     * @param mixed $cellValue
+     * @return Cell
+     */
+    public function createCell($cellValue)
+    {
+        return new Cell($cellValue);
+    }
+
+    /**
+     * @return \ZipArchive
+     */
+    public function createZipArchive()
+    {
+        return new \ZipArchive();
     }
 }

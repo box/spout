@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\ODS\Manager;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
@@ -25,18 +26,24 @@ class WorksheetManager implements WorksheetManagerInterface
     /** @var StringHelper String helper */
     private $stringHelper;
 
+    /** @var EntityFactory Factory to create entities */
+    private $entityFactory;
+
     /**
      * WorksheetManager constructor.
      *
      * @param \Box\Spout\Common\Helper\Escaper\ODS $stringsEscaper
      * @param StringHelper $stringHelper
+     * @param EntityFactory $entityFactory
      */
     public function __construct(
         \Box\Spout\Common\Helper\Escaper\ODS $stringsEscaper,
-        StringHelper $stringHelper)
+        StringHelper $stringHelper,
+        EntityFactory $entityFactory)
     {
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
+        $this->entityFactory = $entityFactory;
     }
 
     /**
@@ -160,7 +167,7 @@ class WorksheetManager implements WorksheetManagerInterface
         if ($cellValue instanceof Cell) {
             $cell = $cellValue;
         } else {
-            $cell = new Cell($cellValue);
+            $cell = $this->entityFactory->createCell($cellValue);
         }
 
         if ($cell->isString()) {

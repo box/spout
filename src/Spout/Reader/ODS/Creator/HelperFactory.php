@@ -25,11 +25,12 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
     }
 
     /**
+     * @param EntityFactory $entityFactory
      * @return SettingsHelper
      */
-    public function createSettingsHelper()
+    public function createSettingsHelper($entityFactory)
     {
-        return new SettingsHelper();
+        return new SettingsHelper($entityFactory);
     }
 
     /**

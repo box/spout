@@ -61,7 +61,7 @@ class InternalFactory implements InternalFactoryInterface
         $stringsEscaper = $this->createStringsEscaper();
         $stringsHelper = $this->createStringHelper();
 
-        return new WorksheetManager($stringsEscaper, $stringsHelper);
+        return new WorksheetManager($stringsEscaper, $stringsHelper, $this->entityFactory);
     }
 
     /**
@@ -101,7 +101,7 @@ class InternalFactory implements InternalFactoryInterface
      */
     private function createZipHelper()
     {
-        return new ZipHelper();
+        return new ZipHelper($this->entityFactory);
     }
 
     /**
