@@ -65,15 +65,16 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->with(CellValueFormatter::XML_NODE_VALUE)
             ->will($this->returnValue($nodeListMock));
 
-        $styleHelperMock = $this->getMockBuilder('Box\Spout\Reader\XLSX\Helper\StyleHelper')->disableOriginalConstructor()->getMock();
+        /** @var \Box\Spout\Reader\XLSX\Manager\StyleManager|\PHPUnit_Framework_MockObject_MockObject $styleManagerMock */
+        $styleManagerMock = $this->getMockBuilder('Box\Spout\Reader\XLSX\Manager\StyleManager')->disableOriginalConstructor()->getMock();
 
-        $styleHelperMock
+        $styleManagerMock
             ->expects($this->once())
             ->method('shouldFormatNumericValueAsDate')
             ->with(123)
             ->will($this->returnValue(true));
 
-        $formatter = new CellValueFormatter(null, $styleHelperMock, false, new Escaper\XLSX());
+        $formatter = new CellValueFormatter(null, $styleManagerMock, false, new Escaper\XLSX());
         $result = $formatter->extractAndFormatNodeValue($nodeMock);
 
         if ($expectedDateAsString === null) {
@@ -120,13 +121,14 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testFormatNumericCellValueWithNumbers($value, $expectedFormattedValue, $expectedType)
     {
-        $styleHelperMock = $this->getMockBuilder('Box\Spout\Reader\XLSX\Helper\StyleHelper')->disableOriginalConstructor()->getMock();
-        $styleHelperMock
+        /** @var \Box\Spout\Reader\XLSX\Manager\StyleManager|\PHPUnit_Framework_MockObject_MockObject $styleManagerMock */
+        $styleManagerMock = $this->getMockBuilder('Box\Spout\Reader\XLSX\Manager\StyleManager')->disableOriginalConstructor()->getMock();
+        $styleManagerMock
             ->expects($this->once())
             ->method('shouldFormatNumericValueAsDate')
             ->will($this->returnValue(false));
 
-        $formatter = new CellValueFormatter(null, $styleHelperMock, false, new Escaper\XLSX());
+        $formatter = new CellValueFormatter(null, $styleManagerMock, false, new Escaper\XLSX());
         $formattedValue = \ReflectionHelper::callMethodOnObject($formatter, 'formatNumericCellValue', $value, 0);
 
         $this->assertEquals($expectedFormattedValue, $formattedValue);

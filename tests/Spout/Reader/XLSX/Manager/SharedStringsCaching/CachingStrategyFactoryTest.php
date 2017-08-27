@@ -1,12 +1,13 @@
 <?php
 
-namespace Box\Spout\Reader\XLSX\Helper\SharedStringsCaching;
+namespace Box\Spout\Reader\XLSX\Manager\SharedStringsCaching;
+
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 
 /**
  * Class CachingStrategyFactoryTest
  *
- * @package Box\Spout\Reader\XLSX\Helper\SharedStringsCaching
+ * @package Box\Spout\Reader\XLSX\Manager\SharedStringsCaching
  */
 class CachingStrategyFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,7 +39,7 @@ class CachingStrategyFactoryTest extends \PHPUnit_Framework_TestCase
     {
         /** @var CachingStrategyFactory|\PHPUnit_Framework_MockObject_MockObject $factoryStub */
         $factoryStub = $this
-            ->getMockBuilder('\Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyFactory')
+            ->getMockBuilder('\Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory')
             ->disableOriginalConstructor()
             ->setMethods(['getMemoryLimitInKB'])
             ->getMock();
@@ -49,7 +50,7 @@ class CachingStrategyFactoryTest extends \PHPUnit_Framework_TestCase
         $helperFactory = new HelperFactory($factoryStub);
         $strategy = $factoryStub->createBestCachingStrategy($sharedStringsUniqueCount, $tempFolder, $helperFactory);
 
-        $fullExpectedStrategyClassName = 'Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\\' . $expectedStrategyClassName;
+        $fullExpectedStrategyClassName = 'Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\\' . $expectedStrategyClassName;
         $this->assertEquals($fullExpectedStrategyClassName, get_class($strategy));
 
         $strategy->clearCache();
@@ -86,7 +87,7 @@ class CachingStrategyFactoryTest extends \PHPUnit_Framework_TestCase
     {
         /** @var CachingStrategyFactory|\PHPUnit_Framework_MockObject_MockObject $factoryStub */
         $factoryStub = $this
-            ->getMockBuilder('\Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyFactory')
+            ->getMockBuilder('\Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory')
             ->disableOriginalConstructor()
             ->setMethods(['getMemoryLimitFromIni'])
             ->getMock();

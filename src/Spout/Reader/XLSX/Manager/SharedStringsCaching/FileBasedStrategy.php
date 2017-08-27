@@ -1,9 +1,7 @@
 <?php
 
-namespace Box\Spout\Reader\XLSX\Helper\SharedStringsCaching;
+namespace Box\Spout\Reader\XLSX\Manager\SharedStringsCaching;
 
-use Box\Spout\Common\Helper\FileSystemHelper;
-use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Reader\Exception\SharedStringNotFoundException;
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 
@@ -14,7 +12,7 @@ use Box\Spout\Reader\XLSX\Creator\HelperFactory;
  * Shared strings are stored in small files (with a max number of strings per file).
  * This strategy is slower than an in-memory strategy but is used to avoid out of memory crashes.
  *
- * @package Box\Spout\Reader\XLSX\Helper\SharedStringsCaching
+ * @package Box\Spout\Reader\XLSX\Manager\SharedStringsCaching
  */
 class FileBasedStrategy implements CachingStrategyInterface
 {

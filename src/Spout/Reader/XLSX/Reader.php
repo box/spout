@@ -9,7 +9,7 @@ use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\ReaderAbstract;
 use Box\Spout\Reader\XLSX\Creator\EntityFactory;
-use Box\Spout\Reader\XLSX\Creator\HelperFactory;
+use Box\Spout\Reader\XLSX\Creator\ManagerFactory;
 
 /**
  * Class Reader
@@ -19,14 +19,14 @@ use Box\Spout\Reader\XLSX\Creator\HelperFactory;
  */
 class Reader extends ReaderAbstract
 {
-    /** @var HelperFactory */
-    protected $helperFactory;
+    /** @var ManagerFactory */
+    protected $managerFactory;
 
     /** @var \ZipArchive */
     protected $zip;
 
-    /** @var \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings */
-    protected $sharedStringsHelper;
+    /** @var \Box\Spout\Reader\XLSX\Manager\SharedStringsManager Manages shared strings */
+    protected $sharedStringsManager;
 
     /** @var SheetIterator To iterator over the XLSX sheets */
     protected $sheetIterator;
@@ -36,16 +36,16 @@ class Reader extends ReaderAbstract
      * @param OptionsManagerInterface $optionsManager
      * @param GlobalFunctionsHelper $globalFunctionsHelper
      * @param EntityFactoryInterface $entityFactory
-     * @param HelperFactory $helperFactory
+     * @param ManagerFactory $managerFactory
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
         GlobalFunctionsHelper $globalFunctionsHelper,
         EntityFactoryInterface $entityFactory,
-        HelperFactory $helperFactory)
+        ManagerFactory $managerFactory)
     {
         parent::__construct($optionsManager, $globalFunctionsHelper, $entityFactory);
-        $this->helperFactory = $helperFactory;
+        $this->managerFactory = $managerFactory;
     }
 
     /**
@@ -87,14 +87,14 @@ class Reader extends ReaderAbstract
 
         if ($this->zip->open($filePath) === true) {
             $tempFolder = $this->optionsManager->getOption(Options::TEMP_FOLDER);
-            $this->sharedStringsHelper = $this->helperFactory->createSharedStringsHelper($filePath, $tempFolder, $entityFactory);
+            $this->sharedStringsManager = $this->managerFactory->createSharedStringsManager($filePath, $tempFolder, $entityFactory);
 
-            if ($this->sharedStringsHelper->hasSharedStrings()) {
+            if ($this->sharedStringsManager->hasSharedStrings()) {
                 // Extracts all the strings from the sheets for easy access in the future
-                $this->sharedStringsHelper->extractSharedStrings();
+                $this->sharedStringsManager->extractSharedStrings();
             }
 
-            $this->sheetIterator = $entityFactory->createSheetIterator($filePath, $this->optionsManager, $this->sharedStringsHelper, $this->globalFunctionsHelper);
+            $this->sheetIterator = $entityFactory->createSheetIterator($filePath, $this->optionsManager, $this->sharedStringsManager, $this->globalFunctionsHelper);
         } else {
             throw new IOException("Could not open $filePath for reading.");
         }
@@ -121,8 +121,8 @@ class Reader extends ReaderAbstract
             $this->zip->close();
         }
 
-        if ($this->sharedStringsHelper) {
-            $this->sharedStringsHelper->cleanup();
+        if ($this->sharedStringsManager) {
+            $this->sharedStringsManager->cleanup();
         }
     }
 }

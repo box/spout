@@ -1,11 +1,11 @@
 <?php
 
-namespace Box\Spout\Reader\XLSX\Helper\SharedStringsCaching;
+namespace Box\Spout\Reader\XLSX\Manager\SharedStringsCaching;
 
 /**
  * Interface CachingStrategyInterface
  *
- * @package Box\Spout\Reader\XLSX\Helper\SharedStringsCaching
+ * @package Box\Spout\Reader\XLSX\Manager\SharedStringsCaching
  */
 interface CachingStrategyInterface
 {
