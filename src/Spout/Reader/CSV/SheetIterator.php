@@ -20,14 +20,11 @@ class SheetIterator implements IteratorInterface
     protected $hasReadUniqueSheet = false;
 
     /**
-     * @param resource $filePointer
-     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager
-     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param Sheet $sheet Corresponding unique sheet
      */
-    public function __construct($filePointer, $optionsManager, $globalFunctionsHelper, $entityFactory)
+    public function __construct($sheet)
     {
-        $this->sheet = $entityFactory->createSheet($filePointer, $optionsManager, $globalFunctionsHelper);
+        $this->sheet = $sheet;
     }
 
     /**

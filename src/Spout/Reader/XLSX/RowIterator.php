@@ -10,9 +10,8 @@ use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 use Box\Spout\Reader\XLSX\Helper\CellHelper;
-use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
-use Box\Spout\Reader\XLSX\Helper\StyleHelper;
 use Box\Spout\Reader\Common\XMLProcessor;
+use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
 
 /**
  * Class RowIterator
@@ -48,9 +47,6 @@ class RowIterator implements IteratorInterface
     /** @var Helper\CellValueFormatter Helper to format cell values */
     protected $cellValueFormatter;
 
-    /** @var Helper\StyleHelper $styleHelper Helper to work with styles */
-    protected $styleHelper;
-
     /**
      * TODO: This variable can be deleted when row indices get preserved
      * @var int Number of read rows
@@ -84,25 +80,21 @@ class RowIterator implements IteratorInterface
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
-     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
-     * @param Helper\SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
-     * @param EntityFactory $entityFactory Factory to create entities
-     * @param HelperFactory $helperFactory Factory to create helpers
+     * @param bool $shouldPreserveEmptyRows Whether empty rows should be preserved
+     * @param XMLReader $xmlReader XML Reader
+     * @param XMLProcessor $xmlProcessor Helper to process XML files
+     * @param CellValueFormatter $cellValueFormatter Helper to format cell values
      */
-    public function __construct($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsHelper, $entityFactory, $helperFactory)
+    public function __construct($filePath, $sheetDataXMLFilePath, $shouldPreserveEmptyRows, $xmlReader, $xmlProcessor, $cellValueFormatter)
     {
         $this->filePath = $filePath;
         $this->sheetDataXMLFilePath = $this->normalizeSheetDataXMLFilePath($sheetDataXMLFilePath);
-
-        $this->xmlReader = $entityFactory->createXMLReader();
-
-        $this->styleHelper = $helperFactory->createStyleHelper($filePath, $entityFactory);
-        $this->cellValueFormatter = $helperFactory->createCellValueFormatter($sharedStringsHelper, $this->styleHelper, $optionsManager->getOption(Options::SHOULD_FORMAT_DATES));
-
-        $this->shouldPreserveEmptyRows = $optionsManager->getOption(Options::SHOULD_PRESERVE_EMPTY_ROWS);
+        $this->xmlReader = $xmlReader;
+        $this->cellValueFormatter = $cellValueFormatter;
+        $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
 
         // Register all callbacks to process different nodes when reading the XML file
-        $this->xmlProcessor = $entityFactory->createXMLProcessor($this->xmlReader);
+        $this->xmlProcessor = $xmlProcessor;
         $this->xmlProcessor->registerCallback(self::XML_NODE_DIMENSION, XMLProcessor::NODE_TYPE_START, [$this, 'processDimensionStartingNode']);
         $this->xmlProcessor->registerCallback(self::XML_NODE_ROW, XMLProcessor::NODE_TYPE_START, [$this, 'processRowStartingNode']);
         $this->xmlProcessor->registerCallback(self::XML_NODE_CELL, XMLProcessor::NODE_TYPE_START, [$this, 'processCellStartingNode']);

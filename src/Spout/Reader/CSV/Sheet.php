@@ -16,14 +16,11 @@ class Sheet implements SheetInterface
     protected $rowIterator;
 
     /**
-     * @param resource $filePointer Pointer to the CSV file to read
-     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager
-     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param RowIterator $rowIterator Corresponding row iterator
      */
-    public function __construct($filePointer, $optionsManager, $globalFunctionsHelper, $entityFactory)
+    public function __construct(RowIterator $rowIterator)
     {
-        $this->rowIterator = $entityFactory->createRowIterator($filePointer, $optionsManager, $globalFunctionsHelper);
+        $this->rowIterator = $rowIterator;
     }
 
     /**

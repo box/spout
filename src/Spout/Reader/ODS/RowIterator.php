@@ -9,6 +9,7 @@ use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Reader\ODS\Creator\EntityFactory;
 use Box\Spout\Reader\ODS\Creator\HelperFactory;
+use Box\Spout\Reader\ODS\Helper\CellValueFormatter;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\Common\XMLProcessor;
 
@@ -75,17 +76,17 @@ class RowIterator implements IteratorInterface
     /**
      * @param XMLReader $xmlReader XML Reader, positioned on the "<table:table>" element
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
-     * @param EntityFactory $entityFactory Factory to create entities
-     * @param HelperFactory $helperFactory Factory to create helpers
+     * @param CellValueFormatter $cellValueFormatter Helper to format cell values
+     * @param XMLProcessor $xmlProcessor Helper to process XML files
      */
-    public function __construct($xmlReader, $optionsManager, $entityFactory, $helperFactory)
+    public function __construct($xmlReader, $optionsManager, $cellValueFormatter, $xmlProcessor)
     {
         $this->xmlReader = $xmlReader;
         $this->shouldPreserveEmptyRows = $optionsManager->getOption(Options::SHOULD_PRESERVE_EMPTY_ROWS);
-        $this->cellValueFormatter = $helperFactory->createCellValueFormatter($optionsManager->getOption(Options::SHOULD_FORMAT_DATES));
+        $this->cellValueFormatter = $cellValueFormatter;
 
         // Register all callbacks to process different nodes when reading the XML file
-        $this->xmlProcessor = $entityFactory->createXMLProcessor($this->xmlReader);
+        $this->xmlProcessor = $xmlProcessor;
         $this->xmlProcessor->registerCallback(self::XML_NODE_ROW, XMLProcessor::NODE_TYPE_START, [$this, 'processRowStartingNode']);
         $this->xmlProcessor->registerCallback(self::XML_NODE_CELL, XMLProcessor::NODE_TYPE_START, [$this, 'processCellStartingNode']);
         $this->xmlProcessor->registerCallback(self::XML_NODE_ROW, XMLProcessor::NODE_TYPE_END, [$this, 'processRowEndingNode']);

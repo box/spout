@@ -3,6 +3,7 @@
 namespace Box\Spout\Reader\XLSX\Creator;
 
 use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
+use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\XLSX\Helper\SharedStringsHelper;
 use Box\Spout\Reader\XLSX\RowIterator;
@@ -33,19 +34,12 @@ class EntityFactory implements EntityFactoryInterface
      * @param string $filePath Path of the file to be read
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
      * @param SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
-     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      * @return SheetIterator
      */
-    public function createSheetIterator($filePath, $optionsManager, $sharedStringsHelper, $globalFunctionsHelper)
+    public function createSheetIterator($filePath, $optionsManager, $sharedStringsHelper)
     {
-        return new SheetIterator(
-            $filePath,
-            $optionsManager,
-            $sharedStringsHelper,
-            $globalFunctionsHelper,
-            $this,
-            $this->helperFactory
-        );
+        $sheetHelper = $this->helperFactory->createSheetHelper($filePath, $optionsManager, $sharedStringsHelper, $this);
+        return new SheetIterator($sheetHelper);
     }
 
     /**
@@ -67,16 +61,8 @@ class EntityFactory implements EntityFactoryInterface
         $optionsManager,
         $sharedStringsHelper)
     {
-        return new Sheet(
-            $filePath,
-            $sheetDataXMLFilePath,
-            $sheetIndex,
-            $sheetName,
-            $isSheetActive,
-            $optionsManager,
-            $sharedStringsHelper,
-            $this
-        );
+        $rowIterator = $this->createRowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsHelper);
+        return new Sheet($rowIterator, $sheetIndex, $sheetName, $isSheetActive);
     }
 
     /**
@@ -86,9 +72,25 @@ class EntityFactory implements EntityFactoryInterface
      * @param SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
      * @return RowIterator
      */
-    public function createRowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsHelper)
+    private function createRowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsHelper)
     {
-        return new RowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsHelper, $this, $this->helperFactory);
+        $xmlReader = $this->createXMLReader();
+        $xmlProcessor = $this->createXMLProcessor($xmlReader);
+
+        $styleHelper = $this->helperFactory->createStyleHelper($filePath, $this);
+        $shouldFormatDates = $optionsManager->getOption(Options::SHOULD_FORMAT_DATES);
+        $cellValueFormatter = $this->helperFactory->createCellValueFormatter($sharedStringsHelper, $styleHelper, $shouldFormatDates);
+
+        $shouldPreserveEmptyRows = $optionsManager->getOption(Options::SHOULD_PRESERVE_EMPTY_ROWS);
+
+        return new RowIterator(
+            $filePath,
+            $sheetDataXMLFilePath,
+            $shouldPreserveEmptyRows,
+            $xmlReader,
+            $xmlProcessor,
+            $cellValueFormatter
+        );
     }
 
     /**

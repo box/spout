@@ -44,14 +44,13 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
      * @param string $filePath Path of the XLSX file being read
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
      * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings
-     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      * @param EntityFactory $entityFactory Factory to create entities
      * @return SheetHelper
      */
-    public function createSheetHelper($filePath, $optionsManager, $sharedStringsHelper, $globalFunctionsHelper, $entityFactory)
+    public function createSheetHelper($filePath, $optionsManager, $sharedStringsHelper, $entityFactory)
     {
         $escaper = $this->createStringsEscaper();
-        return new SheetHelper($filePath, $optionsManager, $sharedStringsHelper, $globalFunctionsHelper, $escaper, $entityFactory);
+        return new SheetHelper($filePath, $optionsManager, $sharedStringsHelper, $escaper, $entityFactory);
     }
 
     /**

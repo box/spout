@@ -51,19 +51,17 @@ class SheetIterator implements IteratorInterface
     /**
      * @param string $filePath Path of the file to be read
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager
+     * @param \Box\Spout\Common\Helper\Escaper\ODS $escaper Used to unescape XML data
+     * @param SettingsHelper $settingsHelper Helper to get data from "settings.xml"
      * @param EntityFactory $entityFactory Factory to create entities
-     * @param HelperFactory $helperFactory Factory to create helpers
      */
-    public function __construct($filePath, $optionsManager, $entityFactory, $helperFactory)
+    public function __construct($filePath, $optionsManager, $escaper, $settingsHelper, $entityFactory)
     {
         $this->filePath = $filePath;
         $this->optionsManager = $optionsManager;
         $this->entityFactory = $entityFactory;
         $this->xmlReader = $entityFactory->createXMLReader();
-
-        $this->escaper = $helperFactory->createStringsEscaper();
-
-        $settingsHelper = $helperFactory->createSettingsHelper($entityFactory);
+        $this->escaper = $escaper;
         $this->activeSheetName = $settingsHelper->getActiveSheetName($filePath);
     }
 
