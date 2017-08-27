@@ -1,22 +1,22 @@
 <?php
 
-namespace Box\Spout\Reader\XLSX\Helper;
+namespace Box\Spout\Reader\XLSX\Manager;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
-use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyFactory;
-use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyInterface;
+use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
+use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyInterface;
 
 /**
- * Class SharedStringsHelper
- * This class provides helper functions for reading sharedStrings XML file
+ * Class SharedStringsManager
+ * This class manages the shared strings defined in the associated XML file
  *
- * @package Box\Spout\Reader\XLSX\Helper
+ * @package Box\Spout\Reader\XLSX\Manager
  */
-class SharedStringsHelper
+class SharedStringsManager
 {
     /** Path of sharedStrings XML file inside the XLSX file */
     const SHARED_STRINGS_XML_FILE_PATH = 'xl/sharedStrings.xml';

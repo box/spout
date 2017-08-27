@@ -3,9 +3,7 @@
 namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Reader\IteratorInterface;
-use Box\Spout\Reader\XLSX\Creator\EntityFactory;
-use Box\Spout\Reader\XLSX\Creator\HelperFactory;
-use Box\Spout\Reader\XLSX\Helper\SheetHelper;
+use Box\Spout\Reader\XLSX\Manager\SheetManager;
 use Box\Spout\Reader\Exception\NoSheetsFoundException;
 
 /**
@@ -23,13 +21,13 @@ class SheetIterator implements IteratorInterface
     protected $currentSheetIndex;
 
     /**
-     * @param SheetHelper $sheetHelper Helper to work with sheets
+     * @param SheetManager $sheetManager Manages sheets
      * @throws \Box\Spout\Reader\Exception\NoSheetsFoundException If there are no sheets in the file
      */
-    public function __construct($sheetHelper)
+    public function __construct($sheetManager)
     {
         // Fetch all available sheets
-        $this->sheets = $sheetHelper->getSheets();
+        $this->sheets = $sheetManager->getSheets();
 
         if (count($this->sheets) === 0) {
             throw new NoSheetsFoundException('The file must contain at least one sheet.');

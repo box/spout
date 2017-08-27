@@ -4,9 +4,8 @@ namespace Box\Spout\Reader;
 
 use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
-use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Type;
-use Box\Spout\Reader\XLSX\Helper\SharedStringsCaching\CachingStrategyFactory;
+use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 
 /**
  * Class ReaderFactory
@@ -56,12 +55,12 @@ class ReaderFactory
     private static function getXLSXReader()
     {
         $optionsManager = new XLSX\Manager\OptionsManager();
-        $cachingStrategyFactory = new CachingStrategyFactory();
-        $helperFactory = new XLSX\Creator\HelperFactory($cachingStrategyFactory);
-        $entityFactory = new XLSX\Creator\EntityFactory($helperFactory);
+        $helperFactory = new XLSX\Creator\HelperFactory();
+        $managerFactory = new XLSX\Creator\ManagerFactory($helperFactory, new CachingStrategyFactory());
+        $entityFactory = new XLSX\Creator\EntityFactory($managerFactory, $helperFactory);
         $globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
 
-        return new XLSX\Reader($optionsManager, $globalFunctionsHelper, $entityFactory, $helperFactory);
+        return new XLSX\Reader($optionsManager, $globalFunctionsHelper, $entityFactory, $managerFactory);
     }
 
     /**

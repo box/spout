@@ -5,11 +5,12 @@ namespace Box\Spout\Reader\XLSX\Creator;
 use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Common\XMLProcessor;
-use Box\Spout\Reader\XLSX\Helper\SharedStringsHelper;
+use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Reader\XLSX\RowIterator;
 use Box\Spout\Reader\XLSX\Sheet;
 use Box\Spout\Reader\XLSX\SheetIterator;
 use Box\Spout\Reader\Wrapper\XMLReader;
+use MongoDB\Driver\Manager;
 
 /**
  * Class EntityFactory
@@ -22,24 +23,29 @@ class EntityFactory implements EntityFactoryInterface
     /** @var HelperFactory */
     private $helperFactory;
 
+    /** @var ManagerFactory */
+    private $managerFactory;
+
     /**
+     * @param ManagerFactory $managerFactory
      * @param HelperFactory $helperFactory
      */
-    public function __construct(HelperFactory $helperFactory)
+    public function __construct(ManagerFactory $managerFactory, HelperFactory $helperFactory)
     {
+        $this->managerFactory = $managerFactory;
         $this->helperFactory = $helperFactory;
     }
 
     /**
      * @param string $filePath Path of the file to be read
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
-     * @param SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
+     * @param SharedStringsManager $sharedStringsManager Manages shared strings
      * @return SheetIterator
      */
-    public function createSheetIterator($filePath, $optionsManager, $sharedStringsHelper)
+    public function createSheetIterator($filePath, $optionsManager, $sharedStringsManager)
     {
-        $sheetHelper = $this->helperFactory->createSheetHelper($filePath, $optionsManager, $sharedStringsHelper, $this);
-        return new SheetIterator($sheetHelper);
+        $sheetManager = $this->managerFactory->createSheetManager($filePath, $optionsManager, $sharedStringsManager, $this);
+        return new SheetIterator($sheetManager);
     }
 
     /**
@@ -49,7 +55,7 @@ class EntityFactory implements EntityFactoryInterface
      * @param string $sheetName Name of the sheet
      * @param bool $isSheetActive Whether the sheet was defined as active
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
-     * @param SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
+     * @param SharedStringsManager $sharedStringsManager Manages shared strings
      * @return Sheet
      */
     public function createSheet(
@@ -59,9 +65,9 @@ class EntityFactory implements EntityFactoryInterface
         $sheetName,
         $isSheetActive,
         $optionsManager,
-        $sharedStringsHelper)
+        $sharedStringsManager)
     {
-        $rowIterator = $this->createRowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsHelper);
+        $rowIterator = $this->createRowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsManager);
         return new Sheet($rowIterator, $sheetIndex, $sheetName, $isSheetActive);
     }
 
@@ -69,17 +75,17 @@ class EntityFactory implements EntityFactoryInterface
      * @param string $filePath Path of the XLSX file being read
      * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
-     * @param SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
+     * @param SharedStringsManager $sharedStringsManager Manages shared strings
      * @return RowIterator
      */
-    private function createRowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsHelper)
+    private function createRowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsManager)
     {
         $xmlReader = $this->createXMLReader();
         $xmlProcessor = $this->createXMLProcessor($xmlReader);
 
-        $styleHelper = $this->helperFactory->createStyleHelper($filePath, $this);
+        $styleManager = $this->managerFactory->createStyleManager($filePath, $this);
         $shouldFormatDates = $optionsManager->getOption(Options::SHOULD_FORMAT_DATES);
-        $cellValueFormatter = $this->helperFactory->createCellValueFormatter($sharedStringsHelper, $styleHelper, $shouldFormatDates);
+        $cellValueFormatter = $this->helperFactory->createCellValueFormatter($sharedStringsManager, $styleManager, $shouldFormatDates);
 
         $shouldPreserveEmptyRows = $optionsManager->getOption(Options::SHOULD_PRESERVE_EMPTY_ROWS);
 

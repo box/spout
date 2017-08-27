@@ -1,18 +1,18 @@
 <?php
 
-namespace Box\Spout\Reader\XLSX\Helper;
+namespace Box\Spout\Reader\XLSX\Manager;
 
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 use Box\Spout\Reader\XLSX\Sheet;
 
 /**
- * Class SheetHelper
- * This class provides helper functions related to XLSX sheets
+ * Class SheetManager
+ * This class manages XLSX sheets
  *
- * @package Box\Spout\Reader\XLSX\Helper
+ * @package Box\Spout\Reader\XLSX\Manager
  */
-class SheetHelper
+class SheetManager
 {
     /** Paths of XML files relative to the XLSX file root */
     const WORKBOOK_XML_RELS_FILE_PATH = 'xl/_rels/workbook.xml.rels';
@@ -37,8 +37,8 @@ class SheetHelper
     /** @var \Box\Spout\Common\Manager\OptionsManagerInterface Reader's options manager */
     protected $optionsManager;
 
-    /** @var \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings */
-    protected $sharedStringsHelper;
+    /** @var \Box\Spout\Reader\XLSX\Manager\SharedStringsManager Manages shared strings */
+    protected $sharedStringsManager;
 
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
@@ -52,15 +52,15 @@ class SheetHelper
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
-     * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper Helper to work with shared strings
+     * @param \Box\Spout\Reader\XLSX\Manager\SharedStringsManager Manages shared strings
      * @param \Box\Spout\Common\Helper\Escaper\XLSX $escaper Used to unescape XML data
      * @param EntityFactory $entityFactory Factory to create entities
      */
-    public function __construct($filePath, $optionsManager, $sharedStringsHelper, $escaper, $entityFactory)
+    public function __construct($filePath, $optionsManager, $sharedStringsManager, $escaper, $entityFactory)
     {
         $this->filePath = $filePath;
         $this->optionsManager = $optionsManager;
-        $this->sharedStringsHelper = $sharedStringsHelper;
+        $this->sharedStringsManager = $sharedStringsManager;
         $this->escaper = $escaper;
         $this->entityFactory = $entityFactory;
     }
@@ -126,7 +126,7 @@ class SheetHelper
             $sheetName,
             $isSheetActive,
             $this->optionsManager,
-            $this->sharedStringsHelper
+            $this->sharedStringsManager
         );
     }
 

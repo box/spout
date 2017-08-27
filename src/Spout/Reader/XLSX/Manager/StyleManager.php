@@ -1,16 +1,16 @@
 <?php
 
-namespace Box\Spout\Reader\XLSX\Helper;
+namespace Box\Spout\Reader\XLSX\Manager;
 
 use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 
 /**
- * Class StyleHelper
- * This class provides helper functions related to XLSX styles
+ * Class StyleManager
+ * This class manages XLSX styles
  *
- * @package Box\Spout\Reader\XLSX\Helper
+ * @package Box\Spout\Reader\XLSX\Manager
  */
-class StyleHelper
+class StyleManager
 {
     /** Paths of XML files relative to the XLSX file root */
     const STYLES_XML_FILE_PATH = 'xl/styles.xml';
