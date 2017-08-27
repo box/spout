@@ -37,18 +37,19 @@ class EntityFactory implements EntityFactoryInterface
      */
     public function createSheetIterator($filePointer, $optionsManager, $globalFunctionsHelper)
     {
-        return new SheetIterator($filePointer, $optionsManager, $globalFunctionsHelper, $this);
+        $rowIterator = $this->createRowIterator($filePointer, $optionsManager, $globalFunctionsHelper);
+        $sheet = $this->createSheet($rowIterator);
+
+        return new SheetIterator($sheet);
     }
 
     /**
-     * @param resource $filePointer Pointer to the CSV file to read
-     * @param OptionsManagerInterface $optionsManager
-     * @param GlobalFunctionsHelper $globalFunctionsHelper
+     * @param RowIterator $rowIterator
      * @return Sheet
      */
-    public function createSheet($filePointer, $optionsManager, $globalFunctionsHelper)
+    private function createSheet($rowIterator)
     {
-        return new Sheet($filePointer, $optionsManager, $globalFunctionsHelper, $this);
+        return new Sheet($rowIterator);
     }
 
     /**
@@ -57,7 +58,7 @@ class EntityFactory implements EntityFactoryInterface
      * @param GlobalFunctionsHelper $globalFunctionsHelper
      * @return RowIterator
      */
-    public function createRowIterator($filePointer, $optionsManager, $globalFunctionsHelper)
+    private function createRowIterator($filePointer, $optionsManager, $globalFunctionsHelper)
     {
         $encodingHelper = $this->helperFactory->createEncodingHelper($globalFunctionsHelper);
         return new RowIterator($filePointer, $optionsManager, $encodingHelper, $globalFunctionsHelper);

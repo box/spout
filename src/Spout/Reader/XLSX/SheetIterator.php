@@ -23,24 +23,12 @@ class SheetIterator implements IteratorInterface
     protected $currentSheetIndex;
 
     /**
-     * @param string $filePath Path of the file to be read
-     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
-     * @param \Box\Spout\Reader\XLSX\Helper\SharedStringsHelper $sharedStringsHelper
-     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
-     * @param EntityFactory $entityFactory Factory to create entities
-     * @param HelperFactory $helperFactory Factory to create helpers
+     * @param SheetHelper $sheetHelper Helper to work with sheets
      * @throws \Box\Spout\Reader\Exception\NoSheetsFoundException If there are no sheets in the file
      */
-    public function __construct(
-        $filePath,
-        $optionsManager,
-        $sharedStringsHelper,
-        $globalFunctionsHelper,
-        $entityFactory,
-        $helperFactory)
+    public function __construct($sheetHelper)
     {
         // Fetch all available sheets
-        $sheetHelper = $helperFactory->createSheetHelper($filePath, $optionsManager, $sharedStringsHelper, $globalFunctionsHelper, $entityFactory);
         $this->sheets = $sheetHelper->getSheets();
 
         if (count($this->sheets) === 0) {

@@ -5,6 +5,7 @@ namespace Box\Spout\Reader\ODS\Creator;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
+use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\ODS\RowIterator;
 use Box\Spout\Reader\ODS\Sheet;
@@ -37,7 +38,10 @@ class EntityFactory implements EntityFactoryInterface
      */
     public function createSheetIterator($filePath, $optionsManager)
     {
-        return new SheetIterator($filePath, $optionsManager, $this, $this->helperFactory);
+        $escaper = $this->helperFactory->createStringsEscaper();
+        $settingsHelper = $this->helperFactory->createSettingsHelper($this);
+
+        return new SheetIterator($filePath, $optionsManager, $escaper, $settingsHelper, $this);
     }
 
     /**
@@ -50,7 +54,9 @@ class EntityFactory implements EntityFactoryInterface
      */
     public function createSheet($xmlReader, $sheetIndex, $sheetName, $isSheetActive, $optionsManager)
     {
-        return new Sheet($xmlReader, $sheetIndex, $sheetName, $isSheetActive, $optionsManager, $this);
+        $rowIterator = $this->createRowIterator($xmlReader, $optionsManager);
+
+        return new Sheet($rowIterator, $sheetIndex, $sheetName, $isSheetActive);
     }
 
     /**
@@ -58,9 +64,13 @@ class EntityFactory implements EntityFactoryInterface
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
      * @return RowIterator
      */
-    public function createRowIterator($xmlReader, $optionsManager)
+    private function createRowIterator($xmlReader, $optionsManager)
     {
-        return new RowIterator($xmlReader, $optionsManager, $this, $this->helperFactory);
+        $shouldFormatDates = $optionsManager->getOption(Options::SHOULD_FORMAT_DATES);
+        $cellValueFormatter = $this->helperFactory->createCellValueFormatter($shouldFormatDates);
+        $xmlProcessor = $this->createXMLProcessor($xmlReader);
+
+        return new RowIterator($xmlReader, $optionsManager, $cellValueFormatter, $xmlProcessor);
     }
 
     /**
@@ -75,7 +85,7 @@ class EntityFactory implements EntityFactoryInterface
      * @param $xmlReader
      * @return XMLProcessor
      */
-    public function createXMLProcessor($xmlReader)
+    private function createXMLProcessor($xmlReader)
     {
         return new XMLProcessor($xmlReader);
     }

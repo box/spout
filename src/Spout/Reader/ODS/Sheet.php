@@ -30,16 +30,14 @@ class Sheet implements SheetInterface
     protected $isActive;
 
     /**
-     * @param XMLReader $xmlReader XML Reader, positioned on the "<table:table>" element
+     * @param RowIterator $rowIterator The corresponding row iterator
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $sheetName Name of the sheet
      * @param bool $isSheetActive Whether the sheet was defined as active
-     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
-     * @param EntityFactory $entityFactory Factory to create entities
      */
-    public function __construct($xmlReader, $sheetIndex, $sheetName, $isSheetActive, $optionsManager, $entityFactory)
+    public function __construct($rowIterator, $sheetIndex, $sheetName, $isSheetActive)
     {
-        $this->rowIterator = $entityFactory->createRowIterator($xmlReader, $optionsManager);
+        $this->rowIterator = $rowIterator;
         $this->index = $sheetIndex;
         $this->name = $sheetName;
         $this->isActive = $isSheetActive;

@@ -26,25 +26,14 @@ class Sheet implements SheetInterface
     protected $isActive;
 
     /**
-     * @param string $filePath Path of the XLSX file being read
-     * @param string $sheetDataXMLFilePath Path of the sheet data XML file as in [Content_Types].xml
+     * @param RowIterator $rowIterator The corresponding row iterator
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $sheetName Name of the sheet
      * @param bool $isSheetActive Whether the sheet was defined as active
-     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
-     * @param Helper\SharedStringsHelper $sharedStringsHelper Helper to work with shared strings
-     * @param EntityFactory $entityFactory Factory to create entities
      */
-    public function __construct(
-        $filePath,
-        $sheetDataXMLFilePath,
-        $sheetIndex, $sheetName,
-        $isSheetActive,
-        $optionsManager,
-        $sharedStringsHelper,
-        $entityFactory)
+    public function __construct($rowIterator, $sheetIndex, $sheetName, $isSheetActive)
     {
-        $this->rowIterator = $entityFactory->createRowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsHelper);
+        $this->rowIterator = $rowIterator;
         $this->index = $sheetIndex;
         $this->name = $sheetName;
         $this->isActive = $isSheetActive;
