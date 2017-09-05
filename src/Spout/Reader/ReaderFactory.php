@@ -11,8 +11,6 @@ use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
  * Class ReaderFactory
  * This factory is used to create readers, based on the type of the file to be read.
  * It supports CSV and XLSX formats.
- *
- * @package Box\Spout\Reader
  */
 class ReaderFactory
 {
@@ -21,12 +19,11 @@ class ReaderFactory
      *
      * @api
      * @param  string $readerType Type of the reader to instantiate
-     * @return ReaderInterface
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
+     * @return ReaderInterface
      */
     public static function create($readerType)
     {
-
         switch ($readerType) {
             case Type::CSV: return self::getCSVReader();
             case Type::XLSX: return self::getXLSXReader();

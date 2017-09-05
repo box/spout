@@ -3,13 +3,10 @@
 namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Reader\SheetInterface;
-use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 
 /**
  * Class Sheet
  * Represents a sheet within a XLSX file
- *
- * @package Box\Spout\Reader\XLSX
  */
 class Sheet implements SheetInterface
 {

@@ -10,8 +10,6 @@ use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 /**
  * Class WorkbookManager
  * ODS workbook manager, providing the interfaces to work with workbook.
- *
- * @package Box\Spout\Writer\ODS\Manager
  */
 class WorkbookManager extends WorkbookManagerAbstract
 {
@@ -45,6 +43,7 @@ class WorkbookManager extends WorkbookManagerAbstract
     public function getWorksheetFilePath(Sheet $sheet)
     {
         $sheetsContentTempFolder = $this->fileSystemHelper->getSheetsContentTempFolder();
+
         return $sheetsContentTempFolder . '/sheet' . $sheet->getIndex() . '.xml';
     }
 

@@ -8,8 +8,6 @@ use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
 
 /**
  * Interface ManagerFactoryInterface
- *
- * @package Box\Spout\Writer\Common\Creator
  */
 interface ManagerFactoryInterface
 {

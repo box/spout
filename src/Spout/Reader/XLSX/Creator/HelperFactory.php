@@ -4,17 +4,12 @@ namespace Box\Spout\Reader\XLSX\Creator;
 
 use Box\Spout\Common\Helper\Escaper;
 use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
-use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
-use Box\Spout\Reader\XLSX\Manager\SheetManager;
 use Box\Spout\Reader\XLSX\Manager\StyleManager;
-
 
 /**
  * Class HelperFactory
  * Factory to create helpers
- *
- * @package Box\Spout\Reader\XLSX\Creator
  */
 class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
 {
@@ -27,6 +22,7 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
     public function createCellValueFormatter($sharedStringsManager, $styleManager, $shouldFormatDates)
     {
         $escaper = $this->createStringsEscaper();
+
         return new CellValueFormatter($sharedStringsManager, $styleManager, $shouldFormatDates, $escaper);
     }
 
@@ -35,7 +31,7 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
      */
     public function createStringsEscaper()
     {
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
+        /* @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         return new Escaper\XLSX();
     }
 }

@@ -4,8 +4,6 @@ namespace Box\Spout\Writer;
 
 /**
  * Class WriterFactoryTest
- *
- * @package Box\Spout\Writer
  */
 class WriterFactoryTest extends \PHPUnit_Framework_TestCase
 {

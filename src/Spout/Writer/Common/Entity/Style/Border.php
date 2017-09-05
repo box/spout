@@ -4,8 +4,6 @@ namespace Box\Spout\Writer\Common\Entity\Style;
 
 /**
  * Class Border
- *
- * @package \Box\Spout\Writer\Common\Entity\Style
  */
 class Border
 {
@@ -37,7 +35,7 @@ class Border
 
     /**
      * @param string $name The name of the border part
-     * @return null|BorderPart
+     * @return BorderPart|null
      */
     public function getPart($name)
     {
@@ -81,6 +79,7 @@ class Border
     public function addPart(BorderPart $borderPart)
     {
         $this->parts[$borderPart->getName()] = $borderPart;
+
         return $this;
     }
 }

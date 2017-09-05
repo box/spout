@@ -4,8 +4,6 @@ namespace Box\Spout\Common\Manager;
 
 /**
  * Class OptionsManager
- *
- * @package Box\Spout\Common\Manager
  */
 abstract class OptionsManagerAbstract implements OptionsManagerInterface
 {

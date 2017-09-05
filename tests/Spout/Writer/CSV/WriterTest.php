@@ -2,16 +2,14 @@
 
 namespace Box\Spout\Writer\CSV;
 
-use Box\Spout\TestUsingResource;
-use Box\Spout\Common\Type;
 use Box\Spout\Common\Helper\EncodingHelper;
+use Box\Spout\Common\Type;
+use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\WriterFactory;
 
 /**
  * Class WriterTest
- *
- * @package Box\Spout\Writer\CSV
  */
 class WriterTest extends \PHPUnit_Framework_TestCase
 {
@@ -184,7 +182,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testWriteShouldAcceptCellObjects()
     {
         $allRows = [
-            [new Cell('String Value'), new Cell(1)]
+            [new Cell('String Value'), new Cell(1)],
         ];
         $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_cell_objects.csv');
         $writtenContent = $this->trimWrittenContent($writtenContent);
@@ -197,7 +195,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      * @param string $fieldDelimiter
      * @param string $fieldEnclosure
      * @param bool   $shouldAddBOM
-     * @return null|string
+     * @return string|null
      */
     private function writeToCsvFileAndReturnWrittenContent($allRows, $fileName, $fieldDelimiter = ',', $fieldEnclosure = '"', $shouldAddBOM = true)
     {

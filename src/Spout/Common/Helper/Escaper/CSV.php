@@ -5,8 +5,6 @@ namespace Box\Spout\Common\Helper\Escaper;
 /**
  * Class CSV
  * Provides functions to escape and unescape data for CSV files
- *
- * @package Box\Spout\Common\Helper\Escaper
  */
 class CSV implements EscaperInterface
 {

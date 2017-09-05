@@ -6,8 +6,6 @@ use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
  * Interface WriterInterface
- *
- * @package Box\Spout\Writer
  */
 interface WriterInterface
 {
@@ -16,8 +14,8 @@ interface WriterInterface
      * By using this method, the data will be written to a file.
      *
      * @param  string $outputFilePath Path of the output file that will contain the data
-     * @return WriterInterface
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened or if the given path is not writable
+     * @return WriterInterface
      */
     public function openToFile($outputFilePath);
 
@@ -26,8 +24,8 @@ interface WriterInterface
      * By using this method, the data will be outputted directly to the browser.
      *
      * @param  string $outputFileName Name of the output file that will contain the data. If a path is passed in, only the file name will be kept
-     * @return WriterInterface
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened
+     * @return WriterInterface
      */
     public function openToBrowser($outputFileName);
 
@@ -36,9 +34,9 @@ interface WriterInterface
      *
      * @param  array $dataRow Array containing data to be streamed.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @return WriterInterface
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yetthe writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     * @return WriterInterface
      */
     public function addRow(array $dataRow);
 
@@ -48,10 +46,10 @@ interface WriterInterface
      *
      * @param array $dataRow Array of array containing data to be streamed.
      * @param Style $style Style to be applied to the row.
-     * @return WriterInterface
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     * @return WriterInterface
      */
     public function addRowWithStyle(array $dataRow, $style);
 
@@ -63,10 +61,10 @@ interface WriterInterface
      *              ['data11', 12, , '', 'data13'],
      *              ['data21', 'data22', null],
      *          ];
-     * @return WriterInterface
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     * @return WriterInterface
      */
     public function addRows(array $dataRows);
 
@@ -76,10 +74,10 @@ interface WriterInterface
      *
      * @param array $dataRows Array of array containing data to be streamed.
      * @param Style $style Style to be applied to the rows.
-     * @return WriterInterface
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     * @return WriterInterface
      */
     public function addRowsWithStyle(array $dataRows, $style);
 

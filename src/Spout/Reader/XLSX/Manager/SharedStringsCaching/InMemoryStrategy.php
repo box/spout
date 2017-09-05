@@ -9,8 +9,6 @@ use Box\Spout\Reader\Exception\SharedStringNotFoundException;
  *
  * This class implements the in-memory caching strategy for shared strings.
  * This strategy is used when the number of unique strings is low, compared to the memory available.
- *
- * @package Box\Spout\Reader\XLSX\Manager\SharedStringsCaching
  */
 class InMemoryStrategy implements CachingStrategyInterface
 {
@@ -58,8 +56,8 @@ class InMemoryStrategy implements CachingStrategyInterface
      * Returns the string located at the given index from the cache.
      *
      * @param int $sharedStringIndex Index of the shared string in the sharedStrings.xml file
-     * @return string The shared string at the given index
      * @throws \Box\Spout\Reader\Exception\SharedStringNotFoundException If no shared string found for the given index
+     * @return string The shared string at the given index
      */
     public function getStringAtIndex($sharedStringIndex)
     {

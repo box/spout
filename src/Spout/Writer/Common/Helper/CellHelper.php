@@ -5,8 +5,6 @@ namespace Box\Spout\Writer\Common\Helper;
 /**
  * Class CellHelper
  * This class provides helper functions when working with cells
- *
- * @package Box\Spout\Writer\Common\Helper
  */
 class CellHelper
 {
@@ -36,8 +34,7 @@ class CellHelper
                 $cellIndex = chr($capitalAAsciiValue + $modulus) . $cellIndex;
 
                 // substracting 1 because it's zero-based
-                $columnIndex = intval($columnIndex / 26) - 1;
-
+                $columnIndex = (int) ($columnIndex / 26) - 1;
             } while ($columnIndex >= 0);
 
             self::$columnIndexToCellIndexCache[$originalColumnIndex] = $cellIndex;
@@ -74,6 +71,7 @@ class CellHelper
     public static function isNumeric($value)
     {
         $valueType = gettype($value);
+
         return ($valueType === 'integer' || $valueType === 'double');
     }
 

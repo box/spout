@@ -4,21 +4,20 @@ namespace Box\Spout\Writer;
 
 use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
-use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
+use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
-use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
-use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
 
 /**
  * Class WriterMultiSheetsAbstract
  *
- * @package Box\Spout\Writer
  * @abstract
  */
 abstract class WriterMultiSheetsAbstract extends WriterAbstract
@@ -41,8 +40,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
         StyleMerger $styleMerger,
         GlobalFunctionsHelper $globalFunctionsHelper,
         HelperFactory $helperFactory,
-        ManagerFactoryInterface $managerFactory)
-    {
+        ManagerFactoryInterface $managerFactory
+    ) {
         parent::__construct($optionsManager, $styleMerger, $globalFunctionsHelper, $helperFactory);
         $this->managerFactory = $managerFactory;
     }
@@ -53,22 +52,23 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      *
      * @api
      * @param bool $shouldCreateNewSheetsAutomatically Whether new sheets should be automatically created when the max rows limit per sheet is reached
-     * @return WriterMultiSheetsAbstract
      * @throws WriterAlreadyOpenedException If the writer was already opened
+     * @return WriterMultiSheetsAbstract
      */
     public function setShouldCreateNewSheetsAutomatically($shouldCreateNewSheetsAutomatically)
     {
         $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
         $this->optionsManager->setOption(Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY, $shouldCreateNewSheetsAutomatically);
+
         return $this;
     }
 
     /**
      * Configures the write and sets the current sheet pointer to a new sheet.
      *
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If unable to open the file for writing
+     * @return void
      */
     protected function openWriter()
     {
@@ -82,8 +82,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * Returns all the workbook's sheets
      *
      * @api
-     * @return Sheet[] All the workbook's sheets
      * @throws WriterNotOpenedException If the writer has not been opened yet
+     * @return Sheet[] All the workbook's sheets
      */
     public function getSheets()
     {
@@ -104,8 +104,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * Creates a new sheet and make it the current sheet. The data will now be written to this sheet.
      *
      * @api
-     * @return Sheet The created sheet
      * @throws WriterNotOpenedException If the writer has not been opened yet
+     * @return Sheet The created sheet
      */
     public function addNewSheetAndMakeItCurrent()
     {
@@ -119,12 +119,13 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * Returns the current sheet
      *
      * @api
-     * @return Sheet The current sheet
      * @throws WriterNotOpenedException If the writer has not been opened yet
+     * @return Sheet The current sheet
      */
     public function getCurrentSheet()
     {
         $this->throwIfWorkbookIsNotAvailable();
+
         return $this->workbookManager->getCurrentWorksheet()->getExternalSheet();
     }
 
@@ -134,9 +135,9 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      *
      * @api
      * @param Sheet $sheet The sheet to set as current
-     * @return void
      * @throws WriterNotOpenedException If the writer has not been opened yet
      * @throws SheetNotFoundException If the given sheet does not exist in the workbook
+     * @return void
      */
     public function setCurrentSheet($sheet)
     {
@@ -147,8 +148,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /**
      * Checks if the workbook has been created. Throws an exception if not created yet.
      *
-     * @return void
      * @throws WriterNotOpenedException If the workbook is not created yet
+     * @return void
      */
     protected function throwIfWorkbookIsNotAvailable()
     {
@@ -165,9 +166,9 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * @param array $dataRow Array containing data to be written.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @param \Box\Spout\Writer\Common\Entity\Style\Style $style Style to be applied to the row.
-     * @return void
      * @throws WriterNotOpenedException If the book is not created yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     * @return void
      */
     protected function addRowToWriter(array $dataRow, $style)
     {
@@ -187,4 +188,3 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
         }
     }
 }
-

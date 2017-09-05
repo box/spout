@@ -9,8 +9,6 @@ use Box\Spout\Writer\Exception\InvalidSheetNameException;
 /**
  * Class SheetManager
  * Sheet manager
- *
- * @package Box\Spout\Writer\Common\Manager
  */
 class SheetManager
 {
@@ -42,8 +40,8 @@ class SheetManager
      *
      * @param string $name
      * @param Sheet $sheet The sheet whose future name is checked
-     * @return void
      * @throws \Box\Spout\Writer\Exception\InvalidSheetNameException If the sheet's name is invalid.
+     * @return void
      */
     public function throwIfNameIsInvalid($name, Sheet $sheet)
     {

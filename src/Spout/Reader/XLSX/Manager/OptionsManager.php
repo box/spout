@@ -8,13 +8,11 @@ use Box\Spout\Reader\Common\Entity\Options;
 /**
  * Class OptionsManager
  * XLSX Reader options manager
- *
- * @package Box\Spout\Reader\XLSX\Manager
  */
 class OptionsManager extends OptionsManagerAbstract
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getSupportedOptions()
     {
@@ -26,7 +24,7 @@ class OptionsManager extends OptionsManagerAbstract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setDefaultOptions()
     {

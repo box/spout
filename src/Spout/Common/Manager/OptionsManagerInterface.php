@@ -4,8 +4,6 @@ namespace Box\Spout\Common\Manager;
 
 /**
  * Interface OptionsManagerInterface
- *
- * @package Box\Spout\Common\Manager
  */
 interface OptionsManagerInterface
 {

@@ -8,8 +8,6 @@ use Box\Spout\Writer\Common\Entity\Style\Style;
 /**
  * Class StyleBuilder
  * Builder to create new styles
- *
- * @package Box\Spout\Writer\Common\Creator\Style
  */
 class StyleBuilder
 {
@@ -33,6 +31,7 @@ class StyleBuilder
     public function setFontBold()
     {
         $this->style->setFontBold();
+
         return $this;
     }
 
@@ -45,6 +44,7 @@ class StyleBuilder
     public function setFontItalic()
     {
         $this->style->setFontItalic();
+
         return $this;
     }
 
@@ -57,6 +57,7 @@ class StyleBuilder
     public function setFontUnderline()
     {
         $this->style->setFontUnderline();
+
         return $this;
     }
 
@@ -69,6 +70,7 @@ class StyleBuilder
     public function setFontStrikethrough()
     {
         $this->style->setFontStrikethrough();
+
         return $this;
     }
 
@@ -82,6 +84,7 @@ class StyleBuilder
     public function setFontSize($fontSize)
     {
         $this->style->setFontSize($fontSize);
+
         return $this;
     }
 
@@ -95,6 +98,7 @@ class StyleBuilder
     public function setFontColor($fontColor)
     {
         $this->style->setFontColor($fontColor);
+
         return $this;
     }
 
@@ -108,6 +112,7 @@ class StyleBuilder
     public function setFontName($fontName)
     {
         $this->style->setFontName($fontName);
+
         return $this;
     }
 
@@ -121,6 +126,7 @@ class StyleBuilder
     public function setShouldWrapText($shouldWrap = true)
     {
         $this->style->setShouldWrapText($shouldWrap);
+
         return $this;
     }
 
@@ -133,6 +139,7 @@ class StyleBuilder
     public function setBorder(Border $border)
     {
         $this->style->setBorder($border);
+
         return $this;
     }
 
@@ -146,6 +153,7 @@ class StyleBuilder
     public function setBackgroundColor($color)
     {
         $this->style->setBackgroundColor($color);
+
         return $this;
     }
 

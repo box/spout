@@ -6,8 +6,6 @@ use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 
 /**
  * Class CachingStrategyFactory
- *
- * @package Box\Spout\Reader\XLSX\Manager\SharedStringsCaching
  */
 class CachingStrategyFactory
 {
@@ -51,7 +49,6 @@ class CachingStrategyFactory
      * 10,000 was chosen because it creates small files that are fast to be loaded in memory.
      */
     const MAX_NUM_STRINGS_PER_TEMP_FILE = 10000;
-
 
     /**
      * Returns the best caching strategy, given the number of unique shared strings
@@ -114,7 +111,7 @@ class CachingStrategyFactory
         }
 
         if (preg_match('/(\d+)([bkmgt])b?/', $memoryLimitFormatted, $matches)) {
-            $amount = intval($matches[1]);
+            $amount = (int) ($matches[1]);
             $unit = $matches[2];
 
             switch ($unit) {

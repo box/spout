@@ -5,12 +5,9 @@ namespace Box\Spout\Reader\ODS\Creator;
 use Box\Spout\Reader\ODS\Helper\CellValueFormatter;
 use Box\Spout\Reader\ODS\Helper\SettingsHelper;
 
-
 /**
  * Class EntityFactory
  * Factory to create helpers
- *
- * @package Box\Spout\Reader\ODS\Creator
  */
 class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
 {
@@ -21,6 +18,7 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
     public function createCellValueFormatter($shouldFormatDates)
     {
         $escaper = $this->createStringsEscaper();
+
         return new CellValueFormatter($shouldFormatDates, $escaper);
     }
 
@@ -38,7 +36,7 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
      */
     public function createStringsEscaper()
     {
-        /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
+        /* @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         return new \Box\Spout\Common\Helper\Escaper\ODS();
     }
 }

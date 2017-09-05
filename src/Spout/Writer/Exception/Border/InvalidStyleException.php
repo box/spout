@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Writer\Exception\Border;
 
-use Box\Spout\Writer\Exception\WriterException;
 use Box\Spout\Writer\Common\Entity\Style\BorderPart;
+use Box\Spout\Writer\Exception\WriterException;
 
 class InvalidStyleException extends WriterException
 {

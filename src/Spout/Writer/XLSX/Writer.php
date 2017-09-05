@@ -8,8 +8,6 @@ use Box\Spout\Writer\WriterMultiSheetsAbstract;
 /**
  * Class Writer
  * This class provides base support to write data to XLSX files
- *
- * @package Box\Spout\Writer\XLSX
  */
 class Writer extends WriterMultiSheetsAbstract
 {
@@ -22,14 +20,15 @@ class Writer extends WriterMultiSheetsAbstract
      *
      * @api
      * @param string $tempFolder Temporary folder where the files to create the XLSX will be stored
-     * @return Writer
      * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
+     * @return Writer
      */
     public function setTempFolder($tempFolder)
     {
         $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
         $this->optionsManager->setOption(Options::TEMP_FOLDER, $tempFolder);
+
         return $this;
     }
 
@@ -39,14 +38,15 @@ class Writer extends WriterMultiSheetsAbstract
      *
      * @api
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
-     * @return Writer
      * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
+     * @return Writer
      */
     public function setShouldUseInlineStrings($shouldUseInlineStrings)
     {
         $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
         $this->optionsManager->setOption(Options::SHOULD_USE_INLINE_STRINGS, $shouldUseInlineStrings);
+
         return $this;
     }
 }

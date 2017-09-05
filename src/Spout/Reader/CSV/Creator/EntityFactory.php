@@ -13,8 +13,6 @@ use Box\Spout\Reader\CSV\SheetIterator;
 /**
  * Class EntityFactory
  * Factory to create entities
- *
- * @package Box\Spout\Reader\CSV\Creator
  */
 class EntityFactory implements EntityFactoryInterface
 {
@@ -61,6 +59,7 @@ class EntityFactory implements EntityFactoryInterface
     private function createRowIterator($filePointer, $optionsManager, $globalFunctionsHelper)
     {
         $encodingHelper = $this->helperFactory->createEncodingHelper($globalFunctionsHelper);
+
         return new RowIterator($filePointer, $optionsManager, $encodingHelper, $globalFunctionsHelper);
     }
 }

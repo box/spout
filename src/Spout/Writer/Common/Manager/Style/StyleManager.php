@@ -7,8 +7,6 @@ use Box\Spout\Writer\Common\Entity\Style\Style;
 /**
  * Class StyleManager
  * Manages styles to be applied to a cell
- *
- * @package Box\Spout\Writer\Common\Manager\Style
  */
 class StyleManager implements StyleManagerInterface
 {
@@ -57,6 +55,7 @@ class StyleManager implements StyleManagerInterface
     public function applyExtraStylesIfNeeded($style, $dataRow)
     {
         $updatedStyle = $this->applyWrapTextIfCellContainsNewLine($style, $dataRow);
+
         return $updatedStyle;
     }
 

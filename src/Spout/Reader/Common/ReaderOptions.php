@@ -5,8 +5,6 @@ namespace Box\Spout\Reader\Common;
 /**
  * Class ReaderOptions
  * Readers' common options
- *
- * @package Box\Spout\Reader\Common
  */
 class ReaderOptions
 {
@@ -33,6 +31,7 @@ class ReaderOptions
     public function setShouldFormatDates($shouldFormatDates)
     {
         $this->shouldFormatDates = $shouldFormatDates;
+
         return $this;
     }
 
@@ -53,6 +52,7 @@ class ReaderOptions
     public function setShouldPreserveEmptyRows($shouldPreserveEmptyRows)
     {
         $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
+
         return $this;
     }
 }

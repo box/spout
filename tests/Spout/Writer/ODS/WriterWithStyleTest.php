@@ -5,18 +5,15 @@ namespace Box\Spout\Writer\ODS;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\ODS\Helper\BorderHelper;
-use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\WriterFactory;
 
 /**
  * Class WriterWithStyleTest
- *
- * @package Box\Spout\Writer\ODS
  */
 class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 {
@@ -276,7 +273,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $borderBottomGreenThickSolid = (new BorderBuilder())
             ->setBorderBottom(Color::GREEN, Border::WIDTH_THICK, Border::STYLE_SOLID)->build();
-
 
         $borderTopRedThinDashed = (new BorderBuilder())
             ->setBorderTop(Color::RED, Border::WIDTH_THIN, Border::STYLE_DASHED)->build();

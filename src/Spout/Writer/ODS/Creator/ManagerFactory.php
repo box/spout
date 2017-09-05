@@ -4,8 +4,8 @@ namespace Box\Spout\Writer\ODS\Creator;
 
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
+use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Manager\SheetManager;
 use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 use Box\Spout\Writer\ODS\Manager\Style\StyleRegistry;
@@ -15,8 +15,6 @@ use Box\Spout\Writer\ODS\Manager\WorksheetManager;
 /**
  * Class ManagerFactory
  * Factory for managers needed by the ODS Writer
- *
- * @package Box\Spout\Writer\ODS\Creator
  */
 class ManagerFactory implements ManagerFactoryInterface
 {
@@ -78,6 +76,7 @@ class ManagerFactory implements ManagerFactoryInterface
     public function createSheetManager()
     {
         $stringHelper = $this->helperFactory->createStringHelper();
+
         return new SheetManager($stringHelper);
     }
 
@@ -88,6 +87,7 @@ class ManagerFactory implements ManagerFactoryInterface
     private function createStyleManager(OptionsManagerInterface $optionsManager)
     {
         $styleRegistry = $this->createStyleRegistry($optionsManager);
+
         return new StyleManager($styleRegistry);
     }
 
@@ -98,6 +98,7 @@ class ManagerFactory implements ManagerFactoryInterface
     private function createStyleRegistry(OptionsManagerInterface $optionsManager)
     {
         $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
+
         return new StyleRegistry($defaultRowStyle);
     }
 }

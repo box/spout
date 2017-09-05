@@ -5,8 +5,6 @@ namespace Box\Spout\Common\Helper\Escaper;
 /**
  * Class ODS
  * Provides functions to escape and unescape data for ODS files
- *
- * @package Box\Spout\Common\Helper\Escaper
  */
 class ODS implements EscaperInterface
 {

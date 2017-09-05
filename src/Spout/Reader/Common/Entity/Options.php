@@ -5,8 +5,6 @@ namespace Box\Spout\Reader\Common\Entity;
 /**
  * Class Options
  * Readers' options holder
- *
- * @package Box\Spout\Reader\Common\Entity
  */
 abstract class Options
 {

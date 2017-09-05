@@ -5,8 +5,6 @@ namespace Box\Spout\Writer\Common\Entity;
 /**
  * Class Workbook
  * Entity describing a workbook
- *
- * @package Box\Spout\Writer\Common\Entity
  */
 class Workbook
 {

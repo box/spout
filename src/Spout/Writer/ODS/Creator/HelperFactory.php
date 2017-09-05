@@ -2,19 +2,17 @@
 
 namespace Box\Spout\Writer\ODS\Creator;
 
-use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Common\Helper\ZipHelper;
-use Box\Spout\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Entity\Options;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\ODS\Helper\FileSystemHelper;
 use Box\Spout\Common\Helper\Escaper;
+use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Helper\ZipHelper;
+use Box\Spout\Writer\ODS\Helper\FileSystemHelper;
 
 /**
  * Class HelperFactory
  * Factory for helpers needed by the ODS Writer
- *
- * @package Box\Spout\Writer\ODS\Creator
  */
 class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
 {

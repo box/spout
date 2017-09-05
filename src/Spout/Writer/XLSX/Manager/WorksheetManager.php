@@ -5,21 +5,19 @@ namespace Box\Spout\Writer\XLSX\Manager;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Helper\CellHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Worksheet;
-use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
+use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Entity\Worksheet;
+use Box\Spout\Writer\Common\Helper\CellHelper;
+use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
 use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
 
 /**
  * Class WorksheetManager
  * XLSX worksheet manager, providing the interfaces to work with XLSX worksheets.
- *
- * @package Box\Spout\Writer\XLSX\Manager
  */
 class WorksheetManager implements WorksheetManagerInterface
 {
@@ -31,7 +29,7 @@ class WorksheetManager implements WorksheetManagerInterface
      */
     const MAX_CHARACTERS_PER_CELL = 32767;
 
-    const SHEET_XML_FILE_HEADER = <<<EOD
+    const SHEET_XML_FILE_HEADER = <<<'EOD'
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
 EOD;
@@ -70,8 +68,8 @@ EOD;
         SharedStringsManager $sharedStringsManager,
         \Box\Spout\Common\Helper\Escaper\XLSX $stringsEscaper,
         StringHelper $stringHelper,
-        EntityFactory $entityFactory)
-    {
+        EntityFactory $entityFactory
+    ) {
         $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
         $this->styleManager = $styleManager;
         $this->sharedStringsManager = $sharedStringsManager;
@@ -88,13 +86,12 @@ EOD;
         return $this->sharedStringsManager;
     }
 
-
     /**
      * Prepares the worksheet to accept data
      *
      * @param Worksheet $worksheet The worksheet to start
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
+     * @return void
      */
     public function startSheet(Worksheet $worksheet)
     {
@@ -111,8 +108,8 @@ EOD;
      * Checks if the sheet has been sucessfully created. Throws an exception if not.
      *
      * @param bool|resource $sheetFilePointer Pointer to the sheet data file or FALSE if unable to open the file
-     * @return void
      * @throws IOException If the sheet data file cannot be opened for writing
+     * @return void
      */
     private function throwIfSheetFilePointerIsNotAvailable($sheetFilePointer)
     {
@@ -128,9 +125,9 @@ EOD;
      * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @param Style $rowStyle Style to be applied to the row. NULL means use default style.
-     * @return void
      * @throws IOException If the data cannot be written
      * @throws InvalidArgumentException If a cell value's type is not supported
+     * @return void
      */
     public function addRow(Worksheet $worksheet, $dataRow, $rowStyle)
     {
@@ -162,9 +159,9 @@ EOD;
      * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @param \Box\Spout\Writer\Common\Entity\Style\Style $style Style to be applied to the row. NULL means use default style.
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
+     * @return void
      */
     private function addNonEmptyRow(Worksheet $worksheet, $dataRow, $style)
     {
@@ -174,7 +171,7 @@ EOD;
 
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
-        foreach($dataRow as $cellValue) {
+        foreach ($dataRow as $cellValue) {
             $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cellValue, $style->getId());
             $cellNumber++;
         }
@@ -194,8 +191,8 @@ EOD;
      * @param int $cellNumber
      * @param mixed $cellValue
      * @param int $styleId
-     * @return string
      * @throws InvalidArgumentException If the given value cannot be processed
+     * @return string
      */
     private function getCellXML($rowIndex, $cellNumber, $cellValue, $styleId)
     {
@@ -203,7 +200,7 @@ EOD;
         $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
         $cellXML .= ' s="' . $styleId . '"';
 
-        /** @TODO Remove code duplication with ODS writer: https://github.com/box/spout/pull/383#discussion_r113292746 */
+        /* @TODO Remove code duplication with ODS writer: https://github.com/box/spout/pull/383#discussion_r113292746 */
         if ($cellValue instanceof Cell) {
             $cell = $cellValue;
         } else {
@@ -212,11 +209,11 @@ EOD;
 
         if ($cell->isString()) {
             $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cell->getValue());
-        } else if ($cell->isBoolean()) {
-            $cellXML .= ' t="b"><v>' . intval($cell->getValue()) . '</v></c>';
-        } else if ($cell->isNumeric()) {
+        } elseif ($cell->isBoolean()) {
+            $cellXML .= ' t="b"><v>' . (int) ($cell->getValue()) . '</v></c>';
+        } elseif ($cell->isNumeric()) {
             $cellXML .= '><v>' . $cell->getValue() . '</v></c>';
-        } else if ($cell->isEmpty()) {
+        } elseif ($cell->isEmpty()) {
             if ($this->styleManager->shouldApplyStyleOnEmptyCell($styleId)) {
                 $cellXML .= '/>';
             } else {
@@ -235,8 +232,8 @@ EOD;
      * Returns the XML fragment for a cell containing a non empty string
      *
      * @param string $cellValue The cell value
-     * @return string The XML fragment representing the cell
      * @throws InvalidArgumentException If the string exceeds the maximum number of characters allowed per cell
+     * @return string The XML fragment representing the cell
      */
     private function getCellXMLFragmentForNonEmptyString($cellValue)
     {

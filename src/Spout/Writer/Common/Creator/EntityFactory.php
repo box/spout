@@ -11,8 +11,6 @@ use Box\Spout\Writer\Common\Manager\SheetManager;
 /**
  * Class EntityFactory
  * Factory to create entities
- *
- * @package Box\Spout\Writer\Common\Creator
  */
 class EntityFactory
 {

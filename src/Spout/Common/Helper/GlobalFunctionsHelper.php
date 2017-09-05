@@ -7,8 +7,6 @@ namespace Box\Spout\Common\Helper;
  * This class wraps global functions to facilitate testing
  *
  * @codeCoverageIgnore
- *
- * @package Box\Spout\Common\Helper
  */
 class GlobalFunctionsHelper
 {
@@ -165,6 +163,7 @@ class GlobalFunctionsHelper
     public function file_get_contents($filePath)
     {
         $realFilePath = $this->convertToUseRealPath($filePath);
+
         return file_get_contents($realFilePath);
     }
 

@@ -7,16 +7,13 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
+use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
-use Box\Spout\Writer\Common\Entity\Style\Style;
-use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 
 /**
  * Class WorksheetManager
  * ODS worksheet manager, providing the interfaces to work with ODS worksheets.
- *
- * @package Box\Spout\Writer\ODS\Manager
  */
 class WorksheetManager implements WorksheetManagerInterface
 {
@@ -39,8 +36,8 @@ class WorksheetManager implements WorksheetManagerInterface
     public function __construct(
         \Box\Spout\Common\Helper\Escaper\ODS $stringsEscaper,
         StringHelper $stringHelper,
-        EntityFactory $entityFactory)
-    {
+        EntityFactory $entityFactory
+    ) {
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
         $this->entityFactory = $entityFactory;
@@ -50,8 +47,8 @@ class WorksheetManager implements WorksheetManagerInterface
      * Prepares the worksheet to accept data
      *
      * @param Worksheet $worksheet The worksheet to start
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
+     * @return void
      */
     public function startSheet(Worksheet $worksheet)
     {
@@ -65,8 +62,8 @@ class WorksheetManager implements WorksheetManagerInterface
      * Checks if the sheet has been sucessfully created. Throws an exception if not.
      *
      * @param bool|resource $sheetFilePointer Pointer to the sheet data file or FALSE if unable to open the file
-     * @return void
      * @throws IOException If the sheet data file cannot be opened for writing
+     * @return void
      */
     private function throwIfSheetFilePointerIsNotAvailable($sheetFilePointer)
     {
@@ -100,9 +97,9 @@ class WorksheetManager implements WorksheetManagerInterface
      * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @param Style $rowStyle Style to be applied to the row. NULL means use default style.
-     * @return void
      * @throws IOException If the data cannot be written
      * @throws InvalidArgumentException If a cell value's type is not supported
+     * @return void
      */
     public function addRow(Worksheet $worksheet, $dataRow, $rowStyle)
     {
@@ -124,7 +121,6 @@ class WorksheetManager implements WorksheetManagerInterface
             // Using isset here because it is way faster than array_key_exists...
             if (!isset($dataRowWithNumericIndexes[$nextCellIndex]) ||
                 $currentCellValue !== $dataRowWithNumericIndexes[$nextCellIndex]) {
-
                 $numTimesValueRepeated = ($nextCellIndex - $currentCellIndex);
                 $data .= $this->getCellXML($currentCellValue, $styleIndex, $numTimesValueRepeated);
 
@@ -152,8 +148,8 @@ class WorksheetManager implements WorksheetManagerInterface
      * @param mixed $cellValue The value to be written
      * @param int $styleIndex Index of the used style
      * @param int $numTimesValueRepeated Number of times the value is consecutively repeated
-     * @return string The cell XML content
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
+     * @return string The cell XML content
      */
     private function getCellXML($cellValue, $styleIndex, $numTimesValueRepeated)
     {
@@ -163,7 +159,7 @@ class WorksheetManager implements WorksheetManagerInterface
             $data .= ' table:number-columns-repeated="' . $numTimesValueRepeated . '"';
         }
 
-        /** @TODO Remove code duplication with XLSX writer: https://github.com/box/spout/pull/383#discussion_r113292746 */
+        /* @TODO Remove code duplication with XLSX writer: https://github.com/box/spout/pull/383#discussion_r113292746 */
         if ($cellValue instanceof Cell) {
             $cell = $cellValue;
         } else {
@@ -179,15 +175,15 @@ class WorksheetManager implements WorksheetManagerInterface
             }
 
             $data .= '</table:table-cell>';
-        } else if ($cell->isBoolean()) {
+        } elseif ($cell->isBoolean()) {
             $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:boolean-value="' . $cell->getValue() . '">';
             $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
-        } else if ($cell->isNumeric()) {
+        } elseif ($cell->isNumeric()) {
             $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cell->getValue() . '">';
             $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
-        } else if ($cell->isEmpty()) {
+        } elseif ($cell->isEmpty()) {
             $data .= '/>';
         } else {
             throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cell->getValue()));

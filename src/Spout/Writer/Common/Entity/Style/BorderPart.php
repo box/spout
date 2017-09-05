@@ -8,8 +8,6 @@ use Box\Spout\Writer\Exception\Border\InvalidWidthException;
 
 /**
  * Class BorderPart
- *
- * @package \Box\Spout\Writer\Common\Entity\Style
  */
 class BorderPart
 {
@@ -41,7 +39,7 @@ class BorderPart
         'solid',
         'dashed',
         'dotted',
-        'double'
+        'double',
     ];
 
     /**

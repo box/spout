@@ -4,8 +4,6 @@ namespace Box\Spout\Reader\XLSX\Helper;
 
 /**
  * Class CellHelperTest
- *
- * @package Box\Spout\Reader\XLSX\Helper
  */
 class CellHelperTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,9 +13,9 @@ class CellHelperTest extends \PHPUnit_Framework_TestCase
     public function dataProviderForTestFillMissingArrayIndexes()
     {
         return [
-            [ null, [] ],
-            [ [], [] ],
-            [ [1 => 1, 3 => 3], ['FILL', 1, 'FILL', 3] ]
+            [null, []],
+            [[], []],
+            [[1 => 1, 3 => 3], ['FILL', 1, 'FILL', 3]],
         ];
     }
 

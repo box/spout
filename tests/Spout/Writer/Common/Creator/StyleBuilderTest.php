@@ -8,8 +8,6 @@ use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 /**
  * Class StyleManagerTest
- *
- * @package Box\Spout\Writer\Common\Creator\Style
  */
 class StyleBuilderTest extends \PHPUnit_Framework_TestCase
 {

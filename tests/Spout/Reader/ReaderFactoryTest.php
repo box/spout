@@ -4,8 +4,6 @@ namespace Box\Spout\Reader;
 
 /**
  * Class ReaderFactoryTest
- *
- * @package Box\Spout\Writer
  */
 class ReaderFactoryTest extends \PHPUnit_Framework_TestCase
 {
