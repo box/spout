@@ -10,8 +10,6 @@ use Box\Spout\Common\Helper\StringHelper;
 /**
  * Class HelperFactory
  * Factory to create helpers
- *
- * @package Box\Spout\Common\Creator
  */
 class HelperFactory
 {

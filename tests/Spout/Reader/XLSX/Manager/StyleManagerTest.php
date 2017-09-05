@@ -9,12 +9,9 @@ use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 
 /**
  * Class StyleManagerTest
- *
- * @package Box\Spout\Reader\XLSX\Manager
  */
 class StyleManagerTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @param array $styleAttributes
      * @param array $customNumberFormats

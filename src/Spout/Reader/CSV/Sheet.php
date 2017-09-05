@@ -2,13 +2,10 @@
 
 namespace Box\Spout\Reader\CSV;
 
-use Box\Spout\Reader\CSV\Creator\EntityFactory;
 use Box\Spout\Reader\SheetInterface;
 
 /**
  * Class Sheet
- *
- * @package Box\Spout\Reader\CSV
  */
 class Sheet implements SheetInterface
 {

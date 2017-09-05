@@ -14,8 +14,6 @@ use Box\Spout\Reader\XLSX\Creator\ManagerFactory;
 /**
  * Class Reader
  * This class provides support to read data from a XLSX file
- *
- * @package Box\Spout\Reader\XLSX
  */
 class Reader extends ReaderAbstract
 {
@@ -31,7 +29,6 @@ class Reader extends ReaderAbstract
     /** @var SheetIterator To iterator over the XLSX sheets */
     protected $sheetIterator;
 
-
     /**
      * @param OptionsManagerInterface $optionsManager
      * @param GlobalFunctionsHelper $globalFunctionsHelper
@@ -42,8 +39,8 @@ class Reader extends ReaderAbstract
         OptionsManagerInterface $optionsManager,
         GlobalFunctionsHelper $globalFunctionsHelper,
         EntityFactoryInterface $entityFactory,
-        ManagerFactory $managerFactory)
-    {
+        ManagerFactory $managerFactory
+    ) {
         parent::__construct($optionsManager, $globalFunctionsHelper, $entityFactory);
         $this->managerFactory = $managerFactory;
     }
@@ -55,6 +52,7 @@ class Reader extends ReaderAbstract
     public function setTempFolder($tempFolder)
     {
         $this->optionsManager->setOption(Options::TEMP_FOLDER, $tempFolder);
+
         return $this;
     }
 
@@ -74,9 +72,9 @@ class Reader extends ReaderAbstract
      * and fetches all the available sheets.
      *
      * @param  string $filePath Path of the file to be read
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the file at the given path or its content cannot be read
      * @throws \Box\Spout\Reader\Exception\NoSheetsFoundException If there are no sheets in the file
+     * @return void
      */
     protected function openReader($filePath)
     {

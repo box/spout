@@ -7,8 +7,6 @@ use Box\Spout\Writer\Common\Manager\SheetManager;
 
 /**
  * Class SheetTest
- *
- * @package Box\Spout\Writer\Common\Entity
  */
 class SheetTest extends \PHPUnit_Framework_TestCase
 {

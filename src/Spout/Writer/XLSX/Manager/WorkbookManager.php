@@ -10,8 +10,6 @@ use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
 /**
  * Class WorkbookManager
  * XLSX workbook manager, providing the interfaces to work with workbook.
- *
- * @package Box\Spout\Writer\XLSX\Manager
  */
 class WorkbookManager extends WorkbookManagerAbstract
 {
@@ -45,6 +43,7 @@ class WorkbookManager extends WorkbookManagerAbstract
     public function getWorksheetFilePath(Sheet $sheet)
     {
         $worksheetFilesFolder = $this->fileSystemHelper->getXlWorksheetsFolder();
+
         return $worksheetFilesFolder . '/' . strtolower($sheet->getName()) . '.xml';
     }
 

@@ -5,8 +5,6 @@ namespace Box\Spout\Reader\ODS\Helper;
 /**
  * Class CellValueFormatter
  * This class provides helper functions to format cell values
- *
- * @package Box\Spout\Reader\ODS\Helper
  */
 class CellValueFormatter
 {
@@ -100,11 +98,11 @@ class CellValueFormatter
             foreach ($pNode->childNodes as $childNode) {
                 if ($childNode instanceof \DOMText) {
                     $currentPValue .= $childNode->nodeValue;
-                } else if ($childNode->nodeName === self::XML_NODE_S) {
+                } elseif ($childNode->nodeName === self::XML_NODE_S) {
                     $spaceAttribute = $childNode->getAttribute(self::XML_ATTRIBUTE_C);
-                    $numSpaces = (!empty($spaceAttribute)) ? intval($spaceAttribute) : 1;
+                    $numSpaces = (!empty($spaceAttribute)) ? (int) $spaceAttribute : 1;
                     $currentPValue .= str_repeat(' ', $numSpaces);
-                } else if ($childNode->nodeName === self::XML_NODE_A || $childNode->nodeName === self::XML_NODE_SPAN) {
+                } elseif ($childNode->nodeName === self::XML_NODE_A || $childNode->nodeName === self::XML_NODE_SPAN) {
                     $currentPValue .= $childNode->nodeValue;
                 }
             }
@@ -114,6 +112,7 @@ class CellValueFormatter
 
         $escapedCellValue = implode("\n", $pNodeValues);
         $cellValue = $this->escaper->unescape($escapedCellValue);
+
         return $cellValue;
     }
 
@@ -126,9 +125,11 @@ class CellValueFormatter
     protected function formatFloatCellValue($node)
     {
         $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_VALUE);
-        $nodeIntValue = intval($nodeValue);
+
+        $nodeIntValue = (int) $nodeValue;
         $nodeFloatValue = (float) $nodeValue;
         $cellValue = ((float) $nodeIntValue === $nodeFloatValue) ? $nodeIntValue : $nodeFloatValue;
+
         return $cellValue;
     }
 
@@ -141,6 +142,7 @@ class CellValueFormatter
     protected function formatBooleanCellValue($node)
     {
         $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_BOOLEAN_VALUE);
+
         return (bool) $nodeValue;
     }
 

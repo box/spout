@@ -5,8 +5,6 @@ namespace Box\Spout\Writer\Common\Entity;
 /**
  * Class Options
  * Writers' options holder
- *
- * @package Box\Spout\Writer\Common\Entity
  */
 abstract class Options
 {

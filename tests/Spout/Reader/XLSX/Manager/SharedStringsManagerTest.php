@@ -12,8 +12,6 @@ use Box\Spout\TestUsingResource;
 
 /**
  * Class SharedStringsManagerTest
- *
- * @package Box\Spout\Reader\XLSX\Manager
  */
 class SharedStringsManagerTest extends \PHPUnit_Framework_TestCase
 {

@@ -9,8 +9,6 @@ use Box\Spout\TestUsingResource;
 
 /**
  * Class ReaderTest
- *
- * @package Box\Spout\Reader\XLSX
  */
 class ReaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,7 +49,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
             ['one_sheet_with_shared_strings.xlsx', 5, 5],
             ['one_sheet_with_inline_strings.xlsx', 5, 5],
             ['two_sheets_with_shared_strings.xlsx', 10, 5],
-            ['two_sheets_with_inline_strings.xlsx', 10, 5]
+            ['two_sheets_with_inline_strings.xlsx', 10, 5],
         ];
     }
 
@@ -236,7 +234,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
                 \DateTime::createFromFormat('Y-m-d H:i:s', '1900-02-28 23:59:59'),
                 \DateTime::createFromFormat('Y-m-d H:i:s', '1900-03-01 00:00:00'),
                 \DateTime::createFromFormat('Y-m-d H:i:s', '1900-02-28 11:00:00'), // 1900-02-29 should be converted to 1900-02-28
-            ]
+            ],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }
@@ -258,7 +256,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
                 \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 23:29:00'),
                 \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 01:42:25'),
                 \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 13:42:25'),
-            ]
+            ],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }
@@ -579,7 +577,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $expectedRows = [
             ['A', 'B', 'C'],
             ['1', '2', '3'],
-            ['0', '0', '0']
+            ['0', '0', '0'],
         ];
         $this->assertEquals($expectedRows, $allRows, 'There should be only 3 rows, because zeros (0) are valid values');
     }
@@ -595,11 +593,10 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $expectedRows = [
             ['A', 'B', 'C'],
             ['0', '', ''],
-            ['1', '1', '']
+            ['1', '1', ''],
         ];
         $this->assertEquals($expectedRows, $allRows, 'There should be 3 rows, with equal length');
     }
-
 
     /**
      * https://github.com/box/spout/issues/195
@@ -617,7 +614,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedRows, $allRows, 'Cell values should not be trimmed');
     }
-
 
     /**
      * @param string $fileName

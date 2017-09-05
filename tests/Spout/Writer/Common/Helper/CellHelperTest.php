@@ -4,8 +4,6 @@ namespace Box\Spout\Writer\Common\Helper;
 
 /**
  * Class CellHelperTest
- *
- * @package Box\Spout\Writer\Common\Helper
  */
 class CellHelperTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,14 +39,14 @@ class CellHelperTest extends \PHPUnit_Framework_TestCase
     public function testIsEmpty()
     {
         $this->assertTrue(CellHelper::isEmpty(null));
-        $this->assertTrue(CellHelper::isEmpty(""));
+        $this->assertTrue(CellHelper::isEmpty(''));
 
-        $this->assertFalse(CellHelper::isEmpty("string"));
+        $this->assertFalse(CellHelper::isEmpty('string'));
         $this->assertFalse(CellHelper::isEmpty(0));
         $this->assertFalse(CellHelper::isEmpty(1));
         $this->assertFalse(CellHelper::isEmpty(true));
         $this->assertFalse(CellHelper::isEmpty(false));
-        $this->assertFalse(CellHelper::isEmpty(["string"]));
+        $this->assertFalse(CellHelper::isEmpty(['string']));
         $this->assertFalse(CellHelper::isEmpty(new \stdClass()));
     }
 
@@ -57,14 +55,14 @@ class CellHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsNonEmptyString()
     {
-        $this->assertTrue(CellHelper::isNonEmptyString("string"));
+        $this->assertTrue(CellHelper::isNonEmptyString('string'));
 
-        $this->assertFalse(CellHelper::isNonEmptyString(""));
+        $this->assertFalse(CellHelper::isNonEmptyString(''));
         $this->assertFalse(CellHelper::isNonEmptyString(0));
         $this->assertFalse(CellHelper::isNonEmptyString(1));
         $this->assertFalse(CellHelper::isNonEmptyString(true));
         $this->assertFalse(CellHelper::isNonEmptyString(false));
-        $this->assertFalse(CellHelper::isNonEmptyString(["string"]));
+        $this->assertFalse(CellHelper::isNonEmptyString(['string']));
         $this->assertFalse(CellHelper::isNonEmptyString(new \stdClass()));
         $this->assertFalse(CellHelper::isNonEmptyString(null));
     }
@@ -83,8 +81,8 @@ class CellHelperTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(CellHelper::isNumeric(0b10100111001));
         $this->assertTrue(CellHelper::isNumeric(1337e0));
 
-        $this->assertFalse(CellHelper::isNumeric("0"));
-        $this->assertFalse(CellHelper::isNumeric("42"));
+        $this->assertFalse(CellHelper::isNumeric('0'));
+        $this->assertFalse(CellHelper::isNumeric('42'));
         $this->assertFalse(CellHelper::isNumeric(true));
         $this->assertFalse(CellHelper::isNumeric([2]));
         $this->assertFalse(CellHelper::isNumeric(new \stdClass()));
@@ -101,10 +99,10 @@ class CellHelperTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse(CellHelper::isBoolean(0));
         $this->assertFalse(CellHelper::isBoolean(1));
-        $this->assertFalse(CellHelper::isBoolean("0"));
-        $this->assertFalse(CellHelper::isBoolean("1"));
-        $this->assertFalse(CellHelper::isBoolean("true"));
-        $this->assertFalse(CellHelper::isBoolean("false"));
+        $this->assertFalse(CellHelper::isBoolean('0'));
+        $this->assertFalse(CellHelper::isBoolean('1'));
+        $this->assertFalse(CellHelper::isBoolean('true'));
+        $this->assertFalse(CellHelper::isBoolean('false'));
         $this->assertFalse(CellHelper::isBoolean([true]));
         $this->assertFalse(CellHelper::isBoolean(new \stdClass()));
         $this->assertFalse(CellHelper::isBoolean(null));

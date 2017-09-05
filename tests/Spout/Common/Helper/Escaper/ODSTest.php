@@ -6,8 +6,6 @@ use Box\Spout\Common\Helper\Escaper;
 
 /**
  * Class ODSTest
- *
- * @package Box\Spout\Common\Helper\Escaper
  */
 class ODSTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,8 +20,8 @@ class ODSTest extends \PHPUnit_Framework_TestCase
             ["\n", "\n"],
             ["\r", "\r"],
             ["\t", "\t"],
-            ["\v", "�"],
-            ["\f", "�"],
+            ["\v", '�'],
+            ["\f", '�'],
         ];
     }
 

@@ -2,15 +2,13 @@
 
 namespace Box\Spout\Reader\XLSX;
 
+use Box\Spout\Reader\Exception\NoSheetsFoundException;
 use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Reader\XLSX\Manager\SheetManager;
-use Box\Spout\Reader\Exception\NoSheetsFoundException;
 
 /**
  * Class SheetIterator
  * Iterate over XLSX sheet.
- *
- * @package Box\Spout\Reader\XLSX
  */
 class SheetIterator implements IteratorInterface
 {
@@ -36,7 +34,7 @@ class SheetIterator implements IteratorInterface
 
     /**
      * Rewind the Iterator to the first element
-     * @link http://php.net/manual/en/iterator.rewind.php
+     * @see http://php.net/manual/en/iterator.rewind.php
      *
      * @return void
      */
@@ -47,7 +45,7 @@ class SheetIterator implements IteratorInterface
 
     /**
      * Checks if current position is valid
-     * @link http://php.net/manual/en/iterator.valid.php
+     * @see http://php.net/manual/en/iterator.valid.php
      *
      * @return bool
      */
@@ -58,7 +56,7 @@ class SheetIterator implements IteratorInterface
 
     /**
      * Move forward to next element
-     * @link http://php.net/manual/en/iterator.next.php
+     * @see http://php.net/manual/en/iterator.next.php
      *
      * @return void
      */
@@ -75,7 +73,7 @@ class SheetIterator implements IteratorInterface
 
     /**
      * Return the current element
-     * @link http://php.net/manual/en/iterator.current.php
+     * @see http://php.net/manual/en/iterator.current.php
      *
      * @return \Box\Spout\Reader\XLSX\Sheet
      */
@@ -86,7 +84,7 @@ class SheetIterator implements IteratorInterface
 
     /**
      * Return the key of the current element
-     * @link http://php.net/manual/en/iterator.key.php
+     * @see http://php.net/manual/en/iterator.key.php
      *
      * @return int
      */

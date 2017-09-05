@@ -3,12 +3,9 @@
 namespace Box\Spout\Reader\Wrapper;
 
 use Box\Spout\TestUsingResource;
-use Box\Spout\Reader\Exception\XMLProcessingException;
 
 /**
  * Class XMLReaderTest
- *
- * @package Box\Spout\Reader\Wrapper
  */
 class XMLReaderTest extends \PHPUnit_Framework_TestCase
 {

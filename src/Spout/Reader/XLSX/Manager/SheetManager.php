@@ -2,15 +2,12 @@
 
 namespace Box\Spout\Reader\XLSX\Manager;
 
-use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 use Box\Spout\Reader\XLSX\Sheet;
 
 /**
  * Class SheetManager
  * This class manages XLSX sheets
- *
- * @package Box\Spout\Reader\XLSX\Manager
  */
 class SheetManager
 {
@@ -55,6 +52,7 @@ class SheetManager
      * @param \Box\Spout\Reader\XLSX\Manager\SharedStringsManager $sharedStringsManager Manages shared strings
      * @param \Box\Spout\Common\Helper\Escaper\XLSX $escaper Used to unescape XML data
      * @param EntityFactory $entityFactory Factory to create entities
+     * @param mixed $sharedStringsManager
      */
     public function __construct($filePath, $optionsManager, $sharedStringsManager, $escaper, $entityFactory)
     {
@@ -85,11 +83,11 @@ class SheetManager
                     // The "workbookView" node is located before "sheet" nodes, ensuring that
                     // the active sheet is known before parsing sheets data.
                     $activeSheetIndex = (int) $xmlReader->getAttribute(self::XML_ATTRIBUTE_ACTIVE_TAB);
-                } else if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_SHEET)) {
+                } elseif ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_SHEET)) {
                     $isSheetActive = ($sheetIndex === $activeSheetIndex);
                     $sheets[] = $this->getSheetFromSheetXMLNode($xmlReader, $sheetIndex, $isSheetActive);
                     $sheetIndex++;
-                } else if ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_SHEETS)) {
+                } elseif ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_SHEETS)) {
                     // stop reading once all sheets have been read
                     break;
                 }

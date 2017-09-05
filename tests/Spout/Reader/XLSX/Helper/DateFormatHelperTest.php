@@ -4,8 +4,6 @@ namespace Box\Spout\Reader\XLSX\Helper;
 
 /**
  * Class DateFormatHelperTest
- *
- * @package Box\Spout\Reader\XLSX\Helper
  */
 class DateFormatHelperTest extends \PHPUnit_Framework_TestCase
 {

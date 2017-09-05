@@ -3,19 +3,15 @@
 namespace Box\Spout\Reader\CSV;
 
 use Box\Spout\Common\Creator\HelperFactory;
+use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Reader\CSV\Creator\EntityFactory;
 use Box\Spout\Reader\CSV\Manager\OptionsManager;
-use Box\Spout\Reader\ReaderFactory;
-use Box\Spout\Common\Type;
-use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Reader\ReaderInterface;
 use Box\Spout\TestUsingResource;
 
 /**
  * Class ReaderTest
- *
- * @package Box\Spout\Reader\CSV
  */
 class ReaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -78,7 +74,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $reader = $this->createCSVReader(null, $helperStub);
         $reader->open($resourcePath);
     }
-
 
     /**
      * @return void
@@ -144,7 +139,9 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     {
         $allRows = $this->getAllRowsForFile(
             'csv_with_multiple_empty_lines.csv',
-            ',', '"', EncodingHelper::ENCODING_UTF8,
+            ',',
+            '"',
+            EncodingHelper::ENCODING_UTF8,
             $shouldPreserveEmptyRows = true
         );
 
@@ -379,7 +376,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $expectedRows = [
             ['A', 'B', 'C'],
             ['1', '2', '3'],
-            ['0', '0', '0']
+            ['0', '0', '0'],
         ];
         $this->assertEquals($expectedRows, $allRows, 'There should be only 3 rows, because zeros (0) are valid values');
     }
@@ -395,7 +392,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $expectedRows = [
             ['A', 'B', 'C'],
             ['0', '', ''],
-            ['1', '1', '']
+            ['1', '1', ''],
         ];
         $this->assertEquals($expectedRows, $allRows, 'There should be 3 rows, with equal length');
     }
@@ -490,8 +487,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $fieldDelimiter = ',',
         $fieldEnclosure = '"',
         $encoding = EncodingHelper::ENCODING_UTF8,
-        $shouldPreserveEmptyRows = false)
-    {
+        $shouldPreserveEmptyRows = false
+    ) {
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
@@ -514,5 +511,4 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         return $allRows;
     }
-
 }

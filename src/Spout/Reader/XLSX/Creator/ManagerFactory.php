@@ -7,12 +7,9 @@ use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Reader\XLSX\Manager\SheetManager;
 use Box\Spout\Reader\XLSX\Manager\StyleManager;
 
-
 /**
  * Class ManagerFactory
  * Factory to create managers
- *
- * @package Box\Spout\Reader\XLSX\Creator
  */
 class ManagerFactory
 {
@@ -53,6 +50,7 @@ class ManagerFactory
     public function createSheetManager($filePath, $optionsManager, $sharedStringsManager, $entityFactory)
     {
         $escaper = $this->helperFactory->createStringsEscaper();
+
         return new SheetManager($filePath, $optionsManager, $sharedStringsManager, $escaper, $entityFactory);
     }
 

@@ -5,18 +5,16 @@ namespace Box\Spout\Reader\XLSX\Creator;
 use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Common\XMLProcessor;
+use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Reader\XLSX\RowIterator;
 use Box\Spout\Reader\XLSX\Sheet;
 use Box\Spout\Reader\XLSX\SheetIterator;
-use Box\Spout\Reader\Wrapper\XMLReader;
 use MongoDB\Driver\Manager;
 
 /**
  * Class EntityFactory
  * Factory to create entities
- *
- * @package Box\Spout\Reader\XLSX\Creator
  */
 class EntityFactory implements EntityFactoryInterface
 {
@@ -45,6 +43,7 @@ class EntityFactory implements EntityFactoryInterface
     public function createSheetIterator($filePath, $optionsManager, $sharedStringsManager)
     {
         $sheetManager = $this->managerFactory->createSheetManager($filePath, $optionsManager, $sharedStringsManager, $this);
+
         return new SheetIterator($sheetManager);
     }
 
@@ -65,9 +64,10 @@ class EntityFactory implements EntityFactoryInterface
         $sheetName,
         $isSheetActive,
         $optionsManager,
-        $sharedStringsManager)
-    {
+        $sharedStringsManager
+    ) {
         $rowIterator = $this->createRowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsManager);
+
         return new Sheet($rowIterator, $sheetIndex, $sheetName, $isSheetActive);
     }
 

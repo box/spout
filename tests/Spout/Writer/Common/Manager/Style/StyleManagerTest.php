@@ -6,8 +6,6 @@ use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 
 /**
  * Class StyleManagerTest
- *
- * @package Box\Spout\Writer\Common\Manager\Style
  */
 class StyleManagerTest extends \PHPUnit_Framework_TestCase
 {

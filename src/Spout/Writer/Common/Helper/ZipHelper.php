@@ -7,8 +7,6 @@ use Box\Spout\Writer\Common\Creator\EntityFactory;
 /**
  * Class ZipHelper
  * This class provides helper functions to create zip files
- *
- * @package Box\Spout\Writer\Common\Helper
  */
 class ZipHelper
 {
@@ -40,7 +38,7 @@ class ZipHelper
         $zip = $this->entityFactory->createZipArchive();
         $zipFilePath = $tmpFolderPath . self::ZIP_EXTENSION;
 
-        $zip->open($zipFilePath, \ZipArchive::CREATE|\ZipArchive::OVERWRITE);
+        $zip->open($zipFilePath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
         return $zip;
     }
@@ -184,6 +182,7 @@ class ZipHelper
     protected function getNormalizedRealPath($path)
     {
         $realPath = realpath($path);
+
         return str_replace(DIRECTORY_SEPARATOR, '/', $realPath);
     }
 

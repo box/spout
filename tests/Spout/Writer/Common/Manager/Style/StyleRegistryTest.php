@@ -2,16 +2,11 @@
 
 namespace Box\Spout\Writer\Common\Manager\Style;
 
-use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Entity\Style\Border;
-use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
  * Class StyleRegistryTest
- *
- * @package Box\Spout\Writer\Common\Manager\Style
  */
 class StyleRegistryTest extends \PHPUnit_Framework_TestCase
 {

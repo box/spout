@@ -6,8 +6,6 @@ use Box\Spout\Writer\Common\Helper\CellHelper;
 
 /**
  * Class Cell
- *
- * @package Box\Spout\Writer\Common\Entity
  */
 class Cell
 {
@@ -46,13 +44,13 @@ class Cell
      * The value of this cell
      * @var mixed|null
      */
-    protected $value = null;
+    protected $value;
 
     /**
      * The cell type
      * @var int|null
      */
-    protected $type = null;
+    protected $type;
 
     /**
      * Cell constructor.
@@ -165,6 +163,6 @@ class Cell
      */
     public function __toString()
     {
-        return (string)$this->value;
+        return (string) $this->value;
     }
 }

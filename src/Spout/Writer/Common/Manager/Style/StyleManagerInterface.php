@@ -6,8 +6,6 @@ use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
  * Interface StyleHManagernterface
- *
- * @package Box\Spout\Writer\Common\Manager\Style
  */
 interface StyleManagerInterface
 {

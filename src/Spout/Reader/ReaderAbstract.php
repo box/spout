@@ -12,7 +12,6 @@ use Box\Spout\Reader\Exception\ReaderNotOpenedException;
 /**
  * Class ReaderAbstract
  *
- * @package Box\Spout\Reader
  * @abstract
  */
 abstract class ReaderAbstract implements ReaderInterface
@@ -66,8 +65,8 @@ abstract class ReaderAbstract implements ReaderInterface
     public function __construct(
         OptionsManagerInterface $optionsManager,
         GlobalFunctionsHelper $globalFunctionsHelper,
-        EntityFactoryInterface $entityFactory)
-    {
+        EntityFactoryInterface $entityFactory
+    ) {
         $this->optionsManager = $optionsManager;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
         $this->entityFactory = $entityFactory;
@@ -83,6 +82,7 @@ abstract class ReaderAbstract implements ReaderInterface
     public function setShouldFormatDates($shouldFormatDates)
     {
         $this->optionsManager->setOption(Options::SHOULD_FORMAT_DATES, $shouldFormatDates);
+
         return $this;
     }
 
@@ -96,6 +96,7 @@ abstract class ReaderAbstract implements ReaderInterface
     public function setShouldPreserveEmptyRows($shouldPreserveEmptyRows)
     {
         $this->optionsManager->setOption(Options::SHOULD_PRESERVE_EMPTY_ROWS, $shouldPreserveEmptyRows);
+
         return $this;
     }
 
@@ -105,8 +106,8 @@ abstract class ReaderAbstract implements ReaderInterface
      *
      * @api
      * @param  string $filePath Path of the file to be read
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the file at the given path does not exist, is not readable or is corrupted
+     * @return void
      */
     public function open($filePath)
     {
@@ -118,7 +119,8 @@ abstract class ReaderAbstract implements ReaderInterface
             // we skip the checks if the provided file path points to a PHP stream
             if (!$this->globalFunctionsHelper->file_exists($filePath)) {
                 throw new IOException("Could not open $filePath for reading! File does not exist.");
-            } else if (!$this->globalFunctionsHelper->is_readable($filePath)) {
+            }
+            if (!$this->globalFunctionsHelper->is_readable($filePath)) {
                 throw new IOException("Could not open $filePath for reading! File is not readable.");
             }
         }
@@ -162,6 +164,7 @@ abstract class ReaderAbstract implements ReaderInterface
         if (preg_match('/^(\w+):\/\//', $filePath, $matches)) {
             $streamScheme = $matches[1];
         }
+
         return $streamScheme;
     }
 
@@ -188,6 +191,7 @@ abstract class ReaderAbstract implements ReaderInterface
     protected function isSupportedStreamWrapper($filePath)
     {
         $streamScheme = $this->getStreamWrapperScheme($filePath);
+
         return ($streamScheme !== null) ?
             in_array($streamScheme, $this->globalFunctionsHelper->stream_get_wrappers()) :
             true;
@@ -202,6 +206,7 @@ abstract class ReaderAbstract implements ReaderInterface
     protected function isPhpStream($filePath)
     {
         $streamScheme = $this->getStreamWrapperScheme($filePath);
+
         return ($streamScheme === 'php');
     }
 
@@ -209,8 +214,8 @@ abstract class ReaderAbstract implements ReaderInterface
      * Returns an iterator to iterate over sheets.
      *
      * @api
-     * @return \Iterator To iterate over sheets
      * @throws \Box\Spout\Reader\Exception\ReaderNotOpenedException If called before opening the reader
+     * @return \Iterator To iterate over sheets
      */
     public function getSheetIterator()
     {

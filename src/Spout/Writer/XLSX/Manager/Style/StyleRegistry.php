@@ -7,8 +7,6 @@ use Box\Spout\Writer\Common\Entity\Style\Style;
 /**
  * Class StyleRegistry
  * Registry for all used styles
- *
- * @package Box\Spout\Writer\XLSX\Manager\Style
  */
 class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
 {
@@ -80,7 +78,6 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
                 $this->registeredFills[$backgroundColor] = $styleId;
                 $this->styleIdToFillMappingTable[$styleId] = $this->fillIndex++;
             }
-
         } else {
             // The fillId maps a style to a fill declaration
             // When there is no background color definition - we default to 0
@@ -122,7 +119,6 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
                 $this->registeredBorders[$serializedBorder] = $styleId;
                 $this->styleIdToBorderMappingTable[$styleId] = count($this->registeredBorders);
             }
-
         } else {
             // If no border should be applied - the mapping is the default border: 0
             $this->styleIdToBorderMappingTable[$styleId] = 0;

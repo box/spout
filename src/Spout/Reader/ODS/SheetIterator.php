@@ -6,15 +6,12 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Reader\ODS\Creator\EntityFactory;
-use Box\Spout\Reader\ODS\Creator\HelperFactory;
 use Box\Spout\Reader\ODS\Helper\SettingsHelper;
 use Box\Spout\Reader\Wrapper\XMLReader;
 
 /**
  * Class SheetIterator
  * Iterate over ODS sheet.
- *
- * @package Box\Spout\Reader\ODS
  */
 class SheetIterator implements IteratorInterface
 {
@@ -67,10 +64,10 @@ class SheetIterator implements IteratorInterface
 
     /**
      * Rewind the Iterator to the first element
-     * @link http://php.net/manual/en/iterator.rewind.php
+     * @see http://php.net/manual/en/iterator.rewind.php
      *
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If unable to open the XML file containing sheets' data
+     * @return void
      */
     public function rewind()
     {
@@ -84,15 +81,15 @@ class SheetIterator implements IteratorInterface
         try {
             $this->hasFoundSheet = $this->xmlReader->readUntilNodeFound(self::XML_NODE_TABLE);
         } catch (XMLProcessingException $exception) {
-           throw new IOException("The content.xml file is invalid and cannot be read. [{$exception->getMessage()}]");
-       }
+            throw new IOException("The content.xml file is invalid and cannot be read. [{$exception->getMessage()}]");
+        }
 
         $this->currentSheetIndex = 0;
     }
 
     /**
      * Checks if current position is valid
-     * @link http://php.net/manual/en/iterator.valid.php
+     * @see http://php.net/manual/en/iterator.valid.php
      *
      * @return bool
      */
@@ -103,7 +100,7 @@ class SheetIterator implements IteratorInterface
 
     /**
      * Move forward to next element
-     * @link http://php.net/manual/en/iterator.next.php
+     * @see http://php.net/manual/en/iterator.next.php
      *
      * @return void
      */
@@ -118,7 +115,7 @@ class SheetIterator implements IteratorInterface
 
     /**
      * Return the current element
-     * @link http://php.net/manual/en/iterator.current.php
+     * @see http://php.net/manual/en/iterator.current.php
      *
      * @return \Box\Spout\Reader\ODS\Sheet
      */
@@ -151,7 +148,7 @@ class SheetIterator implements IteratorInterface
 
     /**
      * Return the key of the current element
-     * @link http://php.net/manual/en/iterator.key.php
+     * @see http://php.net/manual/en/iterator.key.php
      *
      * @return int
      */

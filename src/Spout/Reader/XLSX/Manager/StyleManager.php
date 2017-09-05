@@ -7,8 +7,6 @@ use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 /**
  * Class StyleManager
  * This class manages XLSX styles
- *
- * @package Box\Spout\Reader\XLSX\Manager
  */
 class StyleManager
 {
@@ -118,8 +116,7 @@ class StyleManager
             while ($xmlReader->read()) {
                 if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_NUM_FMTS)) {
                     $this->extractNumberFormats($xmlReader);
-
-                } else if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL_XFS)) {
+                } elseif ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_CELL_XFS)) {
                     $this->extractStyleAttributes($xmlReader);
                 }
             }
@@ -140,10 +137,10 @@ class StyleManager
     {
         while ($xmlReader->read()) {
             if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_NUM_FMT)) {
-                $numFmtId = intval($xmlReader->getAttribute(self::XML_ATTRIBUTE_NUM_FMT_ID));
+                $numFmtId = (int) ($xmlReader->getAttribute(self::XML_ATTRIBUTE_NUM_FMT_ID));
                 $formatCode = $xmlReader->getAttribute(self::XML_ATTRIBUTE_FORMAT_CODE);
                 $this->customNumberFormats[$numFmtId] = $formatCode;
-            } else if ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_NUM_FMTS)) {
+            } elseif ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_NUM_FMTS)) {
                 // Once done reading "numFmts" node's children
                 break;
             }
@@ -163,16 +160,16 @@ class StyleManager
         while ($xmlReader->read()) {
             if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_XF)) {
                 $numFmtId = $xmlReader->getAttribute(self::XML_ATTRIBUTE_NUM_FMT_ID);
-                $normalizedNumFmtId = ($numFmtId !== null) ? intval($numFmtId) : null;
+                $normalizedNumFmtId = ($numFmtId !== null) ? (int) $numFmtId : null;
 
                 $applyNumberFormat = $xmlReader->getAttribute(self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT);
-                $normalizedApplyNumberFormat = ($applyNumberFormat !== null) ? !!$applyNumberFormat : null;
+                $normalizedApplyNumberFormat = ($applyNumberFormat !== null) ? (bool) $applyNumberFormat : null;
 
                 $this->stylesAttributes[] = [
-                    self::XML_ATTRIBUTE_NUM_FMT_ID => $normalizedNumFmtId,
+                    self::XML_ATTRIBUTE_NUM_FMT_ID          => $normalizedNumFmtId,
                     self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT => $normalizedApplyNumberFormat,
                 ];
-            } else if ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_CELL_XFS)) {
+            } elseif ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_CELL_XFS)) {
                 // Once done reading "cellXfs" node's children
                 break;
             }

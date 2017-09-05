@@ -2,15 +2,13 @@
 
 namespace Box\Spout\Writer\XLSX\Manager;
 
-use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Common\Manager\OptionsManagerAbstract;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Options;
 
 /**
  * Class OptionsManager
  * XLSX Writer options manager
- *
- * @package Box\Spout\Writer\XLSX\Manager
  */
 class OptionsManager extends OptionsManagerAbstract
 {
@@ -32,7 +30,7 @@ class OptionsManager extends OptionsManagerAbstract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getSupportedOptions()
     {
@@ -45,7 +43,7 @@ class OptionsManager extends OptionsManagerAbstract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setDefaultOptions()
     {

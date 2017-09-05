@@ -2,8 +2,6 @@
 
 namespace Box\Spout\Reader\ODS\Creator;
 
-use Box\Spout\Common\Helper\GlobalFunctionsHelper;
-use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Common\XMLProcessor;
@@ -15,8 +13,6 @@ use Box\Spout\Reader\Wrapper\XMLReader;
 /**
  * Class EntityFactory
  * Factory to create entities
- *
- * @package Box\Spout\Reader\ODS\Creator
  */
 class EntityFactory implements EntityFactoryInterface
 {

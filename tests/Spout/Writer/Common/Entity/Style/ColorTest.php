@@ -4,8 +4,6 @@ namespace Box\Spout\Writer\Common\Entity\Style;
 
 /**
  * Class ColorTest
- *
- * @package Box\Spout\Writer\Common\Entity\Style
  */
 class ColorTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,7 +12,6 @@ class ColorTest extends \PHPUnit_Framework_TestCase
      */
     public function dataProviderForTestRGB()
     {
-
         return [
             [0, 0, 0, Color::BLACK],
             [255, 255, 255, Color::WHITE],

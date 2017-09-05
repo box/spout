@@ -6,8 +6,6 @@ use Box\Spout\Common\Helper\Escaper;
 
 /**
  * Class CellValueFormatterTest
- *
- * @package Box\Spout\Reader\XLSX\Helper
  */
 class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,7 +45,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->expects($this->atLeastOnce())
             ->method('item')
             ->with(0)
-            ->will($this->returnValue((object)['nodeValue' => $nodeValue]));
+            ->will($this->returnValue((object) ['nodeValue' => $nodeValue]));
 
         $nodeMock = $this->getMockBuilder('DOMElement')->disableOriginalConstructor()->getMock();
 
@@ -162,7 +160,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->expects($this->atLeastOnce())
             ->method('item')
             ->with(0)
-            ->will($this->returnValue((object)['nodeValue' => $value]));
+            ->will($this->returnValue((object) ['nodeValue' => $value]));
 
         $nodeMock = $this->getMockBuilder('DOMElement')->disableOriginalConstructor()->getMock();
         $nodeMock

@@ -2,10 +2,10 @@
 
 namespace Box\Spout\Writer\XLSX\Creator;
 
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
-use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Manager\SheetManager;
 use Box\Spout\Writer\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
@@ -16,8 +16,6 @@ use Box\Spout\Writer\XLSX\Manager\WorksheetManager;
 /**
  * Class ManagerFactory
  * Factory for managers needed by the XLSX Writer
- *
- * @package Box\Spout\Writer\XLSX\Creator
  */
 class ManagerFactory implements ManagerFactoryInterface
 {
@@ -75,8 +73,7 @@ class ManagerFactory implements ManagerFactoryInterface
         OptionsManagerInterface $optionsManager,
         StyleManager $styleManager,
         SharedStringsManager $sharedStringsManager
-    )
-    {
+    ) {
         $stringsEscaper = $this->helperFactory->createStringsEscaper();
         $stringsHelper = $this->helperFactory->createStringHelper();
 
@@ -89,6 +86,7 @@ class ManagerFactory implements ManagerFactoryInterface
     public function createSheetManager()
     {
         $stringHelper = $this->helperFactory->createStringHelper();
+
         return new SheetManager($stringHelper);
     }
 
@@ -99,6 +97,7 @@ class ManagerFactory implements ManagerFactoryInterface
     private function createStyleManager(OptionsManagerInterface $optionsManager)
     {
         $styleRegistry = $this->createStyleRegistry($optionsManager);
+
         return new StyleManager($styleRegistry);
     }
 
@@ -109,6 +108,7 @@ class ManagerFactory implements ManagerFactoryInterface
     private function createStyleRegistry(OptionsManagerInterface $optionsManager)
     {
         $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
+
         return new StyleRegistry($defaultRowStyle);
     }
 
@@ -119,6 +119,7 @@ class ManagerFactory implements ManagerFactoryInterface
     private function createSharedStringsManager($xlFolder)
     {
         $stringEscaper = $this->helperFactory->createStringsEscaper();
+
         return new SharedStringsManager($xlFolder, $stringEscaper);
     }
 }

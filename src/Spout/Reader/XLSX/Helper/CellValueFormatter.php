@@ -8,8 +8,6 @@ use Box\Spout\Reader\XLSX\Manager\StyleManager;
 /**
  * Class CellValueFormatter
  * This class provides helper functions to format cell values
- *
- * @package Box\Spout\Reader\XLSX\Helper
  */
 class CellValueFormatter
 {
@@ -77,7 +75,7 @@ class CellValueFormatter
     {
         // Default cell type is "n"
         $cellType = $node->getAttribute(self::XML_ATTRIBUTE_TYPE) ?: self::CELL_TYPE_NUMERIC;
-        $cellStyleId = intval($node->getAttribute(self::XML_ATTRIBUTE_STYLE_ID));
+        $cellStyleId = (int) $node->getAttribute(self::XML_ATTRIBUTE_STYLE_ID);
         $vNodeValue = $this->getVNodeValue($node);
 
         if (($vNodeValue === '') && ($cellType !== self::CELL_TYPE_INLINE_STRING)) {
@@ -113,6 +111,7 @@ class CellValueFormatter
         // for cell types having a "v" tag containing the value.
         // if not, the returned value should be empty string.
         $vNode = $node->getElementsByTagName(self::XML_NODE_VALUE)->item(0);
+
         return ($vNode !== null) ? $vNode->nodeValue : '';
     }
 
@@ -128,6 +127,7 @@ class CellValueFormatter
         // <c r="A1" t="inlineStr"><is><t>[INLINE_STRING]</t></is></c>
         $tNode = $node->getElementsByTagName(self::XML_NODE_INLINE_STRING_VALUE)->item(0);
         $cellValue = $this->escaper->unescape($tNode->nodeValue);
+
         return $cellValue;
     }
 
@@ -141,9 +141,10 @@ class CellValueFormatter
     {
         // shared strings are formatted this way:
         // <c r="A1" t="s"><v>[SHARED_STRING_INDEX]</v></c>
-        $sharedStringIndex = intval($nodeValue);
+        $sharedStringIndex = (int) $nodeValue;
         $escapedCellValue = $this->sharedStringsManager->getStringAtIndex($sharedStringIndex);
         $cellValue = $this->escaper->unescape($escapedCellValue);
+
         return $cellValue;
     }
 
@@ -157,6 +158,7 @@ class CellValueFormatter
     {
         $escapedCellValue = trim($nodeValue);
         $cellValue = $this->escaper->unescape($escapedCellValue);
+
         return $cellValue;
     }
 
@@ -175,9 +177,9 @@ class CellValueFormatter
         $shouldFormatAsDate = $this->styleManager->shouldFormatNumericValueAsDate($cellStyleId);
 
         if ($shouldFormatAsDate) {
-            $cellValue = $this->formatExcelTimestampValue(floatval($nodeValue), $cellStyleId);
+            $cellValue = $this->formatExcelTimestampValue((float) $nodeValue, $cellStyleId);
         } else {
-            $nodeIntValue = intval($nodeValue);
+            $nodeIntValue = (int) $nodeValue;
             $nodeFloatValue = (float) $nodeValue;
             $cellValue = ((float) $nodeIntValue === $nodeFloatValue) ? $nodeIntValue : $nodeFloatValue;
         }
@@ -204,7 +206,7 @@ class CellValueFormatter
         if ($nodeValue >= 1) {
             // Values greater than 1 represent "dates". The value 1.0 representing the "base" date: 1900-01-01.
             $cellValue = $this->formatExcelTimestampValueAsDateValue($nodeValue, $cellStyleId);
-        } else if ($nodeValue >= 0) {
+        } elseif ($nodeValue >= 0) {
             // Values between 0 and 1 represent "times".
             $cellValue = $this->formatExcelTimestampValueAsTimeValue($nodeValue, $cellStyleId);
         } else {
@@ -262,7 +264,7 @@ class CellValueFormatter
 
         try {
             $dateObj = \DateTime::createFromFormat('|Y-m-d', '1899-12-31');
-            $dateObj->modify('+' . intval($nodeValue) . 'days');
+            $dateObj->modify('+' . (int) $nodeValue . 'days');
             $dateObj->modify('+' . $secondsRemainder . 'seconds');
 
             if ($this->shouldFormatDates) {

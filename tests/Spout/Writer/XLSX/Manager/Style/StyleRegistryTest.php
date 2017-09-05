@@ -8,8 +8,6 @@ use Box\Spout\Writer\Common\Entity\Style\Color;
 
 /**
  * Class StyleRegistryTest
- *
- * @package Box\Spout\Writer\XLSX\Manager\Style
  */
 class StyleRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,6 +17,7 @@ class StyleRegistryTest extends \PHPUnit_Framework_TestCase
     private function getStyleRegistry()
     {
         $defaultStyle = (new StyleBuilder())->build();
+
         return new StyleRegistry($defaultStyle);
     }
 
@@ -53,7 +52,7 @@ class StyleRegistryTest extends \PHPUnit_Framework_TestCase
     public function testRegisterStyleAlsoRegistersBorders()
     {
         $styleRegistry = $this->getStyleRegistry();
-        
+
         $borderLeft = (new BorderBuilder())->setBorderLeft()->build();
         $borderRight = (new BorderBuilder())->setBorderRight()->build();
 

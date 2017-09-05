@@ -9,8 +9,6 @@ use Box\Spout\TestUsingResource;
 
 /**
  * Class ReaderTest
- *
- * @package Box\Spout\Reader\ODS
  */
 class ReaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -134,9 +132,9 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $allRows = $this->getAllRowsForFile($fileName);
 
         $expectedRows = [
-            ['header1','header2','header3','header4'],
-            ['val11','val12','val13','val14'],
-            ['val21','','val23','val23'],
+            ['header1', 'header2', 'header3', 'header4'],
+            ['val11', 'val12', 'val13', 'val14'],
+            ['val21', '', 'val23', 'val23'],
             ['', 10.43, 29.11],
         ];
 
@@ -149,7 +147,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expectedRows, $allRows);
     }
-
 
     /**
      * @return void
@@ -277,7 +274,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         ];
         $this->assertEquals([$expectedRow], $allRows);
     }
-
 
     /**
      * @NOTE: The LIBXML_NOENT is used to ACTUALLY substitute entities (and should therefore not be used)
@@ -450,7 +446,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $expectedRows = [
             ['A', 'B', 'C'],
             ['1', '2', '3'],
-            ['0', '0', '0']
+            ['0', '0', '0'],
         ];
         $this->assertEquals($expectedRows, $allRows, 'There should be only 3 rows, because zeros (0) are valid values');
     }
@@ -466,7 +462,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $expectedRows = [
             ['A', 'B', 'C'],
             ['0', '', ''],
-            ['1', '1', '']
+            ['1', '1', ''],
         ];
         $this->assertEquals($expectedRows, $allRows, 'There should be 3 rows, with equal length');
     }
@@ -513,7 +509,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $allRows = $this->getAllRowsForFile('sheet_with_inline_font_formatting.ods');
 
         $expectedRows = [
-            ['I am a yellow bird']
+            ['I am a yellow bird'],
         ];
 
         $this->assertEquals($expectedRows, $allRows, 'Text formatted inline should be read');

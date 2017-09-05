@@ -5,15 +5,13 @@ namespace Box\Spout\Writer\Common\Entity;
 /**
  * Class Worksheet
  * Entity describing a Worksheet
- *
- * @package Box\Spout\Writer\Common\Entity
  */
 class Worksheet
 {
     /** @var string Path to the XML file that will contain the sheet data */
     private $filePath;
 
-    /** @var Resource Pointer to the sheet data file (e.g. xl/worksheets/sheet1.xml) */
+    /** @var resource Pointer to the sheet data file (e.g. xl/worksheets/sheet1.xml) */
     private $filePointer;
 
     /** @var Sheet The "external" sheet */
@@ -49,7 +47,7 @@ class Worksheet
     }
 
     /**
-     * @return Resource
+     * @return resource
      */
     public function getFilePointer()
     {
@@ -57,7 +55,7 @@ class Worksheet
     }
 
     /**
-     * @param Resource $filePointer
+     * @param resource $filePointer
      */
     public function setFilePointer($filePointer)
     {

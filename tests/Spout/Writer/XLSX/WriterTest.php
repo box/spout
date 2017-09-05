@@ -11,8 +11,6 @@ use Box\Spout\Writer\XLSX\Manager\WorksheetManager;
 
 /**
  * Class WriterTest
- *
- * @package Box\Spout\Writer\XLSX
  */
 class WriterTest extends \PHPUnit_Framework_TestCase
 {
@@ -485,7 +483,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_add_row_should_escape_control_characters.xlsx';
         $dataRows = [
-            ['control '.chr(21).' character'],
+            ['control ' . chr(21) . ' character'],
         ];
 
         $this->writeToXLSXFile($dataRows, $fileName);
@@ -540,7 +538,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
             [new Cell('i am a string')],
         ];
         $dataRowsInline = [
-            [new Cell(51465), new Cell(true), new Cell(51465.5)]
+            [new Cell(51465), new Cell(true), new Cell(51465.5)],
         ];
 
         $dataRows = array_merge($dataRowsShared, $dataRowsInline);
@@ -550,7 +548,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         foreach ($dataRowsShared as $dataRow) {
             /** @var Cell $cell */
             foreach ($dataRow as $cell) {
-                $this->assertSharedStringWasWritten($fileName, (string)$cell->getValue());
+                $this->assertSharedStringWasWritten($fileName, (string) $cell->getValue());
             }
         }
 
@@ -630,7 +628,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetIndex . '.xml';
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
-        $this->assertContains((string)$inlineData, $xmlContents, $message);
+        $this->assertContains((string) $inlineData, $xmlContents, $message);
     }
 
     /**
@@ -646,7 +644,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetIndex . '.xml';
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
-        $this->assertNotContains((string)$inlineData, $xmlContents, $message);
+        $this->assertNotContains((string) $inlineData, $xmlContents, $message);
     }
 
     /**

@@ -2,15 +2,11 @@
 
 namespace Box\Spout\Reader\ODS;
 
-use Box\Spout\Reader\ODS\Creator\EntityFactory;
 use Box\Spout\Reader\SheetInterface;
-use Box\Spout\Reader\Wrapper\XMLReader;
 
 /**
  * Class Sheet
  * Represents a sheet within a ODS file
- *
- * @package Box\Spout\Reader\ODS
  */
 class Sheet implements SheetInterface
 {

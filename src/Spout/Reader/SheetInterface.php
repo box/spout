@@ -4,8 +4,6 @@ namespace Box\Spout\Reader;
 
 /**
  * Interface SheetInterface
- *
- * @package Box\Spout\Reader
  */
 interface SheetInterface
 {

@@ -6,14 +6,12 @@ use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\Common\Entity\Cell;
+use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\WriterFactory;
 
 /**
  * Class WriterTest
- *
- * @package Box\Spout\Writer\ODS
  */
 class WriterTest extends \PHPUnit_Framework_TestCase
 {
@@ -280,6 +278,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
             [['foo', 'bar'], 2, 0],
         ];
     }
+
     /**
      * @dataProvider dataProviderForTestAddRowShouldUseNumberColumnsRepeatedForRepeatedValues
      *
@@ -300,7 +299,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         if ($expectedNumTableCells === 1) {
             $tableCellNode = $tableCellNodes->item(0);
-            $numColumnsRepeated = intval($tableCellNode->getAttribute('table:number-columns-repeated'));
+            $numColumnsRepeated = (int) ($tableCellNode->getAttribute('table:number-columns-repeated'));
             $this->assertEquals($expectedNumColumnsRepeated, $numColumnsRepeated);
         } else {
             foreach ($tableCellNodes as $tableCellNode) {
@@ -501,7 +500,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         foreach ($dataRows as $dataRow) {
             /** @var Cell $cell */
             foreach ($dataRow as $cell) {
-                $this->assertValueWasWritten($fileName, (string)$cell->getValue(), '');
+                $this->assertValueWasWritten($fileName, (string) $cell->getValue(), '');
             }
         }
     }
@@ -570,7 +569,6 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $xmlContents = file_get_contents('zip://' . $pathToContentFile);
 
         $this->assertContains($value, $xmlContents, $message);
-
     }
 
     /**
@@ -611,6 +609,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     private function getSheetXmlNode($fileName, $sheetIndex)
     {
         $xmlReader = $this->moveReaderToCorrectTableNode($fileName, $sheetIndex);
+
         return $xmlReader->expand();
     }
 
@@ -622,6 +621,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     private function getSheetXmlNodeAsString($fileName, $sheetIndex)
     {
         $xmlReader = $this->moveReaderToCorrectTableNode($fileName, $sheetIndex);
+
         return $xmlReader->readOuterXml();
     }
 

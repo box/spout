@@ -4,8 +4,6 @@ namespace Box\Spout\Common\Manager;
 
 /**
  * Class OptionsManagerTest
- *
- * @package Box\Spout\Common\Manager
  */
 class OptionsManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -48,7 +46,6 @@ class OptionsManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($optionsManager->getOption('not-supported'));
     }
 }
-
 
 // TODO: Convert this to anonymous class when PHP < 7 support is dropped
 class FakeOptionsManager extends OptionsManagerAbstract

@@ -4,8 +4,6 @@ namespace Box\Spout\Writer\XLSX\Manager\Style;
 
 /**
  * Class StyleManagerTest
- *
- * @package Box\Spout\Writer\XLSX\Manager\Style
  */
 class StyleManagerTest extends \PHPUnit_Framework_TestCase
 {

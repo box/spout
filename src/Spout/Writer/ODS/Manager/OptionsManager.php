@@ -2,15 +2,13 @@
 
 namespace Box\Spout\Writer\ODS\Manager;
 
-use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Common\Manager\OptionsManagerAbstract;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Options;
 
 /**
  * Class OptionsManager
  * ODS Writer options manager
- *
- * @package Box\Spout\Writer\ODS\Manager
  */
 class OptionsManager extends OptionsManagerAbstract
 {
@@ -28,7 +26,7 @@ class OptionsManager extends OptionsManagerAbstract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getSupportedOptions()
     {
@@ -40,7 +38,7 @@ class OptionsManager extends OptionsManagerAbstract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setDefaultOptions()
     {
