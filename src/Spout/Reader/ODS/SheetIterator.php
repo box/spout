@@ -136,7 +136,7 @@ class SheetIterator implements IteratorInterface
      *
      * @param string $sheetName Name of the current sheet
      * @param int $sheetIndex Index of the current sheet
-     * @param string|null Name of the sheet that was defined as active or NULL if none defined
+     * @param string|null $activeSheetName Name of the sheet that was defined as active or NULL if none defined
      * @return bool Whether the current sheet was defined as the active one
      */
     private function isActiveSheet($sheetName, $sheetIndex, $activeSheetName)

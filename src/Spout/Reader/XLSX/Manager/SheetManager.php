@@ -52,7 +52,7 @@ class SheetManager
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
-     * @param \Box\Spout\Reader\XLSX\Manager\SharedStringsManager Manages shared strings
+     * @param \Box\Spout\Reader\XLSX\Manager\SharedStringsManager $sharedStringsManager Manages shared strings
      * @param \Box\Spout\Common\Helper\Escaper\XLSX $escaper Used to unescape XML data
      * @param EntityFactory $entityFactory Factory to create entities
      */

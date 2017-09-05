@@ -621,8 +621,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $fileName
-     * @param bool|void $shouldFormatDates
-     * @param bool|void $shouldPreserveEmptyRows
+     * @param bool $shouldFormatDates
+     * @param bool $shouldPreserveEmptyRows
      * @return array All the read rows the given file
      */
     private function getAllRowsForFile($fileName, $shouldFormatDates = false, $shouldPreserveEmptyRows = false)

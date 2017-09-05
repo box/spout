@@ -28,7 +28,7 @@ class Border
     private $parts = [];
 
     /**
-     * @param array|void $borderParts
+     * @param array $borderParts
      */
     public function __construct(array $borderParts = [])
     {

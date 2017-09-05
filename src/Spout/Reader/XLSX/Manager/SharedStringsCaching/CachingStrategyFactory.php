@@ -89,11 +89,13 @@ class CachingStrategyFactory
 
         if ($memoryAvailable === -1) {
             // if cannot get memory limit or if memory limit set as unlimited, don't trust and play safe
-            return ($sharedStringsUniqueCount < self::MAX_NUM_STRINGS_PER_TEMP_FILE);
+            $isInMemoryStrategyUsageSafe = ($sharedStringsUniqueCount < self::MAX_NUM_STRINGS_PER_TEMP_FILE);
         } else {
             $memoryNeeded = $sharedStringsUniqueCount * self::AMOUNT_MEMORY_NEEDED_PER_STRING_IN_KB;
-            return ($memoryAvailable > $memoryNeeded);
+            $isInMemoryStrategyUsageSafe = ($memoryAvailable > $memoryNeeded);
         }
+
+        return $isInMemoryStrategyUsageSafe;
     }
 
     /**
