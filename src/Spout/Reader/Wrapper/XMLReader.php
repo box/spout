@@ -115,7 +115,7 @@ class XMLReader extends \XMLReader
      * Move cursor to next node skipping all subtrees
      * @see \XMLReader::next
      *
-     * @param string|void $localName The name of the next node to move to
+     * @param string|null $localName The name of the next node to move to
      * @return bool TRUE on success or FALSE on failure
      * @throws \Box\Spout\Reader\Exception\XMLProcessingException If an error/warning occurred
      */

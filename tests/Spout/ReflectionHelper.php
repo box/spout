@@ -51,7 +51,7 @@ class ReflectionHelper
      * @param string $class
      * @param string $valueName
      * @param mixed|null $value
-     * @param bool|void $saveOriginalValue
+     * @param bool $saveOriginalValue
      * @return void
      */
     public static function setStaticValue($class, $valueName, $value, $saveOriginalValue = true)

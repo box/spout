@@ -81,7 +81,7 @@ class SpoutTestStream
 
     /**
      * @param int $offset
-     * @param int|void $whence
+     * @param int $whence
      * @return bool
      */
     public function stream_seek($offset, $whence = SEEK_SET)

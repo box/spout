@@ -479,10 +479,10 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $fileName
-     * @param string|void $fieldDelimiter
-     * @param string|void $fieldEnclosure
-     * @param string|void $encoding
-     * @param bool|void $shouldPreserveEmptyRows
+     * @param string $fieldDelimiter
+     * @param string $fieldEnclosure
+     * @param string $encoding
+     * @param bool $shouldPreserveEmptyRows
      * @return array All the read rows the given file
      */
     private function getAllRowsForFile(

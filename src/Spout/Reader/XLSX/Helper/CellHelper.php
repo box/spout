@@ -26,7 +26,7 @@ class CellHelper
      * Calling fillMissingArrayIndexes($dataArray, 'FILL') will return this array: ['FILL', 1, 'FILL', 3]
      *
      * @param array $dataArray The array to fill
-     * @param string|void $fillValue optional
+     * @param string $fillValue optional
      * @return array
      */
     public static function fillMissingArrayIndexes($dataArray, $fillValue = '')

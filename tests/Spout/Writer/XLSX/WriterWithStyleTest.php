@@ -504,7 +504,8 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $bordersApplied = 0;
         /** @var \DOMElement $node */
         foreach ($styleXfsElements->childNodes as $node) {
-            if ($node->getAttribute('applyBorder') == 1) {
+            $shouldApplyBorder = ((int) $node->getAttribute('applyBorder') === 1);
+            if ($shouldApplyBorder) {
                 $bordersApplied++;
                 $this->assertTrue((int)$node->getAttribute('borderId') > 0, 'BorderId is greater than 0');
             } else {

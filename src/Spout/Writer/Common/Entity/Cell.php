@@ -97,15 +97,18 @@ class Cell
     {
         if (CellHelper::isBoolean($value)) {
             return self::TYPE_BOOLEAN;
-        } elseif (CellHelper::isEmpty($value)) {
-            return self::TYPE_EMPTY;
-        } elseif (CellHelper::isNumeric($this->getValue())) {
-            return self::TYPE_NUMERIC;
-        } elseif (CellHelper::isNonEmptyString($value)) {
-            return self::TYPE_STRING;
-        } else {
-            return self::TYPE_ERROR;
         }
+        if (CellHelper::isEmpty($value)) {
+            return self::TYPE_EMPTY;
+        }
+        if (CellHelper::isNumeric($this->getValue())) {
+            return self::TYPE_NUMERIC;
+        }
+        if (CellHelper::isNonEmptyString($value)) {
+            return self::TYPE_STRING;
+        }
+
+        return self::TYPE_ERROR;
     }
 
     /**

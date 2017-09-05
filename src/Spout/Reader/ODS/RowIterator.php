@@ -311,7 +311,7 @@ class RowIterator implements IteratorInterface
      * row data yet (as we still need to apply the "num-columns-repeated" attribute).
      *
      * @param array $rowData
-     * @param string|int|float|bool|\DateTime|\DateInterval|null The value of the last read cell
+     * @param string|int|float|bool|\DateTime|\DateInterval|null $lastReadCellValue The value of the last read cell
      * @return bool Whether the row is empty
      */
     protected function isEmptyRow($rowData, $lastReadCellValue)

@@ -16,8 +16,8 @@ class StyleManagerTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
-     * @param array|void $styleAttributes
-     * @param array|void $customNumberFormats
+     * @param array $styleAttributes
+     * @param array $customNumberFormats
      * @return StyleManager
      */
     private function getStyleManagerMock($styleAttributes = [], $customNumberFormats = [])

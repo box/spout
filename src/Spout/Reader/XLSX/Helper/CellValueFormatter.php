@@ -175,11 +175,14 @@ class CellValueFormatter
         $shouldFormatAsDate = $this->styleManager->shouldFormatNumericValueAsDate($cellStyleId);
 
         if ($shouldFormatAsDate) {
-            return $this->formatExcelTimestampValue(floatval($nodeValue), $cellStyleId);
+            $cellValue = $this->formatExcelTimestampValue(floatval($nodeValue), $cellStyleId);
         } else {
             $nodeIntValue = intval($nodeValue);
-            return ($nodeIntValue == $nodeValue) ? $nodeIntValue : floatval($nodeValue);
+            $nodeFloatValue = (float) $nodeValue;
+            $cellValue = ((float) $nodeIntValue === $nodeFloatValue) ? $nodeIntValue : $nodeFloatValue;
         }
+
+        return $cellValue;
     }
 
     /**
@@ -200,14 +203,16 @@ class CellValueFormatter
 
         if ($nodeValue >= 1) {
             // Values greater than 1 represent "dates". The value 1.0 representing the "base" date: 1900-01-01.
-            return $this->formatExcelTimestampValueAsDateValue($nodeValue, $cellStyleId);
+            $cellValue = $this->formatExcelTimestampValueAsDateValue($nodeValue, $cellStyleId);
         } else if ($nodeValue >= 0) {
             // Values between 0 and 1 represent "times".
-            return $this->formatExcelTimestampValueAsTimeValue($nodeValue, $cellStyleId);
+            $cellValue = $this->formatExcelTimestampValueAsTimeValue($nodeValue, $cellStyleId);
         } else {
             // invalid date
-            return null;
+            $cellValue = null;
         }
+
+        return $cellValue;
     }
 
     /**
@@ -232,10 +237,12 @@ class CellValueFormatter
         if ($this->shouldFormatDates) {
             $styleNumberFormatCode = $this->styleManager->getNumberFormatCode($cellStyleId);
             $phpDateFormat = DateFormatHelper::toPHPDateFormat($styleNumberFormatCode);
-            return $dateObj->format($phpDateFormat);
+            $cellValue = $dateObj->format($phpDateFormat);
         } else {
-            return $dateObj;
+            $cellValue = $dateObj;
         }
+
+        return $cellValue;
     }
 
     /**
@@ -261,13 +268,15 @@ class CellValueFormatter
             if ($this->shouldFormatDates) {
                 $styleNumberFormatCode = $this->styleManager->getNumberFormatCode($cellStyleId);
                 $phpDateFormat = DateFormatHelper::toPHPDateFormat($styleNumberFormatCode);
-                return $dateObj->format($phpDateFormat);
+                $cellValue = $dateObj->format($phpDateFormat);
             } else {
-                return $dateObj;
+                $cellValue = $dateObj;
             }
         } catch (\Exception $e) {
-            return null;
+            $cellValue = null;
         }
+
+        return $cellValue;
     }
 
     /**
@@ -278,9 +287,7 @@ class CellValueFormatter
      */
     protected function formatBooleanCellValue($nodeValue)
     {
-        // !! is similar to boolval()
-        $cellValue = !!$nodeValue;
-        return $cellValue;
+        return (bool) $nodeValue;
     }
 
     /**
@@ -294,9 +301,11 @@ class CellValueFormatter
     {
         // Mitigate thrown Exception on invalid date-time format (http://php.net/manual/en/datetime.construct.php)
         try {
-            return ($this->shouldFormatDates) ? $nodeValue : new \DateTime($nodeValue);
+            $cellValue = ($this->shouldFormatDates) ? $nodeValue : new \DateTime($nodeValue);
         } catch (\Exception $e) {
-            return null;
+            $cellValue = null;
         }
+
+        return $cellValue;
     }
 }

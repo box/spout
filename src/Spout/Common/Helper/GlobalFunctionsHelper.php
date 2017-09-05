@@ -30,7 +30,7 @@ class GlobalFunctionsHelper
      * @see fgets()
      *
      * @param resource $handle
-     * @param int|void $length
+     * @param int|null $length
      * @return string
      */
     public function fgets($handle, $length = null)
@@ -81,9 +81,9 @@ class GlobalFunctionsHelper
      * @see fgetcsv()
      *
      * @param resource $handle
-     * @param int|void $length
-     * @param string|void $delimiter
-     * @param string|void $enclosure
+     * @param int|null $length
+     * @param string|null $delimiter
+     * @param string|null $enclosure
      * @return array
      */
     public function fgetcsv($handle, $length = null, $delimiter = null, $enclosure = null)
@@ -97,8 +97,8 @@ class GlobalFunctionsHelper
      *
      * @param resource $handle
      * @param array $fields
-     * @param string|void $delimiter
-     * @param string|void $enclosure
+     * @param string|null $delimiter
+     * @param string|null $enclosure
      * @return int
      */
     public function fputcsv($handle, array $fields, $delimiter = null, $enclosure = null)
@@ -207,7 +207,7 @@ class GlobalFunctionsHelper
      * Wrapper around global function feof()
      * @see feof()
      *
-     * @param resource
+     * @param resource $handle
      * @return bool
      */
     public function feof($handle)
@@ -232,7 +232,7 @@ class GlobalFunctionsHelper
      * @see basename()
      *
      * @param string $path
-     * @param string|void $suffix
+     * @param string|null $suffix
      * @return string
      */
     public function basename($path, $suffix = null)
