@@ -17,7 +17,8 @@
         "ext-xmlreader" : "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7.0"
+        "phpunit/phpunit": "^5.7.0",
+        "friendsofphp/php-cs-fixer": "^2.5.0"
     },
     "suggest": {
         "ext-iconv": "To handle non UTF-8 CSV files (if \"php-intl\" is not already installed or is too limited)",
