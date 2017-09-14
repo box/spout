@@ -30,6 +30,9 @@ class Writer extends AbstractMultiSheetsWriter
     /** @var Internal\Workbook The workbook for the XLSX file */
     protected $book;
 
+    /** @var array contain column width information */
+    protected $columnWidths = [];
+
     /**
      * Sets a custom temporary folder for creating intermediate files/folders.
      * This must be set before opening the writer.
@@ -65,6 +68,46 @@ class Writer extends AbstractMultiSheetsWriter
     }
 
     /**
+     * Clear all column width specification
+     * @return Writer
+     */
+    public function clearColumnWidths()
+    {
+        $this->columnWidths = [];
+
+        if ($this->book) {
+            $this->book->_setColumnWidths($this->columnWidths);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add a width definition for the next sheet that will be generated
+     * @param number $width column width
+     * @param int $count column range size where this width should take effect (default 1)
+     * @return Writer
+     */
+    public function setColumnWidth($width, $count = 1)
+    {
+        $countExisted = count($this->columnWidths);
+        $min = $countExisted ? $this->columnWidths[$countExisted - 1]['max'] + 1 : 1;
+        $max = $min + $count - 1;
+
+        $this->columnWidths[] = [
+            'width' => $width,
+            'min' => $min,
+            'max' => $max
+        ];
+
+        if ($this->book) {
+            $this->book->_setColumnWidths($this->columnWidths);
+        }
+
+        return $this;
+    }
+
+    /**
      * Configures the write and sets the current sheet pointer to a new sheet.
      *
      * @return void
@@ -74,7 +117,7 @@ class Writer extends AbstractMultiSheetsWriter
     {
         if (!$this->book) {
             $tempFolder = ($this->tempFolder) ? : sys_get_temp_dir();
-            $this->book = new Workbook($tempFolder, $this->shouldUseInlineStrings, $this->shouldCreateNewSheetsAutomatically, $this->defaultRowStyle);
+            $this->book = new Workbook($tempFolder, $this->shouldUseInlineStrings, $this->shouldCreateNewSheetsAutomatically, $this->defaultRowStyle, $this->columnWidths);
             $this->book->addNewSheetAndMakeItCurrent();
         }
     }
