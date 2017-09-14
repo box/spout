@@ -63,9 +63,10 @@ EOD;
      * @param \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper $sharedStringsHelper Helper for shared strings
      * @param \Box\Spout\Writer\XLSX\Helper\StyleHelper Helper to work with styles
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
+     * @param array $columnWidths array of column widths
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
-    public function __construct($externalSheet, $worksheetFilesFolder, $sharedStringsHelper, $styleHelper, $shouldUseInlineStrings)
+    public function __construct($externalSheet, $worksheetFilesFolder, $sharedStringsHelper, $styleHelper, $shouldUseInlineStrings, $columnWidths)
     {
         $this->externalSheet = $externalSheet;
         $this->sharedStringsHelper = $sharedStringsHelper;
@@ -77,21 +78,36 @@ EOD;
         $this->stringHelper = new StringHelper();
 
         $this->worksheetFilePath = $worksheetFilesFolder . '/' . strtolower($this->externalSheet->getName()) . '.xml';
-        $this->startSheet();
+        $this->startSheet($columnWidths);
     }
 
     /**
      * Prepares the worksheet to accept data
      *
+     * @param array $columnWidths
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
-    protected function startSheet()
+    protected function startSheet($columnWidths)
     {
         $this->sheetFilePointer = fopen($this->worksheetFilePath, 'w');
         $this->throwIfSheetFilePointerIsNotAvailable();
 
         fwrite($this->sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+
+        if (!empty($columnWidths)) {
+            fwrite($this->sheetFilePointer, '<cols>');
+            foreach ($columnWidths as $columnWidth) {
+                fwrite($this->sheetFilePointer,
+                    '<col min="' . $columnWidth['min'] .
+                    '" max="' . $columnWidth['max'] .
+                    '" width="' . $columnWidth['width'] .
+                    '" customWidth="1" />'
+                );
+            }
+            fwrite($this->sheetFilePointer, '</cols>');
+        }
+
         fwrite($this->sheetFilePointer, '<sheetData>');
     }
 
