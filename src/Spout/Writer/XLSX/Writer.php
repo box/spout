@@ -85,18 +85,17 @@ class Writer extends AbstractMultiSheetsWriter
     /**
      * Add a width definition for the next sheet that will be generated
      * @param number $width column width
+     * @param int $start 1-based number of the first column where this width should take effect
      * @param int $count column range size where this width should take effect (default 1)
      * @return Writer
      */
-    public function setColumnWidth($width, $count = 1)
+    public function setColumnWidth($width, $start, $count = 1)
     {
-        $countExisted = count($this->columnWidths);
-        $min = $countExisted ? $this->columnWidths[$countExisted - 1]['max'] + 1 : 1;
-        $max = $min + $count - 1;
+        $max = $start + $count - 1;
 
         $this->columnWidths[] = [
             'width' => $width,
-            'min' => $min,
+            'min' => $start,
             'max' => $max
         ];
 
