@@ -27,8 +27,11 @@ class SheetHelper
     const XML_ATTRIBUTE_ACTIVE_TAB = 'activeTab';
     const XML_ATTRIBUTE_R_ID = 'r:id';
     const XML_ATTRIBUTE_NAME = 'name';
+    const XML_ATTRIBUTE_STATE = 'state';
     const XML_ATTRIBUTE_ID = 'Id';
     const XML_ATTRIBUTE_TARGET = 'Target';
+    
+    const SHEET_STATE_VISIBLE = 'visible';
 
     /** @var string Path of the XLSX file being read */
     protected $filePath;
@@ -105,16 +108,18 @@ class SheetHelper
     {
         $sheetId = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_R_ID);
         $escapedSheetName = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_NAME);
+        $sheetState = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_STATE);
 
         /** @noinspection PhpUnnecessaryFullyQualifiedNameInspection */
         $escaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
         $sheetName = $escaper->unescape($escapedSheetName);
+        $isSheetVisible = ($sheetState === self::SHEET_STATE_VISIBLE);
 
         $sheetDataXMLFilePath = $this->getSheetDataXMLFilePathForSheetId($sheetId);
 
         return new Sheet(
             $this->filePath, $sheetDataXMLFilePath,
-            $sheetIndexZeroBased, $sheetName, $isSheetActive,
+            $sheetIndexZeroBased, $sheetName, $isSheetActive, $isSheetVisible,
             $this->options, $this->sharedStringsHelper
         );
     }

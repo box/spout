@@ -47,10 +47,11 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_set_name_should_create_sheet_with_custom_name.xlsx';
         $customSheetName = 'CustomName';
-        $this->writeDataAndReturnSheetWithCustomName($fileName, $customSheetName);
+        $this->writeDataToSheetWithCustomName($fileName, $customSheetName);
 
         $this->assertSheetNameEquals($customSheetName, $fileName, "The sheet name should have been changed to '$customSheetName'");
     }
+
 
     /**
      * @expectedException \Box\Spout\Writer\Exception\InvalidSheetNameException
@@ -76,11 +77,22 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testSetSheetVisibilityShouldCreateSheetHidden()
+    {
+        $fileName = 'test_set_visibility_should_create_sheet_hidden.xlsx';
+        $this->writeDataToHiddenSheet($fileName);
+
+        $this->assertIsHiddenSheet( $fileName, "The sheet visibility should have been changed to 'hidden'");
+    }
+
+    /**
      * @param string $fileName
      * @param string $sheetName
      * @return Sheet
      */
-    private function writeDataAndReturnSheetWithCustomName($fileName, $sheetName)
+    private function writeDataToSheetWithCustomName($fileName, $sheetName)
     {
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -118,6 +130,25 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param string $fileName
+     * @return void
+     */
+    private function writeDataToHiddenSheet($fileName)
+    {
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterFactory::create(Type::XLSX);
+        $writer->openToFile($resourcePath);
+
+        $sheet = $writer->getCurrentSheet();
+        $sheet->setIsVisible(false);
+
+        $writer->addRow(['xlsx--11', 'xlsx--12']);
+        $writer->close();
+    }
+
+    /**
      * @param string $expectedName
      * @param string $fileName
      * @param string $message
@@ -130,5 +161,19 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
 
         $this->assertContains("<sheet name=\"$expectedName\"", $xmlContents, $message);
+    }
+
+    /**
+     * @param string $fileName
+     * @param string $message
+     * @return void
+     */
+    private function assertIsHiddenSheet( $fileName, $message = '')
+    {
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $pathToWorkbookFile = $resourcePath . '#xl/workbook.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains(" state=\"hidden\"", $xmlContents, $message);
     }
 }
