@@ -236,7 +236,7 @@ abstract class WriterAbstract implements WriterInterface
      */
     protected function createRowFromArray(array $dataRow, Style $style = null)
     {
-        $row = (new Row())->setCells(array_map(function ($value) {
+        $row = EntityFactory::createRow(array_map(function ($value) {
             if ($value instanceof Cell) {
                 return $value;
             }
