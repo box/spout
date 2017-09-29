@@ -7,8 +7,6 @@ use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Creator\ManagerFactory;
-use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\WriterFactory;
@@ -30,7 +28,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->entityFactory = new EntityFactory(new ManagerFactory());
+        $this->entityFactory = new EntityFactory();
         parent::setUp();
     }
 
@@ -326,7 +324,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         if ($expectedNumTableCells === 1) {
             $tableCellNode = $tableCellNodes->item(0);
-            $numColumnsRepeated = (int) ($tableCellNode->getAttribute('table:number-columns-repeated'));
+            $numColumnsRepeated = (int)($tableCellNode->getAttribute('table:number-columns-repeated'));
             $this->assertEquals($expectedNumColumnsRepeated, $numColumnsRepeated);
         } else {
             foreach ($tableCellNodes as $tableCellNode) {
@@ -340,7 +338,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddRowShouldWriteGivenDataToTheCorrectSheet()
     {
-        $arrayToRows = function(array $allRows) {
+        $arrayToRows = function (array $allRows) {
             return array_map(function ($oneRow) {
                 $row = $this->entityFactory->createRow(array_map(function ($value) {
                     return new Cell($value);
@@ -536,7 +534,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         foreach ($dataRows as $dataRow) {
             /** @var Cell $cell */
             foreach ($dataRow as $cell) {
-                $this->assertValueWasWritten($fileName, (string) $cell->getValue(), '');
+                $this->assertValueWasWritten($fileName, (string)$cell->getValue(), '');
             }
         }
     }
@@ -559,7 +557,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer->openToFile($resourcePath);
         $writer->addRows(array_map(function ($oneRow) {
             $row = $this->entityFactory->createRow(array_map(function ($value) {
-                if(!$value instanceof Cell) {
+                if (!$value instanceof Cell) {
                     return new Cell($value);
                 } else {
                     return $value;

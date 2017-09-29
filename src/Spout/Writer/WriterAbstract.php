@@ -7,6 +7,7 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
@@ -63,8 +64,6 @@ abstract class WriterAbstract implements WriterInterface
         $this->styleMerger = $styleMerger;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
         $this->helperFactory = $helperFactory;
-
-        $this->resetRowStyleToDefault();
     }
 
     /**
@@ -210,7 +209,7 @@ abstract class WriterAbstract implements WriterInterface
      */
     public function withRow(\Closure $callback)
     {
-        return $this->addRow($callback(new Row()));
+        return $this->addRow($callback(EntityFactory::createRow([])));
     }
 
     /**

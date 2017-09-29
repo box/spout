@@ -18,17 +18,6 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     use TestUsingResource;
 
     /**
-     * @var EntityFactory
-     */
-    protected $entityFactory;
-
-    protected function setUp()
-    {
-        $this->entityFactory = new EntityFactory(new ManagerFactory());
-        parent::setUp();
-    }
-
-    /**
      * @expectedException \Box\Spout\Common\Exception\IOException
      */
     public function testWriteShouldThrowExceptionIfCannotOpenFileForWriting()
@@ -39,7 +28,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $writer = WriterFactory::create(Type::CSV);
         @$writer->openToFile($filePath);
-        $row = $this->entityFactory->createRow([
+        $row = EntityFactory::createRow([
             new Cell('csv--11'),
             new Cell('csv--12')
         ]);
@@ -53,7 +42,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testWriteShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::CSV);
-        $row = $this->entityFactory->createRow([
+        $row = EntityFactory::createRow([
             new Cell('csv--11'),
             new Cell('csv--12')
         ]);
@@ -67,7 +56,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testWriteShouldThrowExceptionIfCallAddRowsBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::CSV);
-        $row = $this->entityFactory->createRow([
+        $row = EntityFactory::createRow([
             new Cell('csv--11'),
             new Cell('csv--12')
         ]);
@@ -237,7 +226,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer->openToFile($resourcePath);
 
         $writer->addRows(array_map(function ($oneRow) {
-            $row = $this->entityFactory->createRow(array_map(function ($value) {
+            $row = EntityFactory::createRow(array_map(function ($value) {
                 return new Cell($value);
             }, $oneRow));
             return $row;

@@ -6,11 +6,9 @@ use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Creator\ManagerFactory;
-use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
@@ -29,17 +27,11 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     private $defaultStyle;
 
     /**
-     * @var EntityFactory
-     */
-    protected $entityFactory;
-
-    /**
      * @return void
      */
     public function setUp()
     {
         $this->defaultStyle = (new StyleBuilder())->build();
-        $this->entityFactory = new EntityFactory(new ManagerFactory());
     }
 
     /**
@@ -48,7 +40,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::XLSX);
-        $row = $this->entityFactory->createRow([
+        $row = EntityFactory::createRow([
             new Cell('xlsx--11'),
             new Cell('xlsx--12')
         ], $this->defaultStyle);
@@ -61,7 +53,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowsWithStyleShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::XLSX);
-        $row = $this->entityFactory->createRow([
+        $row = EntityFactory::createRow([
             new Cell('xlsx--11'),
             new Cell('xlsx--12')
         ], $this->defaultStyle);
@@ -98,7 +90,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
-        $row = $this->entityFactory->createRow([
+        $row = EntityFactory::createRow([
             new Cell('xlsx--11'),
             new Cell('xlsx--12')
         ], $style);
@@ -124,7 +116,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
-        $row = $this->entityFactory->createRow([
+        $row = EntityFactory::createRow([
             new Cell('xlsx--11'),
             new Cell('xlsx--12')
         ], $style);
@@ -465,7 +457,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_set_default_row_style.xlsx';
 
-        $row = $this->entityFactory->createRow([
+        $row = EntityFactory::createRow([
             new Cell('xlsx--11')
         ]);
         $dataRows = [$row];
@@ -563,7 +555,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $arrayToRows = function(array $allRows) use ($style) {
             return array_map(function ($oneRow) use ($style) {
-                $row = $this->entityFactory->createRow(array_map(function ($value) {
+                $row = EntityFactory::createRow(array_map(function ($value) {
                     return new Cell($value);
                 }, $oneRow), $style);
                 return $row;
@@ -632,7 +624,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         for ($i = 0; $i < count($allRows); $i++) {
             $currentRow = $allRows[$i];
             $currentStyle = $styles[$i];
-            $row = $this->entityFactory->createRow(array_map(function ($value) {
+            $row = EntityFactory::createRow(array_map(function ($value) {
                 return new Cell($value);
             }, $currentRow), $currentStyle);
             $writer->addRow($row);

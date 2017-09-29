@@ -18,20 +18,6 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     use TestUsingResource;
 
     /**
-     * @var EntityFactory
-     */
-    protected $entityFactory;
-
-    /**
-     * @return void
-     */
-    public function setUp()
-    {
-        $this->entityFactory = new EntityFactory(new ManagerFactory());
-    }
-
-
-    /**
      * @return void
      */
     public function testGetSheetIndex()
@@ -108,7 +94,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $sheet = $writer->getCurrentSheet();
         $sheet->setName($sheetName);
 
-        $row = $this->entityFactory->createRow([
+        $row = EntityFactory::createRow([
             new Cell('ods--11'),
             new Cell('ods--12'),
         ]);
@@ -129,7 +115,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::ODS);
         $writer->openToFile($resourcePath);
 
-        $row = $this->entityFactory->createRow([
+        $row = EntityFactory::createRow([
             new Cell('ods--sheet1--11'),
             new Cell('ods--sheet1--12'),
         ]);
@@ -137,7 +123,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
 
         $writer->addNewSheetAndMakeItCurrent();
 
-        $row = $this->entityFactory->createRow([
+        $row = EntityFactory::createRow([
             new Cell('ods--sheet2--11'),
             new Cell('ods--sheet2--12'),
             new Cell('ods--sheet2--13'),

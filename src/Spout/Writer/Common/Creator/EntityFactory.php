@@ -8,7 +8,9 @@ use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Workbook;
 use Box\Spout\Writer\Common\Entity\Worksheet;
+use Box\Spout\Writer\Common\Manager\RowManager;
 use Box\Spout\Writer\Common\Manager\SheetManager;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 /**
  * Class EntityFactory
@@ -49,7 +51,7 @@ class EntityFactory
      * @param mixed $cellValue
      * @return Cell
      */
-    public function createCell($cellValue)
+    public static function createCell($cellValue)
     {
         return new Cell($cellValue);
     }
@@ -67,9 +69,10 @@ class EntityFactory
      * @param Style|null $style
      * @return Row
      */
-    public function createRow(array $cells, Style $style = null)
+    public static function createRow(array $cells, Style $style = null)
     {
-        $rowManager = $this->managerFactory->createRowManager();
+        $styleMerger = new StyleMerger();
+        $rowManager = new RowManager($styleMerger);
         return new Row($cells, $style, $rowManager);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer;
 
+use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;

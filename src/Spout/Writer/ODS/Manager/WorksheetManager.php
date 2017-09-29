@@ -4,10 +4,10 @@ namespace Box\Spout\Writer\ODS\Manager;
 
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Common\Helper\Escaper\ODS as ODSEscaper;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
@@ -25,34 +25,23 @@ class WorksheetManager implements WorksheetManagerInterface
     /** @var StringHelper String helper */
     private $stringHelper;
 
-    /** @var EntityFactory Factory to create entities */
-    private $entityFactory;
-
     /** @var StyleManager Manages styles */
     private $styleManager;
 
     /**
      * WorksheetManager constructor.
-     *
-     * @param \Box\Spout\Common\Helper\Escaper\ODS $stringsEscaper
      * @param StyleManager $styleManager
-     * @param \Box\Spout\Common\Escaper\ODS $stringsEscaper
+     * @param ODSEscaper $stringsEscaper
      * @param StringHelper $stringHelper
-     * @param EntityFactory $entityFactory
      */
     public function __construct(
         StyleManager $styleManager,
-        \Box\Spout\Common\Escaper\ODS $stringsEscaper,
+        ODSEscaper $stringsEscaper,
         StringHelper $stringHelper)
     {
-        \Box\Spout\Common\Helper\Escaper\ODS $stringsEscaper,
-        StringHelper $stringHelper,
-        EntityFactory $entityFactory
-    ) {
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
         $this->styleManager = $styleManager;
-        $this->entityFactory = $entityFactory;
     }
 
     /**

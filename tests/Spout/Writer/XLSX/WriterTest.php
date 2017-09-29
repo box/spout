@@ -6,7 +6,6 @@ use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Creator\ManagerFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Manager\WorksheetManager;
@@ -28,7 +27,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->entityFactory = new EntityFactory(new ManagerFactory());
+        $this->entityFactory = new EntityFactory();
         parent::setUp();
     }
 
