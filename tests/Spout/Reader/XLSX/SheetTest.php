@@ -8,8 +8,6 @@ use Box\Spout\TestUsingResource;
 
 /**
  * Class SheetTest
- *
- * @package Box\Spout\Reader\XLSX
  */
 class SheetTest extends \PHPUnit_Framework_TestCase
 {

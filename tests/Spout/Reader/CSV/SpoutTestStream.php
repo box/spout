@@ -6,8 +6,6 @@ namespace Box\Spout\Reader\CSV;
  * Class SpoutTestStream
  * Custom stream that reads CSV files located in the tests/resources/csv folder.
  * For example: spout://foobar will point to tests/resources/csv/foobar.csv
- *
- * @package Box\Spout\Reader\CSV
  */
 class SpoutTestStream
 {
@@ -30,6 +28,7 @@ class SpoutTestStream
     public function url_stat($path, $flag)
     {
         $filePath = $this->getFilePathFromStreamPath($path);
+
         return stat($filePath);
     }
 
@@ -40,6 +39,7 @@ class SpoutTestStream
     private function getFilePathFromStreamPath($streamPath)
     {
         $fileName = parse_url($streamPath, PHP_URL_HOST);
+
         return self::PATH_TO_CSV_RESOURCES . $fileName . self::CSV_EXTENSION;
     }
 
@@ -68,6 +68,7 @@ class SpoutTestStream
     public function stream_read($numBytes)
     {
         $this->position += $numBytes;
+
         return fread($this->fileHandle, $numBytes);
     }
 
@@ -81,7 +82,7 @@ class SpoutTestStream
 
     /**
      * @param int $offset
-     * @param int|void $whence
+     * @param int $whence
      * @return bool
      */
     public function stream_seek($offset, $whence = SEEK_SET)
@@ -93,7 +94,7 @@ class SpoutTestStream
 
         if ($whence === SEEK_SET) {
             $this->position = $offset;
-        } else if ($whence === SEEK_CUR) {
+        } elseif ($whence === SEEK_CUR) {
             $this->position += $offset;
         } else {
             // not implemented

@@ -7,8 +7,6 @@ use Box\Spout\Writer\Common\Entity\Style\Style;
 /**
  * Class StyleRegistry
  * Registry for all used styles
- *
- * @package Box\Spout\Writer\Common\Manager\Style
  */
 class StyleRegistry
 {
@@ -72,6 +70,7 @@ class StyleRegistry
     protected function getStyleFromSerializedStyle($serializedStyle)
     {
         $styleId = $this->serializedStyleToStyleIdMappingTable[$serializedStyle];
+
         return $this->styleIdToStyleMappingTable[$styleId];
     }
 

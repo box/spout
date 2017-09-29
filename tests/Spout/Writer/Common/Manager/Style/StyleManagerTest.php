@@ -7,8 +7,6 @@ use Box\Spout\Writer\Common\Entity\Cell;
 
 /**
  * Class StyleManagerTest
- *
- * @package Box\Spout\Writer\Common\Manager\Style
  */
 class StyleManagerTest extends \PHPUnit_Framework_TestCase
 {

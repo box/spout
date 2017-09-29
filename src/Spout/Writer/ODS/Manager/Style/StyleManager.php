@@ -8,8 +8,6 @@ use Box\Spout\Writer\ODS\Helper\BorderHelper;
 /**
  * Class StyleManager
  * Manages styles to be applied to a cell
- *
- * @package Box\Spout\Writer\ODS\Manager\Style
  */
 class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
 {
@@ -24,7 +22,7 @@ class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
      */
     public function getStylesXMLFileContent($numWorksheets)
     {
-        $content = <<<EOD
+        $content = <<<'EOD'
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <office:document-styles office:version="1.2" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:msoxl="http://schemas.microsoft.com/office/excel/formula" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:xlink="http://www.w3.org/1999/xlink">
 EOD;
@@ -34,7 +32,7 @@ EOD;
         $content .= $this->getAutomaticStylesSectionContent($numWorksheets);
         $content .= $this->getMasterStylesSectionContent($numWorksheets);
 
-        $content .= <<<EOD
+        $content .= <<<'EOD'
 </office:document-styles>
 EOD;
 
@@ -132,7 +130,6 @@ EOD;
         return $content;
     }
 
-
     /**
      * Returns the contents of the "<office:font-face-decls>" section, inside "content.xml" file.
      *
@@ -163,7 +160,7 @@ EOD;
             $content .= $this->getStyleSectionContent($style);
         }
 
-        $content .= <<<EOD
+        $content .= <<<'EOD'
 <style:style style:family="table-column" style:name="co1">
     <style:table-column-properties fo:break-before="auto"/>
 </style:style>

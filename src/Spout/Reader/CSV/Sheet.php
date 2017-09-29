@@ -6,8 +6,6 @@ use Box\Spout\Reader\SheetInterface;
 
 /**
  * Class Sheet
- *
- * @package Box\Spout\Reader\CSV
  */
 class Sheet implements SheetInterface
 {
@@ -15,13 +13,11 @@ class Sheet implements SheetInterface
     protected $rowIterator;
 
     /**
-     * @param resource $filePointer Pointer to the CSV file to read
-     * @param \Box\Spout\Reader\CSV\ReaderOptions $options
-     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
+     * @param RowIterator $rowIterator Corresponding row iterator
      */
-    public function __construct($filePointer, $options, $globalFunctionsHelper)
+    public function __construct(RowIterator $rowIterator)
     {
-        $this->rowIterator = new RowIterator($filePointer, $options, $globalFunctionsHelper);
+        $this->rowIterator = $rowIterator;
     }
 
     /**

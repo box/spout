@@ -7,8 +7,6 @@ use Box\Spout\Writer\Common\Entity\Style\Style;
 /**
  * Class StyleRegistry
  * Registry for all used styles
- *
- * @package Box\Spout\Writer\ODS\Manager\Style
  */
 class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
 {

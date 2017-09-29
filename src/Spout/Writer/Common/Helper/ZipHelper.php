@@ -2,11 +2,11 @@
 
 namespace Box\Spout\Writer\Common\Helper;
 
+use Box\Spout\Writer\Common\Creator\EntityFactory;
+
 /**
  * Class ZipHelper
  * This class provides helper functions to create zip files
- *
- * @package Box\Spout\Writer\Common\Helper
  */
 class ZipHelper
 {
@@ -16,6 +16,17 @@ class ZipHelper
     const EXISTING_FILES_SKIP = 'skip';
     const EXISTING_FILES_OVERWRITE = 'overwrite';
 
+    /** @var EntityFactory Factory to create entities */
+    private $entityFactory;
+
+    /**
+     * @param EntityFactory $entityFactory Factory to create entities
+     */
+    public function __construct($entityFactory)
+    {
+        $this->entityFactory = $entityFactory;
+    }
+
     /**
      * Returns a new ZipArchive instance pointing at the given path.
      *
@@ -24,10 +35,10 @@ class ZipHelper
      */
     public function createZip($tmpFolderPath)
     {
-        $zip = new \ZipArchive();
+        $zip = $this->entityFactory->createZipArchive();
         $zipFilePath = $tmpFolderPath . self::ZIP_EXTENSION;
 
-        $zip->open($zipFilePath, \ZipArchive::CREATE|\ZipArchive::OVERWRITE);
+        $zip->open($zipFilePath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
 
         return $zip;
     }
@@ -52,7 +63,7 @@ class ZipHelper
      * @param \ZipArchive $zip An opened zip archive object
      * @param string $rootFolderPath Path of the root folder that will be ignored in the archive tree.
      * @param string $localFilePath Path of the file to be added, under the root folder
-     * @param string|void $existingFileMode Controls what to do when trying to add an existing file
+     * @param string $existingFileMode Controls what to do when trying to add an existing file
      * @return void
      */
     public function addFileToArchive($zip, $rootFolderPath, $localFilePath, $existingFileMode = self::EXISTING_FILES_OVERWRITE)
@@ -77,7 +88,7 @@ class ZipHelper
      * @param \ZipArchive $zip An opened zip archive object
      * @param string $rootFolderPath Path of the root folder that will be ignored in the archive tree.
      * @param string $localFilePath Path of the file to be added, under the root folder
-     * @param string|void $existingFileMode Controls what to do when trying to add an existing file
+     * @param string $existingFileMode Controls what to do when trying to add an existing file
      * @return void
      */
     public function addUncompressedFileToArchive($zip, $rootFolderPath, $localFilePath, $existingFileMode = self::EXISTING_FILES_OVERWRITE)
@@ -130,7 +141,7 @@ class ZipHelper
     /**
      * @param \ZipArchive $zip An opened zip archive object
      * @param string $folderPath Path to the folder to be zipped
-     * @param string|void $existingFileMode Controls what to do when trying to add an existing file
+     * @param string $existingFileMode Controls what to do when trying to add an existing file
      * @return void
      */
     public function addFolderToArchive($zip, $folderPath, $existingFileMode = self::EXISTING_FILES_OVERWRITE)
@@ -171,6 +182,7 @@ class ZipHelper
     protected function getNormalizedRealPath($path)
     {
         $realPath = realpath($path);
+
         return str_replace(DIRECTORY_SEPARATOR, '/', $realPath);
     }
 

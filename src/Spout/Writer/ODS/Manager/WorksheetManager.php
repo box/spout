@@ -5,7 +5,9 @@ namespace Box\Spout\Writer\ODS\Manager;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
+use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
@@ -14,42 +16,51 @@ use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 /**
  * Class WorksheetManager
  * ODS worksheet manager, providing the interfaces to work with ODS worksheets.
- *
- * @package Box\Spout\Writer\ODS\Manager
  */
 class WorksheetManager implements WorksheetManagerInterface
 {
-    /** @var \Box\Spout\Common\Escaper\ODS Strings escaper */
+    /** @var \Box\Spout\Common\Helper\Escaper\ODS Strings escaper */
     private $stringsEscaper;
 
     /** @var StringHelper String helper */
     private $stringHelper;
+
+    /** @var EntityFactory Factory to create entities */
+    private $entityFactory;
 
     /** @var StyleManager Manages styles */
     private $styleManager;
 
     /**
      * WorksheetManager constructor.
+     *
+     * @param \Box\Spout\Common\Helper\Escaper\ODS $stringsEscaper
      * @param StyleManager $styleManager
      * @param \Box\Spout\Common\Escaper\ODS $stringsEscaper
      * @param StringHelper $stringHelper
+     * @param EntityFactory $entityFactory
      */
     public function __construct(
         StyleManager $styleManager,
         \Box\Spout\Common\Escaper\ODS $stringsEscaper,
         StringHelper $stringHelper)
     {
+        \Box\Spout\Common\Helper\Escaper\ODS $stringsEscaper,
+        StringHelper $stringHelper,
+        EntityFactory $entityFactory
+    ) {
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
         $this->styleManager = $styleManager;
+        $this->entityFactory = $entityFactory;
     }
 
     /**
      * Prepares the worksheet to accept data
      *
      * @param Worksheet $worksheet The worksheet to start
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
+     * @return void
      */
     public function startSheet(Worksheet $worksheet)
     {
@@ -63,8 +74,8 @@ class WorksheetManager implements WorksheetManagerInterface
      * Checks if the sheet has been sucessfully created. Throws an exception if not.
      *
      * @param bool|resource $sheetFilePointer Pointer to the sheet data file or FALSE if unable to open the file
-     * @return void
      * @throws IOException If the sheet data file cannot be opened for writing
+     * @return void
      */
     private function throwIfSheetFilePointerIsNotAvailable($sheetFilePointer)
     {
@@ -100,6 +111,7 @@ class WorksheetManager implements WorksheetManagerInterface
      *
      * @throws IOException If the data cannot be written
      * @throws InvalidArgumentException If a cell value's type is not supported
+     * @return void
      */
     public function addRow(Worksheet $worksheet, Row $row)
     {
@@ -154,8 +166,8 @@ class WorksheetManager implements WorksheetManagerInterface
      * @param Cell $cell The cell to be written
      * @param int $styleIndex Index of the used style
      * @param int $numTimesValueRepeated Number of times the value is consecutively repeated
-     * @return string The cell XML content
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
+     * @return string The cell XML content
      */
     protected function getCellXML(Cell $cell, $styleIndex, $numTimesValueRepeated)
     {
@@ -174,15 +186,15 @@ class WorksheetManager implements WorksheetManagerInterface
             }
 
             $data .= '</table:table-cell>';
-        } else if ($cell->isBoolean()) {
+        } elseif ($cell->isBoolean()) {
             $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:boolean-value="' . $cell->getValue() . '">';
             $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
-        } else if ($cell->isNumeric()) {
+        } elseif ($cell->isNumeric()) {
             $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cell->getValue() . '">';
             $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
-        } else if ($cell->isEmpty()) {
+        } elseif ($cell->isEmpty()) {
             $data .= '/>';
         } else {
             throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cell->getValue()));

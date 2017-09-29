@@ -7,8 +7,6 @@ use Box\Spout\Writer\Exception\InvalidColorException;
 /**
  * Class Color
  * This class provides constants and functions to work with colors
- *
- * @package Box\Spout\Writer\Common\Entity\Style
  */
 class Color
 {
@@ -52,8 +50,8 @@ class Color
      * Throws an exception is the color component value is outside of bounds (0 - 255)
      *
      * @param int $colorComponent
-     * @return void
      * @throws \Box\Spout\Writer\Exception\InvalidColorException
+     * @return void
      */
     protected static function throwIfInvalidColorComponentValue($colorComponent)
     {

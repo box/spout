@@ -9,8 +9,6 @@ use Box\Spout\Writer\XLSX\Helper\BorderHelper;
 /**
  * Class StyleManager
  * Manages styles to be applied to a cell
- *
- * @package Box\Spout\Writer\XLSX\Manager\Style
  */
 class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
 {
@@ -38,7 +36,6 @@ class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
         return ($hasStyleCustomFill || $hasStyleCustomBorders);
     }
 
-
     /**
      * Returns the content of the "styles.xml" file, given a list of styles.
      *
@@ -46,7 +43,7 @@ class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
      */
     public function getStylesXMLFileContent()
     {
-        $content = <<<EOD
+        $content = <<<'EOD'
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 EOD;
@@ -58,7 +55,7 @@ EOD;
         $content .= $this->getCellXfsSectionContent();
         $content .= $this->getCellStylesSectionContent();
 
-        $content .= <<<EOD
+        $content .= <<<'EOD'
 </styleSheet>
 EOD;
 
@@ -187,7 +184,7 @@ EOD;
      */
     protected function getCellStyleXfsSectionContent()
     {
-        return <<<EOD
+        return <<<'EOD'
 <cellStyleXfs count="1">
     <xf borderId="0" fillId="0" fontId="0" numFmtId="0"/>
 </cellStyleXfs>
@@ -239,7 +236,7 @@ EOD;
      */
     protected function getCellStylesSectionContent()
     {
-        return <<<EOD
+        return <<<'EOD'
 <cellStyles count="1">
     <cellStyle builtinId="0" name="Normal" xfId="0"/>
 </cellStyles>

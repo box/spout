@@ -9,8 +9,6 @@ use Box\Spout\Writer\Common\Entity\Style\Color;
 
 /**
  * Class BorderTest
- *
- * @package Box\Spout\Writer\Common\EntityStyle
  */
 class BorderTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +19,7 @@ class BorderTest extends \PHPUnit_Framework_TestCase
     {
         $noConstructorParams = new Border();
         $withConstructorParams = new Border([
-            new BorderPart(Border::LEFT)
+            new BorderPart(Border::LEFT),
         ]);
     }
 
@@ -72,7 +70,7 @@ class BorderTest extends \PHPUnit_Framework_TestCase
     {
         $border = new Border();
         $border->setParts([
-            new BorderPart(Border::LEFT)
+            new BorderPart(Border::LEFT),
         ]);
 
         $this->assertEquals(1, count($border->getParts()), 'It should be possible to set the border parts');

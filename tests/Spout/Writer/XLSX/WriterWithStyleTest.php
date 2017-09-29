@@ -10,17 +10,16 @@ use Box\Spout\Writer\Common\Creator\ManagerFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Manager\OptionsManager;
 
 /**
  * Class WriterWithStyleTest
- *
- * @package Box\Spout\Writer\XLSX
  */
 class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 {
@@ -323,7 +322,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_add_background_color.xlsx';
         $dataRows = [
-            ["BgColor"],
+            ['BgColor'],
         ];
         $style = (new StyleBuilder())->setBackgroundColor(Color::WHITE)->build();
         $this->writeToXLSXFile($dataRows, $fileName, $style);
@@ -341,7 +340,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, $styleXfsElements->getAttribute('count'), '2 cell xfs present - a default one and a custom one');
 
         $customFillId = $styleXfsElements->lastChild->getAttribute('fillId');
-        $this->assertEquals(2, (int)$customFillId, 'The custom fill id should have the index 2');
+        $this->assertEquals(2, (int) $customFillId, 'The custom fill id should have the index 2');
     }
 
     /**
@@ -351,13 +350,13 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_add_background_color_shared_definition.xlsx';
         $dataRows = [
-            ["row-bold-background-red"],
-            ["row-background-red"],
+            ['row-bold-background-red'],
+            ['row-background-red'],
         ];
 
         $styles = [
             (new StyleBuilder())->setBackgroundColor(Color::RED)->setFontBold()->build(),
-            (new StyleBuilder())->setBackgroundColor(Color::RED)->build()
+            (new StyleBuilder())->setBackgroundColor(Color::RED)->build(),
         ];
 
         $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, $styles);
@@ -377,10 +376,10 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         );
 
         $firstCustomId = $styleXfsElements->childNodes->item(1)->getAttribute('fillId');
-        $this->assertEquals(2, (int)$firstCustomId, 'The first custom fill id should have the index 2');
+        $this->assertEquals(2, (int) $firstCustomId, 'The first custom fill id should have the index 2');
 
         $secondCustomId = $styleXfsElements->childNodes->item(2)->getAttribute('fillId');
-        $this->assertEquals(2, (int)$secondCustomId, 'The second custom fill id should have the index 2');
+        $this->assertEquals(2, (int) $secondCustomId, 'The second custom fill id should have the index 2');
     }
 
     /**
@@ -398,7 +397,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $borderBottomGreenThickSolid = (new BorderBuilder())
             ->setBorderBottom(Color::GREEN, Border::WIDTH_THICK, Border::STYLE_SOLID)->build();
-
 
         $borderTopRedThinDashed = (new BorderBuilder())
             ->setBorderTop(Color::RED, Border::WIDTH_THIN, Border::STYLE_DASHED)->build();
@@ -441,15 +439,15 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $borderElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'borders');
 
         $correctOrdering = [
-            'left', 'right', 'top', 'bottom'
+            'left', 'right', 'top', 'bottom',
         ];
 
-        /** @var  $borderNode  \DOMElement */
+        /** @var \DOMElement $borderNode */
         foreach ($borderElements->childNodes as $borderNode) {
             $borderParts = $borderNode->childNodes;
             $ordering = [];
 
-            /** @var $part \DOMText */
+            /** @var \DOMText $part */
             foreach ($borderParts as $part) {
                 if ($part instanceof \DOMElement) {
                     $ordering[] = $part->nodeName;
@@ -457,7 +455,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             }
 
             $this->assertEquals($correctOrdering, $ordering, 'The border parts are in correct ordering');
-        };
+        }
     }
 
     /**
@@ -516,7 +514,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             $emptyStyle,
             $fontStyle,
             $borderRightStyle,
-            $borderRightFontBoldStyle
+            $borderRightFontBoldStyle,
         ];
 
         $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, $styles);
@@ -542,11 +540,12 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $bordersApplied = 0;
         /** @var \DOMElement $node */
         foreach ($styleXfsElements->childNodes as $node) {
-            if ($node->getAttribute('applyBorder') == 1) {
+            $shouldApplyBorder = ((int) $node->getAttribute('applyBorder') === 1);
+            if ($shouldApplyBorder) {
                 $bordersApplied++;
-                $this->assertTrue((int)$node->getAttribute('borderId') > 0, 'BorderId is greater than 0');
+                $this->assertTrue((int) $node->getAttribute('borderId') > 0, 'BorderId is greater than 0');
             } else {
-                $this->assertTrue((int)$node->getAttribute('borderId') === 0, 'BorderId is 0');
+                $this->assertTrue((int) $node->getAttribute('borderId') === 0, 'BorderId is 0');
             }
         }
 

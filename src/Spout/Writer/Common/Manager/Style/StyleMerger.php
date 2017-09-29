@@ -2,15 +2,11 @@
 
 namespace Box\Spout\Writer\Common\Manager\Style;
 
-use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
-use Box\Spout\Writer\XLSX\Helper\BorderHelper;
 
 /**
  * Class StyleMerger
  * Takes care of merging styles together
- *
- * @package Box\Spout\Writer\Common\Manager\Style
  */
 class StyleMerger
 {

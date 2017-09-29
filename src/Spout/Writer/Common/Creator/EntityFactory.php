@@ -3,32 +3,19 @@
 namespace Box\Spout\Writer\Common\Creator;
 
 use Box\Spout\Writer\Common\Entity\Row;
+use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Workbook;
 use Box\Spout\Writer\Common\Entity\Worksheet;
+use Box\Spout\Writer\Common\Manager\SheetManager;
 
 /**
  * Class EntityFactory
  * Factory to create entities
- *
- * @package Box\Spout\Writer\Common\Creator
  */
 class EntityFactory
 {
-    /** @var ManagerFactory */
-    private $managerFactory;
-
-    /**
-     * EntityFactory constructor.
-     *
-     * @param ManagerFactory $managerFactory
-     */
-    public function __construct(ManagerFactory $managerFactory)
-    {
-        $this->managerFactory = $managerFactory;
-    }
-
     /**
      * @return Workbook
      */
@@ -50,12 +37,29 @@ class EntityFactory
     /**
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $associatedWorkbookId ID of the sheet's associated workbook
+     * @param SheetManager $sheetManager To manage sheets
      * @return Sheet
      */
-    public function createSheet($sheetIndex, $associatedWorkbookId)
+    public function createSheet($sheetIndex, $associatedWorkbookId, $sheetManager)
     {
-        $sheetManager = $this->managerFactory->createSheetManager();
         return new Sheet($sheetIndex, $associatedWorkbookId, $sheetManager);
+    }
+
+    /**
+     * @param mixed $cellValue
+     * @return Cell
+     */
+    public function createCell($cellValue)
+    {
+        return new Cell($cellValue);
+    }
+
+    /**
+     * @return \ZipArchive
+     */
+    public function createZipArchive()
+    {
+        return new \ZipArchive();
     }
 
     /**

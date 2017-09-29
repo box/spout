@@ -7,8 +7,6 @@ use Box\Spout\Writer\Common\Manager\SheetManager;
 /**
  * Class Sheet
  * External representation of a worksheet
- *
- * @package Box\Spout\Writer\Common\Entity
  */
 class Sheet
 {
@@ -29,7 +27,7 @@ class Sheet
     /**
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $associatedWorkbookId ID of the sheet's associated workbook
-     * @param SheetManager $sheetManager
+     * @param SheetManager $sheetManager To manage sheets
      */
     public function __construct($sheetIndex, $associatedWorkbookId, SheetManager $sheetManager)
     {
@@ -77,8 +75,8 @@ class Sheet
      *
      * @api
      * @param string $name Name of the sheet
-     * @return Sheet
      * @throws \Box\Spout\Writer\Exception\InvalidSheetNameException If the sheet's name is invalid.
+     * @return Sheet
      */
     public function setName($name)
     {

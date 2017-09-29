@@ -4,8 +4,6 @@ namespace Box\Spout\Common\Helper;
 
 /**
  * Class FileSystemHelperTest
- *
- * @package Box\Spout\Common\Helper
  */
 class FileSystemHelperTest extends \PHPUnit_Framework_TestCase
 {

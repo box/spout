@@ -2,14 +2,13 @@
 
 namespace Box\Spout\Reader\CSV;
 
-use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Common\Helper\EncodingHelper;
+use Box\Spout\Reader\Common\Entity\Options;
+use Box\Spout\Reader\IteratorInterface;
 
 /**
  * Class RowIterator
  * Iterate over CSV rows.
- *
- * @package Box\Spout\Reader\CSV
  */
 class RowIterator implements IteratorInterface
 {
@@ -25,7 +24,7 @@ class RowIterator implements IteratorInterface
     protected $numReadRows = 0;
 
     /** @var array|null Buffer used to store the row data, while checking if there are more rows to read */
-    protected $rowDataBuffer = null;
+    protected $rowDataBuffer;
 
     /** @var bool Indicates whether all rows have been read */
     protected $hasReachedEndOfFile = false;
@@ -39,9 +38,6 @@ class RowIterator implements IteratorInterface
     /** @var string Encoding of the CSV file to be read */
     protected $encoding;
 
-    /** @var string End of line delimiter, given by the user as input. */
-    protected $inputEOLDelimiter;
-
     /** @var bool Whether empty rows should be returned or skipped */
     protected $shouldPreserveEmptyRows;
 
@@ -51,30 +47,26 @@ class RowIterator implements IteratorInterface
     /** @var \Box\Spout\Common\Helper\EncodingHelper Helper to work with different encodings */
     protected $encodingHelper;
 
-    /** @var string End of line delimiter, encoded using the same encoding as the CSV */
-    protected $encodedEOLDelimiter;
-
     /**
      * @param resource $filePointer Pointer to the CSV file to read
-     * @param \Box\Spout\Reader\CSV\ReaderOptions $options
+     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager
+     * @param \Box\Spout\Common\Helper\EncodingHelper $encodingHelper
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $options, $globalFunctionsHelper)
+    public function __construct($filePointer, $optionsManager, $encodingHelper, $globalFunctionsHelper)
     {
         $this->filePointer = $filePointer;
-        $this->fieldDelimiter = $options->getFieldDelimiter();
-        $this->fieldEnclosure = $options->getFieldEnclosure();
-        $this->encoding = $options->getEncoding();
-        $this->inputEOLDelimiter = $options->getEndOfLineCharacter();
-        $this->shouldPreserveEmptyRows = $options->shouldPreserveEmptyRows();
+        $this->fieldDelimiter = $optionsManager->getOption(Options::FIELD_DELIMITER);
+        $this->fieldEnclosure = $optionsManager->getOption(Options::FIELD_ENCLOSURE);
+        $this->encoding = $optionsManager->getOption(Options::ENCODING);
+        $this->shouldPreserveEmptyRows = $optionsManager->getOption(Options::SHOULD_PRESERVE_EMPTY_ROWS);
+        $this->encodingHelper = $encodingHelper;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
-
-        $this->encodingHelper = new EncodingHelper($globalFunctionsHelper);
     }
 
     /**
      * Rewind the Iterator to the first element
-     * @link http://php.net/manual/en/iterator.rewind.php
+     * @see http://php.net/manual/en/iterator.rewind.php
      *
      * @return void
      */
@@ -104,7 +96,7 @@ class RowIterator implements IteratorInterface
 
     /**
      * Checks if current position is valid
-     * @link http://php.net/manual/en/iterator.valid.php
+     * @see http://php.net/manual/en/iterator.valid.php
      *
      * @return bool
      */
@@ -115,10 +107,10 @@ class RowIterator implements IteratorInterface
 
     /**
      * Move forward to next element. Reads data for the next unprocessed row.
-     * @link http://php.net/manual/en/iterator.next.php
+     * @see http://php.net/manual/en/iterator.next.php
      *
-     * @return void
      * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
+     * @return void
      */
     public function next()
     {
@@ -130,8 +122,8 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * @return void
      * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
+     * @return void
      */
     protected function readDataForNextRow()
     {
@@ -171,8 +163,8 @@ class RowIterator implements IteratorInterface
      * As fgetcsv() does not manage correctly encoding for non UTF-8 data,
      * we remove manually whitespace with ltrim or rtrim (depending on the order of the bytes)
      *
-     * @return array|false The row for the current file pointer, encoded in UTF-8 or FALSE if nothing to read
      * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
+     * @return array|false The row for the current file pointer, encoded in UTF-8 or FALSE if nothing to read
      */
     protected function getNextUTF8EncodedRow()
     {
@@ -182,7 +174,7 @@ class RowIterator implements IteratorInterface
         }
 
         foreach ($encodedRowData as $cellIndex => $cellValue) {
-            switch($this->encoding) {
+            switch ($this->encoding) {
                 case EncodingHelper::ENCODING_UTF16_LE:
                 case EncodingHelper::ENCODING_UTF32_LE:
                     // remove whitespace from the beginning of a string as fgetcsv() add extra whitespace when it try to explode non UTF-8 data
@@ -203,21 +195,6 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * Returns the end of line delimiter, encoded using the same encoding as the CSV.
-     * The return value is cached.
-     *
-     * @return string
-     */
-    protected function getEncodedEOLDelimiter()
-    {
-        if (!isset($this->encodedEOLDelimiter)) {
-            $this->encodedEOLDelimiter = $this->encodingHelper->attemptConversionFromUTF8($this->inputEOLDelimiter, $this->encoding);
-        }
-
-        return $this->encodedEOLDelimiter;
-    }
-
-    /**
      * @param array|bool $lineData Array containing the cells value for the line
      * @return bool Whether the given line is empty
      */
@@ -228,7 +205,7 @@ class RowIterator implements IteratorInterface
 
     /**
      * Return the current element from the buffer
-     * @link http://php.net/manual/en/iterator.current.php
+     * @see http://php.net/manual/en/iterator.current.php
      *
      * @return array|null
      */
@@ -239,7 +216,7 @@ class RowIterator implements IteratorInterface
 
     /**
      * Return the key of the current element
-     * @link http://php.net/manual/en/iterator.key.php
+     * @see http://php.net/manual/en/iterator.key.php
      *
      * @return int
      */

@@ -3,13 +3,12 @@
 namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Writer\Common\Entity\Row;
+use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 
 /**
  * Interface WorksheetManagerInterface
  * Inteface for worksheet managers, providing the generic interfaces to work with worksheets.
- *
- * @package Box\Spout\Writer\Common\Manager
  */
 interface WorksheetManagerInterface
 {
@@ -21,6 +20,7 @@ interface WorksheetManagerInterface
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
+     * @return void
      */
     public function addRow(Worksheet $worksheet, Row $row);
 
@@ -28,8 +28,8 @@ interface WorksheetManagerInterface
      * Prepares the worksheet to accept data
      *
      * @param Worksheet $worksheet The worksheet to start
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
+     * @return void
      */
     public function startSheet(Worksheet $worksheet);
 

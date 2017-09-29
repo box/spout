@@ -7,8 +7,6 @@ use Box\Spout\Writer\Common\Entity\Row;
 
 /**
  * Interface WriterInterface
- *
- * @package Box\Spout\Writer
  */
 interface WriterInterface
 {
@@ -17,8 +15,8 @@ interface WriterInterface
      * By using this method, the data will be written to a file.
      *
      * @param  string $outputFilePath Path of the output file that will contain the data
+     * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened or if the given path is not writable
      * @return WriterInterface
-     * @throws IOException If the writer cannot be opened or if the given path is not writable
      */
     public function openToFile($outputFilePath);
 
@@ -26,10 +24,9 @@ interface WriterInterface
      * Initializes the writer and opens it to accept data.
      * By using this method, the data will be outputted directly to the browser.
      *
-     * @param  string $outputFileName Name of the output file that will contain the data.
-     * If a path is passed in, only the file name will be kept
+     * @param  string $outputFileName Name of the output file that will contain the data. If a path is passed in, only the file name will be kept
+     * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened
      * @return WriterInterface
-     * @throws IOException If the writer cannot be opened
      */
     public function openToBrowser($outputFileName);
 
@@ -57,6 +54,7 @@ interface WriterInterface
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     * @return WriterInterface
      */
     public function addRows(array $rows);
 

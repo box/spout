@@ -2,16 +2,16 @@
 
 namespace Box\Spout\Writer;
 
+use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
-use Box\Spout\Common\Helper\FileSystemHelper;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Writer\Common\Entity\Cell;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Style;
-use Box\Spout\Writer\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
@@ -19,7 +19,6 @@ use Box\Spout\Writer\Exception\WriterNotOpenedException;
 /**
  * Class WriterAbstract
  *
- * @package Box\Spout\Writer
  * @abstract
  */
 abstract class WriterAbstract implements WriterInterface
@@ -36,6 +35,9 @@ abstract class WriterAbstract implements WriterInterface
     /** @var GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
+    /** @var HelperFactory $helperFactory */
+    protected $helperFactory;
+
     /** @var OptionsManagerInterface Writer options manager */
     protected $optionsManager;
 
@@ -49,23 +51,27 @@ abstract class WriterAbstract implements WriterInterface
      * @param OptionsManagerInterface $optionsManager
      * @param StyleMerger $styleMerger
      * @param GlobalFunctionsHelper $globalFunctionsHelper
+     * @param HelperFactory $helperFactory
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
         StyleMerger $styleMerger,
-        GlobalFunctionsHelper $globalFunctionsHelper
-    )
-    {
+        GlobalFunctionsHelper $globalFunctionsHelper,
+        HelperFactory $helperFactory
+    ) {
         $this->optionsManager = $optionsManager;
         $this->styleMerger = $styleMerger;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
+        $this->helperFactory = $helperFactory;
+
+        $this->resetRowStyleToDefault();
     }
 
     /**
      * Opens the streamer and makes it ready to accept data.
      *
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened
+     * @return void
      */
     abstract protected function openWriter();
 
@@ -150,8 +156,8 @@ abstract class WriterAbstract implements WriterInterface
      * Checks if the pointer to the file/stream to write to is available.
      * Will throw an exception if not available.
      *
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the pointer is not available
+     * @return void
      */
     protected function throwIfFilePointerIsNotAvailable()
     {
@@ -165,8 +171,8 @@ abstract class WriterAbstract implements WriterInterface
      * Throws an exception if already opened.
      *
      * @param string $message Error message
-     * @return void
      * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened and must not be.
+     * @return void
      */
     protected function throwIfWriterAlreadyOpened($message)
     {
@@ -297,7 +303,7 @@ abstract class WriterAbstract implements WriterInterface
         // remove output file if it was created
         if ($this->globalFunctionsHelper->file_exists($this->outputFilePath)) {
             $outputFolderPath = dirname($this->outputFilePath);
-            $fileSystemHelper = new FileSystemHelper($outputFolderPath);
+            $fileSystemHelper = $this->helperFactory->createFileSystemHelper($outputFolderPath);
             $fileSystemHelper->deleteFile($this->outputFilePath);
         }
     }

@@ -12,8 +12,6 @@ use Box\Spout\Writer\WriterFactory;
 
 /**
  * Class SheetTest
- *
- * @package Box\Spout\Writer\XLSX
  */
 class SheetTest extends \PHPUnit_Framework_TestCase
 {

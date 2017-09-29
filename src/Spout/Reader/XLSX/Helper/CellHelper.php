@@ -7,8 +7,6 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 /**
  * Class CellHelper
  * This class provides helper functions when working with cells
- *
- * @package Box\Spout\Reader\XLSX\Helper
  */
 class CellHelper
 {
@@ -26,7 +24,7 @@ class CellHelper
      * Calling fillMissingArrayIndexes($dataArray, 'FILL') will return this array: ['FILL', 1, 'FILL', 3]
      *
      * @param array $dataArray The array to fill
-     * @param string|void $fillValue optional
+     * @param string $fillValue optional
      * @return array
      */
     public static function fillMissingArrayIndexes($dataArray, $fillValue = '')
@@ -51,8 +49,8 @@ class CellHelper
      * The mapping is zero based, so that A1 maps to 0, B2 maps to 1, Z13 to 25 and AA4 to 26.
      *
      * @param string $cellIndex The Excel cell index ('A1', 'BC13', ...)
-     * @return int
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException When the given cell index is invalid
+     * @return int
      */
     public static function getColumnIndexFromCellIndex($cellIndex)
     {

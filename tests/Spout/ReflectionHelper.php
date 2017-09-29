@@ -5,7 +5,7 @@
  */
 class ReflectionHelper
 {
-    private static $privateVarsToReset = array();
+    private static $privateVarsToReset = [];
 
     /**
      * Resets any static vars that were set to their
@@ -20,7 +20,7 @@ class ReflectionHelper
                 self::setStaticValue($class, $valueName, $originalValue, $saveOriginalValue = false);
             }
         }
-        self::$privateVarsToReset = array();
+        self::$privateVarsToReset = [];
     }
 
     /**
@@ -51,7 +51,7 @@ class ReflectionHelper
      * @param string $class
      * @param string $valueName
      * @param mixed|null $value
-     * @param bool|void $saveOriginalValue
+     * @param bool $saveOriginalValue
      * @return void
      */
     public static function setStaticValue($class, $valueName, $value, $saveOriginalValue = true)

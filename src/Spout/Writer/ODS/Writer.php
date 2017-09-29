@@ -8,8 +8,6 @@ use Box\Spout\Writer\WriterMultiSheetsAbstract;
 /**
  * Class Writer
  * This class provides base support to write data to ODS files
- *
- * @package Box\Spout\Writer\ODS
  */
 class Writer extends WriterMultiSheetsAbstract
 {
@@ -22,14 +20,15 @@ class Writer extends WriterMultiSheetsAbstract
      *
      * @api
      * @param string $tempFolder Temporary folder where the files to create the ODS will be stored
-     * @return Writer
      * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
+     * @return Writer
      */
     public function setTempFolder($tempFolder)
     {
         $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
         $this->optionsManager->setOption(Options::TEMP_FOLDER, $tempFolder);
+
         return $this;
     }
 }

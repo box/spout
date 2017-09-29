@@ -2,19 +2,17 @@
 
 namespace Box\Spout\Writer\CSV\Manager;
 
+use Box\Spout\Common\Manager\OptionsManagerAbstract;
 use Box\Spout\Writer\Common\Entity\Options;
-use Box\Spout\Writer\Common\Manager\OptionsManagerAbstract;
 
 /**
  * Class OptionsManager
  * CSV Writer options manager
- *
- * @package Box\Spout\Writer\CSV\Manager
  */
 class OptionsManager extends OptionsManagerAbstract
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getSupportedOptions()
     {
@@ -26,7 +24,7 @@ class OptionsManager extends OptionsManagerAbstract
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setDefaultOptions()
     {

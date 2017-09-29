@@ -2,17 +2,15 @@
 
 namespace Box\Spout\Writer\CSV;
 
-use Box\Spout\Writer\WriterAbstract;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Row;
+use Box\Spout\Writer\WriterAbstract;
 
 /**
  * Class Writer
  * This class provides support to write data to CSV files
- *
- * @package Box\Spout\Writer\CSV
  */
 class Writer extends WriterAbstract
 {
@@ -35,6 +33,7 @@ class Writer extends WriterAbstract
     public function setFieldDelimiter($fieldDelimiter)
     {
         $this->optionsManager->setOption(Options::FIELD_DELIMITER, $fieldDelimiter);
+
         return $this;
     }
 
@@ -48,6 +47,7 @@ class Writer extends WriterAbstract
     public function setFieldEnclosure($fieldEnclosure)
     {
         $this->optionsManager->setOption(Options::FIELD_ENCLOSURE, $fieldEnclosure);
+
         return $this;
     }
 
@@ -61,6 +61,7 @@ class Writer extends WriterAbstract
     public function setShouldAddBOM($shouldAddBOM)
     {
         $this->optionsManager->setOption(Options::SHOULD_ADD_BOM, (bool) $shouldAddBOM);
+
         return $this;
     }
 

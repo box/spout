@@ -4,8 +4,6 @@ namespace Box\Spout;
 
 /**
  * Trait TestUsingResource
- *
- * @package Box\Spout
  */
 trait TestUsingResource
 {

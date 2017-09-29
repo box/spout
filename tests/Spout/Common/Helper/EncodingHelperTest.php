@@ -6,8 +6,6 @@ use Box\Spout\TestUsingResource;
 
 /**
  * Class EncodingHelperTest
- *
- * @package Box\Spout\Common\Helper
  */
 class EncodingHelperTest extends \PHPUnit_Framework_TestCase
 {

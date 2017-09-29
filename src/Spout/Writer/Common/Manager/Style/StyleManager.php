@@ -8,8 +8,6 @@ use Box\Spout\Writer\Common\Entity\Style\Style;
 /**
  * Class StyleManager
  * Manages styles to be applied to a cell
- *
- * @package Box\Spout\Writer\Common\Manager\Style
  */
 class StyleManager implements StyleManagerInterface
 {
@@ -46,7 +44,6 @@ class StyleManager implements StyleManagerInterface
     {
         return $this->styleRegistry->registerStyle($style);
     }
-
 
     /**
      * Apply additional styles if the given row needs it.

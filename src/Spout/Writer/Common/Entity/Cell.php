@@ -8,8 +8,6 @@ use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 /**
  * Class Cell
- *
- * @package Box\Spout\Writer\Common\Entity
  */
 class Cell
 {
@@ -48,13 +46,13 @@ class Cell
      * The value of this cell
      * @var mixed|null
      */
-    protected $value = null;
+    protected $value;
 
     /**
      * The cell type
      * @var int|null
      */
-    protected $type = null;
+    protected $type;
 
     /**
      * The cell style
@@ -132,15 +130,18 @@ class Cell
     {
         if (CellHelper::isBoolean($value)) {
             return self::TYPE_BOOLEAN;
-        } elseif (CellHelper::isEmpty($value)) {
-            return self::TYPE_EMPTY;
-        } elseif (CellHelper::isNumeric($this->getValue())) {
-            return self::TYPE_NUMERIC;
-        } elseif (CellHelper::isNonEmptyString($value)) {
-            return self::TYPE_STRING;
-        } else {
-            return self::TYPE_ERROR;
         }
+        if (CellHelper::isEmpty($value)) {
+            return self::TYPE_EMPTY;
+        }
+        if (CellHelper::isNumeric($this->getValue())) {
+            return self::TYPE_NUMERIC;
+        }
+        if (CellHelper::isNonEmptyString($value)) {
+            return self::TYPE_STRING;
+        }
+
+        return self::TYPE_ERROR;
     }
 
     /**
@@ -197,7 +198,7 @@ class Cell
      */
     public function __toString()
     {
-        return (string)$this->value;
+        return (string) $this->value;
     }
 
     /**

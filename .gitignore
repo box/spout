@@ -1,6 +1,8 @@
+/.idea
+*.iml
+
 /tests/resources/generated
 /tests/coverage
 /vendor
-/.idea
-*.iml
-composer.lock
+/composer.lock
+/.php_cs.cache
