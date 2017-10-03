@@ -6,7 +6,7 @@ $config = PhpCsFixer\Config::create()
         '@Symfony' => true,
         'align_multiline_comment' => false,
         'array_syntax' => ['syntax' => 'short'],
-        'binary_operator_spaces' => ['align_double_arrow' => true, 'align_equals' => null],
+        'binary_operator_spaces' => ['default' => null],
         'blank_line_before_statement' => ['statements' => ['return']],
         'combine_consecutive_unsets' => true,
         'concat_space' => ['spacing' => 'one'],
@@ -43,6 +43,7 @@ $config = PhpCsFixer\Config::create()
         'single_line_comment_style' => ['comment_types' => ['hash']],
         'strict_comparison' => true,
         'void_return' => true,
+        'yoda_style' => ['equal' => false, 'identical' => false],
     ]);
 
 $config->setFinder(
