@@ -42,7 +42,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::XLSX);
         $row = EntityFactory::createRow([
             new Cell('xlsx--11'),
-            new Cell('xlsx--12')
+            new Cell('xlsx--12'),
         ], $this->defaultStyle);
         $writer->addRow($row);
     }
@@ -55,7 +55,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::XLSX);
         $row = EntityFactory::createRow([
             new Cell('xlsx--11'),
-            new Cell('xlsx--12')
+            new Cell('xlsx--12'),
         ], $this->defaultStyle);
         $writer->addRows([$row]);
     }
@@ -92,7 +92,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $writer->openToFile($resourcePath);
         $row = EntityFactory::createRow([
             new Cell('xlsx--11'),
-            new Cell('xlsx--12')
+            new Cell('xlsx--12'),
         ], $style);
         $writer->addRow($row);
     }
@@ -118,7 +118,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $writer->openToFile($resourcePath);
         $row = EntityFactory::createRow([
             new Cell('xlsx--11'),
-            new Cell('xlsx--12')
+            new Cell('xlsx--12'),
         ], $style);
         $writer->addRows([$row]);
     }
@@ -458,7 +458,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $fileName = 'test_set_default_row_style.xlsx';
 
         $row = EntityFactory::createRow([
-            new Cell('xlsx--11')
+            new Cell('xlsx--11'),
         ]);
         $dataRows = [$row];
 
@@ -552,16 +552,15 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
      */
     private function writeToXLSXFile($allRows, $fileName, $style)
     {
-
-        $arrayToRows = function(array $allRows) use ($style) {
+        $arrayToRows = function (array $allRows) use ($style) {
             return array_map(function ($oneRow) use ($style) {
                 $row = EntityFactory::createRow(array_map(function ($value) {
                     return new Cell($value);
                 }, $oneRow), $style);
+
                 return $row;
             }, $allRows);
         };
-
 
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -585,8 +584,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
      */
     private function writeToXLSXFileWithDefaultStyle($allRows, $fileName, $defaultStyle)
     {
-
-
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 

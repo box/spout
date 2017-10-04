@@ -42,6 +42,7 @@ class RowManager
     public function isEmpty(Row $row)
     {
         $cells = $row->getCells();
+
         return count($cells) === 0 || (count($cells) === 1 && $cells[0]->isEmpty());
     }
 }

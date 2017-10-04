@@ -83,8 +83,8 @@ class Writer extends WriterAbstract
      *
      * @param Row $row The row containing cells and styles
      *
-     * @return void
      * @throws IOException If unable to write data
+     * @return void
      * @internal param \Box\Spout\Writer\Common\Entity\Style\Style $style Ignored here since CSV does not support styling.
      */
     protected function addRowToWriter(Row $row)

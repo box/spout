@@ -3,7 +3,6 @@
 namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Writer\Common\Entity\Row;
-use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 
 /**
@@ -17,9 +16,9 @@ interface WorksheetManagerInterface
      *
      * @param Worksheet $worksheet The worksheet to add the row to
      * @param Row $row The row to be added
-     * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
+     * @return void
      * @return void
      */
     public function addRow(Worksheet $worksheet, Row $row);

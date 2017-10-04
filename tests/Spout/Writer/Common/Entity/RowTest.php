@@ -10,6 +10,7 @@ class RowTest extends TestCase
     {
         $styleMock = $this
             ->getMockBuilder('Box\Spout\Writer\Common\Entity\Style\Style');
+
         return $styleMock;
     }
 
@@ -18,6 +19,7 @@ class RowTest extends TestCase
         $cellMock = $this
             ->getMockBuilder('Box\Spout\Writer\Common\Entity\Cell')
             ->disableOriginalConstructor();
+
         return $cellMock;
     }
 
@@ -26,6 +28,7 @@ class RowTest extends TestCase
         $rowManagerMock = $this
             ->getMockBuilder('Box\Spout\Writer\Common\Manager\RowManager')
             ->disableOriginalConstructor();
+
         return $rowManagerMock;
     }
 
@@ -33,7 +36,8 @@ class RowTest extends TestCase
     {
         $this->assertInstanceOf(
             'Box\Spout\Writer\Common\Entity\Row',
-            new Row([],
+            new Row(
+                [],
                 null,
                 $this->rowManagerMock()->getMock()
             )

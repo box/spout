@@ -4,7 +4,6 @@ namespace Box\Spout\Writer\Common\Entity;
 
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Manager\RowManager;
-use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 class Row
 {
@@ -16,9 +15,9 @@ class Row
 
     /**
      * The row style
-     * @var null|Style
+     * @var Style|null
      */
-    protected $style = null;
+    protected $style;
 
     /**
      * Thw row manager
@@ -59,6 +58,7 @@ class Row
         foreach ($cells as $cell) {
             $this->addCell($cell);
         }
+
         return $this;
     }
 
@@ -70,6 +70,7 @@ class Row
         if (!isset($this->style)) {
             $this->setStyle(new Style());
         }
+
         return $this->style;
     }
 
@@ -80,6 +81,7 @@ class Row
     public function setStyle($style)
     {
         $this->style = $style;
+
         return $this;
     }
 
@@ -90,6 +92,7 @@ class Row
     public function applyStyle(Style $style = null)
     {
         $this->rowManager->applyStyle($this, $style);
+
         return $this;
     }
 
@@ -100,6 +103,7 @@ class Row
     public function addCell(Cell $cell)
     {
         $this->cells[] = $cell;
+
         return $this;
     }
 

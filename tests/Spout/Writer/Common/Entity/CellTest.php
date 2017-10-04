@@ -10,6 +10,7 @@ class CellTest extends TestCase
     {
         $styleMock = $this
             ->getMockBuilder('Box\Spout\Writer\Common\Entity\Style\Style');
+
         return $styleMock;
     }
 

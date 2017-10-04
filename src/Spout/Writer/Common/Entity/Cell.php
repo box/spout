@@ -58,7 +58,7 @@ class Cell
      * The cell style
      * @var Style|null
      */
-    protected $style = null;
+    protected $style;
 
     /**
      * @var StyleMerger
@@ -110,6 +110,7 @@ class Cell
         if (!isset($this->style)) {
             $this->setStyle(new Style());
         }
+
         return $this->style;
     }
 
@@ -212,6 +213,7 @@ class Cell
         }
         $mergedStyle = $this->styleMerger->merge($this->getStyle(), $style);
         $this->setStyle($mergedStyle);
+
         return $this;
     }
 }

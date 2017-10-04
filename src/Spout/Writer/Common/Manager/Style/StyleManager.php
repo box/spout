@@ -55,6 +55,7 @@ class StyleManager implements StyleManagerInterface
     public function applyExtraStylesIfNeeded(Cell $cell)
     {
         $updatedStyle = $this->applyWrapTextIfCellContainsNewLine($cell);
+
         return $updatedStyle;
     }
 
@@ -79,6 +80,7 @@ class StyleManager implements StyleManagerInterface
         if ($cell->isString() && strpos($cell->getValue(), "\n") !== false) {
             $cell->getStyle()->setShouldWrapText();
         }
+
         return $cell->getStyle();
     }
 }

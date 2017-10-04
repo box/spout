@@ -5,7 +5,6 @@ namespace Box\Spout\Writer\Common\Manager\Style;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 
-
 /**
  * Interface StyleHManagernterface
  */

@@ -53,7 +53,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::ODS);
         $row = $this->entityFactory->createRow([
             new Cell('csv--11'),
-            new Cell('csv--12')
+            new Cell('csv--12'),
         ]);
         $writer->addRow($row);
     }
@@ -66,7 +66,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::ODS);
         $row = $this->entityFactory->createRow([
             new Cell('csv--11'),
-            new Cell('csv--12')
+            new Cell('csv--12'),
         ]);
         $writer->addRows([$row]);
     }
@@ -140,7 +140,6 @@ class WriterTest extends \PHPUnit_Framework_TestCase
             $writer->addRows($dataRows);
             $this->fail('Exception should have been thrown');
         } catch (SpoutException $e) {
-
             $this->assertFalse(file_exists($fileName), 'Output file should have been deleted');
 
             $numFiles = iterator_count(new \FilesystemIterator($tempFolderPath, \FilesystemIterator::SKIP_DOTS));
@@ -324,7 +323,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         if ($expectedNumTableCells === 1) {
             $tableCellNode = $tableCellNodes->item(0);
-            $numColumnsRepeated = (int)($tableCellNode->getAttribute('table:number-columns-repeated'));
+            $numColumnsRepeated = (int) ($tableCellNode->getAttribute('table:number-columns-repeated'));
             $this->assertEquals($expectedNumColumnsRepeated, $numColumnsRepeated);
         } else {
             foreach ($tableCellNodes as $tableCellNode) {
@@ -343,6 +342,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
                 $row = $this->entityFactory->createRow(array_map(function ($value) {
                     return new Cell($value);
                 }, $oneRow));
+
                 return $row;
             }, $allRows);
         };
@@ -534,7 +534,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         foreach ($dataRows as $dataRow) {
             /** @var Cell $cell */
             foreach ($dataRow as $cell) {
-                $this->assertValueWasWritten($fileName, (string)$cell->getValue(), '');
+                $this->assertValueWasWritten($fileName, (string) $cell->getValue(), '');
             }
         }
     }
@@ -563,6 +563,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
                     return $value;
                 }
             }, $oneRow));
+
             return $row;
         }, $allRows));
         $writer->close();
@@ -591,6 +592,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
             $row = $this->entityFactory->createRow(array_map(function ($value) {
                 return new Cell($value);
             }, $oneRow));
+
             return $row;
         }, $allRows));
 
@@ -600,6 +602,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
                 $row = $this->entityFactory->createRow(array_map(function ($value) {
                     return new Cell($value);
                 }, $oneRow));
+
                 return $row;
             }, $allRows));
         }

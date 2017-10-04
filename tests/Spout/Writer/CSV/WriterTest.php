@@ -6,7 +6,6 @@ use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Creator\ManagerFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\WriterFactory;
 
@@ -30,7 +29,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         @$writer->openToFile($filePath);
         $row = EntityFactory::createRow([
             new Cell('csv--11'),
-            new Cell('csv--12')
+            new Cell('csv--12'),
         ]);
         $writer->addRow($row);
         $writer->close();
@@ -44,7 +43,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::CSV);
         $row = EntityFactory::createRow([
             new Cell('csv--11'),
-            new Cell('csv--12')
+            new Cell('csv--12'),
         ]);
         $writer->addRow($row);
         $writer->close();
@@ -58,7 +57,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::CSV);
         $row = EntityFactory::createRow([
             new Cell('csv--11'),
-            new Cell('csv--12')
+            new Cell('csv--12'),
         ]);
         $writer->addRows([$row]);
         $writer->close();
@@ -229,6 +228,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
             $row = EntityFactory::createRow(array_map(function ($value) {
                 return new Cell($value);
             }, $oneRow));
+
             return $row;
         }, $allRows));
         $writer->close();

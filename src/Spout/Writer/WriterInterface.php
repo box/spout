@@ -2,7 +2,6 @@
 
 namespace Box\Spout\Writer;
 
-use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Writer\Common\Entity\Row;
 
 /**
@@ -50,10 +49,10 @@ interface WriterInterface
      * Write a given array of rows to the output. New data will be appended to the end of the stream.
      *
      * @param  Row[] $rows Array of rows be appended to the stream
-     * @return WriterInterface
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     * @return WriterInterface
      * @return WriterInterface
      */
     public function addRows(array $rows);

@@ -203,9 +203,9 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * with the creation of new worksheets if one worksheet has reached its maximum capicity.
      *
      * @param Row $row The row to added
-     * @return void
      * @throws IOException If trying to create a new sheet and unable to open the sheet for writing
      * @throws WriterException If unable to write data
+     * @return void
      * @return void
      */
     public function addRowToCurrentWorksheet(Row $row)
@@ -243,8 +243,8 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      *
      * @param Worksheet $worksheet Worksheet to write the row to
      * @param Row $row The row to be added
-     * @return void
      * @throws WriterException If unable to write data
+     * @return void
      * @return void
      */
     private function addRowToWorksheet(Worksheet $worksheet, Row $row)

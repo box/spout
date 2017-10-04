@@ -53,7 +53,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $row = $this->entityFactory->createRow([
             new Cell('xlsx--11'),
-            new Cell('xlsx--12')
+            new Cell('xlsx--12'),
         ]);
         $writer->addRow($row);
     }
@@ -66,7 +66,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::XLSX);
         $row = $this->entityFactory->createRow([
             new Cell('xlsx--11'),
-            new Cell('xlsx--12')
+            new Cell('xlsx--12'),
         ]);
         $writer->addRows([$row]);
     }
@@ -386,12 +386,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddRowShouldWriteGivenDataToTheCorrectSheet()
     {
-
-        $arrayToRows = function(array $allRows) {
+        $arrayToRows = function (array $allRows) {
             return array_map(function ($oneRow) {
                 $row = $this->entityFactory->createRow(array_map(function ($value) {
                     return new Cell($value);
                 }, $oneRow));
+
                 return $row;
             }, $allRows);
         };
@@ -615,12 +615,13 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer->openToFile($resourcePath);
         $writer->addRows(array_map(function ($oneRow) {
             $row = $this->entityFactory->createRow(array_map(function ($value) {
-                if(!$value instanceof Cell) {
+                if (!$value instanceof Cell) {
                     return new Cell($value);
                 } else {
                     return $value;
                 }
             }, $oneRow));
+
             return $row;
         }, $allRows));
         $writer->close();
@@ -651,6 +652,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
             $row = $this->entityFactory->createRow(array_map(function ($value) {
                 return new Cell($value);
             }, $oneRow));
+
             return $row;
         }, $allRows));
 
@@ -660,6 +662,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
                 $row = $this->entityFactory->createRow(array_map(function ($value) {
                     return new Cell($value);
                 }, $oneRow));
+
                 return $row;
             }, $allRows));
         }

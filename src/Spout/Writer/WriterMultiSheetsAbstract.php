@@ -7,8 +7,8 @@ use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
-use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Row;
+use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
@@ -165,9 +165,9 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * with the creation of new worksheets if one worksheet has reached its maximum capicity.
      *
      * @param Row $row
-     * @return void
      * @throws WriterNotOpenedException If the book is not created yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     * @return void
      * @return void
      */
     protected function addRowToWriter(Row $row)

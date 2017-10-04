@@ -6,10 +6,10 @@ use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Cell;
+use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\WriterFactory;
@@ -102,7 +102,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddRowsWithStyleShouldThrowExceptionIfInvalidStyleGiven($style)
     {
-
         if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
             $this->expectException(\TypeError::class);
         } else {
@@ -357,7 +356,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_set_default_row_style.ods';
         $row = EntityFactory::createRow([
-            new Cell('ods--11')
+            new Cell('ods--11'),
         ]);
         $dataRows = [$row];
 
@@ -383,6 +382,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
                 $row = EntityFactory::createRow(array_map(function ($value) {
                     return new Cell($value);
                 }, $oneRow), $style);
+
                 return $row;
             }, $allRows);
         };

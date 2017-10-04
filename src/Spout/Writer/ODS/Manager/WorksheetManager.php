@@ -6,7 +6,6 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\Escaper\ODS as ODSEscaper;
 use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Worksheet;
@@ -37,8 +36,8 @@ class WorksheetManager implements WorksheetManagerInterface
     public function __construct(
         StyleManager $styleManager,
         ODSEscaper $stringsEscaper,
-        StringHelper $stringHelper)
-    {
+        StringHelper $stringHelper
+    ) {
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
         $this->styleManager = $styleManager;
@@ -96,15 +95,14 @@ class WorksheetManager implements WorksheetManagerInterface
      *
      * @param Worksheet $worksheet The worksheet to add the row to
      * @param Row $row The row to be added
-     * @return void
-     *
      * @throws IOException If the data cannot be written
      * @throws InvalidArgumentException If a cell value's type is not supported
+     * @return void
+     *
      * @return void
      */
     public function addRow(Worksheet $worksheet, Row $row)
     {
-
         $cells = $row->getCells();
         $cellsCount = count($cells);
 
@@ -114,15 +112,13 @@ class WorksheetManager implements WorksheetManagerInterface
         $nextCellIndex = 1;
 
         for ($i = 0; $i < $cellsCount; $i++) {
-
             /** @var Cell $cell */
             $cell = $cells[$currentCellIndex];
             /** @var Cell|null $nextCell */
             $nextCell = isset($cells[$nextCellIndex]) ? $cells[$nextCellIndex] : null;
 
             // @TODO refactoring: move this to its own method
-            if (null === $nextCell || $cell->getValue() !== $nextCell->getValue()) {
-
+            if ($nextCell === null || $cell->getValue() !== $nextCell->getValue()) {
                 // Apply styles - the row style is merged at this point
                 $cell->applyStyle($row->getStyle());
                 $this->styleManager->applyExtraStylesIfNeeded($cell);

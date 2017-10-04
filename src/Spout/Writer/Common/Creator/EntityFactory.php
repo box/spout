@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Writer\Common\Creator;
 
-use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Cell;
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Workbook;
@@ -73,6 +73,7 @@ class EntityFactory
     {
         $styleMerger = new StyleMerger();
         $rowManager = new RowManager($styleMerger);
+
         return new Row($cells, $style, $rowManager);
     }
 }

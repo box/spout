@@ -3,9 +3,8 @@
 namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Writer\Common\Entity\Sheet;
-use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Row;
+use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Workbook;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
@@ -59,12 +58,13 @@ interface WorkbookManagerInterface
      * with the creation of new worksheets if one worksheet has reached its maximum capicity.
      *
      * @param Row $row The row to added
-     * @return void
      * @throws IOException If trying to create a new sheet and unable to open the sheet for writing
      * @throws WriterException If unable to write data
      * @return void
+     * @return void
      */
     public function addRowToCurrentWorksheet(Row $row);
+
     /**
      * Closes the workbook and all its associated sheets.
      * All the necessary files are written to disk and zipped together to create the final file.

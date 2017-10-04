@@ -27,15 +27,14 @@ class RowManagerTest extends TestCase
         $this->assertTrue($this->rowManager->isEmpty($row));
 
         $row = new Row([
-            new Cell('')
+            new Cell(''),
         ], null, $this->rowManager);
         $this->assertTrue($this->rowManager->isEmpty($row));
-
 
         $row = new Row([
             new Cell(''),
             new Cell(''),
-            new Cell('Okay')
+            new Cell('Okay'),
         ], null, $this->rowManager);
         $this->assertFalse($this->rowManager->isEmpty($row));
     }

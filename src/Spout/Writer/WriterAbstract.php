@@ -7,9 +7,9 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Style;
@@ -98,11 +98,12 @@ abstract class WriterAbstract implements WriterInterface
     public function setDefaultRowStyle($defaultStyle)
     {
         $this->optionsManager->setOption(Options::DEFAULT_ROW_STYLE, $defaultStyle);
+
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function openToFile($outputFilePath)
     {
@@ -118,7 +119,7 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function openToBrowser($outputFileName)
     {
@@ -181,7 +182,7 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addRow(Row $row)
     {
@@ -201,11 +202,12 @@ abstract class WriterAbstract implements WriterInterface
         } else {
             throw new WriterNotOpenedException('The writer needs to be opened before adding row.');
         }
+
         return $this;
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function withRow(\Closure $callback)
     {
@@ -213,19 +215,19 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function addRows(array $dataRows)
     {
         foreach ($dataRows as $dataRow) {
-
-            if(!$dataRow instanceof Row) {
+            if (!$dataRow instanceof Row) {
                 $this->closeAndAttemptToCleanupAllFiles();
                 throw new InvalidArgumentException();
             }
 
             $this->addRow($dataRow);
         }
+
         return $this;
     }
 
@@ -240,6 +242,7 @@ abstract class WriterAbstract implements WriterInterface
             if ($value instanceof Cell) {
                 return $value;
             }
+
             return new Cell($value);
         }, $dataRow));
 
@@ -259,7 +262,7 @@ abstract class WriterAbstract implements WriterInterface
     private function applyDefaultRowStyle(Row $row)
     {
         $defaultRowStyle = $this->optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
-        if (null === $defaultRowStyle) {
+        if ($defaultRowStyle === null) {
             return $this;
         }
         $mergedStyle = $this->styleMerger->merge($row->getStyle(), $defaultRowStyle);
