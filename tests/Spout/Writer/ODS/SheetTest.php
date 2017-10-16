@@ -4,6 +4,8 @@ namespace Box\Spout\Writer\ODS;
 
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\WriterFactory;
 
@@ -91,7 +93,11 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $sheet = $writer->getCurrentSheet();
         $sheet->setName($sheetName);
 
-        $writer->addRow(['ods--11', 'ods--12']);
+        $row = EntityFactory::createRow([
+            new Cell('ods--11'),
+            new Cell('ods--12'),
+        ]);
+        $writer->addRow($row);
         $writer->close();
     }
 
@@ -108,9 +114,20 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::ODS);
         $writer->openToFile($resourcePath);
 
-        $writer->addRow(['ods--sheet1--11', 'ods--sheet1--12']);
+        $row = EntityFactory::createRow([
+            new Cell('ods--sheet1--11'),
+            new Cell('ods--sheet1--12'),
+        ]);
+        $writer->addRow($row);
+
         $writer->addNewSheetAndMakeItCurrent();
-        $writer->addRow(['ods--sheet2--11', 'ods--sheet2--12', 'ods--sheet2--13']);
+
+        $row = EntityFactory::createRow([
+            new Cell('ods--sheet2--11'),
+            new Cell('ods--sheet2--12'),
+            new Cell('ods--sheet2--13'),
+        ]);
+        $writer->addRow($row);
 
         $writer->close();
 

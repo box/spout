@@ -6,6 +6,7 @@ use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\WriterFactory;
@@ -16,6 +17,20 @@ use Box\Spout\Writer\WriterFactory;
 class WriterTest extends \PHPUnit_Framework_TestCase
 {
     use TestUsingResource;
+
+    /**
+     * @var EntityFactory
+     */
+    protected $entityFactory;
+
+    /**
+     * @return void
+     */
+    protected function setUp()
+    {
+        $this->entityFactory = new EntityFactory();
+        parent::setUp();
+    }
 
     /**
      * @expectedException \Box\Spout\Common\Exception\IOException
@@ -36,7 +51,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::ODS);
-        $writer->addRow(['ods--11', 'ods--12']);
+        $row = $this->entityFactory->createRow([
+            new Cell('csv--11'),
+            new Cell('csv--12'),
+        ]);
+        $writer->addRow($row);
     }
 
     /**
@@ -45,7 +64,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::ODS);
-        $writer->addRows([['ods--11', 'ods--12']]);
+        $row = $this->entityFactory->createRow([
+            new Cell('csv--11'),
+            new Cell('csv--12'),
+        ]);
+        $writer->addRows([$row]);
     }
 
     /**
@@ -98,8 +121,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_add_row_should_cleanup_all_files_if_exception_thrown.ods';
         $dataRows = [
-            ['wrong'],
-            [new \stdClass()],
+            $this->entityFactory->createRow([]),
+            new \stdClass(),
         ];
 
         $this->createGeneratedFolderIfNeeded($fileName);
@@ -191,6 +214,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldWriteGivenDataToSheet()
     {
         $fileName = 'test_add_row_should_write_given_data_to_sheet.ods';
+
         $dataRows = [
             ['ods--11', 'ods--12'],
             ['ods--21', 'ods--22', 'ods--23'],
@@ -313,6 +337,16 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddRowShouldWriteGivenDataToTheCorrectSheet()
     {
+        $arrayToRows = function (array $allRows) {
+            return array_map(function ($oneRow) {
+                $row = $this->entityFactory->createRow(array_map(function ($value) {
+                    return new Cell($value);
+                }, $oneRow));
+
+                return $row;
+            }, $allRows);
+        };
+
         $fileName = 'test_add_row_should_write_given_data_to_the_correct_sheet.ods';
         $dataRowsSheet1 = [
             ['ods--sheet1--11', 'ods--sheet1--12'],
@@ -334,15 +368,15 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::ODS);
         $writer->openToFile($resourcePath);
 
-        $writer->addRows($dataRowsSheet1);
+        $writer->addRows($arrayToRows($dataRowsSheet1));
 
         $writer->addNewSheetAndMakeItCurrent();
-        $writer->addRows($dataRowsSheet2);
+        $writer->addRows($arrayToRows($dataRowsSheet2));
 
         $firstSheet = $writer->getSheets()[0];
         $writer->setCurrentSheet($firstSheet);
 
-        $writer->addRows($dataRowsSheet1Again);
+        $writer->addRows($arrayToRows($dataRowsSheet1Again));
 
         $writer->close();
 
@@ -521,7 +555,17 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer->setShouldCreateNewSheetsAutomatically($shouldCreateSheetsAutomatically);
 
         $writer->openToFile($resourcePath);
-        $writer->addRows($allRows);
+        $writer->addRows(array_map(function ($oneRow) {
+            $row = $this->entityFactory->createRow(array_map(function ($value) {
+                if (!$value instanceof Cell) {
+                    return new Cell($value);
+                } else {
+                    return $value;
+                }
+            }, $oneRow));
+
+            return $row;
+        }, $allRows));
         $writer->close();
 
         return $writer;
@@ -544,11 +588,23 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer->setShouldCreateNewSheetsAutomatically($shouldCreateSheetsAutomatically);
 
         $writer->openToFile($resourcePath);
-        $writer->addRows($allRows);
+        $writer->addRows(array_map(function ($oneRow) {
+            $row = $this->entityFactory->createRow(array_map(function ($value) {
+                return new Cell($value);
+            }, $oneRow));
+
+            return $row;
+        }, $allRows));
 
         for ($i = 1; $i < $numSheets; $i++) {
             $writer->addNewSheetAndMakeItCurrent();
-            $writer->addRows($allRows);
+            $writer->addRows(array_map(function ($oneRow) {
+                $row = $this->entityFactory->createRow(array_map(function ($value) {
+                    return new Cell($value);
+                }, $oneRow));
+
+                return $row;
+            }, $allRows));
         }
 
         $writer->close();

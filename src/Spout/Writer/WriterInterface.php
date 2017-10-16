@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer;
 
-use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Entity\Row;
 
 /**
  * Interface WriterInterface
@@ -10,7 +10,7 @@ use Box\Spout\Writer\Common\Entity\Style\Style;
 interface WriterInterface
 {
     /**
-     * Inits the writer and opens it to accept data.
+     * Initializes the writer and opens it to accept data.
      * By using this method, the data will be written to a file.
      *
      * @param  string $outputFilePath Path of the output file that will contain the data
@@ -20,7 +20,7 @@ interface WriterInterface
     public function openToFile($outputFilePath);
 
     /**
-     * Inits the writer and opens it to accept data.
+     * Initializes the writer and opens it to accept data.
      * By using this method, the data will be outputted directly to the browser.
      *
      * @param  string $outputFileName Name of the output file that will contain the data. If a path is passed in, only the file name will be kept
@@ -30,56 +30,32 @@ interface WriterInterface
     public function openToBrowser($outputFileName);
 
     /**
-     * Write given data to the output. New data will be appended to end of stream.
+     * Append a row to the end of the stream.
      *
-     * @param  array $dataRow Array containing data to be streamed.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yetthe writer
-     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     * @param Row $row The row to be appended to the stream
      * @return WriterInterface
      */
-    public function addRow(array $dataRow);
+    public function addRow(Row $row);
 
     /**
-     * Write given data to the output and apply the given style.
-     * @see addRow
+     * Write given data to the output with a closure function. New data will be appended to the end of the stream.
      *
-     * @param array $dataRow Array of array containing data to be streamed.
-     * @param Style $style Style to be applied to the row.
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
-     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
+     * @param \Closure $callback A callback returning a Row object. A new Row object is injected into the callback.
      * @return WriterInterface
      */
-    public function addRowWithStyle(array $dataRow, $style);
+    public function withRow(\Closure $callback);
 
     /**
-     * Write given data to the output. New data will be appended to end of stream.
+     * Write a given array of rows to the output. New data will be appended to the end of the stream.
      *
-     * @param  array $dataRows Array of array containing data to be streamed.
-     *          Example $dataRow = [
-     *              ['data11', 12, , '', 'data13'],
-     *              ['data21', 'data22', null],
-     *          ];
+     * @param  Row[] $rows Array of rows be appended to the stream
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      * @return WriterInterface
-     */
-    public function addRows(array $dataRows);
-
-    /**
-     * Write given data to the output and apply the given style.
-     * @see addRows
-     *
-     * @param array $dataRows Array of array containing data to be streamed.
-     * @param Style $style Style to be applied to the rows.
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
-     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      * @return WriterInterface
      */
-    public function addRowsWithStyle(array $dataRows, $style);
+    public function addRows(array $rows);
 
     /**
      * Closes the writer. This will close the streamer as well, preventing new data
