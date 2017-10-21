@@ -14,7 +14,6 @@ class CellManager
     protected $styleMerger;
 
     /**
-     * CellManager constructor.
      * @param StyleMerger $styleMerger
      */
     public function __construct(StyleMerger $styleMerger)
@@ -23,7 +22,7 @@ class CellManager
     }
 
     /**
-     * Merges a Style into a cells Style.
+     * Merges a Style into a cell's Style.
      *
      * @param Cell $cell
      * @param Style $style

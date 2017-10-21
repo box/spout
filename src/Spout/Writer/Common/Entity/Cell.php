@@ -56,7 +56,7 @@ class Cell
 
     /**
      * The cell style
-     * @var Style|null
+     * @var Style
      */
     protected $style;
 
@@ -66,9 +66,8 @@ class Cell
     protected $styleMerger;
 
     /**
-     * Cell constructor.
      * @param $value mixed
-     * @param $style|null Style
+     * @param Style|null $style
      */
     public function __construct($value, Style $style = null)
     {
@@ -78,7 +77,7 @@ class Cell
     }
 
     /**
-     * @param $value mixed|null
+     * @param mixed|null $value
      */
     public function setValue($value)
     {
@@ -95,22 +94,18 @@ class Cell
     }
 
     /**
-     * @param Style $style|null
+     * @param Style|null $style
      */
-    public function setStyle(Style $style = null)
+    public function setStyle($style)
     {
-        $this->style = $style;
+        $this->style = $style ?: new Style();
     }
 
     /**
-     * @return Style|null
+     * @return Style
      */
     public function getStyle()
     {
-        if (!isset($this->style)) {
-            $this->setStyle(new Style());
-        }
-
         return $this->style;
     }
 
@@ -124,6 +119,7 @@ class Cell
 
     /**
      * Get the current value type
+     *
      * @param mixed|null $value
      * @return int
      */
@@ -163,6 +159,7 @@ class Cell
 
     /**
      * Not used at the moment
+     *
      * @return bool
      */
     public function isFormula()
@@ -203,15 +200,16 @@ class Cell
     }
 
     /**
-     * @param Style $style|null
+     * @param Style|null $style
      * @return Cell
      */
-    public function applyStyle(Style $style = null)
+    public function applyStyle($style)
     {
         if ($style === null) {
             return $this;
         }
-        $mergedStyle = $this->styleMerger->merge($this->getStyle(), $style);
+
+        $mergedStyle = $this->styleMerger->merge($this->style, $style);
         $this->setStyle($mergedStyle);
 
         return $this;

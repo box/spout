@@ -52,8 +52,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $writer = WriterFactory::create(Type::ODS);
         $row = $this->entityFactory->createRow([
-            new Cell('csv--11'),
-            new Cell('csv--12'),
+            EntityFactory::createCell('csv--11'),
+            EntityFactory::createCell('csv--12'),
         ]);
         $writer->addRow($row);
     }
@@ -65,8 +65,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $writer = WriterFactory::create(Type::ODS);
         $row = $this->entityFactory->createRow([
-            new Cell('csv--11'),
-            new Cell('csv--12'),
+            EntityFactory::createCell('csv--11'),
+            EntityFactory::createCell('csv--12'),
         ]);
         $writer->addRows([$row]);
     }
@@ -339,11 +339,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $arrayToRows = function (array $allRows) {
             return array_map(function ($oneRow) {
-                $row = $this->entityFactory->createRow(array_map(function ($value) {
-                    return new Cell($value);
+                return $this->entityFactory->createRow(array_map(function ($value) {
+                    return EntityFactory::createCell($value);
                 }, $oneRow));
-
-                return $row;
             }, $allRows);
         };
 
@@ -505,8 +503,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_writer_should_accept_cell_objects.ods';
         $dataRows = [
-            [new Cell('ods--11'), new Cell('ods--12')],
-            [new Cell('ods--21'), new Cell('ods--22'), new Cell('ods--23')],
+            [EntityFactory::createCell('ods--11'), EntityFactory::createCell('ods--12')],
+            [EntityFactory::createCell('ods--21'), EntityFactory::createCell('ods--22'), EntityFactory::createCell('ods--23')],
         ];
 
         $this->writeToODSFile($dataRows, $fileName);
@@ -526,7 +524,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_writer_should_accept_cell_objects_with_types.ods';
         $dataRows = [
-            [new Cell('i am a string'), new Cell(51465), new Cell(true), new Cell(51465.5)],
+            [EntityFactory::createCell('i am a string'), EntityFactory::createCell(51465), EntityFactory::createCell(true), EntityFactory::createCell(51465.5)],
         ];
 
         $this->writeToODSFile($dataRows, $fileName);
@@ -556,15 +554,14 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $writer->openToFile($resourcePath);
         $writer->addRows(array_map(function ($oneRow) {
-            $row = $this->entityFactory->createRow(array_map(function ($value) {
+            return $this->entityFactory->createRow(array_map(function ($value) {
+                // @TODO: always pass a Cell instance!
                 if (!$value instanceof Cell) {
-                    return new Cell($value);
+                    return EntityFactory::createCell($value);
                 } else {
                     return $value;
                 }
             }, $oneRow));
-
-            return $row;
         }, $allRows));
         $writer->close();
 
@@ -589,21 +586,17 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $writer->openToFile($resourcePath);
         $writer->addRows(array_map(function ($oneRow) {
-            $row = $this->entityFactory->createRow(array_map(function ($value) {
-                return new Cell($value);
+            return $this->entityFactory->createRow(array_map(function ($value) {
+                return EntityFactory::createCell($value);
             }, $oneRow));
-
-            return $row;
         }, $allRows));
 
         for ($i = 1; $i < $numSheets; $i++) {
             $writer->addNewSheetAndMakeItCurrent();
             $writer->addRows(array_map(function ($oneRow) {
-                $row = $this->entityFactory->createRow(array_map(function ($value) {
-                    return new Cell($value);
+                return $this->entityFactory->createRow(array_map(function ($value) {
+                    return EntityFactory::createCell($value);
                 }, $oneRow));
-
-                return $row;
             }, $allRows));
         }
 

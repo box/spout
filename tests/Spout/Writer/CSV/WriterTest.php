@@ -6,7 +6,6 @@ use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\WriterFactory;
 
 /**
@@ -28,8 +27,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::CSV);
         @$writer->openToFile($filePath);
         $row = EntityFactory::createRow([
-            new Cell('csv--11'),
-            new Cell('csv--12'),
+            EntityFactory::createCell('csv--11'),
+            EntityFactory::createCell('csv--12'),
         ]);
         $writer->addRow($row);
         $writer->close();
@@ -42,8 +41,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $writer = WriterFactory::create(Type::CSV);
         $row = EntityFactory::createRow([
-            new Cell('csv--11'),
-            new Cell('csv--12'),
+            EntityFactory::createCell('csv--11'),
+            EntityFactory::createCell('csv--12'),
         ]);
         $writer->addRow($row);
         $writer->close();
@@ -56,8 +55,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $writer = WriterFactory::create(Type::CSV);
         $row = EntityFactory::createRow([
-            new Cell('csv--11'),
-            new Cell('csv--12'),
+            EntityFactory::createCell('csv--11'),
+            EntityFactory::createCell('csv--12'),
         ]);
         $writer->addRows([$row]);
         $writer->close();
@@ -196,7 +195,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testWriteShouldAcceptCellObjects()
     {
         $allRows = [
-            [new Cell('String Value'), new Cell(1)],
+            [EntityFactory::createCell('String Value'), EntityFactory::createCell(1)],
         ];
         $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_cell_objects.csv');
         $writtenContent = $this->trimWrittenContent($writtenContent);
@@ -225,12 +224,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writer->openToFile($resourcePath);
 
         $writer->addRows(array_map(function ($oneRow) {
-            $row = EntityFactory::createRow(array_map(function ($value) {
-                return new Cell($value);
+            return EntityFactory::createRow(array_map(function ($value) {
+                return EntityFactory::createCell($value);
             }, $oneRow));
-
-            return $row;
         }, $allRows));
+
         $writer->close();
 
         return file_get_contents($resourcePath);

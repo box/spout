@@ -127,7 +127,6 @@ EOD;
      * @throws IOException If the data cannot be written
      * @throws InvalidArgumentException If a cell value's type is not supported
      * @return void
-     * @return void
      */
     public function addRow(Worksheet $worksheet, Row $row)
     {
@@ -144,8 +143,6 @@ EOD;
      * @param Row $row The row to be written
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
-     * @return void
-     *
      * @return void
      */
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)

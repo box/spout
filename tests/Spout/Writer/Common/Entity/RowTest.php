@@ -2,88 +2,113 @@
 
 namespace Box\Spout\Writer\Common\Entity;
 
+use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Manager\RowManager;
 use PHPUnit\Framework\TestCase;
 
 class RowTest extends TestCase
 {
-    protected function styleMock()
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|Style
+     */
+    private function getStyleMock()
     {
-        $styleMock = $this
-            ->getMockBuilder('Box\Spout\Writer\Common\Entity\Style\Style');
-
-        return $styleMock;
+        return $this->createMock(Style::class);
     }
 
-    protected function cellMock()
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|Cell
+     */
+    private function getCellMock()
     {
-        $cellMock = $this
-            ->getMockBuilder('Box\Spout\Writer\Common\Entity\Cell')
-            ->disableOriginalConstructor();
-
-        return $cellMock;
+        return $this->createMock(Cell::class);
     }
 
-    protected function rowManagerMock()
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|RowManager
+     */
+    private function getRowManagerMock()
     {
-        $rowManagerMock = $this
-            ->getMockBuilder('Box\Spout\Writer\Common\Manager\RowManager')
-            ->disableOriginalConstructor();
-
-        return $rowManagerMock;
+        return $this->createMock(RowManager::class);
     }
 
+    /**
+     * @return void
+     */
     public function testValidInstance()
     {
         $this->assertInstanceOf(
-            'Box\Spout\Writer\Common\Entity\Row',
-            new Row(
-                [],
-                null,
-                $this->rowManagerMock()->getMock()
-            )
+            Row::class,
+            new Row([], null, $this->getRowManagerMock())
         );
     }
 
+    /**
+     * @return void
+     */
     public function testSetCells()
     {
-        $o = new Row([], null, $this->rowManagerMock()->getMock());
-        $o->setCells([$this->cellMock()->getMock(), $this->cellMock()->getMock()]);
-        $this->assertEquals(2, count($o->getCells()));
+        $row = new Row([], null, $this->getRowManagerMock());
+        $row->setCells([$this->getCellMock(), $this->getCellMock()]);
+
+        $this->assertEquals(2, count($row->getCells()));
     }
 
+    /**
+     * @return void
+     */
     public function testSetCellsResets()
     {
-        $o = new Row([], null, $this->rowManagerMock()->getMock());
-        $o->setCells([$this->cellMock()->getMock(), $this->cellMock()->getMock()]);
-        $this->assertEquals(2, count($o->getCells()));
-        $o->setCells([$this->cellMock()->getMock()]);
-        $this->assertEquals(1, count($o->getCells()));
+        $row = new Row([], null, $this->getRowManagerMock());
+        $row->setCells([$this->getCellMock(), $this->getCellMock()]);
+
+        $this->assertEquals(2, count($row->getCells()));
+
+        $row->setCells([$this->getCellMock()]);
+
+        $this->assertEquals(1, count($row->getCells()));
     }
 
+    /**
+     * @return void
+     */
     public function testGetCells()
     {
-        $o = new Row([], null, $this->rowManagerMock()->getMock());
-        $this->assertEquals(0, count($o->getCells()));
-        $o->setCells([$this->cellMock()->getMock(), $this->cellMock()->getMock()]);
-        $this->assertEquals(2, count($o->getCells()));
+        $row = new Row([], null, $this->getRowManagerMock());
+
+        $this->assertEquals(0, count($row->getCells()));
+
+        $row->setCells([$this->getCellMock(), $this->getCellMock()]);
+
+        $this->assertEquals(2, count($row->getCells()));
     }
 
+    /**
+     * @return void
+     */
     public function testAddCell()
     {
-        $o = new Row([], null, $this->rowManagerMock()->getMock());
-        $o->setCells([$this->cellMock()->getMock(), $this->cellMock()->getMock()]);
-        $this->assertEquals(2, count($o->getCells()));
-        $o->addCell($this->cellMock()->getMock());
-        $this->assertEquals(3, count($o->getCells()));
+        $row = new Row([], null, $this->getRowManagerMock());
+        $row->setCells([$this->getCellMock(), $this->getCellMock()]);
+
+        $this->assertEquals(2, count($row->getCells()));
+
+        $row->addCell($this->getCellMock());
+
+        $this->assertEquals(3, count($row->getCells()));
     }
 
+    /**
+     * @return void
+     */
     public function testFluentInterface()
     {
-        $o = new Row([], null, $this->rowManagerMock()->getMock());
-        $o
-            ->addCell($this->cellMock()->getMock())
-            ->setStyle($this->styleMock()->getMock())
+        $row = new Row([], null, $this->getRowManagerMock());
+        $row
+            ->addCell($this->getCellMock())
+            ->setStyle($this->getStyleMock())
             ->setCells([]);
-        $this->assertTrue(is_object($o));
+
+        $this->assertTrue(is_object($row));
     }
 }

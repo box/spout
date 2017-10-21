@@ -41,8 +41,8 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $writer = WriterFactory::create(Type::XLSX);
         $row = EntityFactory::createRow([
-            new Cell('xlsx--11'),
-            new Cell('xlsx--12'),
+            EntityFactory::createCell('xlsx--11'),
+            EntityFactory::createCell('xlsx--12'),
         ], $this->defaultStyle);
         $writer->addRow($row);
     }
@@ -54,8 +54,8 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $writer = WriterFactory::create(Type::XLSX);
         $row = EntityFactory::createRow([
-            new Cell('xlsx--11'),
-            new Cell('xlsx--12'),
+            EntityFactory::createCell('xlsx--11'),
+            EntityFactory::createCell('xlsx--12'),
         ], $this->defaultStyle);
         $writer->addRows([$row]);
     }
@@ -72,17 +72,14 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @requires PHP 7
      * @dataProvider dataProviderForInvalidStyle
      *
      * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
      */
     public function testAddRowWithStyleShouldThrowExceptionIfInvalidStyleGiven($style)
     {
-        if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
-            $this->expectException(\TypeError::class);
-        } else {
-            $this->markTestSkipped('PHP > 7.0 only');
-        }
+        $this->expectException(\TypeError::class);
 
         $fileName = 'test_add_row_with_style_should_throw_exception.xlsx';
         $this->createGeneratedFolderIfNeeded($fileName);
@@ -91,24 +88,21 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
         $row = EntityFactory::createRow([
-            new Cell('xlsx--11'),
-            new Cell('xlsx--12'),
+            EntityFactory::createCell('xlsx--11'),
+            EntityFactory::createCell('xlsx--12'),
         ], $style);
         $writer->addRow($row);
     }
 
     /**
+     * @requires PHP 7
      * @dataProvider dataProviderForInvalidStyle
      *
      * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
      */
     public function testAddRowsWithStyleShouldThrowExceptionIfInvalidStyleGiven($style)
     {
-        if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
-            $this->expectException(\TypeError::class);
-        } else {
-            $this->markTestSkipped('PHP > 7.0 only');
-        }
+        $this->expectException(\TypeError::class);
 
         $fileName = 'test_add_row_with_style_should_throw_exception.xlsx';
         $this->createGeneratedFolderIfNeeded($fileName);
@@ -117,8 +111,8 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
         $row = EntityFactory::createRow([
-            new Cell('xlsx--11'),
-            new Cell('xlsx--12'),
+            EntityFactory::createCell('xlsx--11'),
+            EntityFactory::createCell('xlsx--12'),
         ], $style);
         $writer->addRows([$row]);
     }
@@ -458,7 +452,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $fileName = 'test_set_default_row_style.xlsx';
 
         $row = EntityFactory::createRow([
-            new Cell('xlsx--11'),
+            EntityFactory::createCell('xlsx--11'),
         ]);
         $dataRows = [$row];
 
@@ -554,11 +548,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $arrayToRows = function (array $allRows) use ($style) {
             return array_map(function ($oneRow) use ($style) {
-                $row = EntityFactory::createRow(array_map(function ($value) {
-                    return new Cell($value);
+                return EntityFactory::createRow(array_map(function ($value) {
+                    return EntityFactory::createCell($value);
                 }, $oneRow), $style);
-
-                return $row;
             }, $allRows);
         };
 
@@ -622,7 +614,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             $currentRow = $allRows[$i];
             $currentStyle = $styles[$i];
             $row = EntityFactory::createRow(array_map(function ($value) {
-                return new Cell($value);
+                return EntityFactory::createCell($value);
             }, $currentRow), $currentStyle);
             $writer->addRow($row);
         }

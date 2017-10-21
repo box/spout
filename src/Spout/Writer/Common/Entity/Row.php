@@ -9,13 +9,13 @@ class Row
 {
     /**
      * The cells in this row
-     * @var array
+     * @var Cell[]
      */
     protected $cells = [];
 
     /**
      * The row style
-     * @var Style|null
+     * @var Style
      */
     protected $style;
 
@@ -31,7 +31,7 @@ class Row
      * @param Style|null $style
      * @param RowManager $rowManager
      */
-    public function __construct(array $cells = [], Style $style = null, RowManager $rowManager)
+    public function __construct(array $cells, $style, RowManager $rowManager)
     {
         $this
             ->setCells($cells)
@@ -49,7 +49,7 @@ class Row
     }
 
     /**
-     * @param array $cells
+     * @param Cell[] $cells
      * @return $this
      */
     public function setCells(array $cells)
@@ -67,29 +67,25 @@ class Row
      */
     public function getStyle()
     {
-        if (!isset($this->style)) {
-            $this->setStyle(new Style());
-        }
-
         return $this->style;
+    }
+
+    /**
+     * @param Style|null $style
+     * @return Row
+     */
+    public function setStyle($style)
+    {
+        $this->style = $style ?: new Style();
+
+        return $this;
     }
 
     /**
      * @param Style $style
      * @return Row
      */
-    public function setStyle($style)
-    {
-        $this->style = $style;
-
-        return $this;
-    }
-
-    /**
-     * @param Style $style|null
-     * @return Row
-     */
-    public function applyStyle(Style $style = null)
+    public function applyStyle($style)
     {
         $this->rowManager->applyStyle($this, $style);
 
@@ -105,6 +101,16 @@ class Row
         $this->cells[] = $cell;
 
         return $this;
+    }
+
+    /**
+     * Returns whether a row has cells
+     *
+     * @return bool
+     */
+    public function hasCells()
+    {
+        return $this->rowManager->hasCells($this);
     }
 
     /**

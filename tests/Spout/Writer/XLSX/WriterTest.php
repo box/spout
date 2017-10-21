@@ -51,9 +51,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $writer = WriterFactory::create(Type::XLSX);
 
-        $row = $this->entityFactory->createRow([
-            new Cell('xlsx--11'),
-            new Cell('xlsx--12'),
+        $row = EntityFactory::createRow([
+            EntityFactory::createCell('xlsx--11'),
+            EntityFactory::createCell('xlsx--12'),
         ]);
         $writer->addRow($row);
     }
@@ -64,9 +64,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::XLSX);
-        $row = $this->entityFactory->createRow([
-            new Cell('xlsx--11'),
-            new Cell('xlsx--12'),
+        $row = EntityFactory::createRow([
+            EntityFactory::createCell('xlsx--11'),
+            EntityFactory::createCell('xlsx--12'),
         ]);
         $writer->addRows([$row]);
     }
@@ -344,7 +344,6 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddRowShouldNotWriteEmptyRows()
     {
-        $this->markTestIncomplete('Unsure why this does not pass');
         $fileName = 'test_add_row_should_not_write_empty_rows.xlsx';
         $dataRows = [
             [''],
@@ -388,11 +387,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $arrayToRows = function (array $allRows) {
             return array_map(function ($oneRow) {
-                $row = $this->entityFactory->createRow(array_map(function ($value) {
-                    return new Cell($value);
+                return EntityFactory::createRow(array_map(function ($value) {
+                    return EntityFactory::createCell($value);
                 }, $oneRow));
-
-                return $row;
             }, $allRows);
         };
 
@@ -548,8 +545,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_writer_should_accept_cell_objects.xlsx';
         $dataRows = [
-            [new Cell('xlsx--11'), new Cell('xlsx--12')],
-            [new Cell('xlsx--21'), new Cell('xlsx--22'), new Cell('xlsx--23')],
+            [EntityFactory::createCell('xlsx--11'), EntityFactory::createCell('xlsx--12')],
+            [EntityFactory::createCell('xlsx--21'), EntityFactory::createCell('xlsx--22'), EntityFactory::createCell('xlsx--23')],
         ];
 
         $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
@@ -570,10 +567,10 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $fileName = 'test_writer_should_accept_cell_objects_with_types.xlsx';
 
         $dataRowsShared = [
-            [new Cell('i am a string')],
+            [EntityFactory::createCell('i am a string')],
         ];
         $dataRowsInline = [
-            [new Cell(51465), new Cell(true), new Cell(51465.5)],
+            [EntityFactory::createCell(51465), EntityFactory::createCell(true), EntityFactory::createCell(51465.5)],
         ];
 
         $dataRows = array_merge($dataRowsShared, $dataRowsInline);
@@ -614,15 +611,13 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $writer->openToFile($resourcePath);
         $writer->addRows(array_map(function ($oneRow) {
-            $row = $this->entityFactory->createRow(array_map(function ($value) {
+            return EntityFactory::createRow(array_map(function ($value) {
                 if (!$value instanceof Cell) {
-                    return new Cell($value);
+                    return EntityFactory::createCell($value);
                 } else {
                     return $value;
                 }
             }, $oneRow));
-
-            return $row;
         }, $allRows));
         $writer->close();
 
@@ -649,21 +644,17 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $writer->openToFile($resourcePath);
         $writer->addRows(array_map(function ($oneRow) {
-            $row = $this->entityFactory->createRow(array_map(function ($value) {
-                return new Cell($value);
+            return EntityFactory::createRow(array_map(function ($value) {
+                return EntityFactory::createCell($value);
             }, $oneRow));
-
-            return $row;
         }, $allRows));
 
         for ($i = 1; $i < $numSheets; $i++) {
             $writer->addNewSheetAndMakeItCurrent();
             $writer->addRows(array_map(function ($oneRow) {
-                $row = $this->entityFactory->createRow(array_map(function ($value) {
-                    return new Cell($value);
+                return EntityFactory::createRow(array_map(function ($value) {
+                    return EntityFactory::createCell($value);
                 }, $oneRow));
-
-                return $row;
             }, $allRows));
         }
 

@@ -8,8 +8,6 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Style;
@@ -119,6 +117,8 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * {@inheritdoc}
      */
     public function openToBrowser($outputFileName)
@@ -187,7 +187,7 @@ abstract class WriterAbstract implements WriterInterface
     public function addRow(Row $row)
     {
         if ($this->isWriterOpened) {
-            if (!$row->isEmpty()) {
+            if ($row->hasCells()) {
                 try {
                     $this->applyDefaultRowStyle($row);
                     $this->addRowToWriter($row);
@@ -195,6 +195,7 @@ abstract class WriterAbstract implements WriterInterface
                     // if an exception occurs while writing data,
                     // close the writer and remove all files created so far.
                     $this->closeAndAttemptToCleanupAllFiles();
+
                     // re-throw the exception to alert developers of the error
                     throw $e;
                 }
@@ -204,14 +205,6 @@ abstract class WriterAbstract implements WriterInterface
         }
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function withRow(\Closure $callback)
-    {
-        return $this->addRow($callback(EntityFactory::createRow([])));
     }
 
     /**
@@ -232,28 +225,6 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * @param array $dataRow
-     * @param Style|null $style
-     * @return Row
-     */
-    protected function createRowFromArray(array $dataRow, Style $style = null)
-    {
-        $row = EntityFactory::createRow(array_map(function ($value) {
-            if ($value instanceof Cell) {
-                return $value;
-            }
-
-            return new Cell($value);
-        }, $dataRow));
-
-        if ($style !== null) {
-            $row->setStyle($style);
-        }
-
-        return $row;
-    }
-
-    /**
      * @TODO: Move this into styleMerger
      *
      * @param Row $row
@@ -265,6 +236,7 @@ abstract class WriterAbstract implements WriterInterface
         if ($defaultRowStyle === null) {
             return $this;
         }
+
         $mergedStyle = $this->styleMerger->merge($row->getStyle(), $defaultRowStyle);
         $row->setStyle($mergedStyle);
     }
@@ -273,7 +245,6 @@ abstract class WriterAbstract implements WriterInterface
      * Closes the writer. This will close the streamer as well, preventing new data
      * to be written to the file.
      *
-     * @api
      * @return void
      */
     public function close()

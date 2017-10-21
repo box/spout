@@ -2,6 +2,7 @@
 
 namespace Spout\Writer\Common\Manager;
 
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Manager\RowManager;
@@ -11,31 +12,75 @@ use PHPUnit\Framework\TestCase;
 class RowManagerTest extends TestCase
 {
     /**
-     * @var RowManager
+     * @return void
      */
-    protected $rowManager;
-
-    public function setUp()
+    public function testApplyStyle()
     {
-        $this->rowManager = new RowManager(new StyleMerger());
-        parent::setUp();
+        $rowManager = new RowManager(new StyleMerger());
+        $row = new Row([new Cell('test')], null, $rowManager);
+
+        $this->assertFalse($row->getStyle()->isFontBold());
+
+        $style = (new StyleBuilder())->setFontBold()->build();
+        $rowManager->applyStyle($row, $style);
+
+        $this->assertTrue($row->getStyle()->isFontBold());
     }
 
-    public function testIsEmptyRow()
+    /**
+     * @return array
+     */
+    public function dataProviderForTestHasCells()
     {
-        $row = new Row([], null, $this->rowManager);
-        $this->assertTrue($this->rowManager->isEmpty($row));
+        return [
+            // cells, expected hasCells
+            [[], false],
+            [[new Cell('')], true],
+            [[new Cell(null)], true],
+            [[new Cell('test')], true],
+        ];
+    }
 
-        $row = new Row([
-            new Cell(''),
-        ], null, $this->rowManager);
-        $this->assertTrue($this->rowManager->isEmpty($row));
+    /**
+     * @dataProvider dataProviderForTestHasCells
+     *
+     * @param array $cells
+     * @param bool $expectedHasCells
+     * @return void
+     */
+    public function testHasCells(array $cells, $expectedHasCells)
+    {
+        $rowManager = new RowManager(new StyleMerger());
 
-        $row = new Row([
-            new Cell(''),
-            new Cell(''),
-            new Cell('Okay'),
-        ], null, $this->rowManager);
-        $this->assertFalse($this->rowManager->isEmpty($row));
+        $row = new Row($cells, null, $rowManager);
+        $this->assertEquals($expectedHasCells, $rowManager->hasCells($row));
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForTestIsEmptyRow()
+    {
+        return [
+            // cells, expected isEmpty
+            [[], true],
+            [[new Cell('')], true],
+            [[new Cell(''), new Cell(''), new Cell('Okay')], false],
+        ];
+    }
+
+    /**
+     * @dataProvider dataProviderForTestIsEmptyRow
+     *
+     * @param array $cells
+     * @param bool $expectedIsEmpty
+     * @return void
+     */
+    public function testIsEmptyRow(array $cells, $expectedIsEmpty)
+    {
+        $rowManager = new RowManager(new StyleMerger());
+
+        $row = new Row($cells, null, $rowManager);
+        $this->assertEquals($expectedIsEmpty, $rowManager->isEmpty($row));
     }
 }
