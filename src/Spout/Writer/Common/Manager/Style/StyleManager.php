@@ -73,14 +73,17 @@ class StyleManager implements StyleManagerInterface
      */
     protected function applyWrapTextIfCellContainsNewLine(Cell $cell)
     {
+        $cellStyle = $cell->getStyle();
+
         // if the "wrap text" option is already set, no-op
-        if ($cell->getStyle()->hasSetWrapText()) {
-            return $cell->getStyle();
-        }
-        if ($cell->isString() && strpos($cell->getValue(), "\n") !== false) {
-            $cell->getStyle()->setShouldWrapText();
+        if ($cellStyle->hasSetWrapText()) {
+            return $cellStyle;
         }
 
-        return $cell->getStyle();
+        if ($cell->isString() && strpos($cell->getValue(), "\n") !== false) {
+            $cellStyle->setShouldWrapText();
+        }
+
+        return $cellStyle;
     }
 }

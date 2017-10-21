@@ -38,14 +38,6 @@ interface WriterInterface
     public function addRow(Row $row);
 
     /**
-     * Write given data to the output with a closure function. New data will be appended to the end of the stream.
-     *
-     * @param \Closure $callback A callback returning a Row object. A new Row object is injected into the callback.
-     * @return WriterInterface
-     */
-    public function withRow(\Closure $callback);
-
-    /**
      * Write a given array of rows to the output. New data will be appended to the end of the stream.
      *
      * @param  Row[] $rows Array of rows be appended to the stream

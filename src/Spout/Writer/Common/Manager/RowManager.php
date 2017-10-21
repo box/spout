@@ -14,7 +14,6 @@ class RowManager
     protected $styleMerger;
 
     /**
-     * RowManager constructor.
      * @param StyleMerger $styleMerger
      */
     public function __construct(StyleMerger $styleMerger)
@@ -23,6 +22,7 @@ class RowManager
     }
 
     /**
+     * @param Row $row
      * @param Style $style
      * @return $this
      */
@@ -30,6 +30,17 @@ class RowManager
     {
         $mergedStyle = $this->styleMerger->merge($row->getStyle(), $style);
         $row->setStyle($mergedStyle);
+    }
+
+    /**
+     * Returns whether a row has cells
+     *
+     * @param Row $row
+     * @return bool
+     */
+    public function hasCells(Row $row)
+    {
+        return count($row->getCells()) !== 0;
     }
 
     /**

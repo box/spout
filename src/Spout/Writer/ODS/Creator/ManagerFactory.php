@@ -69,8 +69,6 @@ class ManagerFactory implements ManagerFactoryInterface
         $stringsHelper = $this->helperFactory->createStringHelper();
 
         return new WorksheetManager($styleManager, $stringsEscaper, $stringsHelper);
-
-        return new WorksheetManager($stringsEscaper, $stringsHelper, $this->entityFactory);
     }
 
     /**
