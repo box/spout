@@ -3,8 +3,8 @@
 namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Sheet;
-use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Workbook;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
@@ -53,18 +53,17 @@ interface WorkbookManagerInterface
     public function setCurrentSheet(Sheet $sheet);
 
     /**
-     * Adds data to the current sheet.
+     * Adds a row to the current sheet.
      * If shouldCreateNewSheetsAutomatically option is set to true, it will handle pagination
      * with the creation of new worksheets if one worksheet has reached its maximum capicity.
      *
-     * @param array $dataRow Array containing data to be written. Cannot be empty.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param Style $style Style to be applied to the row.
+     * @param Row $row The row to added
      * @throws IOException If trying to create a new sheet and unable to open the sheet for writing
      * @throws WriterException If unable to write data
      * @return void
+     * @return void
      */
-    public function addRowToCurrentWorksheet($dataRow, Style $style);
+    public function addRowToCurrentWorksheet(Row $row);
 
     /**
      * Closes the workbook and all its associated sheets.

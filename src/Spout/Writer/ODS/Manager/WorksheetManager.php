@@ -4,12 +4,13 @@ namespace Box\Spout\Writer\ODS\Manager;
 
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Common\Helper\Escaper\ODS as ODSEscaper;
 use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
+use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 
 /**
  * Class WorksheetManager
@@ -23,24 +24,23 @@ class WorksheetManager implements WorksheetManagerInterface
     /** @var StringHelper String helper */
     private $stringHelper;
 
-    /** @var EntityFactory Factory to create entities */
-    private $entityFactory;
+    /** @var StyleManager Manages styles */
+    private $styleManager;
 
     /**
      * WorksheetManager constructor.
-     *
-     * @param \Box\Spout\Common\Helper\Escaper\ODS $stringsEscaper
+     * @param StyleManager $styleManager
+     * @param ODSEscaper $stringsEscaper
      * @param StringHelper $stringHelper
-     * @param EntityFactory $entityFactory
      */
     public function __construct(
-        \Box\Spout\Common\Helper\Escaper\ODS $stringsEscaper,
-        StringHelper $stringHelper,
-        EntityFactory $entityFactory
+        StyleManager $styleManager,
+        ODSEscaper $stringsEscaper,
+        StringHelper $stringHelper
     ) {
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
-        $this->entityFactory = $entityFactory;
+        $this->styleManager = $styleManager;
     }
 
     /**
@@ -91,24 +91,20 @@ class WorksheetManager implements WorksheetManagerInterface
     }
 
     /**
-     * Adds data to the given worksheet.
+     * Adds a row to the worksheet.
      *
      * @param Worksheet $worksheet The worksheet to add the row to
-     * @param array $dataRow Array containing data to be written. Cannot be empty.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param Style $rowStyle Style to be applied to the row. NULL means use default style.
+     * @param Row $row The row to be added
      * @throws IOException If the data cannot be written
      * @throws InvalidArgumentException If a cell value's type is not supported
      * @return void
+     *
+     * @return void
      */
-    public function addRow(Worksheet $worksheet, $dataRow, $rowStyle)
+    public function addRow(Worksheet $worksheet, Row $row)
     {
-        // $dataRow can be an associative array. We need to transform
-        // it into a regular array, as we'll use the numeric indexes.
-        $dataRowWithNumericIndexes = array_values($dataRow);
-
-        $styleIndex = ($rowStyle->getId() + 1); // 1-based
-        $cellsCount = count($dataRow);
+        $cells = $row->getCells();
+        $cellsCount = count($cells);
 
         $data = '<table:table-row table:style-name="ro1">';
 
@@ -116,14 +112,21 @@ class WorksheetManager implements WorksheetManagerInterface
         $nextCellIndex = 1;
 
         for ($i = 0; $i < $cellsCount; $i++) {
-            $currentCellValue = $dataRowWithNumericIndexes[$currentCellIndex];
+            /** @var Cell $cell */
+            $cell = $cells[$currentCellIndex];
+            /** @var Cell|null $nextCell */
+            $nextCell = isset($cells[$nextCellIndex]) ? $cells[$nextCellIndex] : null;
 
-            // Using isset here because it is way faster than array_key_exists...
-            if (!isset($dataRowWithNumericIndexes[$nextCellIndex]) ||
-                $currentCellValue !== $dataRowWithNumericIndexes[$nextCellIndex]) {
+            // @TODO refactoring: move this to its own method
+            if ($nextCell === null || $cell->getValue() !== $nextCell->getValue()) {
+                // Apply styles - the row style is merged at this point
+                $cell->applyStyle($row->getStyle());
+                $this->styleManager->applyExtraStylesIfNeeded($cell);
+                $registeredStyle = $this->styleManager->registerStyle($cell->getStyle());
+                $styleIndex = $registeredStyle->getId() + 1; // 1-based
+
                 $numTimesValueRepeated = ($nextCellIndex - $currentCellIndex);
-                $data .= $this->getCellXML($currentCellValue, $styleIndex, $numTimesValueRepeated);
-
+                $data .= $this->getCellXML($cell, $styleIndex, $numTimesValueRepeated);
                 $currentCellIndex = $nextCellIndex;
             }
 
@@ -145,25 +148,18 @@ class WorksheetManager implements WorksheetManagerInterface
     /**
      * Returns the cell XML content, given its value.
      *
-     * @param mixed $cellValue The value to be written
+     * @param Cell $cell The cell to be written
      * @param int $styleIndex Index of the used style
      * @param int $numTimesValueRepeated Number of times the value is consecutively repeated
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
      * @return string The cell XML content
      */
-    private function getCellXML($cellValue, $styleIndex, $numTimesValueRepeated)
+    protected function getCellXML(Cell $cell, $styleIndex, $numTimesValueRepeated)
     {
         $data = '<table:table-cell table:style-name="ce' . $styleIndex . '"';
 
         if ($numTimesValueRepeated !== 1) {
             $data .= ' table:number-columns-repeated="' . $numTimesValueRepeated . '"';
-        }
-
-        /* @TODO Remove code duplication with XLSX writer: https://github.com/box/spout/pull/383#discussion_r113292746 */
-        if ($cellValue instanceof Cell) {
-            $cell = $cellValue;
-        } else {
-            $cell = $this->entityFactory->createCell($cellValue);
         }
 
         if ($cell->isString()) {
