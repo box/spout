@@ -85,7 +85,14 @@ class EntityFactory implements EntityFactoryInterface
 
         $styleManager = $this->managerFactory->createStyleManager($filePath, $this);
         $shouldFormatDates = $optionsManager->getOption(Options::SHOULD_FORMAT_DATES);
-        $cellValueFormatter = $this->helperFactory->createCellValueFormatter($sharedStringsManager, $styleManager, $shouldFormatDates);
+        $shouldUse1904Dates = $optionsManager->getOption(Options::SHOULD_USE_1904_DATES);
+
+        $cellValueFormatter = $this->helperFactory->createCellValueFormatter(
+            $sharedStringsManager,
+            $styleManager,
+            $shouldFormatDates,
+            $shouldUse1904Dates
+        );
 
         $shouldPreserveEmptyRows = $optionsManager->getOption(Options::SHOULD_PRESERVE_EMPTY_ROWS);
 

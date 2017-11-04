@@ -48,6 +48,9 @@ class CellValueFormatter
     /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
     protected $shouldFormatDates;
 
+    /** @var bool Whether date/time values should use a calendar starting in 1904 instead of 1900 */
+    protected $shouldUse1904Dates;
+
     /** @var \Box\Spout\Common\Helper\Escaper\XLSX Used to unescape XML data */
     protected $escaper;
 
@@ -55,13 +58,15 @@ class CellValueFormatter
      * @param SharedStringsManager $sharedStringsManager Manages shared strings
      * @param StyleManager $styleManager Manages styles
      * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param bool $shouldUse1904Dates Whether date/time values should use a calendar starting in 1904 instead of 1900
      * @param \Box\Spout\Common\Helper\Escaper\XLSX $escaper Used to unescape XML data
      */
-    public function __construct($sharedStringsManager, $styleManager, $shouldFormatDates, $escaper)
+    public function __construct($sharedStringsManager, $styleManager, $shouldFormatDates, $shouldUse1904Dates, $escaper)
     {
         $this->sharedStringsManager = $sharedStringsManager;
         $this->styleManager = $styleManager;
         $this->shouldFormatDates = $shouldFormatDates;
+        $this->shouldUse1904Dates = $shouldUse1904Dates;
         $this->escaper = $escaper;
     }
 
@@ -189,8 +194,11 @@ class CellValueFormatter
 
     /**
      * Returns a cell's PHP Date value, associated to the given timestamp.
-     * NOTE: The timestamp is a float representing the number of days since January 1st, 1900.
+     * NOTE: The timestamp is a float representing the number of days since the base Excel date:
+     *       Dec 30th 1899, 1900 or Jan 1st, 1904, depending on the Workbook setting.
      * NOTE: The timestamp can also represent a time, if it is a value between 0 and 1.
+     *
+     * @see ECMA-376 Part 1 - §18.17.4
      *
      * @param float $nodeValue
      * @param int $cellStyleId 0 being the default style
@@ -198,17 +206,8 @@ class CellValueFormatter
      */
     protected function formatExcelTimestampValue($nodeValue, $cellStyleId)
     {
-        // Fix for the erroneous leap year in Excel
-        if (ceil($nodeValue) > self::ERRONEOUS_EXCEL_LEAP_YEAR_DAY) {
-            $nodeValue--;
-        }
-
-        if ($nodeValue >= 1) {
-            // Values greater than 1 represent "dates". The value 1.0 representing the "base" date: 1900-01-01.
-            $cellValue = $this->formatExcelTimestampValueAsDateValue($nodeValue, $cellStyleId);
-        } elseif ($nodeValue >= 0) {
-            // Values between 0 and 1 represent "times".
-            $cellValue = $this->formatExcelTimestampValueAsTimeValue($nodeValue, $cellStyleId);
+        if ($this->isValidTimestampValue($nodeValue)) {
+            $cellValue = $this->formatExcelTimestampValueAsDateTimeValue($nodeValue, $cellStyleId);
         } else {
             // invalid date
             $cellValue = null;
@@ -218,23 +217,41 @@ class CellValueFormatter
     }
 
     /**
+     * Returns whether the given timestamp is supported by SpreadsheetML
+     * @see ECMA-376 Part 1 - §18.17.4 - this specifies the timestamp boundaries.
+     *
+     * @param float $timestampValue
+     * @return bool
+     */
+    protected function isValidTimestampValue($timestampValue)
+    {
+        // @NOTE: some versions of Excel don't support negative dates (e.g. Excel for Mac 2011)
+        return (
+            $this->shouldUse1904Dates && $timestampValue >= -695055 && $timestampValue <= 2957003.9999884 ||
+            !$this->shouldUse1904Dates && $timestampValue >= -693593 && $timestampValue <= 2958465.9999884
+        );
+    }
+
+    /**
      * Returns a cell's PHP DateTime value, associated to the given timestamp.
-     * Only the time value matters. The date part is set to Jan 1st, 1900 (base Excel date).
+     * Only the time value matters. The date part is set to the base Excel date:
+     * Dec 30th 1899, 1900 or Jan 1st, 1904, depending on the Workbook setting.
      *
      * @param float $nodeValue
      * @param int $cellStyleId 0 being the default style
      * @return \DateTime|string The value associated with the cell
      */
-    protected function formatExcelTimestampValueAsTimeValue($nodeValue, $cellStyleId)
+    protected function formatExcelTimestampValueAsDateTimeValue($nodeValue, $cellStyleId)
     {
-        $time = round($nodeValue * self::NUM_SECONDS_IN_ONE_DAY);
-        $hours = floor($time / self::NUM_SECONDS_IN_ONE_HOUR);
-        $minutes = floor($time / self::NUM_SECONDS_IN_ONE_MINUTE) - ($hours * self::NUM_SECONDS_IN_ONE_MINUTE);
-        $seconds = $time - ($hours * self::NUM_SECONDS_IN_ONE_HOUR) - ($minutes * self::NUM_SECONDS_IN_ONE_MINUTE);
+        $baseDate = $this->shouldUse1904Dates ? '1904-01-01' : '1899-12-30';
 
-        // using the base Excel date (Jan 1st, 1900) - not relevant here
-        $dateObj = new \DateTime('1900-01-01');
-        $dateObj->setTime($hours, $minutes, $seconds);
+        $daysSinceBaseDate = (int) $nodeValue;
+        $timeRemainder = fmod($nodeValue, 1);
+        $secondsRemainder = round($timeRemainder * self::NUM_SECONDS_IN_ONE_DAY, 0);
+
+        $dateObj = \DateTime::createFromFormat('|Y-m-d', $baseDate);
+        $dateObj->modify('+' . $daysSinceBaseDate . 'days');
+        $dateObj->modify('+' . $secondsRemainder . 'seconds');
 
         if ($this->shouldFormatDates) {
             $styleNumberFormatCode = $this->styleManager->getNumberFormatCode($cellStyleId);
@@ -242,40 +259,6 @@ class CellValueFormatter
             $cellValue = $dateObj->format($phpDateFormat);
         } else {
             $cellValue = $dateObj;
-        }
-
-        return $cellValue;
-    }
-
-    /**
-     * Returns a cell's PHP Date value, associated to the given timestamp.
-     * NOTE: The timestamp is a float representing the number of days since January 1st, 1900.
-     *
-     * @param float $nodeValue
-     * @param int $cellStyleId 0 being the default style
-     * @return \DateTime|string|null The value associated with the cell or NULL if invalid date value
-     */
-    protected function formatExcelTimestampValueAsDateValue($nodeValue, $cellStyleId)
-    {
-        // Do not use any unix timestamps for calculation to prevent
-        // issues with numbers exceeding 2^31.
-        $secondsRemainder = fmod($nodeValue, 1) * self::NUM_SECONDS_IN_ONE_DAY;
-        $secondsRemainder = round($secondsRemainder, 0);
-
-        try {
-            $dateObj = \DateTime::createFromFormat('|Y-m-d', '1899-12-31');
-            $dateObj->modify('+' . (int) $nodeValue . 'days');
-            $dateObj->modify('+' . $secondsRemainder . 'seconds');
-
-            if ($this->shouldFormatDates) {
-                $styleNumberFormatCode = $this->styleManager->getNumberFormatCode($cellStyleId);
-                $phpDateFormat = DateFormatHelper::toPHPDateFormat($styleNumberFormatCode);
-                $cellValue = $dateObj->format($phpDateFormat);
-            } else {
-                $cellValue = $dateObj;
-            }
-        } catch (\Exception $e) {
-            $cellValue = null;
         }
 
         return $cellValue;

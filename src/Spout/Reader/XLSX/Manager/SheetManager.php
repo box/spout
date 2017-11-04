@@ -2,6 +2,8 @@
 
 namespace Box\Spout\Reader\XLSX\Manager;
 
+use Box\Spout\Reader\Common\Entity\Options;
+use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 use Box\Spout\Reader\XLSX\Sheet;
 
@@ -16,12 +18,14 @@ class SheetManager
     const WORKBOOK_XML_FILE_PATH = 'xl/workbook.xml';
 
     /** Definition of XML node names used to parse data */
+    const XML_NODE_WORKBOOK_PROPERTIES = 'workbookPr';
     const XML_NODE_WORKBOOK_VIEW = 'workbookView';
     const XML_NODE_SHEET = 'sheet';
     const XML_NODE_SHEETS = 'sheets';
     const XML_NODE_RELATIONSHIP = 'Relationship';
 
     /** Definition of XML attributes used to parse data */
+    const XML_ATTRIBUTE_DATE_1904 = 'date1904';
     const XML_ATTRIBUTE_ACTIVE_TAB = 'activeTab';
     const XML_ATTRIBUTE_R_ID = 'r:id';
     const XML_ATTRIBUTE_NAME = 'name';
@@ -45,6 +49,15 @@ class SheetManager
 
     /** @var \Box\Spout\Common\Helper\Escaper\XLSX Used to unescape XML data */
     protected $escaper;
+
+    /** @var array List of sheets */
+    protected $sheets;
+
+    /** @var int Index of the sheet currently read */
+    protected $currentSheetIndex;
+
+    /** @var int Index of the active sheet (0 by default) */
+    protected $activeSheetIndex;
 
     /**
      * @param string $filePath Path of the XLSX file being read
@@ -71,32 +84,70 @@ class SheetManager
      */
     public function getSheets()
     {
-        $sheets = [];
-        $sheetIndex = 0;
-        $activeSheetIndex = 0; // By default, the first sheet is active
+        $this->sheets = [];
+        $this->currentSheetIndex = 0;
+        $this->activeSheetIndex = 0; // By default, the first sheet is active
 
         $xmlReader = $this->entityFactory->createXMLReader();
+        $xmlProcessor = $this->entityFactory->createXMLProcessor($xmlReader);
+
+        $xmlProcessor->registerCallback(self::XML_NODE_WORKBOOK_PROPERTIES, XMLProcessor::NODE_TYPE_START, [$this, 'processWorkbookPropertiesStartingNode']);
+        $xmlProcessor->registerCallback(self::XML_NODE_WORKBOOK_VIEW, XMLProcessor::NODE_TYPE_START, [$this, 'processWorkbookViewStartingNode']);
+        $xmlProcessor->registerCallback(self::XML_NODE_SHEET, XMLProcessor::NODE_TYPE_START, [$this, 'processSheetStartingNode']);
+        $xmlProcessor->registerCallback(self::XML_NODE_SHEETS, XMLProcessor::NODE_TYPE_END, [$this, 'processSheetsEndingNode']);
 
         if ($xmlReader->openFileInZip($this->filePath, self::WORKBOOK_XML_FILE_PATH)) {
-            while ($xmlReader->read()) {
-                if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_WORKBOOK_VIEW)) {
-                    // The "workbookView" node is located before "sheet" nodes, ensuring that
-                    // the active sheet is known before parsing sheets data.
-                    $activeSheetIndex = (int) $xmlReader->getAttribute(self::XML_ATTRIBUTE_ACTIVE_TAB);
-                } elseif ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_SHEET)) {
-                    $isSheetActive = ($sheetIndex === $activeSheetIndex);
-                    $sheets[] = $this->getSheetFromSheetXMLNode($xmlReader, $sheetIndex, $isSheetActive);
-                    $sheetIndex++;
-                } elseif ($xmlReader->isPositionedOnEndingNode(self::XML_NODE_SHEETS)) {
-                    // stop reading once all sheets have been read
-                    break;
-                }
-            }
-
+            $xmlProcessor->readUntilStopped();
             $xmlReader->close();
         }
 
-        return $sheets;
+        return $this->sheets;
+    }
+
+    /**
+     * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XMLReader object, positioned on a "<workbookPr>" starting node
+     * @return int A return code that indicates what action should the processor take next
+     */
+    protected function processWorkbookPropertiesStartingNode($xmlReader)
+    {
+        $shouldUse1904Dates = (bool) $xmlReader->getAttribute(self::XML_ATTRIBUTE_DATE_1904);
+        $this->optionsManager->setOption(Options::SHOULD_USE_1904_DATES, $shouldUse1904Dates);
+
+        return XMLProcessor::PROCESSING_CONTINUE;
+    }
+
+    /**
+     * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XMLReader object, positioned on a "<workbookView>" starting node
+     * @return int A return code that indicates what action should the processor take next
+     */
+    protected function processWorkbookViewStartingNode($xmlReader)
+    {
+        // The "workbookView" node is located before "sheet" nodes, ensuring that
+        // the active sheet is known before parsing sheets data.
+        $this->activeSheetIndex = (int) $xmlReader->getAttribute(self::XML_ATTRIBUTE_ACTIVE_TAB);
+
+        return XMLProcessor::PROCESSING_CONTINUE;
+    }
+
+    /**
+     * @param \Box\Spout\Reader\Wrapper\XMLReader $xmlReader XMLReader object, positioned on a "<sheet>" starting node
+     * @return int A return code that indicates what action should the processor take next
+     */
+    protected function processSheetStartingNode($xmlReader)
+    {
+        $isSheetActive = ($this->currentSheetIndex === $this->activeSheetIndex);
+        $this->sheets[] = $this->getSheetFromSheetXMLNode($xmlReader, $this->currentSheetIndex, $isSheetActive);
+        $this->currentSheetIndex++;
+
+        return XMLProcessor::PROCESSING_CONTINUE;
+    }
+
+    /**
+     * @return int A return code that indicates what action should the processor take next
+     */
+    protected function processSheetsEndingNode()
+    {
+        return XMLProcessor::PROCESSING_STOP;
     }
 
     /**

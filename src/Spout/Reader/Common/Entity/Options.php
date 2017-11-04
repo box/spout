@@ -19,4 +19,5 @@ abstract class Options
 
     // XLSX specific options
     const TEMP_FOLDER = 'tempFolder';
+    const SHOULD_USE_1904_DATES = 'shouldUse1904Dates';
 }

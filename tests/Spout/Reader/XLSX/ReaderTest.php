@@ -231,9 +231,34 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
                 \DateTime::createFromFormat('Y-m-d H:i:s', '2015-09-01 22:23:00'),
             ],
             [
-                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-02-28 23:59:59'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-02-27 23:59:59'),
                 \DateTime::createFromFormat('Y-m-d H:i:s', '1900-03-01 00:00:00'),
-                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-02-28 11:00:00'), // 1900-02-29 should be converted to 1900-02-28
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-02-28 11:00:00'),
+            ],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
+    public function testReadShouldSupportDifferentDatesAsNumericTimestampWith1904Calendar()
+    {
+        // make sure dates are always created with the same timezone
+        date_default_timezone_set('UTC');
+
+        $allRows = $this->getAllRowsForFile('sheet_with_different_numeric_value_dates_1904_calendar.xlsx');
+
+        $expectedRows = [
+            [
+                \DateTime::createFromFormat('Y-m-d H:i:s', '2019-09-02 00:00:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '2019-09-03 00:00:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '2019-09-02 22:23:00'),
+            ],
+            [
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1904-02-29 23:59:59'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1904-03-02 00:00:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1904-03-01 11:00:00'),
             ],
         ];
         $this->assertEquals($expectedRows, $allRows);
@@ -251,11 +276,11 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         $expectedRows = [
             [
-                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 00:00:00'),
-                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 11:29:00'),
-                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 23:29:00'),
-                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 01:42:25'),
-                \DateTime::createFromFormat('Y-m-d H:i:s', '1900-01-01 13:42:25'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1899-12-30 00:00:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1899-12-30 11:29:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1899-12-30 23:29:00'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1899-12-30 01:42:25'),
+                \DateTime::createFromFormat('Y-m-d H:i:s', '1899-12-30 13:42:25'),
             ],
         ];
         $this->assertEquals($expectedRows, $allRows);
