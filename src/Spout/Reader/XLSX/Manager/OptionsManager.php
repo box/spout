@@ -20,6 +20,7 @@ class OptionsManager extends OptionsManagerAbstract
             Options::TEMP_FOLDER,
             Options::SHOULD_FORMAT_DATES,
             Options::SHOULD_PRESERVE_EMPTY_ROWS,
+            Options::SHOULD_USE_1904_DATES,
         ];
     }
 
@@ -31,5 +32,6 @@ class OptionsManager extends OptionsManagerAbstract
         $this->setOption(Options::TEMP_FOLDER, sys_get_temp_dir());
         $this->setOption(Options::SHOULD_FORMAT_DATES, false);
         $this->setOption(Options::SHOULD_PRESERVE_EMPTY_ROWS, false);
+        $this->setOption(Options::SHOULD_USE_1904_DATES, false);
     }
 }
