@@ -3,6 +3,7 @@
 namespace Box\Spout\Reader\XLSX\Helper;
 
 use Box\Spout\Common\Helper\Escaper;
+use Box\Spout\Reader\XLSX\Manager\StyleManager;
 
 /**
  * Class CellValueFormatterTest
@@ -61,7 +62,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testExcelDate($shouldUse1904Dates, $nodeValue, $expectedDateAsString)
     {
-        $nodeListMock = $this->getMockBuilder('DOMNodeList')->disableOriginalConstructor()->getMock();
+        $nodeListMock = $this->createMock('DOMNodeList');
 
         $nodeListMock
             ->expects($this->atLeastOnce())
@@ -69,7 +70,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->with(0)
             ->will($this->returnValue((object) ['nodeValue' => $nodeValue]));
 
-        $nodeMock = $this->getMockBuilder('DOMElement')->disableOriginalConstructor()->getMock();
+        $nodeMock = $this->createMock('DOMElement');
 
         $nodeMock
             ->expects($this->atLeastOnce())
@@ -86,7 +87,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($nodeListMock));
 
         /** @var \Box\Spout\Reader\XLSX\Manager\StyleManager|\PHPUnit_Framework_MockObject_MockObject $styleManagerMock */
-        $styleManagerMock = $this->getMockBuilder('Box\Spout\Reader\XLSX\Manager\StyleManager')->disableOriginalConstructor()->getMock();
+        $styleManagerMock = $this->createMock(StyleManager::class);
 
         $styleManagerMock
             ->expects($this->once())
@@ -142,7 +143,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
     public function testFormatNumericCellValueWithNumbers($value, $expectedFormattedValue, $expectedType)
     {
         /** @var \Box\Spout\Reader\XLSX\Manager\StyleManager|\PHPUnit_Framework_MockObject_MockObject $styleManagerMock */
-        $styleManagerMock = $this->getMockBuilder('Box\Spout\Reader\XLSX\Manager\StyleManager')->disableOriginalConstructor()->getMock();
+        $styleManagerMock = $this->createMock(StyleManager::class);
         $styleManagerMock
             ->expects($this->once())
             ->method('shouldFormatNumericValueAsDate')
@@ -177,14 +178,14 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
      */
     public function testFormatInlineStringCellValue($value, $expectedFormattedValue)
     {
-        $nodeListMock = $this->getMockBuilder('DOMNodeList')->disableOriginalConstructor()->getMock();
+        $nodeListMock = $this->createMock('DOMNodeList');
         $nodeListMock
             ->expects($this->atLeastOnce())
             ->method('item')
             ->with(0)
             ->will($this->returnValue((object) ['nodeValue' => $value]));
 
-        $nodeMock = $this->getMockBuilder('DOMElement')->disableOriginalConstructor()->getMock();
+        $nodeMock = $this->createMock('DOMElement');
         $nodeMock
             ->expects($this->atLeastOnce())
             ->method('getElementsByTagName')

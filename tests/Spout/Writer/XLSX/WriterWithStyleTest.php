@@ -5,8 +5,10 @@ namespace Box\Spout\Writer\XLSX;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
@@ -38,16 +40,24 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::XLSX);
-        $writer->addRowWithStyle(['xlsx--11', 'xlsx--12'], $this->defaultStyle);
+        $row = EntityFactory::createRow([
+            EntityFactory::createCell('xlsx--11'),
+            EntityFactory::createCell('xlsx--12'),
+        ], $this->defaultStyle);
+        $writer->addRow($row);
     }
 
     /**
      * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
      */
-    public function testAddRowWithStyleShouldThrowExceptionIfCalledBeforeOpeningWriter()
+    public function testAddRowsWithStyleShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::XLSX);
-        $writer->addRowWithStyle(['xlsx--11', 'xlsx--12'], $this->defaultStyle);
+        $row = EntityFactory::createRow([
+            EntityFactory::createCell('xlsx--11'),
+            EntityFactory::createCell('xlsx--12'),
+        ], $this->defaultStyle);
+        $writer->addRows([$row]);
     }
 
     /**
@@ -58,42 +68,53 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         return [
             ['style'],
             [new \stdClass()],
-            [null],
         ];
     }
 
     /**
+     * @requires PHP 7
      * @dataProvider dataProviderForInvalidStyle
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
      *
      * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
      */
     public function testAddRowWithStyleShouldThrowExceptionIfInvalidStyleGiven($style)
     {
+        $this->expectException(\TypeError::class);
+
         $fileName = 'test_add_row_with_style_should_throw_exception.xlsx';
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
-        $writer->addRowWithStyle(['xlsx--11', 'xlsx--12'], $style);
+        $row = EntityFactory::createRow([
+            EntityFactory::createCell('xlsx--11'),
+            EntityFactory::createCell('xlsx--12'),
+        ], $style);
+        $writer->addRow($row);
     }
 
     /**
+     * @requires PHP 7
      * @dataProvider dataProviderForInvalidStyle
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
      *
      * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
      */
     public function testAddRowsWithStyleShouldThrowExceptionIfInvalidStyleGiven($style)
     {
+        $this->expectException(\TypeError::class);
+
         $fileName = 'test_add_row_with_style_should_throw_exception.xlsx';
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
-        $writer->addRowsWithStyle([['xlsx--11', 'xlsx--12']], $style);
+        $row = EntityFactory::createRow([
+            EntityFactory::createCell('xlsx--11'),
+            EntityFactory::createCell('xlsx--12'),
+        ], $style);
+        $writer->addRows([$row]);
     }
 
     /**
@@ -429,7 +450,11 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testSetDefaultRowStyle()
     {
         $fileName = 'test_set_default_row_style.xlsx';
-        $dataRows = [['xlsx--11']];
+
+        $row = EntityFactory::createRow([
+            EntityFactory::createCell('xlsx--11'),
+        ]);
+        $dataRows = [$row];
 
         $defaultFontSize = 50;
         $defaultStyle = (new StyleBuilder())->setFontSize($defaultFontSize)->build();
@@ -521,6 +546,14 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
      */
     private function writeToXLSXFile($allRows, $fileName, $style)
     {
+        $arrayToRows = function (array $allRows) use ($style) {
+            return array_map(function ($oneRow) use ($style) {
+                return EntityFactory::createRow(array_map(function ($value) {
+                    return EntityFactory::createCell($value);
+                }, $oneRow), $style);
+            }, $allRows);
+        };
+
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
@@ -529,7 +562,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $writer->setShouldUseInlineStrings(true);
 
         $writer->openToFile($resourcePath);
-        $writer->addRowsWithStyle($allRows, $style);
+        $writer->addRows(($arrayToRows($allRows)));
         $writer->close();
 
         return $writer;
@@ -578,11 +611,12 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $writer->openToFile($resourcePath);
         for ($i = 0; $i < count($allRows); $i++) {
-            if ($styles[$i] === null) {
-                $writer->addRow($allRows[$i]);
-            } else {
-                $writer->addRowWithStyle($allRows[$i], $styles[$i]);
-            }
+            $currentRow = $allRows[$i];
+            $currentStyle = $styles[$i];
+            $row = EntityFactory::createRow(array_map(function ($value) {
+                return EntityFactory::createCell($value);
+            }, $currentRow), $currentStyle);
+            $writer->addRow($row);
         }
         $writer->close();
 

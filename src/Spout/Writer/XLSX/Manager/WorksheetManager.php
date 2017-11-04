@@ -9,6 +9,7 @@ use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Helper\CellHelper;
@@ -119,60 +120,47 @@ EOD;
     }
 
     /**
-     * Adds data to the given worksheet.
+     * Adds a row to the worksheet.
      *
      * @param Worksheet $worksheet The worksheet to add the row to
-     * @param array $dataRow Array containing data to be written. Cannot be empty.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param Style $rowStyle Style to be applied to the row. NULL means use default style.
+     * @param Row $row The row to be added
      * @throws IOException If the data cannot be written
      * @throws InvalidArgumentException If a cell value's type is not supported
      * @return void
      */
-    public function addRow(Worksheet $worksheet, $dataRow, $rowStyle)
+    public function addRow(Worksheet $worksheet, Row $row)
     {
-        if (!$this->isEmptyRow($dataRow)) {
-            $this->addNonEmptyRow($worksheet, $dataRow, $rowStyle);
+        if (!$row->isEmpty()) {
+            $this->addNonEmptyRow($worksheet, $row);
         }
 
         $worksheet->setLastWrittenRowIndex($worksheet->getLastWrittenRowIndex() + 1);
     }
 
     /**
-     * Returns whether the given row is empty
-     *
-     * @param array $dataRow Array containing data to be written. Cannot be empty.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @return bool Whether the given row is empty
-     */
-    private function isEmptyRow($dataRow)
-    {
-        $numCells = count($dataRow);
-        // using "reset()" instead of "$dataRow[0]" because $dataRow can be an associative array
-        return ($numCells === 1 && CellHelper::isEmpty(reset($dataRow)));
-    }
-
-    /**
      * Adds non empty row to the worksheet.
      *
-     * @param Worksheet $worksheet The worksheet to add the row to
-     * @param array $dataRow Array containing data to be written. Cannot be empty.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style Style to be applied to the row. NULL means use default style.
+     * @param Row $row The row to be written
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
      * @return void
      */
-    private function addNonEmptyRow(Worksheet $worksheet, $dataRow, $style)
+    private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
         $cellNumber = 0;
         $rowIndex = $worksheet->getLastWrittenRowIndex() + 1;
-        $numCells = count($dataRow);
+        $numCells = count($row->getCells());
 
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
-        foreach ($dataRow as $cellValue) {
-            $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cellValue, $style->getId());
+        // @TODO refactoring: move this to its own method
+        /** @var Cell $cell */
+        foreach ($row->getCells() as $cell) {
+            // Apply styles - the row style is merged at this point
+            $cell->applyStyle($row->getStyle());
+            $this->styleManager->applyExtraStylesIfNeeded($cell);
+            $registeredStyle = $this->styleManager->registerStyle($cell->getStyle());
+            $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cell, $registeredStyle->getId());
             $cellNumber++;
         }
 
@@ -189,23 +177,16 @@ EOD;
      *
      * @param int $rowIndex
      * @param int $cellNumber
-     * @param mixed $cellValue
+     * @param Cell $cell
      * @param int $styleId
      * @throws InvalidArgumentException If the given value cannot be processed
      * @return string
      */
-    private function getCellXML($rowIndex, $cellNumber, $cellValue, $styleId)
+    private function getCellXML($rowIndex, $cellNumber, Cell $cell, $styleId)
     {
         $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
         $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
         $cellXML .= ' s="' . $styleId . '"';
-
-        /* @TODO Remove code duplication with ODS writer: https://github.com/box/spout/pull/383#discussion_r113292746 */
-        if ($cellValue instanceof Cell) {
-            $cell = $cellValue;
-        } else {
-            $cell = $this->entityFactory->createCell($cellValue);
-        }
 
         if ($cell->isString()) {
             $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cell->getValue());

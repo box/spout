@@ -9,6 +9,7 @@ use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
@@ -42,9 +43,6 @@ abstract class WriterAbstract implements WriterInterface
     /** @var StyleMerger Helps merge styles together */
     protected $styleMerger;
 
-    /** @var Style Style to be applied to the next written row(s) */
-    protected $rowStyle;
-
     /** @var string Content-Type value for the header - to be defined by child class */
     protected static $headerContentType;
 
@@ -64,8 +62,6 @@ abstract class WriterAbstract implements WriterInterface
         $this->styleMerger = $styleMerger;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
         $this->helperFactory = $helperFactory;
-
-        $this->resetRowStyleToDefault();
     }
 
     /**
@@ -77,14 +73,12 @@ abstract class WriterAbstract implements WriterInterface
     abstract protected function openWriter();
 
     /**
-     * Adds data to the currently openned writer.
+     * Adds a row to the currently opened writer.
      *
-     * @param  array $dataRow Array containing data to be streamed.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param Style $style Style to be applied to the written row
+     * @param Row $row The row containing cells and styles
      * @return void
      */
-    abstract protected function addRowToWriter(array $dataRow, $style);
+    abstract protected function addRowToWriter(Row $row);
 
     /**
      * Closes the streamer, preventing any additional writing.
@@ -94,9 +88,7 @@ abstract class WriterAbstract implements WriterInterface
     abstract protected function closeWriter();
 
     /**
-     * Sets the default styles for all rows added with "addRow".
-     * Overriding the default style instead of using "addRowWithStyle" improves performance by 20%.
-     * @see https://github.com/box/spout/issues/272
+     * Sets the default styles for all rows added with "addRow"
      *
      * @param Style $defaultStyle
      * @return WriterAbstract
@@ -104,19 +96,12 @@ abstract class WriterAbstract implements WriterInterface
     public function setDefaultRowStyle($defaultStyle)
     {
         $this->optionsManager->setOption(Options::DEFAULT_ROW_STYLE, $defaultStyle);
-        $this->resetRowStyleToDefault();
 
         return $this;
     }
 
     /**
-     * Inits the writer and opens it to accept data.
-     * By using this method, the data will be written to a file.
-     *
-     * @api
-     * @param  string $outputFilePath Path of the output file that will contain the data
-     * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened or if the given path is not writable
-     * @return WriterAbstract
+     * {@inheritdoc}
      */
     public function openToFile($outputFilePath)
     {
@@ -132,15 +117,9 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * Inits the writer and opens it to accept data.
-     * By using this method, the data will be outputted directly to the browser.
-     *
      * @codeCoverageIgnore
      *
-     * @api
-     * @param  string $outputFileName Name of the output file that will contain the data. If a path is passed in, only the file name will be kept
-     * @throws \Box\Spout\Common\Exception\IOException If the writer cannot be opened
-     * @return WriterAbstract
+     * {@inheritdoc}
      */
     public function openToBrowser($outputFileName)
     {
@@ -203,24 +182,15 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * Write given data to the output. New data will be appended to end of stream.
-     *
-     * @param  array $dataRow Array containing data to be streamed.
-     *                        If empty, no data is added (i.e. not even as a blank row)
-     *                        Example: $dataRow = ['data1', 1234, null, '', 'data5', false];
-     * @api
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
-     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
-     * @throws \Box\Spout\Common\Exception\SpoutException If anything else goes wrong while writing data
-     * @return WriterAbstract
+     * {@inheritdoc}
      */
-    public function addRow(array $dataRow)
+    public function addRow(Row $row)
     {
         if ($this->isWriterOpened) {
-            // empty $dataRow should not add an empty line
-            if (!empty($dataRow)) {
+            if ($row->hasCells()) {
                 try {
-                    $this->addRowToWriter($dataRow, $this->rowStyle);
+                    $this->applyDefaultRowStyle($row);
+                    $this->addRowToWriter($row);
                 } catch (SpoutException $e) {
                     // if an exception occurs while writing data,
                     // close the writer and remove all files created so far.
@@ -238,115 +208,43 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * Write given data to the output and apply the given style.
-     * @see addRow
-     *
-     * @api
-     * @param array $dataRow Array of array containing data to be streamed.
-     * @param Style $style Style to be applied to the row.
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
-     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
-     * @return WriterAbstract
-     */
-    public function addRowWithStyle(array $dataRow, $style)
-    {
-        if (!$style instanceof Style) {
-            throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
-        }
-
-        $this->setRowStyle($style);
-        $this->addRow($dataRow);
-        $this->resetRowStyleToDefault();
-
-        return $this;
-    }
-
-    /**
-     * Write given data to the output. New data will be appended to end of stream.
-     *
-     * @api
-     * @param  array $dataRows Array of array containing data to be streamed.
-     *                         If a row is empty, it won't be added (i.e. not even as a blank row)
-     *                         Example: $dataRows = [
-     *                             ['data11', 12, , '', 'data13'],
-     *                             ['data21', 'data22', null, false],
-     *                         ];
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
-     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
-     * @return WriterAbstract
+     * {@inheritdoc}
      */
     public function addRows(array $dataRows)
     {
-        if (!empty($dataRows)) {
-            $firstRow = reset($dataRows);
-            if (!is_array($firstRow)) {
-                throw new InvalidArgumentException('The input should be an array of arrays');
+        foreach ($dataRows as $dataRow) {
+            if (!$dataRow instanceof Row) {
+                $this->closeAndAttemptToCleanupAllFiles();
+                throw new InvalidArgumentException();
             }
 
-            foreach ($dataRows as $dataRow) {
-                $this->addRow($dataRow);
-            }
+            $this->addRow($dataRow);
         }
 
         return $this;
     }
 
     /**
-     * Write given data to the output and apply the given style.
-     * @see addRows
+     * @TODO: Move this into styleMerger
      *
-     * @api
-     * @param array $dataRows Array of array containing data to be streamed.
-     * @param Style $style Style to be applied to the rows.
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If the input param is not valid
-     * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
-     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
-     * @return WriterAbstract
+     * @param Row $row
+     * @return $this
      */
-    public function addRowsWithStyle(array $dataRows, $style)
+    private function applyDefaultRowStyle(Row $row)
     {
-        if (!$style instanceof Style) {
-            throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
-        }
-
-        $this->setRowStyle($style);
-        $this->addRows($dataRows);
-        $this->resetRowStyleToDefault();
-
-        return $this;
-    }
-
-    /**
-     * Sets the style to be applied to the next written rows
-     * until it is changed or reset.
-     *
-     * @param Style $style
-     * @return void
-     */
-    private function setRowStyle($style)
-    {
-        // Merge given style with the default one to inherit custom properties
         $defaultRowStyle = $this->optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
-        $this->rowStyle = $this->styleMerger->merge($style, $defaultRowStyle);
-    }
+        if ($defaultRowStyle === null) {
+            return $this;
+        }
 
-    /**
-     * Resets the style to be applied to the next written rows.
-     *
-     * @return void
-     */
-    private function resetRowStyleToDefault()
-    {
-        $this->rowStyle = $this->optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
+        $mergedStyle = $this->styleMerger->merge($row->getStyle(), $defaultRowStyle);
+        $row->setStyle($mergedStyle);
     }
 
     /**
      * Closes the writer. This will close the streamer as well, preventing new data
      * to be written to the file.
      *
-     * @api
      * @return void
      */
     public function close()
