@@ -5,7 +5,8 @@ namespace Box\Spout\Writer\CSV;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\Common\Entity\Cell;
+use Box\Spout\Writer\Common\Entity\Row;
+use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\WriterFactory;
 
 /**
@@ -14,6 +15,7 @@ use Box\Spout\Writer\WriterFactory;
 class WriterTest extends \PHPUnit_Framework_TestCase
 {
     use TestUsingResource;
+    use RowCreationHelper;
 
     /**
      * @expectedException \Box\Spout\Common\Exception\IOException
@@ -26,7 +28,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
 
         $writer = WriterFactory::create(Type::CSV);
         @$writer->openToFile($filePath);
-        $writer->addRow(['csv--11', 'csv--12']);
+        $writer->addRow($this->createRowFromValues(['csv--11', 'csv--12']));
         $writer->close();
     }
 
@@ -36,7 +38,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testWriteShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::CSV);
-        $writer->addRow(['csv--11', 'csv--12']);
+        $writer->addRow($this->createRowFromValues(['csv--11', 'csv--12']));
         $writer->close();
     }
 
@@ -46,7 +48,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testWriteShouldThrowExceptionIfCallAddRowsBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::CSV);
-        $writer->addRows([['csv--11', 'csv--12']]);
+        $writer->addRow($this->createRowFromValues(['csv--11', 'csv--12']));
         $writer->close();
     }
 
@@ -56,7 +58,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowsShouldThrowExceptionIfRowsAreNotArrayOfArrays()
     {
         $writer = WriterFactory::create(Type::CSV);
-        $writer->addRows(['csv--11', 'csv--12']);
+        $writer->addRows([['csv--11', 'csv--12']]);
         $writer->close();
     }
 
@@ -82,9 +84,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function testWriteShouldAddUtf8Bom()
     {
-        $allRows = [
+        $allRows = $this->createRowsFromValues([
             ['csv--11', 'csv--12'],
-        ];
+        ]);
         $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_utf8_bom.csv');
 
         $this->assertContains(EncodingHelper::BOM_UTF8, $writtenContent, 'The CSV file should contain a UTF-8 BOM');
@@ -95,9 +97,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function testWriteShouldNotAddUtf8Bom()
     {
-        $allRows = [
+        $allRows = $this->createRowsFromValues([
             ['csv--11', 'csv--12'],
-        ];
+        ]);
         $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_no_bom.csv', ',', '"', false);
 
         $this->assertNotContains(EncodingHelper::BOM_UTF8, $writtenContent, 'The CSV file should not contain a UTF-8 BOM');
@@ -106,25 +108,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testWriteShouldSupportAssociativeArrays()
-    {
-        $allRows = [
-            ['foo' => 'csv--11', 'bar' => 'csv--12'],
-        ];
-        $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_from_associative_arrays.csv');
-        $writtenContent = $this->trimWrittenContent($writtenContent);
-
-        $this->assertEquals('csv--11,csv--12', $writtenContent, 'Values from associative arrays should be written');
-    }
-
-    /**
-     * @return void
-     */
     public function testWriteShouldSupportNullValues()
     {
-        $allRows = [
+        $allRows = $this->createRowsFromValues([
             ['csv--11', null, 'csv--13'],
-        ];
+        ]);
         $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_null_values.csv');
         $writtenContent = $this->trimWrittenContent($writtenContent);
 
@@ -136,11 +124,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function testWriteShouldSkipEmptyRows()
     {
-        $allRows = [
+        $allRows = $this->createRowsFromValues([
             ['csv--11', 'csv--12'],
             [],
             ['csv--31', 'csv--32'],
-        ];
+        ]);
         $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_empty_rows.csv');
         $writtenContent = $this->trimWrittenContent($writtenContent);
 
@@ -152,10 +140,10 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function testWriteShouldSupportCustomFieldDelimiter()
     {
-        $allRows = [
+        $allRows = $this->createRowsFromValues([
             ['csv--11', 'csv--12', 'csv--13'],
             ['csv--21', 'csv--22', 'csv--23'],
-        ];
+        ]);
         $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_pipe_delimiters.csv', '|');
         $writtenContent = $this->trimWrittenContent($writtenContent);
 
@@ -167,9 +155,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
      */
     public function testWriteShouldSupportCustomFieldEnclosure()
     {
-        $allRows = [
+        $allRows = $this->createRowsFromValues([
             ['This is, a comma', 'csv--12', 'csv--13'],
-        ];
+        ]);
         $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_pound_enclosures.csv', ',', '#');
         $writtenContent = $this->trimWrittenContent($writtenContent);
 
@@ -177,20 +165,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return void
-     */
-    public function testWriteShouldAcceptCellObjects()
-    {
-        $allRows = [
-            [new Cell('String Value'), new Cell(1)],
-        ];
-        $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_cell_objects.csv');
-        $writtenContent = $this->trimWrittenContent($writtenContent);
-        $this->assertEquals('"String Value",1', $writtenContent);
-    }
-
-    /**
-     * @param array  $allRows
+     * @param Row[]  $allRows
      * @param string $fileName
      * @param string $fieldDelimiter
      * @param string $fieldEnclosure

@@ -4,11 +4,13 @@ namespace Box\Spout\Writer\XLSX\Manager;
 
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Common\Helper\Escaper\XLSX as XLSXEscaper;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Helper\CellHelper;
@@ -43,7 +45,7 @@ EOD;
     /** @var SharedStringsManager Helper to write shared strings */
     private $sharedStringsManager;
 
-    /** @var \Box\Spout\Common\Helper\Escaper\XLSX Strings escaper */
+    /** @var XLSXEscaper Strings escaper */
     private $stringsEscaper;
 
     /** @var StringHelper String helper */
@@ -58,7 +60,7 @@ EOD;
      * @param OptionsManagerInterface $optionsManager
      * @param StyleManager $styleManager
      * @param SharedStringsManager $sharedStringsManager
-     * @param \Box\Spout\Common\Helper\Escaper\XLSX $stringsEscaper
+     * @param XLSXEscaper $stringsEscaper
      * @param StringHelper $stringHelper
      * @param EntityFactory $entityFactory
      */
@@ -66,7 +68,7 @@ EOD;
         OptionsManagerInterface $optionsManager,
         StyleManager $styleManager,
         SharedStringsManager $sharedStringsManager,
-        \Box\Spout\Common\Helper\Escaper\XLSX $stringsEscaper,
+        XLSXEscaper $stringsEscaper,
         StringHelper $stringHelper,
         EntityFactory $entityFactory
     ) {
@@ -87,11 +89,7 @@ EOD;
     }
 
     /**
-     * Prepares the worksheet to accept data
-     *
-     * @param Worksheet $worksheet The worksheet to start
-     * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
-     * @return void
+     * {@inheritdoc}
      */
     public function startSheet(Worksheet $worksheet)
     {
@@ -119,61 +117,38 @@ EOD;
     }
 
     /**
-     * Adds data to the given worksheet.
-     *
-     * @param Worksheet $worksheet The worksheet to add the row to
-     * @param array $dataRow Array containing data to be written. Cannot be empty.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param Style $rowStyle Style to be applied to the row. NULL means use default style.
-     * @throws IOException If the data cannot be written
-     * @throws InvalidArgumentException If a cell value's type is not supported
-     * @return void
+     * {@inheritdoc}
      */
-    public function addRow(Worksheet $worksheet, $dataRow, $rowStyle)
+    public function addRow(Worksheet $worksheet, Row $row)
     {
-        if (!$this->isEmptyRow($dataRow)) {
-            $this->addNonEmptyRow($worksheet, $dataRow, $rowStyle);
+        if (!$row->isEmpty()) {
+            $this->addNonEmptyRow($worksheet, $row);
         }
 
         $worksheet->setLastWrittenRowIndex($worksheet->getLastWrittenRowIndex() + 1);
     }
 
     /**
-     * Returns whether the given row is empty
-     *
-     * @param array $dataRow Array containing data to be written. Cannot be empty.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @return bool Whether the given row is empty
-     */
-    private function isEmptyRow($dataRow)
-    {
-        $numCells = count($dataRow);
-        // using "reset()" instead of "$dataRow[0]" because $dataRow can be an associative array
-        return ($numCells === 1 && CellHelper::isEmpty(reset($dataRow)));
-    }
-
-    /**
      * Adds non empty row to the worksheet.
      *
      * @param Worksheet $worksheet The worksheet to add the row to
-     * @param array $dataRow Array containing data to be written. Cannot be empty.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style Style to be applied to the row. NULL means use default style.
-     * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
-     * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
+     * @param Row $row The row to be written
+     * @throws IOException If the data cannot be written
+     * @throws InvalidArgumentException If a cell value's type is not supported
      * @return void
      */
-    private function addNonEmptyRow(Worksheet $worksheet, $dataRow, $style)
+    private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
-        $cellNumber = 0;
+        $cellIndex = 0;
+        $rowStyle = $row->getStyle();
         $rowIndex = $worksheet->getLastWrittenRowIndex() + 1;
-        $numCells = count($dataRow);
+        $numCells = count($row->getCells());
 
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
-        foreach ($dataRow as $cellValue) {
-            $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cellValue, $style->getId());
-            $cellNumber++;
+        foreach ($row->getCells() as $cell) {
+            $rowXML .= $this->applyStyleAndGetCellXML($cell, $rowStyle, $rowIndex, $cellIndex);
+            $cellIndex++;
         }
 
         $rowXML .= '</row>';
@@ -185,27 +160,41 @@ EOD;
     }
 
     /**
-     * Build and return xml for a single cell.
+     * Applies styles to the given style, merging the cell's style with its row's style
+     * Then builds and returns xml for the cell.
+     *
+     * @param Cell $cell
+     * @param Style $rowStyle
+     * @param int $rowIndex
+     * @param int $cellIndex
+     * @throws InvalidArgumentException If the given value cannot be processed
+     * @return string
+     */
+    private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $rowIndex, $cellIndex)
+    {
+        // Apply styles - the row style is merged at this point
+        $cell->applyStyle($rowStyle);
+        $this->styleManager->applyExtraStylesIfNeeded($cell);
+        $registeredStyle = $this->styleManager->registerStyle($cell->getStyle());
+
+        return $this->getCellXML($rowIndex, $cellIndex, $cell, $registeredStyle->getId());
+    }
+
+    /**
+     * Builds and returns xml for a single cell.
      *
      * @param int $rowIndex
      * @param int $cellNumber
-     * @param mixed $cellValue
+     * @param Cell $cell
      * @param int $styleId
      * @throws InvalidArgumentException If the given value cannot be processed
      * @return string
      */
-    private function getCellXML($rowIndex, $cellNumber, $cellValue, $styleId)
+    private function getCellXML($rowIndex, $cellNumber, Cell $cell, $styleId)
     {
         $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
         $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
         $cellXML .= ' s="' . $styleId . '"';
-
-        /* @TODO Remove code duplication with ODS writer: https://github.com/box/spout/pull/383#discussion_r113292746 */
-        if ($cellValue instanceof Cell) {
-            $cell = $cellValue;
-        } else {
-            $cell = $this->entityFactory->createCell($cellValue);
-        }
 
         if ($cell->isString()) {
             $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cell->getValue());
@@ -252,10 +241,7 @@ EOD;
     }
 
     /**
-     * Closes the worksheet
-     *
-     * @param Worksheet $worksheet
-     * @return void
+     * {@inheritdoc}
      */
     public function close(Worksheet $worksheet)
     {

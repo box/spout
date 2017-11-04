@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\Common\Manager\Style;
 
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Cell;
 
 /**
  * Class StyleManagerTest
@@ -29,7 +30,7 @@ class StyleManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($style->shouldWrapText());
 
         $styleManager = $this->getStyleManager();
-        $updatedStyle = $styleManager->applyExtraStylesIfNeeded($style, [12, 'single line', "multi\nlines", null]);
+        $updatedStyle = $styleManager->applyExtraStylesIfNeeded(new Cell("multi\nlines", $style));
 
         $this->assertTrue($updatedStyle->shouldWrapText());
     }
@@ -43,7 +44,7 @@ class StyleManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($style->shouldWrapText());
 
         $styleManager = $this->getStyleManager();
-        $updatedStyle = $styleManager->applyExtraStylesIfNeeded($style, ["multi\nlines"]);
+        $updatedStyle = $styleManager->applyExtraStylesIfNeeded(new Cell("multi\nlines", $style));
 
         $this->assertTrue($updatedStyle->shouldWrapText());
     }

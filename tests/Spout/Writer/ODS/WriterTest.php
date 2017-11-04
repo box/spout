@@ -7,7 +7,9 @@ use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Entity\Cell;
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
+use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\WriterFactory;
 
 /**
@@ -16,6 +18,7 @@ use Box\Spout\Writer\WriterFactory;
 class WriterTest extends \PHPUnit_Framework_TestCase
 {
     use TestUsingResource;
+    use RowCreationHelper;
 
     /**
      * @expectedException \Box\Spout\Common\Exception\IOException
@@ -36,7 +39,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::ODS);
-        $writer->addRow(['ods--11', 'ods--12']);
+        $writer->addRow($this->createRowFromValues(['ods--11', 'ods--12']));
     }
 
     /**
@@ -45,7 +48,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::ODS);
-        $writer->addRows([['ods--11', 'ods--12']]);
+        $writer->addRows([$this->createRowFromValues(['ods--11', 'ods--12'])]);
     }
 
     /**
@@ -85,7 +88,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_add_row_should_throw_exception_if_unsupported_data_type_passed_in.ods';
         $dataRows = [
-            [new \stdClass()],
+            $this->createRowFromValues([new \stdClass()]),
         ];
 
         $this->writeToODSFile($dataRows, $fileName);
@@ -98,8 +101,8 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_add_row_should_cleanup_all_files_if_exception_thrown.ods';
         $dataRows = [
-            ['wrong'],
-            [new \stdClass()],
+            $this->createRowFromValues(['wrong']),
+            $this->createRowFromValues([new \stdClass()]),
         ];
 
         $this->createGeneratedFolderIfNeeded($fileName);
@@ -191,10 +194,10 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldWriteGivenDataToSheet()
     {
         $fileName = 'test_add_row_should_write_given_data_to_sheet.ods';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['ods--11', 'ods--12'],
             ['ods--21', 'ods--22', 'ods--23'],
-        ];
+        ]);
 
         $this->writeToODSFile($dataRows, $fileName);
 
@@ -211,10 +214,10 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldWriteGivenDataToTwoSheets()
     {
         $fileName = 'test_add_row_should_write_given_data_to_two_sheets.ods';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['ods--11', 'ods--12'],
             ['ods--21', 'ods--22', 'ods--23'],
-        ];
+        ]);
 
         $numSheets = 2;
         $this->writeToMultipleSheetsInODSFile($dataRows, $numSheets, $fileName);
@@ -234,9 +237,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldSupportAssociativeArrays()
     {
         $fileName = 'test_add_row_should_support_associative_arrays.ods';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['foo' => 'ods--11', 'bar' => 'ods--12'],
-        ];
+        ]);
 
         $this->writeToODSFile($dataRows, $fileName);
 
@@ -253,9 +256,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldSupportMultipleTypesOfData()
     {
         $fileName = 'test_add_row_should_support_multiple_types_of_data.ods';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['ods--11', true, '', 0, 10.2, null],
-        ];
+        ]);
 
         $this->writeToODSFile($dataRows, $fileName);
 
@@ -290,7 +293,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldUseNumberColumnsRepeatedForRepeatedValues($dataRow, $expectedNumTableCells, $expectedNumColumnsRepeated)
     {
         $fileName = 'test_add_row_should_use_number_columns_repeated.ods';
-        $this->writeToODSFile([$dataRow], $fileName);
+        $this->writeToODSFile($this->createRowsFromValues([$dataRow]), $fileName);
 
         $sheetXmlNode = $this->getSheetXmlNode($fileName, 1);
         $tableCellNodes = $sheetXmlNode->getElementsByTagName('table-cell');
@@ -314,18 +317,18 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldWriteGivenDataToTheCorrectSheet()
     {
         $fileName = 'test_add_row_should_write_given_data_to_the_correct_sheet.ods';
-        $dataRowsSheet1 = [
+        $dataRowsSheet1 = $this->createRowsFromValues([
             ['ods--sheet1--11', 'ods--sheet1--12'],
             ['ods--sheet1--21', 'ods--sheet1--22', 'ods--sheet1--23'],
-        ];
-        $dataRowsSheet2 = [
+        ]);
+        $dataRowsSheet2 = $this->createRowsFromValues([
             ['ods--sheet2--11', 'ods--sheet2--12'],
             ['ods--sheet2--21', 'ods--sheet2--22', 'ods--sheet2--23'],
-        ];
-        $dataRowsSheet1Again = [
+        ]);
+        $dataRowsSheet1Again = $this->createRowsFromValues([
             ['ods--sheet1--31', 'ods--sheet1--32'],
             ['ods--sheet1--41', 'ods--sheet1--42', 'ods--sheet1--43'],
-        ];
+        ]);
 
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -369,11 +372,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldAutomaticallyCreateNewSheetsIfMaxRowsReachedAndOptionTurnedOn()
     {
         $fileName = 'test_add_row_should_automatically_create_new_sheets_if_max_rows_reached_and_option_turned_on.ods';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['ods--sheet1--11', 'ods--sheet1--12'],
             ['ods--sheet1--21', 'ods--sheet1--22', 'ods--sheet1--23'],
             ['ods--sheet2--11', 'ods--sheet2--12'], // this should be written in a new sheet
-        ];
+        ]);
 
         // set the maxRowsPerSheet limit to 2
         \ReflectionHelper::setStaticValue('\Box\Spout\Writer\ODS\Manager\WorkbookManager', 'maxRowsPerWorksheet', 2);
@@ -393,11 +396,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldNotCreateNewSheetsIfMaxRowsReachedAndOptionTurnedOff()
     {
         $fileName = 'test_add_row_should_not_create_new_sheets_if_max_rows_reached_and_option_turned_off.ods';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['ods--sheet1--11', 'ods--sheet1--12'],
             ['ods--sheet1--21', 'ods--sheet1--22', 'ods--sheet1--23'],
             ['ods--sheet1--31', 'ods--sheet1--32'], // this should NOT be written in a new sheet
-        ];
+        ]);
 
         // set the maxRowsPerSheet limit to 2
         \ReflectionHelper::setStaticValue('\Box\Spout\Writer\ODS\Manager\WorkbookManager', 'maxRowsPerWorksheet', 2);
@@ -416,9 +419,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldEscapeHtmlSpecialCharacters()
     {
         $fileName = 'test_add_row_should_escape_html_special_characters.ods';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['I\'m in "great" mood', 'This <must> be escaped & tested'],
-        ];
+        ]);
 
         $this->writeToODSFile($dataRows, $fileName);
 
@@ -434,7 +437,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $fileName = 'test_add_row_should_keep_new_lines.ods';
         $dataRow = ["I have\na dream"];
 
-        $this->writeToODSFile([$dataRow], $fileName);
+        $this->writeToODSFile($this->createRowsFromValues([$dataRow]), $fileName);
 
         $this->assertValueWasWrittenToSheet($fileName, 1, 'I have');
         $this->assertValueWasWrittenToSheet($fileName, 1, 'a dream');
@@ -458,55 +461,14 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $dataRow = ['foo'];
 
-        $this->writeToODSFile([$dataRow], $fileName);
+        $this->writeToODSFile($this->createRowsFromValues([$dataRow]), $fileName);
 
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         $this->assertEquals('application/vnd.oasis.opendocument.spreadsheet', $finfo->file($resourcePath));
     }
 
     /**
-     * @return void
-     */
-    public function testWriteShouldAcceptCellObjects()
-    {
-        $fileName = 'test_writer_should_accept_cell_objects.ods';
-        $dataRows = [
-            [new Cell('ods--11'), new Cell('ods--12')],
-            [new Cell('ods--21'), new Cell('ods--22'), new Cell('ods--23')],
-        ];
-
-        $this->writeToODSFile($dataRows, $fileName);
-
-        foreach ($dataRows as $dataRow) {
-            /** @var Cell $cell */
-            foreach ($dataRow as $cell) {
-                $this->assertValueWasWritten($fileName, $cell->getValue());
-            }
-        }
-    }
-
-    /**
-     * @return void
-     */
-    public function testWriteShouldAcceptCellObjectsWithDifferentValueTypes()
-    {
-        $fileName = 'test_writer_should_accept_cell_objects_with_types.ods';
-        $dataRows = [
-            [new Cell('i am a string'), new Cell(51465), new Cell(true), new Cell(51465.5)],
-        ];
-
-        $this->writeToODSFile($dataRows, $fileName);
-
-        foreach ($dataRows as $dataRow) {
-            /** @var Cell $cell */
-            foreach ($dataRow as $cell) {
-                $this->assertValueWasWritten($fileName, (string) $cell->getValue(), '');
-            }
-        }
-    }
-
-    /**
-     * @param array $allRows
+     * @param Row[] $allRows
      * @param string $fileName
      * @param bool $shouldCreateSheetsAutomatically
      * @return Writer
@@ -528,7 +490,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $allRows
+     * @param Row[] $allRows
      * @param int $numSheets
      * @param string $fileName
      * @param bool $shouldCreateSheetsAutomatically

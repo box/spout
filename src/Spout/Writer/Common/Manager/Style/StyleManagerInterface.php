@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\Common\Manager\Style;
 
+use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
@@ -22,9 +23,8 @@ interface StyleManagerInterface
      * Apply additional styles if the given row needs it.
      * Typically, set "wrap text" if a cell contains a new line.
      *
-     * @param Style $style The original style
-     * @param array $dataRow The row the style will be applied to
+     * @param Cell $cell
      * @return Style The updated style
      */
-    public function applyExtraStylesIfNeeded($style, $dataRow);
+    public function applyExtraStylesIfNeeded(Cell $cell);
 }

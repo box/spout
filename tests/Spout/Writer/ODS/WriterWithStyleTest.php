@@ -7,9 +7,11 @@ use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\WriterFactory;
 
 /**
@@ -18,6 +20,7 @@ use Box\Spout\Writer\WriterFactory;
 class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 {
     use TestUsingResource;
+    use RowCreationHelper;
 
     /** @var Style */
     private $defaultStyle;
@@ -36,7 +39,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::ODS);
-        $writer->addRowWithStyle(['ods--11', 'ods--12'], $this->defaultStyle);
+        $writer->addRow($this->createStyledRowFromValues(['ods--11', 'ods--12'], $this->defaultStyle));
     }
 
     /**
@@ -45,53 +48,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::ODS);
-        $writer->addRowWithStyle(['ods--11', 'ods--12'], $this->defaultStyle);
-    }
-
-    /**
-     * @return array
-     */
-    public function dataProviderForInvalidStyle()
-    {
-        return [
-            ['style'],
-            [new \stdClass()],
-            [null],
-        ];
-    }
-
-    /**
-     * @dataProvider dataProviderForInvalidStyle
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
-     *
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
-     */
-    public function testAddRowWithStyleShouldThrowExceptionIfInvalidStyleGiven($style)
-    {
-        $fileName = 'test_add_row_with_style_should_throw_exception.ods';
-        $this->createGeneratedFolderIfNeeded($fileName);
-        $resourcePath = $this->getGeneratedResourcePath($fileName);
-
-        $writer = WriterFactory::create(Type::ODS);
-        $writer->openToFile($resourcePath);
-        $writer->addRowWithStyle(['ods--11', 'ods--12'], $style);
-    }
-
-    /**
-     * @dataProvider dataProviderForInvalidStyle
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
-     *
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
-     */
-    public function testAddRowsWithStyleShouldThrowExceptionIfInvalidStyleGiven($style)
-    {
-        $fileName = 'test_add_row_with_style_should_throw_exception.ods';
-        $this->createGeneratedFolderIfNeeded($fileName);
-        $resourcePath = $this->getGeneratedResourcePath($fileName);
-
-        $writer = WriterFactory::create(Type::ODS);
-        $writer->openToFile($resourcePath);
-        $writer->addRowsWithStyle([['ods--11', 'ods--12']], $style);
+        $writer->addRow($this->createStyledRowFromValues(['ods--11', 'ods--12'], $this->defaultStyle));
     }
 
     /**
@@ -100,10 +57,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldListAllUsedStylesInCreatedContentXmlFile()
     {
         $fileName = 'test_add_row_with_style_should_list_all_used_fonts.ods';
-        $dataRows = [
-            ['ods--11', 'ods--12'],
-            ['ods--21', 'ods--22'],
-        ];
 
         $style = (new StyleBuilder())
             ->setFontBold()
@@ -118,7 +71,12 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             ->setBackgroundColor(Color::GREEN)
             ->build();
 
-        $this->writeToODSFileWithMultipleStyles($dataRows, $fileName, [$style, $style2]);
+        $dataRows = [
+            $this->createRowFromValues(['ods--11', 'ods--12'], $style),
+            $this->createRowFromValues(['ods--21', 'ods--22'], $style2),
+        ];
+
+        $this->writeToODSFile($dataRows, $fileName);
 
         $cellStyleElements = $this->getCellStyleElementsFromContentXmlFile($fileName);
         $this->assertEquals(3, count($cellStyleElements), 'There should be 3 separate cell styles, including the default one.');
@@ -144,9 +102,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldWriteDefaultStyleSettings()
     {
         $fileName = 'test_add_row_with_style_should_write_default_style_settings.ods';
-        $dataRow = ['ods--11', 'ods--12'];
+        $dataRow = $this->createStyledRowFromValues(['ods--11', 'ods--12'], $this->defaultStyle);
 
-        $this->writeToODSFile([$dataRow], $fileName, $this->defaultStyle);
+        $this->writeToODSFile([$dataRow], $fileName);
 
         $textPropertiesElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'style:text-properties');
         $this->assertEquals(Style::DEFAULT_FONT_SIZE . 'pt', $textPropertiesElement->getAttribute('fo:font-size'));
@@ -160,15 +118,16 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldApplyStyleToCells()
     {
         $fileName = 'test_add_row_with_style_should_apply_style_to_cells.ods';
-        $dataRows = [
-            ['ods--11'],
-            ['ods--21'],
-            ['ods--31'],
-        ];
+
         $style = (new StyleBuilder())->setFontBold()->build();
         $style2 = (new StyleBuilder())->setFontSize(15)->build();
+        $dataRows = [
+            $this->createStyledRowFromValues(['ods--11'], $style),
+            $this->createStyledRowFromValues(['ods--21'], $style2),
+            $this->createRowFromValues(['ods--31']),
+        ];
 
-        $this->writeToODSFileWithMultipleStyles($dataRows, $fileName, [$style, $style2, null]);
+        $this->writeToODSFile($dataRows, $fileName);
 
         $cellDomElements = $this->getCellElementsFromContentXmlFile($fileName);
         $this->assertEquals(3, count($cellDomElements), 'There should be 3 cells with content');
@@ -184,13 +143,14 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldReuseDuplicateStyles()
     {
         $fileName = 'test_add_row_with_style_should_reuse_duplicate_styles.ods';
-        $dataRows = [
+
+        $style = (new StyleBuilder())->setFontBold()->build();
+        $dataRows = $this->createStyledRowsFromValues([
             ['ods--11'],
             ['ods--21'],
-        ];
-        $style = (new StyleBuilder())->setFontBold()->build();
+        ], $style);
 
-        $this->writeToODSFile($dataRows, $fileName, $style);
+        $this->writeToODSFile($dataRows, $fileName);
 
         $cellDomElements = $this->getCellElementsFromContentXmlFile($fileName);
         $this->assertEquals(2, count($cellDomElements), 'There should be 2 cells with content');
@@ -205,12 +165,13 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldAddWrapTextAlignmentInfoInStylesXmlFileIfSpecified()
     {
         $fileName = 'test_add_row_with_style_should_add_wrap_text_alignment.ods';
-        $dataRows = [
-            ['ods--11', 'ods--12'],
-        ];
-        $style = (new StyleBuilder())->setShouldWrapText()->build();
 
-        $this->writeToODSFile($dataRows, $fileName, $style);
+        $style = (new StyleBuilder())->setShouldWrapText()->build();
+        $dataRows = $this->createStyledRowsFromValues([
+            ['ods--11', 'ods--12'],
+        ], $style);
+
+        $this->writeToODSFile($dataRows, $fileName);
 
         $styleElements = $this->getCellStyleElementsFromContentXmlFile($fileName);
         $this->assertEquals(2, count($styleElements), 'There should be 2 styles (default and custom)');
@@ -225,11 +186,11 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldApplyWrapTextIfCellContainsNewLine()
     {
         $fileName = 'test_add_row_with_style_should_apply_wrap_text_if_new_lines.ods';
-        $dataRows = [
+        $dataRows = $this->createStyledRowsFromValues([
             ["ods--11\nods--11"],
-        ];
+        ], $this->defaultStyle);
 
-        $this->writeToODSFile($dataRows, $fileName, $this->defaultStyle);
+        $this->writeToODSFile($dataRows, $fileName);
 
         $styleElements = $this->getCellStyleElementsFromContentXmlFile($fileName);
         $this->assertEquals(2, count($styleElements), 'There should be 2 styles (default and custom)');
@@ -244,12 +205,13 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddBackgroundColor()
     {
         $fileName = 'test_default_background_style.ods';
-        $dataRows = [
-            ['defaultBgColor'],
-        ];
 
         $style = (new StyleBuilder())->setBackgroundColor(Color::WHITE)->build();
-        $this->writeToODSFile($dataRows, $fileName, $style);
+        $dataRows = $this->createStyledRowsFromValues([
+            ['defaultBgColor'],
+        ], $style);
+
+        $this->writeToODSFile($dataRows, $fileName);
 
         $styleElements = $this->getCellStyleElementsFromContentXmlFile($fileName);
         $this->assertEquals(2, count($styleElements), 'There should be 2 styles (default and custom)');
@@ -265,12 +227,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_borders.ods';
 
-        $dataRows = [
-            ['row-with-border-bottom-green-thick-solid'],
-            ['row-without-border'],
-            ['row-with-border-top-red-thin-dashed'],
-        ];
-
         $borderBottomGreenThickSolid = (new BorderBuilder())
             ->setBorderBottom(Color::GREEN, Border::WIDTH_THICK, Border::STYLE_SOLID)->build();
 
@@ -283,7 +239,13 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             (new StyleBuilder())->setBorder($borderTopRedThinDashed)->build(),
         ];
 
-        $this->writeToODSFileWithMultipleStyles($dataRows, $fileName, $styles);
+        $dataRows = [
+            $this->createStyledRowFromValues(['row-with-border-bottom-green-thick-solid'], $styles[0]),
+            $this->createStyledRowFromValues(['row-without-border'], $styles[1]),
+            $this->createStyledRowFromValues(['row-with-border-top-red-thin-dashed'], $styles[2]),
+        ];
+
+        $this->writeToODSFile($dataRows, $fileName);
 
         $styleElements = $this->getCellStyleElementsFromContentXmlFile($fileName);
 
@@ -328,7 +290,10 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testSetDefaultRowStyle()
     {
         $fileName = 'test_set_default_row_style.ods';
-        $dataRows = [['ods--11']];
+
+        $dataRows = $this->createRowsFromValues([
+            ['ods--11'],
+        ]);
 
         $defaultFontSize = 50;
         $defaultStyle = (new StyleBuilder())->setFontSize($defaultFontSize)->build();
@@ -340,12 +305,11 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $allRows
+     * @param Row[] $allRows
      * @param string $fileName
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
      * @return Writer
      */
-    private function writeToODSFile($allRows, $fileName, $style)
+    private function writeToODSFile($allRows, $fileName)
     {
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -354,16 +318,16 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $writer = WriterFactory::create(Type::ODS);
 
         $writer->openToFile($resourcePath);
-        $writer->addRowsWithStyle($allRows, $style);
+        $writer->addRows($allRows);
         $writer->close();
 
         return $writer;
     }
 
     /**
-     * @param array $allRows
+     * @param Row[] $allRows
      * @param string $fileName
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style|null $defaultStyle
+     * @param Style $defaultStyle
      * @return Writer
      */
     private function writeToODSFileWithDefaultStyle($allRows, $fileName, $defaultStyle)
@@ -377,36 +341,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $writer->openToFile($resourcePath);
         $writer->addRows($allRows);
-        $writer->close();
-
-        return $writer;
-    }
-
-    /**
-     * @param array $allRows
-     * @param string $fileName
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style|null[] $styles
-     * @return Writer
-     */
-    private function writeToODSFileWithMultipleStyles($allRows, $fileName, $styles)
-    {
-        // there should be as many rows as there are styles passed in
-        $this->assertEquals(count($allRows), count($styles));
-
-        $this->createGeneratedFolderIfNeeded($fileName);
-        $resourcePath = $this->getGeneratedResourcePath($fileName);
-
-        /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterFactory::create(Type::ODS);
-
-        $writer->openToFile($resourcePath);
-        for ($i = 0; $i < count($allRows); $i++) {
-            if ($styles[$i] === null) {
-                $writer->addRow($allRows[$i]);
-            } else {
-                $writer->addRowWithStyle($allRows[$i], $styles[$i]);
-            }
-        }
         $writer->close();
 
         return $writer;
