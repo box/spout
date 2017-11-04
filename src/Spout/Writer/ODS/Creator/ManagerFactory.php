@@ -46,7 +46,7 @@ class ManagerFactory implements ManagerFactoryInterface
         $fileSystemHelper->createBaseFilesAndFolders();
 
         $styleManager = $this->createStyleManager($optionsManager);
-        $worksheetManager = $this->createWorksheetManager();
+        $worksheetManager = $this->createWorksheetManager($styleManager);
 
         return new WorkbookManager(
             $workbook,
@@ -60,14 +60,15 @@ class ManagerFactory implements ManagerFactoryInterface
     }
 
     /**
+     * @param StyleManager $styleManager
      * @return WorksheetManager
      */
-    private function createWorksheetManager()
+    private function createWorksheetManager(StyleManager $styleManager)
     {
         $stringsEscaper = $this->helperFactory->createStringsEscaper();
         $stringsHelper = $this->helperFactory->createStringHelper();
 
-        return new WorksheetManager($stringsEscaper, $stringsHelper, $this->entityFactory);
+        return new WorksheetManager($styleManager, $stringsEscaper, $stringsHelper);
     }
 
     /**

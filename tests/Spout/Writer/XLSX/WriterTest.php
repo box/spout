@@ -5,7 +5,8 @@ namespace Box\Spout\Writer\XLSX;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\Common\Entity\Cell;
+use Box\Spout\Writer\Common\Entity\Row;
+use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Manager\WorksheetManager;
 
@@ -15,6 +16,7 @@ use Box\Spout\Writer\XLSX\Manager\WorksheetManager;
 class WriterTest extends \PHPUnit_Framework_TestCase
 {
     use TestUsingResource;
+    use RowCreationHelper;
 
     /**
      * @expectedException \Box\Spout\Common\Exception\IOException
@@ -35,7 +37,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::XLSX);
-        $writer->addRow(['xlsx--11', 'xlsx--12']);
+        $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
     }
 
     /**
@@ -44,7 +46,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::XLSX);
-        $writer->addRows([['xlsx--11', 'xlsx--12']]);
+        $writer->addRows($this->createRowsFromValues([['xlsx--11', 'xlsx--12']]));
     }
 
     /**
@@ -111,9 +113,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldThrowExceptionIfWritingStringExceedingMaxNumberOfCharactersAllowedPerCell()
     {
         $fileName = 'test_add_row_should_throw_exception_if_string_exceeds_max_num_chars_allowed_per_cell.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             [new \stdClass()],
-        ];
+        ]);
 
         $this->writeToXLSXFile($dataRows, $fileName);
     }
@@ -124,10 +126,10 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldCleanupAllFilesIfExceptionIsThrown()
     {
         $fileName = 'test_add_row_should_cleanup_all_files_if_exception_thrown.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['wrong'],
             [new \stdClass()],
-        ];
+        ]);
 
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -160,6 +162,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
         $writer->addNewSheetAndMakeItCurrent();
@@ -179,6 +182,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
         $writer = WriterFactory::create(Type::XLSX);
         $writer->openToFile($resourcePath);
 
@@ -216,10 +220,10 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldWriteGivenDataToSheetUsingInlineStrings()
     {
         $fileName = 'test_add_row_should_write_given_data_to_sheet_using_inline_strings.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['xlsx--11', 'xlsx--12'],
             ['xlsx--21', 'xlsx--22', 'xlsx--23'],
-        ];
+        ]);
 
         $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = true);
 
@@ -236,10 +240,10 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldWriteGivenDataToTwoSheetsUsingInlineStrings()
     {
         $fileName = 'test_add_row_should_write_given_data_to_two_sheets_using_inline_strings.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['xlsx--11', 'xlsx--12'],
             ['xlsx--21', 'xlsx--22', 'xlsx--23'],
-        ];
+        ]);
 
         $numSheets = 2;
         $this->writeToMultipleSheetsInXLSXFile($dataRows, $numSheets, $fileName, $shouldUseInlineStrings = true);
@@ -259,10 +263,10 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldWriteGivenDataToSheetUsingSharedStrings()
     {
         $fileName = 'test_add_row_should_write_given_data_to_sheet_using_shared_strings.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['xlsx--11', 'xlsx--12'],
             ['xlsx--21', 'xlsx--22', 'xlsx--23'],
-        ];
+        ]);
 
         $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
 
@@ -279,10 +283,10 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldWriteGivenDataToTwoSheetsUsingSharedStrings()
     {
         $fileName = 'test_add_row_should_write_given_data_to_two_sheets_using_shared_strings.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['xlsx--11', 'xlsx--12'],
             ['xlsx--21', 'xlsx--22', 'xlsx--23'],
-        ];
+        ]);
 
         $numSheets = 2;
         $this->writeToMultipleSheetsInXLSXFile($dataRows, $numSheets, $fileName, $shouldUseInlineStrings = false);
@@ -302,9 +306,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldSupportAssociativeArrays()
     {
         $fileName = 'test_add_row_should_support_associative_arrays.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['foo' => 'xlsx--11', 'bar' => 'xlsx--12'],
-        ];
+        ]);
 
         $this->writeToXLSXFile($dataRows, $fileName);
 
@@ -321,13 +325,13 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldNotWriteEmptyRows()
     {
         $fileName = 'test_add_row_should_not_write_empty_rows.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             [''],
             ['xlsx--21', 'xlsx--22'],
             ['key' => ''],
             [''],
             ['xlsx--51', 'xlsx--52'],
-        ];
+        ]);
 
         $this->writeToXLSXFile($dataRows, $fileName);
 
@@ -344,9 +348,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldSupportMultipleTypesOfData()
     {
         $fileName = 'test_add_row_should_support_multiple_types_of_data.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['xlsx--11', true, '', 0, 10.2, null],
-        ];
+        ]);
 
         $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
 
@@ -362,18 +366,18 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldWriteGivenDataToTheCorrectSheet()
     {
         $fileName = 'test_add_row_should_write_given_data_to_the_correct_sheet.xlsx';
-        $dataRowsSheet1 = [
+        $dataRowsSheet1 = $this->createRowsFromValues([
             ['xlsx--sheet1--11', 'xlsx--sheet1--12'],
             ['xlsx--sheet1--21', 'xlsx--sheet1--22', 'xlsx--sheet1--23'],
-        ];
-        $dataRowsSheet2 = [
+        ]);
+        $dataRowsSheet2 = $this->createRowsFromValues([
             ['xlsx--sheet2--11', 'xlsx--sheet2--12'],
             ['xlsx--sheet2--21', 'xlsx--sheet2--22', 'xlsx--sheet2--23'],
-        ];
-        $dataRowsSheet1Again = [
+        ]);
+        $dataRowsSheet1Again = $this->createRowsFromValues([
             ['xlsx--sheet1--31', 'xlsx--sheet1--32'],
             ['xlsx--sheet1--41', 'xlsx--sheet1--42', 'xlsx--sheet1--43'],
-        ];
+        ]);
 
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -419,11 +423,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldAutomaticallyCreateNewSheetsIfMaxRowsReachedAndOptionTurnedOn()
     {
         $fileName = 'test_add_row_should_automatically_create_new_sheets_if_max_rows_reached_and_option_turned_on.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['xlsx--sheet1--11', 'xlsx--sheet1--12'],
             ['xlsx--sheet1--21', 'xlsx--sheet1--22', 'xlsx--sheet1--23'],
             ['xlsx--sheet2--11', 'xlsx--sheet2--12'], // this should be written in a new sheet
-        ];
+        ]);
 
         // set the maxRowsPerSheet limit to 2
         \ReflectionHelper::setStaticValue('\Box\Spout\Writer\XLSX\Manager\WorkbookManager', 'maxRowsPerWorksheet', 2);
@@ -443,11 +447,11 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldNotCreateNewSheetsIfMaxRowsReachedAndOptionTurnedOff()
     {
         $fileName = 'test_add_row_should_not_create_new_sheets_if_max_rows_reached_and_option_turned_off.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['xlsx--sheet1--11', 'xlsx--sheet1--12'],
             ['xlsx--sheet1--21', 'xlsx--sheet1--22', 'xlsx--sheet1--23'],
             ['xlsx--sheet1--31', 'xlsx--sheet1--32'], // this should NOT be written in a new sheet
-        ];
+        ]);
 
         // set the maxRowsPerSheet limit to 2
         \ReflectionHelper::setStaticValue('\Box\Spout\Writer\XLSX\Manager\WorkbookManager', 'maxRowsPerWorksheet', 2);
@@ -466,9 +470,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldEscapeHtmlSpecialCharacters()
     {
         $fileName = 'test_add_row_should_escape_html_special_characters.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['I\'m in "great" mood', 'This <must> be escaped & tested'],
-        ];
+        ]);
 
         $this->writeToXLSXFile($dataRows, $fileName);
 
@@ -482,9 +486,9 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     public function testAddRowShouldEscapeControlCharacters()
     {
         $fileName = 'test_add_row_should_escape_control_characters.xlsx';
-        $dataRows = [
+        $dataRows = $this->createRowsFromValues([
             ['control ' . chr(21) . ' character'],
-        ];
+        ]);
 
         $this->writeToXLSXFile($dataRows, $fileName);
 
@@ -498,7 +502,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_mime_type.xlsx';
         $resourcePath = $this->getGeneratedResourcePath($fileName);
-        $dataRows = [['foo']];
+        $dataRows = $this->createRowsFromValues([['foo']]);
 
         $this->writeToXLSXFile($dataRows, $fileName);
 
@@ -507,61 +511,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return  void
-     */
-    public function testWriterShouldAcceptCellObjects()
-    {
-        $fileName = 'test_writer_should_accept_cell_objects.xlsx';
-        $dataRows = [
-            [new Cell('xlsx--11'), new Cell('xlsx--12')],
-            [new Cell('xlsx--21'), new Cell('xlsx--22'), new Cell('xlsx--23')],
-        ];
-
-        $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
-
-        foreach ($dataRows as $dataRow) {
-            /** @var Cell $cell */
-            foreach ($dataRow as $cell) {
-                $this->assertSharedStringWasWritten($fileName, $cell->getValue());
-            }
-        }
-    }
-
-    /**
-     * @return  void
-     */
-    public function testWriteShouldAcceptCellObjectsWithDifferentValueTypes()
-    {
-        $fileName = 'test_writer_should_accept_cell_objects_with_types.xlsx';
-
-        $dataRowsShared = [
-            [new Cell('i am a string')],
-        ];
-        $dataRowsInline = [
-            [new Cell(51465), new Cell(true), new Cell(51465.5)],
-        ];
-
-        $dataRows = array_merge($dataRowsShared, $dataRowsInline);
-
-        $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
-
-        foreach ($dataRowsShared as $dataRow) {
-            /** @var Cell $cell */
-            foreach ($dataRow as $cell) {
-                $this->assertSharedStringWasWritten($fileName, (string) $cell->getValue());
-            }
-        }
-
-        foreach ($dataRowsInline as $dataRow) {
-            /** @var Cell $cell */
-            foreach ($dataRow as $cell) {
-                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cell->getValue());
-            }
-        }
-    }
-
-    /**
-     * @param array $allRows
+     * @param Row[] $allRows
      * @param string $fileName
      * @param bool $shouldUseInlineStrings
      * @param bool $shouldCreateSheetsAutomatically
@@ -585,7 +535,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $allRows
+     * @param Row[] $allRows
      * @param int $numSheets
      * @param string $fileName
      * @param bool $shouldUseInlineStrings

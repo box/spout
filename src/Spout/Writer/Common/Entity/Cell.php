@@ -2,7 +2,9 @@
 
 namespace Box\Spout\Writer\Common\Entity;
 
+use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Helper\CellHelper;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 /**
  * Class Cell
@@ -53,16 +55,29 @@ class Cell
     protected $type;
 
     /**
-     * Cell constructor.
-     * @param $value mixed
+     * The cell style
+     * @var Style
      */
-    public function __construct($value)
+    protected $style;
+
+    /**
+     * @var StyleMerger
+     */
+    protected $styleMerger;
+
+    /**
+     * @param $value mixed
+     * @param Style|null $style
+     */
+    public function __construct($value, Style $style = null)
     {
         $this->setValue($value);
+        $this->setStyle($style);
+        $this->styleMerger = new StyleMerger();
     }
 
     /**
-     * @param $value mixed|null
+     * @param mixed|null $value
      */
     public function setValue($value)
     {
@@ -79,6 +94,22 @@ class Cell
     }
 
     /**
+     * @param Style|null $style
+     */
+    public function setStyle($style)
+    {
+        $this->style = $style ?: new Style();
+    }
+
+    /**
+     * @return Style
+     */
+    public function getStyle()
+    {
+        return $this->style;
+    }
+
+    /**
      * @return int|null
      */
     public function getType()
@@ -88,6 +119,7 @@ class Cell
 
     /**
      * Get the current value type
+     *
      * @param mixed|null $value
      * @return int
      */
@@ -127,6 +159,7 @@ class Cell
 
     /**
      * Not used at the moment
+     *
      * @return bool
      */
     public function isFormula()
@@ -164,5 +197,21 @@ class Cell
     public function __toString()
     {
         return (string) $this->value;
+    }
+
+    /**
+     * @param Style|null $style
+     * @return Cell
+     */
+    public function applyStyle($style)
+    {
+        if ($style === null) {
+            return $this;
+        }
+
+        $mergedStyle = $this->styleMerger->merge($this->style, $style);
+        $this->setStyle($mergedStyle);
+
+        return $this;
     }
 }

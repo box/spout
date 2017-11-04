@@ -7,10 +7,12 @@ use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
+use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Manager\OptionsManager;
 
@@ -20,6 +22,7 @@ use Box\Spout\Writer\XLSX\Manager\OptionsManager;
 class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 {
     use TestUsingResource;
+    use RowCreationHelper;
 
     /** @var \Box\Spout\Writer\Common\Entity\Style\Style */
     private $defaultStyle;
@@ -38,7 +41,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::XLSX);
-        $writer->addRowWithStyle(['xlsx--11', 'xlsx--12'], $this->defaultStyle);
+        $writer->addRow($this->createStyledRowFromValues(['xlsx--11', 'xlsx--12'], $this->defaultStyle));
     }
 
     /**
@@ -47,53 +50,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
         $writer = WriterFactory::create(Type::XLSX);
-        $writer->addRowWithStyle(['xlsx--11', 'xlsx--12'], $this->defaultStyle);
-    }
-
-    /**
-     * @return array
-     */
-    public function dataProviderForInvalidStyle()
-    {
-        return [
-            ['style'],
-            [new \stdClass()],
-            [null],
-        ];
-    }
-
-    /**
-     * @dataProvider dataProviderForInvalidStyle
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
-     *
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
-     */
-    public function testAddRowWithStyleShouldThrowExceptionIfInvalidStyleGiven($style)
-    {
-        $fileName = 'test_add_row_with_style_should_throw_exception.xlsx';
-        $this->createGeneratedFolderIfNeeded($fileName);
-        $resourcePath = $this->getGeneratedResourcePath($fileName);
-
-        $writer = WriterFactory::create(Type::XLSX);
-        $writer->openToFile($resourcePath);
-        $writer->addRowWithStyle(['xlsx--11', 'xlsx--12'], $style);
-    }
-
-    /**
-     * @dataProvider dataProviderForInvalidStyle
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
-     *
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
-     */
-    public function testAddRowsWithStyleShouldThrowExceptionIfInvalidStyleGiven($style)
-    {
-        $fileName = 'test_add_row_with_style_should_throw_exception.xlsx';
-        $this->createGeneratedFolderIfNeeded($fileName);
-        $resourcePath = $this->getGeneratedResourcePath($fileName);
-
-        $writer = WriterFactory::create(Type::XLSX);
-        $writer->openToFile($resourcePath);
-        $writer->addRowsWithStyle([['xlsx--11', 'xlsx--12']], $style);
+        $writer->addRow($this->createStyledRowFromValues(['xlsx--11', 'xlsx--12'], $this->defaultStyle));
     }
 
     /**
@@ -102,10 +59,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldListAllUsedFontsInCreatedStylesXmlFile()
     {
         $fileName = 'test_add_row_with_style_should_list_all_used_fonts.xlsx';
-        $dataRows = [
-            ['xlsx--11', 'xlsx--12'],
-            ['xlsx--21', 'xlsx--22'],
-        ];
 
         $style = (new StyleBuilder())
             ->setFontBold()
@@ -119,13 +72,19 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             ->setFontName('Cambria')
             ->build();
 
-        $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, [$style, $style2]);
+        $dataRows = [
+            $this->createStyledRowFromValues(['xlsx--11', 'xlsx--12'], $style),
+            $this->createStyledRowFromValues(['xlsx--21', 'xlsx--22'], $style2),
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName);
 
         $fontsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'fonts');
         $this->assertEquals(3, $fontsDomElement->getAttribute('count'), 'There should be 3 fonts, including the default one.');
 
         $fontElements = $fontsDomElement->getElementsByTagName('font');
         $this->assertEquals(3, $fontElements->length, 'There should be 3 associated "font" elements, including the default one.');
+
         // First font should be the default one
         $defaultFontElement = $fontElements->item(0);
         $this->assertChildrenNumEquals(3, $defaultFontElement, 'The default font should only have 3 properties.');
@@ -158,15 +117,17 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldApplyStyleToCells()
     {
         $fileName = 'test_add_row_with_style_should_apply_style_to_cells.xlsx';
-        $dataRows = [
-            ['xlsx--11'],
-            ['xlsx--21'],
-            ['xlsx--31'],
-        ];
+
         $style = (new StyleBuilder())->setFontBold()->build();
         $style2 = (new StyleBuilder())->setFontSize(15)->build();
 
-        $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, [$style, $style2, null]);
+        $dataRows = [
+            $this->createStyledRowFromValues(['xlsx--11'], $style),
+            $this->createStyledRowFromValues(['xlsx--21'], $style2),
+            $this->createRowFromValues(['xlsx--31']),
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName);
 
         $cellDomElements = $this->getCellElementsFromSheetXmlFile($fileName);
         $this->assertEquals(3, count($cellDomElements), 'There should be 3 cells.');
@@ -182,12 +143,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldApplyStyleToEmptyCellsIfNeeded()
     {
         $fileName = 'test_add_row_with_style_should_apply_style_to_empty_cells_if_needed.xlsx';
-        $dataRows = [
-            ['xlsx--11', '', 'xlsx--13'],
-            ['xlsx--21', '', 'xlsx--23'],
-            ['xlsx--31', '', 'xlsx--33'],
-            ['xlsx--41', '', 'xlsx--43'],
-        ];
 
         $styleWithFont = (new StyleBuilder())->setFontBold()->build();
         $styleWithBackground = (new StyleBuilder())->setBackgroundColor(Color::BLUE)->build();
@@ -195,7 +150,14 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $border = (new BorderBuilder())->setBorderBottom(Color::GREEN)->build();
         $styleWithBorder = (new StyleBuilder())->setBorder($border)->build();
 
-        $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, [null, $styleWithFont, $styleWithBackground, $styleWithBorder]);
+        $dataRows = [
+            $this->createRowFromValues(['xlsx--11', '', 'xlsx--13']),
+            $this->createStyledRowFromValues(['xlsx--21', '', 'xlsx--23'], $styleWithFont),
+            $this->createStyledRowFromValues(['xlsx--31', '', 'xlsx--33'], $styleWithBackground),
+            $this->createStyledRowFromValues(['xlsx--41', '', 'xlsx--43'], $styleWithBorder),
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName);
 
         $cellDomElements = $this->getCellElementsFromSheetXmlFile($fileName);
 
@@ -229,13 +191,14 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldReuseDuplicateStyles()
     {
         $fileName = 'test_add_row_with_style_should_reuse_duplicate_styles.xlsx';
-        $dataRows = [
+
+        $style = (new StyleBuilder())->setFontBold()->build();
+        $dataRows = $this->createStyledRowsFromValues([
             ['xlsx--11'],
             ['xlsx--21'],
-        ];
-        $style = (new StyleBuilder())->setFontBold()->build();
+        ], $style);
 
-        $this->writeToXLSXFile($dataRows, $fileName, $style);
+        $this->writeToXLSXFile($dataRows, $fileName);
 
         $cellDomElements = $this->getCellElementsFromSheetXmlFile($fileName);
         $this->assertEquals('1', $cellDomElements[0]->getAttribute('s'));
@@ -248,12 +211,13 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldAddWrapTextAlignmentInfoInStylesXmlFileIfSpecified()
     {
         $fileName = 'test_add_row_with_style_should_add_wrap_text_alignment.xlsx';
-        $dataRows = [
-            ['xlsx--11', 'xlsx--12'],
-        ];
-        $style = (new StyleBuilder())->setShouldWrapText()->build();
 
-        $this->writeToXLSXFile($dataRows, $fileName, $style);
+        $style = (new StyleBuilder())->setShouldWrapText()->build();
+        $dataRows = $this->createStyledRowsFromValues([
+            ['xlsx--11', 'xlsx--12'],
+        ], $style);
+
+        $this->writeToXLSXFile($dataRows, $fileName);
 
         $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
         $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
@@ -267,12 +231,13 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddRowWithStyleShouldApplyWrapTextIfCellContainsNewLine()
     {
         $fileName = 'test_add_row_with_style_should_apply_wrap_text_if_new_lines.xlsx';
-        $dataRows = [
+
+        $dataRows = $this->createStyledRowsFromValues([
             ["xlsx--11\nxlsx--11"],
             ['xlsx--21'],
-        ];
+        ], $this->defaultStyle);
 
-        $this->writeToXLSXFile($dataRows, $fileName, $this->defaultStyle);
+        $this->writeToXLSXFile($dataRows, $fileName);
 
         $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
         $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
@@ -286,11 +251,14 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testAddBackgroundColor()
     {
         $fileName = 'test_add_background_color.xlsx';
-        $dataRows = [
-            ['BgColor'],
-        ];
+
         $style = (new StyleBuilder())->setBackgroundColor(Color::WHITE)->build();
-        $this->writeToXLSXFile($dataRows, $fileName, $style);
+        $dataRows = $this->createStyledRowsFromValues([
+            ['BgColor'],
+        ], $style);
+
+        $this->writeToXLSXFile($dataRows, $fileName);
+
         $fillsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'fills');
         $this->assertEquals(3, $fillsDomElement->getAttribute('count'), 'There should be 3 fills, including the 2 default ones');
 
@@ -314,17 +282,16 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testReuseBackgroundColorSharedDefinition()
     {
         $fileName = 'test_add_background_color_shared_definition.xlsx';
+
+        $style = (new StyleBuilder())->setBackgroundColor(Color::RED)->setFontBold()->build();
+        $style2 = (new StyleBuilder())->setBackgroundColor(Color::RED)->build();
+
         $dataRows = [
-            ['row-bold-background-red'],
-            ['row-background-red'],
+            $this->createStyledRowFromValues(['row-bold-background-red'], $style),
+            $this->createStyledRowFromValues(['row-background-red'], $style2),
         ];
 
-        $styles = [
-            (new StyleBuilder())->setBackgroundColor(Color::RED)->setFontBold()->build(),
-            (new StyleBuilder())->setBackgroundColor(Color::RED)->build(),
-        ];
-
-        $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, $styles);
+        $this->writeToXLSXFile($dataRows, $fileName);
 
         $fillsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'fills');
         $this->assertEquals(
@@ -354,12 +321,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_borders.xlsx';
 
-        $dataRows = [
-            ['row-with-border-bottom-green-thick-solid'],
-            ['row-without-border'],
-            ['row-with-border-top-red-thin-dashed'],
-        ];
-
         $borderBottomGreenThickSolid = (new BorderBuilder())
             ->setBorderBottom(Color::GREEN, Border::WIDTH_THICK, Border::STYLE_SOLID)->build();
 
@@ -372,7 +333,14 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             (new StyleBuilder())->setBorder($borderTopRedThinDashed)->build(),
         ];
 
-        $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, $styles);
+        $dataRows = [
+            $this->createStyledRowFromValues(['row-with-border-bottom-green-thick-solid'], $styles[0]),
+            $this->createStyledRowFromValues(['row-without-border'], $styles[1]),
+            $this->createStyledRowFromValues(['row-with-border-top-red-thin-dashed'], $styles[2]),
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName);
+
         $borderElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'borders');
         $this->assertEquals(3, $borderElements->getAttribute('count'), '3 borders present');
 
@@ -388,10 +356,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         // Border should be Left, Right, Top, Bottom
         $fileName = 'test_borders_correct_order.xlsx';
 
-        $dataRows = [
-            ['I am a teapot'],
-        ];
-
         $borders = (new BorderBuilder())
             ->setBorderRight()
             ->setBorderTop()
@@ -400,7 +364,12 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             ->build();
 
         $style = (new StyleBuilder())->setBorder($borders)->build();
-        $this->writeToXLSXFile($dataRows, $fileName, $style);
+
+        $dataRows = $this->createStyledRowsFromValues([
+            ['I am a teapot'],
+        ], $style);
+
+        $this->writeToXLSXFile($dataRows, $fileName);
         $borderElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'borders');
 
         $correctOrdering = [
@@ -429,7 +398,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     public function testSetDefaultRowStyle()
     {
         $fileName = 'test_set_default_row_style.xlsx';
-        $dataRows = [['xlsx--11']];
+        $dataRows = $this->createRowsFromValues([['xlsx--11']]);
 
         $defaultFontSize = 50;
         $defaultStyle = (new StyleBuilder())->setFontSize($defaultFontSize)->build();
@@ -463,22 +432,15 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $borderRightFontBoldStyle = (new StyleMerger())->merge($borderRightStyle, $fontStyle);
 
         $dataRows = [
-            ['Border-Left'],
-            ['Empty'],
-            ['Font-Bold'],
-            ['Border-Right'],
-            ['Border-Right-Font-Bold'],
+            $this->createStyledRowFromValues(['Border-Left'], $borderLeftStyle),
+            $this->createStyledRowFromValues(['Empty'], $emptyStyle),
+            $this->createStyledRowFromValues(['Font-Bold'], $fontStyle),
+            $this->createStyledRowFromValues(['Border-Right'], $borderRightStyle),
+            $this->createStyledRowFromValues(['Border-Right-Font-Bold'], $borderRightFontBoldStyle),
         ];
 
-        $styles = [
-            $borderLeftStyle,
-            $emptyStyle,
-            $fontStyle,
-            $borderRightStyle,
-            $borderRightFontBoldStyle,
-        ];
+        $this->writeToXLSXFile($dataRows, $fileName);
 
-        $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, $styles);
         $borderElements = $this->getXmlSectionFromStylesXmlFile($fileName, 'borders');
 
         $this->assertEquals(3, $borderElements->getAttribute('count'), '3 borders in count attribute');
@@ -514,12 +476,11 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $allRows
+     * @param Row[] $allRows
      * @param string $fileName
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
      * @return Writer
      */
-    private function writeToXLSXFile($allRows, $fileName, $style)
+    private function writeToXLSXFile($allRows, $fileName)
     {
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -529,14 +490,14 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $writer->setShouldUseInlineStrings(true);
 
         $writer->openToFile($resourcePath);
-        $writer->addRowsWithStyle($allRows, $style);
+        $writer->addRows($allRows);
         $writer->close();
 
         return $writer;
     }
 
     /**
-     * @param array $allRows
+     * @param Row[] $allRows
      * @param string $fileName
      * @param \Box\Spout\Writer\Common\Entity\Style\Style|null $defaultStyle
      * @return Writer
@@ -553,37 +514,6 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $writer->openToFile($resourcePath);
         $writer->addRows($allRows);
-        $writer->close();
-
-        return $writer;
-    }
-
-    /**
-     * @param array $allRows
-     * @param string $fileName
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style|null[] $styles
-     * @return Writer
-     */
-    private function writeToXLSXFileWithMultipleStyles($allRows, $fileName, $styles)
-    {
-        // there should be as many rows as there are styles passed in
-        $this->assertEquals(count($allRows), count($styles));
-
-        $this->createGeneratedFolderIfNeeded($fileName);
-        $resourcePath = $this->getGeneratedResourcePath($fileName);
-
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterFactory::create(Type::XLSX);
-        $writer->setShouldUseInlineStrings(true);
-
-        $writer->openToFile($resourcePath);
-        for ($i = 0; $i < count($allRows); $i++) {
-            if ($styles[$i] === null) {
-                $writer->addRow($allRows[$i]);
-            } else {
-                $writer->addRowWithStyle($allRows[$i], $styles[$i]);
-            }
-        }
         $writer->close();
 
         return $writer;

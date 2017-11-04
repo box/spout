@@ -7,6 +7,7 @@ use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
@@ -65,10 +66,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     }
 
     /**
-     * Configures the write and sets the current sheet pointer to a new sheet.
-     *
-     * @throws \Box\Spout\Common\Exception\IOException If unable to open the file for writing
-     * @return void
+     * {@inheritdoc}
      */
     protected function openWriter()
     {
@@ -159,27 +157,16 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     }
 
     /**
-     * Adds data to the currently opened writer.
-     * If shouldCreateNewSheetsAutomatically option is set to true, it will handle pagination
-     * with the creation of new worksheets if one worksheet has reached its maximum capicity.
-     *
-     * @param array $dataRow Array containing data to be written.
-     *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style Style to be applied to the row.
-     * @throws WriterNotOpenedException If the book is not created yet
-     * @throws \Box\Spout\Common\Exception\IOException If unable to write data
-     * @return void
+     * {@inheritdoc}
      */
-    protected function addRowToWriter(array $dataRow, $style)
+    protected function addRowToWriter(Row $row)
     {
         $this->throwIfWorkbookIsNotAvailable();
-        $this->workbookManager->addRowToCurrentWorksheet($dataRow, $style);
+        $this->workbookManager->addRowToCurrentWorksheet($row);
     }
 
     /**
-     * Closes the writer, preventing any additional writing.
-     *
-     * @return void
+     * {@inheritdoc}
      */
     protected function closeWriter()
     {
