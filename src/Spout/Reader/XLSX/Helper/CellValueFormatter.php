@@ -200,7 +200,7 @@ class CellValueFormatter
     {
         // Fix for the erroneous leap year in Excel
         if (ceil($nodeValue) > self::ERRONEOUS_EXCEL_LEAP_YEAR_DAY) {
-            --$nodeValue;
+            $nodeValue--;
         }
 
         if ($nodeValue >= 1) {
