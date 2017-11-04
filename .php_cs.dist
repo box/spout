@@ -42,7 +42,6 @@ $config = PhpCsFixer\Config::create()
         'simplified_null_return' => false,
         'single_line_comment_style' => ['comment_types' => ['hash']],
         'strict_comparison' => true,
-        'void_return' => true,
         'yoda_style' => ['equal' => false, 'identical' => false],
     ]);
 
