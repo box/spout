@@ -10,7 +10,6 @@ use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Worksheet;
-use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
@@ -31,19 +30,17 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
 
     /**
      * @param OptionsManagerInterface $optionsManager
-     * @param StyleMerger $styleMerger
      * @param GlobalFunctionsHelper $globalFunctionsHelper
      * @param HelperFactory $helperFactory
      * @param ManagerFactoryInterface $managerFactory
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
-        StyleMerger $styleMerger,
         GlobalFunctionsHelper $globalFunctionsHelper,
         HelperFactory $helperFactory,
         ManagerFactoryInterface $managerFactory
     ) {
-        parent::__construct($optionsManager, $styleMerger, $globalFunctionsHelper, $helperFactory);
+        parent::__construct($optionsManager, $globalFunctionsHelper, $helperFactory);
         $this->managerFactory = $managerFactory;
     }
 

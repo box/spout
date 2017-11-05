@@ -11,7 +11,6 @@ use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Style;
-use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 
@@ -40,26 +39,20 @@ abstract class WriterAbstract implements WriterInterface
     /** @var OptionsManagerInterface Writer options manager */
     protected $optionsManager;
 
-    /** @var StyleMerger Helps merge styles together */
-    protected $styleMerger;
-
     /** @var string Content-Type value for the header - to be defined by child class */
     protected static $headerContentType;
 
     /**
      * @param OptionsManagerInterface $optionsManager
-     * @param StyleMerger $styleMerger
      * @param GlobalFunctionsHelper $globalFunctionsHelper
      * @param HelperFactory $helperFactory
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
-        StyleMerger $styleMerger,
         GlobalFunctionsHelper $globalFunctionsHelper,
         HelperFactory $helperFactory
     ) {
         $this->optionsManager = $optionsManager;
-        $this->styleMerger = $styleMerger;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
         $this->helperFactory = $helperFactory;
     }
@@ -188,7 +181,6 @@ abstract class WriterAbstract implements WriterInterface
             // empty $dataRow should not add an empty line
             if ($row->hasCells()) {
                 try {
-                    $this->applyDefaultRowStyle($row);
                     $this->addRowToWriter($row);
                 } catch (SpoutException $e) {
                     // if an exception occurs while writing data,
@@ -221,21 +213,6 @@ abstract class WriterAbstract implements WriterInterface
         }
 
         return $this;
-    }
-
-    /**
-     * @TODO: Move this into styleMerger
-     *
-     * @param Row $row
-     */
-    private function applyDefaultRowStyle(Row $row)
-    {
-        $defaultRowStyle = $this->optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
-
-        if ($defaultRowStyle !== null) {
-            $mergedStyle = $this->styleMerger->merge($row->getStyle(), $defaultRowStyle);
-            $row->setStyle($mergedStyle);
-        }
     }
 
     /**

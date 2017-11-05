@@ -7,6 +7,7 @@ use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Manager\SheetManager;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 use Box\Spout\Writer\ODS\Manager\Style\StyleRegistry;
 use Box\Spout\Writer\ODS\Manager\WorkbookManager;
@@ -45,6 +46,7 @@ class ManagerFactory implements ManagerFactoryInterface
         $fileSystemHelper = $this->helperFactory->createSpecificFileSystemHelper($optionsManager, $this->entityFactory);
         $fileSystemHelper->createBaseFilesAndFolders();
 
+        $styleMerger = $this->createStyleMerger();
         $styleManager = $this->createStyleManager($optionsManager);
         $worksheetManager = $this->createWorksheetManager($styleManager);
 
@@ -53,6 +55,7 @@ class ManagerFactory implements ManagerFactoryInterface
             $optionsManager,
             $worksheetManager,
             $styleManager,
+            $styleMerger,
             $fileSystemHelper,
             $this->entityFactory,
             $this
@@ -101,5 +104,13 @@ class ManagerFactory implements ManagerFactoryInterface
         $defaultRowStyle = $optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
 
         return new StyleRegistry($defaultRowStyle);
+    }
+
+    /**
+     * @return StyleMerger
+     */
+    private function createStyleMerger()
+    {
+        return new StyleMerger();
     }
 }

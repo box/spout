@@ -13,6 +13,7 @@ use Box\Spout\Writer\Common\Entity\Workbook;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Manager\Style\StyleManagerInterface;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Writer\Exception\WriterException;
 
@@ -26,13 +27,16 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     protected $workbook;
 
     /** @var OptionsManagerInterface */
-    protected $optionManager;
+    protected $optionsManager;
 
     /** @var WorksheetManagerInterface */
     protected $worksheetManager;
 
     /** @var StyleManagerInterface Manages styles */
     protected $styleManager;
+
+    /** @var StyleMerger Helper to merge styles */
+    protected $styleMerger;
 
     /** @var FileSystemWithRootFolderHelperInterface Helper to perform file system operations */
     protected $fileSystemHelper;
@@ -51,6 +55,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * @param OptionsManagerInterface $optionsManager
      * @param WorksheetManagerInterface $worksheetManager
      * @param StyleManagerInterface $styleManager
+     * @param StyleMerger $styleMerger
      * @param FileSystemWithRootFolderHelperInterface $fileSystemHelper
      * @param InternalEntityFactory $entityFactory
      * @param ManagerFactoryInterface $managerFactory
@@ -60,14 +65,16 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         OptionsManagerInterface $optionsManager,
         WorksheetManagerInterface $worksheetManager,
         StyleManagerInterface $styleManager,
+        StyleMerger $styleMerger,
         FileSystemWithRootFolderHelperInterface $fileSystemHelper,
         InternalEntityFactory $entityFactory,
         ManagerFactoryInterface $managerFactory
     ) {
         $this->workbook = $workbook;
-        $this->optionManager = $optionsManager;
+        $this->optionsManager = $optionsManager;
         $this->worksheetManager = $worksheetManager;
         $this->styleManager = $styleManager;
+        $this->styleMerger = $styleMerger;
         $this->fileSystemHelper = $fileSystemHelper;
         $this->entityFactory = $entityFactory;
         $this->managerFactory = $managerFactory;
@@ -215,7 +222,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         // if we reached the maximum number of rows for the current sheet...
         if ($hasReachedMaxRows) {
             // ... continue writing in a new sheet if option set
-            if ($this->optionManager->getOption(Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY)) {
+            if ($this->optionsManager->getOption(Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY)) {
                 $currentWorksheet = $this->addNewSheetAndMakeItCurrent();
 
                 $this->addRowToWorksheet($currentWorksheet, $row);
@@ -247,12 +254,26 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      */
     private function addRowToWorksheet(Worksheet $worksheet, Row $row)
     {
+        $this->applyDefaultRowStyle($row);
         $this->worksheetManager->addRow($worksheet, $row);
 
         // update max num columns for the worksheet
         $currentMaxNumColumns = $worksheet->getMaxNumColumns();
         $cellsCount = count($row->getCells());
         $worksheet->setMaxNumColumns(max($currentMaxNumColumns, $cellsCount));
+    }
+
+    /**
+     * @param Row $row
+     */
+    private function applyDefaultRowStyle(Row $row)
+    {
+        $defaultRowStyle = $this->optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
+
+        if ($defaultRowStyle !== null) {
+            $mergedStyle = $this->styleMerger->merge($row->getStyle(), $defaultRowStyle);
+            $row->setStyle($mergedStyle);
+        }
     }
 
     /**
