@@ -227,17 +227,15 @@ abstract class WriterAbstract implements WriterInterface
      * @TODO: Move this into styleMerger
      *
      * @param Row $row
-     * @return $this
      */
     private function applyDefaultRowStyle(Row $row)
     {
         $defaultRowStyle = $this->optionsManager->getOption(Options::DEFAULT_ROW_STYLE);
-        if ($defaultRowStyle === null) {
-            return $this;
-        }
 
-        $mergedStyle = $this->styleMerger->merge($row->getStyle(), $defaultRowStyle);
-        $row->setStyle($mergedStyle);
+        if ($defaultRowStyle !== null) {
+            $mergedStyle = $this->styleMerger->merge($row->getStyle(), $defaultRowStyle);
+            $row->setStyle($mergedStyle);
+        }
     }
 
     /**
