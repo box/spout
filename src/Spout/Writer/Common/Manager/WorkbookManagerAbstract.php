@@ -4,7 +4,7 @@ namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Row;
@@ -37,7 +37,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     /** @var FileSystemWithRootFolderHelperInterface Helper to perform file system operations */
     protected $fileSystemHelper;
 
-    /** @var EntityFactory Factory to create entities */
+    /** @var InternalEntityFactory Factory to create entities */
     protected $entityFactory;
 
     /** @var ManagerFactoryInterface $managerFactory Factory to create managers */
@@ -52,7 +52,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * @param WorksheetManagerInterface $worksheetManager
      * @param StyleManagerInterface $styleManager
      * @param FileSystemWithRootFolderHelperInterface $fileSystemHelper
-     * @param EntityFactory $entityFactory
+     * @param InternalEntityFactory $entityFactory
      * @param ManagerFactoryInterface $managerFactory
      */
     public function __construct(
@@ -61,7 +61,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         WorksheetManagerInterface $worksheetManager,
         StyleManagerInterface $styleManager,
         FileSystemWithRootFolderHelperInterface $fileSystemHelper,
-        EntityFactory $entityFactory,
+        InternalEntityFactory $entityFactory,
         ManagerFactoryInterface $managerFactory
     ) {
         $this->workbook = $workbook;

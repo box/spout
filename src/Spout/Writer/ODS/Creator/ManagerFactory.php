@@ -3,7 +3,7 @@
 namespace Box\Spout\Writer\ODS\Creator;
 
 use Box\Spout\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Manager\SheetManager;
@@ -18,17 +18,17 @@ use Box\Spout\Writer\ODS\Manager\WorksheetManager;
  */
 class ManagerFactory implements ManagerFactoryInterface
 {
-    /** @var EntityFactory */
+    /** @var InternalEntityFactory */
     protected $entityFactory;
 
     /** @var HelperFactory $helperFactory */
     protected $helperFactory;
 
     /**
-     * @param EntityFactory $entityFactory
+     * @param InternalEntityFactory $entityFactory
      * @param HelperFactory $helperFactory
      */
-    public function __construct(EntityFactory $entityFactory, HelperFactory $helperFactory)
+    public function __construct(InternalEntityFactory $entityFactory, HelperFactory $helperFactory)
     {
         $this->entityFactory = $entityFactory;
         $this->helperFactory = $helperFactory;

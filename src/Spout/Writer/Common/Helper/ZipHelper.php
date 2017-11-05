@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\Common\Helper;
 
-use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
 
 /**
  * Class ZipHelper
@@ -16,11 +16,11 @@ class ZipHelper
     const EXISTING_FILES_SKIP = 'skip';
     const EXISTING_FILES_OVERWRITE = 'overwrite';
 
-    /** @var EntityFactory Factory to create entities */
+    /** @var InternalEntityFactory Factory to create entities */
     private $entityFactory;
 
     /**
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      */
     public function __construct($entityFactory)
     {
