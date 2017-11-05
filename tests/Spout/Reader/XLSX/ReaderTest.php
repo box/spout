@@ -29,13 +29,14 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderForTestReadShouldThrowException
-     * @expectedException \Box\Spout\Common\Exception\IOException
      *
      * @param string $filePath
      * @return void
      */
     public function testReadShouldThrowException($filePath)
     {
+        $this->expectException(IOException::class);
+
         // using @ to prevent warnings/errors from being displayed
         @$this->getAllRowsForFile($filePath);
     }
@@ -568,24 +569,24 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\IOException
-     *
      * @return void
      */
     public function testReadWithUnsupportedCustomStreamWrapper()
     {
+        $this->expectException(IOException::class);
+
         /** @var \Box\Spout\Reader\XLSX\Reader $reader */
         $reader = ReaderFactory::create(Type::XLSX);
         $reader->open('unsupported://foobar');
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\IOException
-     *
      * @return void
      */
     public function testReadWithSupportedCustomStreamWrapper()
     {
+        $this->expectException(IOException::class);
+
         /** @var \Box\Spout\Reader\XLSX\Reader $reader */
         $reader = ReaderFactory::create(Type::XLSX);
         $reader->open('php://memory');

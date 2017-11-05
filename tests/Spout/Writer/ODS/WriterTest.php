@@ -2,6 +2,8 @@
 
 namespace Box\Spout\Writer\ODS;
 
+use Box\Spout\Common\Exception\InvalidArgumentException;
+use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
@@ -9,6 +11,8 @@ use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
+use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
+use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\WriterFactory;
 
@@ -21,10 +25,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     use RowCreationHelper;
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\IOException
+     * @return void
      */
     public function testAddRowShouldThrowExceptionIfCannotOpenAFileForWriting()
     {
+        $this->expectException(IOException::class);
+
         $fileName = 'file_that_wont_be_written.ods';
         $this->createUnwritableFolderIfNeeded();
         $filePath = $this->getGeneratedUnwritableResourcePath($fileName);
@@ -34,28 +40,34 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @return void
      */
     public function testAddRowShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
+        $this->expectException(WriterNotOpenedException::class);
+
         $writer = WriterFactory::create(Type::ODS);
         $writer->addRow($this->createRowFromValues(['ods--11', 'ods--12']));
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @return void
      */
     public function testAddRowShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
+        $this->expectException(WriterNotOpenedException::class);
+
         $writer = WriterFactory::create(Type::ODS);
         $writer->addRows([$this->createRowFromValues(['ods--11', 'ods--12'])]);
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterAlreadyOpenedException
+     * @return void
      */
     public function testSetTempFolderShouldThrowExceptionIfCalledAfterOpeningWriter()
     {
+        $this->expectException(WriterAlreadyOpenedException::class);
+
         $fileName = 'file_that_wont_be_written.ods';
         $filePath = $this->getGeneratedResourcePath($fileName);
 
@@ -67,10 +79,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterAlreadyOpenedException
+     * @return void
      */
     public function testSetShouldCreateNewSheetsAutomaticallyShouldThrowExceptionIfCalledAfterOpeningWriter()
     {
+        $this->expectException(WriterAlreadyOpenedException::class);
+
         $fileName = 'file_that_wont_be_written.ods';
         $filePath = $this->getGeneratedResourcePath($fileName);
 
@@ -82,10 +96,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
+     * @return void
      */
     public function testAddRowShouldThrowExceptionIfUnsupportedDataTypePassedIn()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $fileName = 'test_add_row_should_throw_exception_if_unsupported_data_type_passed_in.ods';
         $dataRows = [
             $this->createRowFromValues([new \stdClass()]),

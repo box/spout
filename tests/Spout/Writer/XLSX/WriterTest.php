@@ -2,10 +2,14 @@
 
 namespace Box\Spout\Writer\XLSX;
 
+use Box\Spout\Common\Exception\InvalidArgumentException;
+use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Entity\Row;
+use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
+use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Manager\WorksheetManager;
@@ -19,10 +23,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     use RowCreationHelper;
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\IOException
+     * @return void
      */
     public function testAddRowShouldThrowExceptionIfCannotOpenAFileForWriting()
     {
+        $this->expectException(IOException::class);
+
         $fileName = 'file_that_wont_be_written.xlsx';
         $this->createUnwritableFolderIfNeeded();
         $filePath = $this->getGeneratedUnwritableResourcePath($fileName);
@@ -32,28 +38,34 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @return void
      */
     public function testAddRowShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
+        $this->expectException(WriterNotOpenedException::class);
+
         $writer = WriterFactory::create(Type::XLSX);
         $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @return void
      */
     public function testAddRowShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
+        $this->expectException(WriterNotOpenedException::class);
+
         $writer = WriterFactory::create(Type::XLSX);
         $writer->addRows($this->createRowsFromValues([['xlsx--11', 'xlsx--12']]));
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterAlreadyOpenedException
+     * @return void
      */
     public function testSetTempFolderShouldThrowExceptionIfCalledAfterOpeningWriter()
     {
+        $this->expectException(WriterAlreadyOpenedException::class);
+
         $fileName = 'file_that_wont_be_written.xlsx';
         $filePath = $this->getGeneratedResourcePath($fileName);
 
@@ -65,10 +77,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterAlreadyOpenedException
+     * @return void
      */
     public function testSetShouldUseInlineStringsShouldThrowExceptionIfCalledAfterOpeningWriter()
     {
+        $this->expectException(WriterAlreadyOpenedException::class);
+
         $fileName = 'file_that_wont_be_written.xlsx';
         $filePath = $this->getGeneratedResourcePath($fileName);
 
@@ -80,10 +94,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterAlreadyOpenedException
+     * @return void
      */
     public function testsetShouldCreateNewSheetsAutomaticallyShouldThrowExceptionIfCalledAfterOpeningWriter()
     {
+        $this->expectException(WriterAlreadyOpenedException::class);
+
         $fileName = 'file_that_wont_be_written.xlsx';
         $filePath = $this->getGeneratedResourcePath($fileName);
 
@@ -95,10 +111,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
+     * @return void
      */
     public function testAddRowShouldThrowExceptionIfUnsupportedDataTypePassedIn()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $fileName = 'test_add_row_should_throw_exception_if_unsupported_data_type_passed_in.xlsx';
         $dataRows = [
             [str_repeat('a', WorksheetManager::MAX_CHARACTERS_PER_CELL + 1)],
@@ -108,10 +126,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
+     * @return void
      */
     public function testAddRowShouldThrowExceptionIfWritingStringExceedingMaxNumberOfCharactersAllowedPerCell()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $fileName = 'test_add_row_should_throw_exception_if_string_exceeds_max_num_chars_allowed_per_cell.xlsx';
         $dataRows = $this->createRowsFromValues([
             [new \stdClass()],

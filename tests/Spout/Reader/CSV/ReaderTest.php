@@ -3,10 +3,12 @@
 namespace Box\Spout\Reader\CSV;
 
 use Box\Spout\Common\Creator\HelperFactory;
+use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Reader\CSV\Creator\EntityFactory;
 use Box\Spout\Reader\CSV\Manager\OptionsManager;
+use Box\Spout\Reader\Exception\ReaderNotOpenedException;
 use Box\Spout\Reader\ReaderInterface;
 use Box\Spout\TestUsingResource;
 
@@ -18,32 +20,32 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     use TestUsingResource;
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\IOException
-     *
      * @return void
      */
     public function testOpenShouldThrowExceptionIfFileDoesNotExist()
     {
+        $this->expectException(IOException::class);
+
         $this->createCSVReader()->open('/path/to/fake/file.csv');
     }
 
     /**
-     * @expectedException \Box\Spout\Reader\Exception\ReaderNotOpenedException
-     *
      * @return void
      */
     public function testOpenShouldThrowExceptionIfTryingToReadBeforeOpeningReader()
     {
+        $this->expectException(ReaderNotOpenedException::class);
+
         $this->createCSVReader()->getSheetIterator();
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\IOException
-     *
      * @return void
      */
     public function testOpenShouldThrowExceptionIfFileNotReadable()
     {
+        $this->expectException(IOException::class);
+
         /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit_Framework_MockObject_MockObject $helperStub */
         $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
                         ->setMethods(['is_readable'])
@@ -57,12 +59,12 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\IOException
-     *
      * @return void
      */
     public function testOpenShouldThrowExceptionIfCannotOpenFile()
     {
+        $this->expectException(IOException::class);
+
         /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit_Framework_MockObject_MockObject $helperStub */
         $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
                         ->setMethods(['fopen'])
@@ -449,12 +451,12 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\IOException
-     *
      * @return void
      */
     public function testReadWithUnsupportedCustomStreamWrapper()
     {
+        $this->expectException(IOException::class);
+
         /** @var \Box\Spout\Reader\CSV\Reader $reader */
         $reader = $this->createCSVReader();
         $reader->open('unsupported://foobar');

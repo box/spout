@@ -12,6 +12,7 @@ use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
+use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Manager\OptionsManager;
@@ -36,19 +37,23 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @return void
      */
     public function testAddRowWithStyleShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
+        $this->expectException(WriterNotOpenedException::class);
+
         $writer = WriterFactory::create(Type::XLSX);
         $writer->addRow($this->createStyledRowFromValues(['xlsx--11', 'xlsx--12'], $this->defaultStyle));
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @return void
      */
     public function testAddRowWithStyleShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
+        $this->expectException(WriterNotOpenedException::class);
+
         $writer = WriterFactory::create(Type::XLSX);
         $writer->addRow($this->createStyledRowFromValues(['xlsx--11', 'xlsx--12'], $this->defaultStyle));
     }

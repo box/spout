@@ -4,6 +4,7 @@ namespace Box\Spout\Reader\ODS;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
+use Box\Spout\Reader\Exception\IteratorNotRewindableException;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\TestUsingResource;
 
@@ -27,13 +28,14 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderForTestReadShouldThrowException
-     * @expectedException \Box\Spout\Common\Exception\IOException
      *
      * @param string $filePath
      * @return void
      */
     public function testReadShouldThrowException($filePath)
     {
+        $this->expectException(IOException::class);
+
         // using @ to prevent warnings/errors from being displayed
         @$this->getAllRowsForFile($filePath);
     }
@@ -344,12 +346,12 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Reader\Exception\IteratorNotRewindableException
-     *
      * @return void
      */
     public function testReadShouldThrowIfTryingToRewindRowIterator()
     {
+        $this->expectException(IteratorNotRewindableException::class);
+
         $resourcePath = $this->getResourcePath('one_sheet_with_strings.ods');
         $reader = ReaderFactory::create(Type::ODS);
         $reader->open($resourcePath);
@@ -412,24 +414,24 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\IOException
-     *
      * @return void
      */
     public function testReadWithUnsupportedCustomStreamWrapper()
     {
+        $this->expectException(IOException::class);
+
         /** @var \Box\Spout\Reader\ODS\Reader $reader */
         $reader = ReaderFactory::create(Type::ODS);
         $reader->open('unsupported://foobar');
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\IOException
-     *
      * @return void
      */
     public function testReadWithSupportedCustomStreamWrapper()
     {
+        $this->expectException(IOException::class);
+
         /** @var \Box\Spout\Reader\ODS\Reader $reader */
         $reader = ReaderFactory::create(Type::ODS);
         $reader->open('php://memory');
