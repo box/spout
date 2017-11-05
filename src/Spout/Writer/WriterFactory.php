@@ -20,7 +20,6 @@ class WriterFactory
     /**
      * This creates an instance of the appropriate writer, given the type of the file to be read
      *
-     * @api
      * @param  string $writerType Type of the writer to instantiate
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      * @return WriterInterface

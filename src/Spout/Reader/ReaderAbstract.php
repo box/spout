@@ -75,7 +75,6 @@ abstract class ReaderAbstract implements ReaderInterface
     /**
      * Sets whether date/time values should be returned as PHP objects or be formatted as strings.
      *
-     * @api
      * @param bool $shouldFormatDates
      * @return ReaderAbstract
      */
@@ -89,7 +88,6 @@ abstract class ReaderAbstract implements ReaderInterface
     /**
      * Sets whether empty rows should be returned or skipped.
      *
-     * @api
      * @param bool $shouldPreserveEmptyRows
      * @return ReaderAbstract
      */
@@ -104,7 +102,6 @@ abstract class ReaderAbstract implements ReaderInterface
      * Prepares the reader to read the given file. It also makes sure
      * that the file exists and is readable.
      *
-     * @api
      * @param  string $filePath Path of the file to be read
      * @throws \Box\Spout\Common\Exception\IOException If the file at the given path does not exist, is not readable or is corrupted
      * @return void
@@ -213,7 +210,6 @@ abstract class ReaderAbstract implements ReaderInterface
     /**
      * Returns an iterator to iterate over sheets.
      *
-     * @api
      * @throws \Box\Spout\Reader\Exception\ReaderNotOpenedException If called before opening the reader
      * @return \Iterator To iterate over sheets
      */
@@ -229,7 +225,6 @@ abstract class ReaderAbstract implements ReaderInterface
     /**
      * Closes the reader, preventing any additional reading
      *
-     * @api
      * @return void
      */
     public function close()

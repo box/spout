@@ -26,7 +26,6 @@ class Writer extends WriterAbstract
     /**
      * Sets the field delimiter for the CSV
      *
-     * @api
      * @param string $fieldDelimiter Character that delimits fields
      * @return Writer
      */
@@ -40,7 +39,6 @@ class Writer extends WriterAbstract
     /**
      * Sets the field enclosure for the CSV
      *
-     * @api
      * @param string $fieldEnclosure Character that enclose fields
      * @return Writer
      */
@@ -54,7 +52,6 @@ class Writer extends WriterAbstract
     /**
      * Set if a BOM has to be added to the file
      *
-     * @api
      * @param bool $shouldAddBOM
      * @return Writer
      */

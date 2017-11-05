@@ -21,7 +21,6 @@ class Sheet implements SheetInterface
     }
 
     /**
-     * @api
      * @return \Box\Spout\Reader\CSV\RowIterator
      */
     public function getRowIterator()
@@ -30,7 +29,6 @@ class Sheet implements SheetInterface
     }
 
     /**
-     * @api
      * @return int Index of the sheet
      */
     public function getIndex()
@@ -39,7 +37,6 @@ class Sheet implements SheetInterface
     }
 
     /**
-     * @api
      * @return string Name of the sheet - empty string since CSV does not support that
      */
     public function getName()
@@ -48,7 +45,6 @@ class Sheet implements SheetInterface
     }
 
     /**
-     * @api
      * @return bool Always TRUE as there is only one sheet
      */
     public function isActive()

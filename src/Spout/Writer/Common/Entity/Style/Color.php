@@ -27,7 +27,6 @@ class Color
     /**
      * Returns an RGB color from R, G and B values
      *
-     * @api
      * @param int $red Red component, 0 - 255
      * @param int $green Green component, 0 - 255
      * @param int $blue Blue component, 0 - 255
