@@ -153,8 +153,8 @@ class WorksheetManager implements WorksheetManagerInterface
     {
         // Apply styles - the row style is merged at this point
         $cell->applyStyle($rowStyle);
-        $this->styleManager->applyExtraStylesIfNeeded($cell);
-        $registeredStyle = $this->styleManager->registerStyle($cell->getStyle());
+        $newCellStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+        $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
         $styleIndex = $registeredStyle->getId() + 1; // 1-based
 
         $numTimesValueRepeated = ($nextCellIndex - $currentCellIndex);

@@ -49,11 +49,12 @@ class EntityFactory
 
     /**
      * @param mixed $cellValue
+     * @param Style|null $cellStyle
      * @return Cell
      */
-    public static function createCell($cellValue)
+    public static function createCell($cellValue, Style $cellStyle = null)
     {
-        return new Cell($cellValue);
+        return new Cell($cellValue, $cellStyle);
     }
 
     /**
@@ -66,14 +67,14 @@ class EntityFactory
 
     /**
      * @param array $cells
-     * @param Style|null $style
+     * @param Style|null $rowStyle
      * @return Row
      */
-    public static function createRow(array $cells, Style $style = null)
+    public static function createRow(array $cells = [], Style $rowStyle = null)
     {
         $styleMerger = new StyleMerger();
         $rowManager = new RowManager($styleMerger);
 
-        return new Row($cells, $style, $rowManager);
+        return new Row($cells, $rowStyle, $rowManager);
     }
 }
