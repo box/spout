@@ -4,10 +4,10 @@ namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Exception\InvalidSheetNameException;
 use Box\Spout\Writer\RowCreationHelper;
-use Box\Spout\Writer\WriterFactory;
 
 /**
  * Class SheetTest
@@ -65,7 +65,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterFactory::create(Type::XLSX);
+        $writer = EntityFactory::createWriter(Type::XLSX);
         $writer->openToFile($resourcePath);
 
         $customSheetName = 'Sheet name';
@@ -89,7 +89,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterFactory::create(Type::XLSX);
+        $writer = EntityFactory::createWriter(Type::XLSX);
         $writer->openToFile($resourcePath);
 
         $sheet = $writer->getCurrentSheet();
@@ -111,7 +111,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterFactory::create(Type::XLSX);
+        $writer = EntityFactory::createWriter(Type::XLSX);
         $writer->openToFile($resourcePath);
 
         $writer->addRow($this->createRowFromValues(['xlsx--sheet1--11', 'xlsx--sheet1--12']));

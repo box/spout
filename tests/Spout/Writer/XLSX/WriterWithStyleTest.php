@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\XLSX;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Entity\Row;
@@ -14,7 +15,6 @@ use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
-use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\XLSX\Manager\OptionsManager;
 
 /**
@@ -43,7 +43,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = WriterFactory::create(Type::XLSX);
+        $writer = EntityFactory::createWriter(Type::XLSX);
         $writer->addRow($this->createStyledRowFromValues(['xlsx--11', 'xlsx--12'], $this->defaultStyle));
     }
 
@@ -54,7 +54,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = WriterFactory::create(Type::XLSX);
+        $writer = EntityFactory::createWriter(Type::XLSX);
         $writer->addRow($this->createStyledRowFromValues(['xlsx--11', 'xlsx--12'], $this->defaultStyle));
     }
 
@@ -491,7 +491,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterFactory::create(Type::XLSX);
+        $writer = EntityFactory::createWriter(Type::XLSX);
         $writer->setShouldUseInlineStrings(true);
 
         $writer->openToFile($resourcePath);
@@ -513,7 +513,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterFactory::create(Type::XLSX);
+        $writer = EntityFactory::createWriter(Type::XLSX);
         $writer->setShouldUseInlineStrings(true);
         $writer->setDefaultRowStyle($defaultStyle);
 

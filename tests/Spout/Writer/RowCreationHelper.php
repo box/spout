@@ -13,28 +13,30 @@ trait RowCreationHelper
 {
     /**
      * @param array $cellValues
-     * @param Style|null $rowStyle
      * @return Row
      */
-    protected function createRowFromValues(array $cellValues, Style $rowStyle = null)
+    protected function createRowFromValues(array $cellValues)
     {
-        $row = EntityFactory::createRow([], $rowStyle);
-
-        foreach ($cellValues as $cellValue) {
-            $row->addCell(EntityFactory::createCell($cellValue));
-        }
-
-        return $row;
+        return $this->createStyledRowFromValues($cellValues, null);
     }
 
     /**
      * @param array $cellValues
-     * @param Style $rowStyle
+     * @param Style|null $rowStyle
      * @return Row
      */
-    protected function createStyledRowFromValues(array $cellValues, Style $rowStyle)
+    protected function createStyledRowFromValues(array $cellValues, Style $rowStyle = null)
     {
-        return $this->createRowFromValues($cellValues, $rowStyle);
+        return EntityFactory::createRowFromArray($cellValues, $rowStyle);
+    }
+
+    /**
+     * @param array $rowValues
+     * @return Row[]
+     */
+    protected function createRowsFromValues(array $rowValues)
+    {
+        return $this->createStyledRowsFromValues($rowValues, null);
     }
 
     /**
@@ -42,24 +44,14 @@ trait RowCreationHelper
      * @param Style|null $rowsStyle
      * @return Row[]
      */
-    protected function createRowsFromValues(array $rowValues, Style $rowsStyle = null)
+    protected function createStyledRowsFromValues(array $rowValues, Style $rowsStyle = null)
     {
         $rows = [];
 
         foreach ($rowValues as $cellValues) {
-            $rows[] = $this->createRowFromValues($cellValues, $rowsStyle);
+            $rows[] = $this->createStyledRowFromValues($cellValues, $rowsStyle);
         }
 
         return $rows;
-    }
-
-    /**
-     * @param array $rowValues
-     * @param Style $rowsStyle
-     * @return Row[]
-     */
-    protected function createStyledRowsFromValues(array $rowValues, Style $rowsStyle)
-    {
-        return $this->createRowsFromValues($rowValues, $rowsStyle);
     }
 }
