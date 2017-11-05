@@ -8,13 +8,12 @@ use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\Common\Entity\Cell;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
-use Box\Spout\Writer\WriterFactory;
 
 /**
  * Class WriterTest
@@ -35,7 +34,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $this->createUnwritableFolderIfNeeded();
         $filePath = $this->getGeneratedUnwritableResourcePath($fileName);
 
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         @$writer->openToFile($filePath);
     }
 
@@ -46,7 +45,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->addRow($this->createRowFromValues(['ods--11', 'ods--12']));
     }
 
@@ -57,7 +56,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->addRows([$this->createRowFromValues(['ods--11', 'ods--12'])]);
     }
 
@@ -72,7 +71,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $filePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->openToFile($filePath);
 
         $writer->setTempFolder('');
@@ -89,7 +88,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $filePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->openToFile($filePath);
 
         $writer->setShouldCreateNewSheetsAutomatically(true);
@@ -128,7 +127,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $tempFolderPath = $this->getTempFolderPath();
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->setTempFolder($tempFolderPath);
         $writer->openToFile($resourcePath);
 
@@ -153,7 +152,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var Writer $writer */
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->openToFile($resourcePath);
         $writer->addNewSheetAndMakeItCurrent();
         $writer->close();
@@ -173,7 +172,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var Writer $writer */
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->openToFile($resourcePath);
 
         $writer->addNewSheetAndMakeItCurrent();
@@ -196,7 +195,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->close(); // This call should not cause any error
 
         $writer->openToFile($resourcePath);
@@ -350,7 +349,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->openToFile($resourcePath);
 
         $writer->addRows($dataRowsSheet1);
@@ -495,7 +494,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->setShouldCreateNewSheetsAutomatically($shouldCreateSheetsAutomatically);
 
         $writer->openToFile($resourcePath);
@@ -518,7 +517,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->setShouldCreateNewSheetsAutomatically($shouldCreateSheetsAutomatically);
 
         $writer->openToFile($resourcePath);

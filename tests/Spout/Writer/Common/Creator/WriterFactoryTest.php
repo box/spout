@@ -1,6 +1,6 @@
 <?php
 
-namespace Box\Spout\Writer;
+namespace Box\Spout\Writer\Common\Creator;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 
@@ -16,6 +16,6 @@ class WriterFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectException(UnsupportedTypeException::class);
 
-        WriterFactory::create('unsupportedType');
+        (new WriterFactory())->create('unsupportedType');
     }
 }

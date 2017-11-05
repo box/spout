@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\ODS;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
+use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Entity\Row;
@@ -13,7 +14,6 @@ use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
-use Box\Spout\Writer\WriterFactory;
 
 /**
  * Class WriterWithStyleTest
@@ -41,7 +41,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->addRow($this->createStyledRowFromValues(['ods--11', 'ods--12'], $this->defaultStyle));
     }
 
@@ -52,7 +52,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->addRow($this->createStyledRowFromValues(['ods--11', 'ods--12'], $this->defaultStyle));
     }
 
@@ -77,8 +77,8 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
             ->build();
 
         $dataRows = [
-            $this->createRowFromValues(['ods--11', 'ods--12'], $style),
-            $this->createRowFromValues(['ods--21', 'ods--22'], $style2),
+            $this->createStyledRowFromValues(['ods--11', 'ods--12'], $style),
+            $this->createStyledRowFromValues(['ods--21', 'ods--22'], $style2),
         ];
 
         $this->writeToODSFile($dataRows, $fileName);
@@ -320,7 +320,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
 
         $writer->openToFile($resourcePath);
         $writer->addRows($allRows);
@@ -341,7 +341,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterFactory::create(Type::ODS);
+        $writer = EntityFactory::createWriter(Type::ODS);
         $writer->setDefaultRowStyle($defaultStyle);
 
         $writer->openToFile($resourcePath);
