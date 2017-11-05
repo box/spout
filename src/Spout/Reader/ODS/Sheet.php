@@ -40,7 +40,6 @@ class Sheet implements SheetInterface
     }
 
     /**
-     * @api
      * @return \Box\Spout\Reader\ODS\RowIterator
      */
     public function getRowIterator()
@@ -49,7 +48,6 @@ class Sheet implements SheetInterface
     }
 
     /**
-     * @api
      * @return int Index of the sheet, based on order in the workbook (zero-based)
      */
     public function getIndex()
@@ -58,7 +56,6 @@ class Sheet implements SheetInterface
     }
 
     /**
-     * @api
      * @return string Name of the sheet
      */
     public function getName()
@@ -67,7 +64,6 @@ class Sheet implements SheetInterface
     }
 
     /**
-     * @api
      * @return bool Whether the sheet was defined as active
      */
     public function isActive()

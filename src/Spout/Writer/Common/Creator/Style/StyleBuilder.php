@@ -25,7 +25,6 @@ class StyleBuilder
     /**
      * Makes the font bold.
      *
-     * @api
      * @return StyleBuilder
      */
     public function setFontBold()
@@ -38,7 +37,6 @@ class StyleBuilder
     /**
      * Makes the font italic.
      *
-     * @api
      * @return StyleBuilder
      */
     public function setFontItalic()
@@ -51,7 +49,6 @@ class StyleBuilder
     /**
      * Makes the font underlined.
      *
-     * @api
      * @return StyleBuilder
      */
     public function setFontUnderline()
@@ -64,7 +61,6 @@ class StyleBuilder
     /**
      * Makes the font struck through.
      *
-     * @api
      * @return StyleBuilder
      */
     public function setFontStrikethrough()
@@ -77,7 +73,6 @@ class StyleBuilder
     /**
      * Sets the font size.
      *
-     * @api
      * @param int $fontSize Font size, in pixels
      * @return StyleBuilder
      */
@@ -91,7 +86,6 @@ class StyleBuilder
     /**
      * Sets the font color.
      *
-     * @api
      * @param string $fontColor ARGB color (@see Color)
      * @return StyleBuilder
      */
@@ -105,7 +99,6 @@ class StyleBuilder
     /**
      * Sets the font name.
      *
-     * @api
      * @param string $fontName Name of the font to use
      * @return StyleBuilder
      */
@@ -119,7 +112,6 @@ class StyleBuilder
     /**
      * Makes the text wrap in the cell if requested
      *
-     * @api
      * @param bool $shouldWrap Should the text be wrapped
      * @return StyleBuilder
      */
@@ -146,7 +138,6 @@ class StyleBuilder
     /**
      *  Sets a background color
      *
-     * @api
      * @param string $color ARGB color (@see Color)
      * @return StyleBuilder
      */
@@ -160,7 +151,6 @@ class StyleBuilder
     /**
      * Returns the configured style. The style is cached and can be reused.
      *
-     * @api
      * @return Style
      */
     public function build()

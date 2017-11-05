@@ -51,7 +51,6 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * Sets whether new sheets should be automatically created when the max rows limit per sheet is reached.
      * This must be set before opening the writer.
      *
-     * @api
      * @param bool $shouldCreateNewSheetsAutomatically Whether new sheets should be automatically created when the max rows limit per sheet is reached
      * @throws WriterAlreadyOpenedException If the writer was already opened
      * @return WriterMultiSheetsAbstract
@@ -79,7 +78,6 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /**
      * Returns all the workbook's sheets
      *
-     * @api
      * @throws WriterNotOpenedException If the writer has not been opened yet
      * @return Sheet[] All the workbook's sheets
      */
@@ -101,7 +99,6 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /**
      * Creates a new sheet and make it the current sheet. The data will now be written to this sheet.
      *
-     * @api
      * @throws WriterNotOpenedException If the writer has not been opened yet
      * @return Sheet The created sheet
      */
@@ -116,7 +113,6 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /**
      * Returns the current sheet
      *
-     * @api
      * @throws WriterNotOpenedException If the writer has not been opened yet
      * @return Sheet The current sheet
      */
@@ -131,7 +127,6 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * Sets the given sheet as the current one. New data will be written to this sheet.
      * The writing will resume where it stopped (i.e. data won't be truncated).
      *
-     * @api
      * @param Sheet $sheet The sheet to set as current
      * @throws WriterNotOpenedException If the writer has not been opened yet
      * @throws SheetNotFoundException If the given sheet does not exist in the workbook
