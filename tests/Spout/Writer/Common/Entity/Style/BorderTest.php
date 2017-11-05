@@ -6,6 +6,9 @@ use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Entity\Style\BorderPart;
 use Box\Spout\Writer\Common\Entity\Style\Color;
+use Box\Spout\Writer\Exception\Border\InvalidNameException;
+use Box\Spout\Writer\Exception\Border\InvalidStyleException;
+use Box\Spout\Writer\Exception\Border\InvalidWidthException;
 
 /**
  * Class BorderTest
@@ -24,26 +27,32 @@ class BorderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\Border\InvalidNameException
+     * @return void
      */
     public function testInvalidBorderPart()
     {
+        $this->expectException(InvalidNameException::class);
+
         new BorderPart('invalid');
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\Border\InvalidStyleException
+     * @return void
      */
     public function testInvalidBorderPartStyle()
     {
+        $this->expectException(InvalidStyleException::class);
+
         new BorderPart(Border::LEFT, Color::BLACK, Border::WIDTH_THIN, 'invalid');
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\Border\InvalidWidthException
+     * @return void
      */
     public function testInvalidBorderPartWidth()
     {
+        $this->expectException(InvalidWidthException::class);
+
         new BorderPart(Border::LEFT, Color::BLACK, 'invalid', Border::STYLE_DASHED);
     }
 

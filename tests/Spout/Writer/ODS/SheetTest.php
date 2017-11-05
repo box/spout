@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\ODS;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Entity\Sheet;
+use Box\Spout\Writer\Exception\InvalidSheetNameException;
 use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\WriterFactory;
 
@@ -53,11 +54,12 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\InvalidSheetNameException
      * @return void
      */
     public function testSetSheetNameShouldThrowWhenNameIsAlreadyUsed()
     {
+        $this->expectException(InvalidSheetNameException::class);
+
         $fileName = 'test_set_name_with_non_unique_name.ods';
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);

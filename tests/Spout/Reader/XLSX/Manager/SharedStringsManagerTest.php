@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Reader\XLSX\Manager;
 
+use Box\Spout\Reader\Exception\SharedStringNotFoundException;
 use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 use Box\Spout\Reader\XLSX\Creator\ManagerFactory;
@@ -57,11 +58,12 @@ class SharedStringsManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Reader\Exception\SharedStringNotFoundException
      * @return void
      */
     public function testGetStringAtIndexShouldThrowExceptionIfStringNotFound()
     {
+        $this->expectException(SharedStringNotFoundException::class);
+
         $sharedStringsManager = $this->createSharedStringsManager();
         $sharedStringsManager->extractSharedStrings();
         $sharedStringsManager->getStringAtIndex(PHP_INT_MAX);

@@ -11,6 +11,7 @@ use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\WriterFactory;
 
@@ -34,19 +35,23 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @return void
      */
     public function testAddRowWithStyleShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
+        $this->expectException(WriterNotOpenedException::class);
+
         $writer = WriterFactory::create(Type::ODS);
         $writer->addRow($this->createStyledRowFromValues(['ods--11', 'ods--12'], $this->defaultStyle));
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @return void
      */
     public function testAddRowWithStyleShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
+        $this->expectException(WriterNotOpenedException::class);
+
         $writer = WriterFactory::create(Type::ODS);
         $writer->addRow($this->createStyledRowFromValues(['ods--11', 'ods--12'], $this->defaultStyle));
     }

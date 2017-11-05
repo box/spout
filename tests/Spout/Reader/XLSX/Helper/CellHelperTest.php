@@ -2,6 +2,8 @@
 
 namespace Box\Spout\Reader\XLSX\Helper;
 
+use Box\Spout\Common\Exception\InvalidArgumentException;
+
 /**
  * Class CellHelperTest
  */
@@ -58,12 +60,12 @@ class CellHelperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
-     *
      * @return void
      */
     public function testGetColumnIndexFromCellIndexShouldThrowIfInvalidCellIndex()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         CellHelper::getColumnIndexFromCellIndex('InvalidCellIndex');
     }
 }

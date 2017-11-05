@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\Common\Entity;
 
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Writer\Common\Manager\SheetManager;
+use Box\Spout\Writer\Exception\InvalidSheetNameException;
 
 /**
  * Class SheetTest
@@ -78,13 +79,14 @@ class SheetTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderForInvalidSheetNames
-     * @expectedException \Box\Spout\Writer\Exception\InvalidSheetNameException
      *
      * @param string $customSheetName
      * @return void
      */
     public function testSetSheetNameShouldThrowOnInvalidName($customSheetName)
     {
+        $this->expectException(InvalidSheetNameException::class);
+
         $sheet = $this->createSheet(0, 'workbookId1');
         $sheet->setName($customSheetName);
     }
@@ -101,11 +103,12 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\InvalidSheetNameException
      * @return void
      */
     public function testSetSheetNameShouldThrowWhenNameIsAlreadyUsed()
     {
+        $this->expectException(InvalidSheetNameException::class);
+
         $customSheetName = 'Sheet name';
 
         $sheet = $this->createSheet(0, 'workbookId1');

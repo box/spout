@@ -2,6 +2,8 @@
 
 namespace Box\Spout\Writer\Common\Entity\Style;
 
+use Box\Spout\Writer\Exception\InvalidColorException;
+
 /**
  * Class ColorTest
  */
@@ -76,7 +78,6 @@ class ColorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider dataProviderForTestRGBAInvalidColorComponents
-     * @expectedException \Box\Spout\Writer\Exception\InvalidColorException
      *
      * @param int $red
      * @param int $green
@@ -85,6 +86,8 @@ class ColorTest extends \PHPUnit_Framework_TestCase
      */
     public function testRGBInvalidColorComponents($red, $green, $blue)
     {
+        $this->expectException(InvalidColorException::class);
+
         Color::rgb($red, $green, $blue);
     }
 }

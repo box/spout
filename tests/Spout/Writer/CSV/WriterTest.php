@@ -2,10 +2,13 @@
 
 namespace Box\Spout\Writer\CSV;
 
+use Box\Spout\Common\Exception\InvalidArgumentException;
+use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Entity\Row;
+use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\WriterFactory;
 
@@ -18,10 +21,12 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     use RowCreationHelper;
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\IOException
+     * @return void
      */
     public function testWriteShouldThrowExceptionIfCannotOpenFileForWriting()
     {
+        $this->expectException(IOException::class);
+
         $fileName = 'file_that_wont_be_written.csv';
         $this->createUnwritableFolderIfNeeded();
         $filePath = $this->getGeneratedUnwritableResourcePath($fileName);
@@ -33,30 +38,36 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @return void
      */
     public function testWriteShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
+        $this->expectException(WriterNotOpenedException::class);
+
         $writer = WriterFactory::create(Type::CSV);
         $writer->addRow($this->createRowFromValues(['csv--11', 'csv--12']));
         $writer->close();
     }
 
     /**
-     * @expectedException \Box\Spout\Writer\Exception\WriterNotOpenedException
+     * @return void
      */
     public function testWriteShouldThrowExceptionIfCallAddRowsBeforeOpeningWriter()
     {
+        $this->expectException(WriterNotOpenedException::class);
+
         $writer = WriterFactory::create(Type::CSV);
         $writer->addRow($this->createRowFromValues(['csv--11', 'csv--12']));
         $writer->close();
     }
 
     /**
-     * @expectedException \Box\Spout\Common\Exception\InvalidArgumentException
+     * @return void
      */
     public function testAddRowsShouldThrowExceptionIfRowsAreNotArrayOfArrays()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $writer = WriterFactory::create(Type::CSV);
         $writer->addRows([['csv--11', 'csv--12']]);
         $writer->close();
