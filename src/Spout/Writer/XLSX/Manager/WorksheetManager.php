@@ -7,7 +7,7 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\Escaper\XLSX as XLSXEscaper;
 use Box\Spout\Common\Helper\StringHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Row;
@@ -51,7 +51,7 @@ EOD;
     /** @var StringHelper String helper */
     private $stringHelper;
 
-    /** @var EntityFactory Factory to create entities */
+    /** @var InternalEntityFactory Factory to create entities */
     private $entityFactory;
 
     /**
@@ -62,7 +62,7 @@ EOD;
      * @param SharedStringsManager $sharedStringsManager
      * @param XLSXEscaper $stringsEscaper
      * @param StringHelper $stringHelper
-     * @param EntityFactory $entityFactory
+     * @param InternalEntityFactory $entityFactory
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
@@ -70,7 +70,7 @@ EOD;
         SharedStringsManager $sharedStringsManager,
         XLSXEscaper $stringsEscaper,
         StringHelper $stringHelper,
-        EntityFactory $entityFactory
+        InternalEntityFactory $entityFactory
     ) {
         $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
         $this->styleManager = $styleManager;

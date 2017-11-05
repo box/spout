@@ -6,7 +6,7 @@ use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Type;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
@@ -60,7 +60,7 @@ class WriterFactory
         $globalFunctionsHelper = new GlobalFunctionsHelper();
 
         $helperFactory = new XLSX\Creator\HelperFactory();
-        $managerFactory = new XLSX\Creator\ManagerFactory(new EntityFactory(), $helperFactory);
+        $managerFactory = new XLSX\Creator\ManagerFactory(new InternalEntityFactory(), $helperFactory);
 
         return new XLSX\Writer($optionsManager, $styleMerger, $globalFunctionsHelper, $helperFactory, $managerFactory);
     }
@@ -76,7 +76,7 @@ class WriterFactory
         $globalFunctionsHelper = new GlobalFunctionsHelper();
 
         $helperFactory = new ODS\Creator\HelperFactory();
-        $managerFactory = new ODS\Creator\ManagerFactory(new EntityFactory(), $helperFactory);
+        $managerFactory = new ODS\Creator\ManagerFactory(new InternalEntityFactory(), $helperFactory);
 
         return new ODS\Writer($optionsManager, $styleMerger, $globalFunctionsHelper, $helperFactory, $managerFactory);
     }
