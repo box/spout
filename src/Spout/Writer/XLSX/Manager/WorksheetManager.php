@@ -14,6 +14,8 @@ use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Helper\CellHelper;
+use Box\Spout\Writer\Common\Manager\RowManager;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
 use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
 
@@ -39,8 +41,14 @@ EOD;
     /** @var bool Whether inline or shared strings should be used */
     protected $shouldUseInlineStrings;
 
+    /** @var RowManager Manages rows */
+    private $rowManager;
+
     /** @var StyleManager Manages styles */
     private $styleManager;
+
+    /** @var StyleMerger Helper to merge styles together */
+    private $styleMerger;
 
     /** @var SharedStringsManager Helper to write shared strings */
     private $sharedStringsManager;
@@ -58,7 +66,9 @@ EOD;
      * WorksheetManager constructor.
      *
      * @param OptionsManagerInterface $optionsManager
+     * @param RowManager $rowManager
      * @param StyleManager $styleManager
+     * @param StyleMerger $styleMerger
      * @param SharedStringsManager $sharedStringsManager
      * @param XLSXEscaper $stringsEscaper
      * @param StringHelper $stringHelper
@@ -66,14 +76,18 @@ EOD;
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
+        RowManager $rowManager,
         StyleManager $styleManager,
+        StyleMerger $styleMerger,
         SharedStringsManager $sharedStringsManager,
         XLSXEscaper $stringsEscaper,
         StringHelper $stringHelper,
         InternalEntityFactory $entityFactory
     ) {
         $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
+        $this->rowManager = $rowManager;
         $this->styleManager = $styleManager;
+        $this->styleMerger = $styleMerger;
         $this->sharedStringsManager = $sharedStringsManager;
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
@@ -121,7 +135,7 @@ EOD;
      */
     public function addRow(Worksheet $worksheet, Row $row)
     {
-        if (!$row->isEmpty()) {
+        if (!$this->rowManager->isEmpty($row)) {
             $this->addNonEmptyRow($worksheet, $row);
         }
 
@@ -172,9 +186,11 @@ EOD;
      */
     private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $rowIndex, $cellIndex)
     {
-        // Apply styles - the row style is merged at this point
-        $cell->applyStyle($rowStyle);
+        // Apply row and extra styles
+        $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
+        $cell->setStyle($mergedCellAndRowStyle);
         $newCellStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+
         $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
 
         return $this->getCellXML($rowIndex, $cellIndex, $cell, $registeredStyle->getId());

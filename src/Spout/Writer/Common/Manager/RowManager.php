@@ -3,7 +3,6 @@
 namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Writer\Common\Entity\Row;
-use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 class RowManager
@@ -19,28 +18,6 @@ class RowManager
     public function __construct(StyleMerger $styleMerger)
     {
         $this->styleMerger = $styleMerger;
-    }
-
-    /**
-     * @param Row $row
-     * @param Style $style
-     * @return $this
-     */
-    public function applyStyle(Row $row, Style $style)
-    {
-        $mergedStyle = $this->styleMerger->merge($row->getStyle(), $style);
-        $row->setStyle($mergedStyle);
-    }
-
-    /**
-     * Returns whether a row has cells
-     *
-     * @param Row $row
-     * @return bool
-     */
-    public function hasCells(Row $row)
-    {
-        return count($row->getCells()) !== 0;
     }
 
     /**

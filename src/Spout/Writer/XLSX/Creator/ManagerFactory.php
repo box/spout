@@ -6,6 +6,7 @@ use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
+use Box\Spout\Writer\Common\Manager\RowManager;
 use Box\Spout\Writer\Common\Manager\SheetManager;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\XLSX\Manager\SharedStringsManager;
@@ -52,7 +53,7 @@ class ManagerFactory implements ManagerFactoryInterface
 
         $styleMerger = $this->createStyleMerger();
         $styleManager = $this->createStyleManager($optionsManager);
-        $worksheetManager = $this->createWorksheetManager($optionsManager, $styleManager, $sharedStringsManager);
+        $worksheetManager = $this->createWorksheetManager($optionsManager, $styleManager, $styleMerger, $sharedStringsManager);
 
         return new WorkbookManager(
             $workbook,
@@ -69,18 +70,30 @@ class ManagerFactory implements ManagerFactoryInterface
     /**
      * @param OptionsManagerInterface $optionsManager
      * @param StyleManager $styleManager
+     * @param StyleMerger $styleMerger
      * @param SharedStringsManager $sharedStringsManager
      * @return WorksheetManager
      */
     private function createWorksheetManager(
         OptionsManagerInterface $optionsManager,
         StyleManager $styleManager,
+        StyleMerger $styleMerger,
         SharedStringsManager $sharedStringsManager
     ) {
+        $rowManager = $this->createRowManager($styleMerger);
         $stringsEscaper = $this->helperFactory->createStringsEscaper();
         $stringsHelper = $this->helperFactory->createStringHelper();
 
-        return new WorksheetManager($optionsManager, $styleManager, $sharedStringsManager, $stringsEscaper, $stringsHelper, $this->entityFactory);
+        return new WorksheetManager(
+            $optionsManager,
+            $rowManager,
+            $styleManager,
+            $styleMerger,
+            $sharedStringsManager,
+            $stringsEscaper,
+            $stringsHelper,
+            $this->entityFactory
+        );
     }
 
     /**
@@ -91,6 +104,15 @@ class ManagerFactory implements ManagerFactoryInterface
         $stringHelper = $this->helperFactory->createStringHelper();
 
         return new SheetManager($stringHelper);
+    }
+
+    /**
+     * @param StyleMerger $styleMerger
+     * @return RowManager
+     */
+    public function createRowManager(StyleMerger $styleMerger)
+    {
+        return new RowManager($styleMerger);
     }
 
     /**

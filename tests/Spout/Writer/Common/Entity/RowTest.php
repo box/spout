@@ -3,7 +3,6 @@
 namespace Box\Spout\Writer\Common\Entity;
 
 use Box\Spout\Writer\Common\Entity\Style\Style;
-use Box\Spout\Writer\Common\Manager\RowManager;
 use PHPUnit\Framework\TestCase;
 
 class RowTest extends TestCase
@@ -25,22 +24,11 @@ class RowTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|RowManager
-     */
-    private function getRowManagerMock()
-    {
-        return $this->createMock(RowManager::class);
-    }
-
-    /**
      * @return void
      */
     public function testValidInstance()
     {
-        $this->assertInstanceOf(
-            Row::class,
-            new Row([], null, $this->getRowManagerMock())
-        );
+        $this->assertInstanceOf(Row::class, new Row([], null));
     }
 
     /**
@@ -48,7 +36,7 @@ class RowTest extends TestCase
      */
     public function testSetCells()
     {
-        $row = new Row([], null, $this->getRowManagerMock());
+        $row = new Row([], null);
         $row->setCells([$this->getCellMock(), $this->getCellMock()]);
 
         $this->assertEquals(2, count($row->getCells()));
@@ -59,7 +47,7 @@ class RowTest extends TestCase
      */
     public function testSetCellsResets()
     {
-        $row = new Row([], null, $this->getRowManagerMock());
+        $row = new Row([], null);
         $row->setCells([$this->getCellMock(), $this->getCellMock()]);
 
         $this->assertEquals(2, count($row->getCells()));
@@ -74,7 +62,7 @@ class RowTest extends TestCase
      */
     public function testGetCells()
     {
-        $row = new Row([], null, $this->getRowManagerMock());
+        $row = new Row([], null);
 
         $this->assertEquals(0, count($row->getCells()));
 
@@ -88,7 +76,7 @@ class RowTest extends TestCase
      */
     public function testAddCell()
     {
-        $row = new Row([], null, $this->getRowManagerMock());
+        $row = new Row([], null);
         $row->setCells([$this->getCellMock(), $this->getCellMock()]);
 
         $this->assertEquals(2, count($row->getCells()));
@@ -103,7 +91,7 @@ class RowTest extends TestCase
      */
     public function testFluentInterface()
     {
-        $row = new Row([], null, $this->getRowManagerMock());
+        $row = new Row([], null);
         $row
             ->addCell($this->getCellMock())
             ->setStyle($this->getStyleMock())
