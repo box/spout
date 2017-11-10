@@ -21,6 +21,9 @@ class Sheet
     /** @var string Name of the sheet */
     private $name;
 
+    /** @var bool Visibility of the sheet */
+    private $isVisible;
+
     /** @var SheetManager Sheet manager */
     private $sheetManager;
 
@@ -38,6 +41,7 @@ class Sheet
         $this->sheetManager->markWorkbookIdAsUsed($associatedWorkbookId);
 
         $this->setName(self::DEFAULT_SHEET_NAME_PREFIX . ($sheetIndex + 1));
+        $this->setIsVisible(true);
     }
 
     /**
@@ -82,6 +86,25 @@ class Sheet
         $this->name = $name;
 
         $this->sheetManager->markSheetNameAsUsed($this);
+
+        return $this;
+    }
+
+    /**
+     * @return bool isVisible Visibility of the sheet
+     */
+    public function isVisible()
+    {
+        return $this->isVisible;
+    }
+
+   /**
+    * @param bool $isVisible Visibility of the sheet
+    * @return Sheet
+    */
+   public function setIsVisible($isVisible)
+    {
+        $this->isVisible = $isVisible;
 
         return $this;
     }

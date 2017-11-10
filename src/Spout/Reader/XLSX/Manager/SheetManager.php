@@ -29,8 +29,12 @@ class SheetManager
     const XML_ATTRIBUTE_ACTIVE_TAB = 'activeTab';
     const XML_ATTRIBUTE_R_ID = 'r:id';
     const XML_ATTRIBUTE_NAME = 'name';
+    const XML_ATTRIBUTE_STATE = 'state';
     const XML_ATTRIBUTE_ID = 'Id';
     const XML_ATTRIBUTE_TARGET = 'Target';
+
+    /** State value to represent a hidden sheet */
+    const SHEET_STATE_HIDDEN = 'hidden';
 
     /** @var string Path of the XLSX file being read */
     protected $filePath;
@@ -163,6 +167,10 @@ class SheetManager
     protected function getSheetFromSheetXMLNode($xmlReaderOnSheetNode, $sheetIndexZeroBased, $isSheetActive)
     {
         $sheetId = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_R_ID);
+
+        $sheetState = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_STATE);
+        $isSheetVisible = ($sheetState !== self::SHEET_STATE_HIDDEN);
+
         $escapedSheetName = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_NAME);
         $sheetName = $this->escaper->unescape($escapedSheetName);
 
@@ -174,6 +182,7 @@ class SheetManager
             $sheetIndexZeroBased,
             $sheetName,
             $isSheetActive,
+            $isSheetVisible,
             $this->optionsManager,
             $this->sharedStringsManager
         );
