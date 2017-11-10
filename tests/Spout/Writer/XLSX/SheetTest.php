@@ -22,7 +22,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSheetIndex()
     {
-        $sheets = $this->writeDataToMulitpleSheetsAndReturnSheets('test_get_sheet_index.xlsx');
+        $sheets = $this->writeDataToMultipleSheetsAndReturnSheets('test_get_sheet_index.xlsx');
 
         $this->assertEquals(2, count($sheets), '2 sheets should have been created');
         $this->assertEquals(0, $sheets[0]->getIndex(), 'The first sheet should be index 0');
@@ -34,7 +34,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetSheetName()
     {
-        $sheets = $this->writeDataToMulitpleSheetsAndReturnSheets('test_get_sheet_name.xlsx');
+        $sheets = $this->writeDataToMultipleSheetsAndReturnSheets('test_get_sheet_name.xlsx');
 
         $this->assertEquals(2, count($sheets), '2 sheets should have been created');
         $this->assertEquals('Sheet1', $sheets[0]->getName(), 'Invalid name for the first sheet');
@@ -48,7 +48,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     {
         $fileName = 'test_set_name_should_create_sheet_with_custom_name.xlsx';
         $customSheetName = 'CustomName';
-        $this->writeDataAndReturnSheetWithCustomName($fileName, $customSheetName);
+        $this->writeDataToSheetWithCustomName($fileName, $customSheetName);
 
         $this->assertSheetNameEquals($customSheetName, $fileName, "The sheet name should have been changed to '$customSheetName'");
     }
@@ -79,11 +79,26 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testSetSheetVisibilityShouldCreateSheetHidden()
+    {
+        $fileName = 'test_set_visibility_should_create_sheet_hidden.xlsx';
+        $this->writeDataToHiddenSheet($fileName);
+
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $pathToWorkbookFile = $resourcePath . '#xl/workbook.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains(" state=\"hidden\"", $xmlContents, 'The sheet visibility should have been changed to "hidden"');
+    }
+
+    /**
      * @param string $fileName
      * @param string $sheetName
      * @return Sheet
      */
-    private function writeDataAndReturnSheetWithCustomName($fileName, $sheetName)
+    private function writeDataToSheetWithCustomName($fileName, $sheetName)
     {
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -105,7 +120,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
      * @param string $fileName
      * @return Sheet[]
      */
-    private function writeDataToMulitpleSheetsAndReturnSheets($fileName)
+    private function writeDataToMultipleSheetsAndReturnSheets($fileName)
     {
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -121,6 +136,26 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $writer->close();
 
         return $writer->getSheets();
+    }
+
+    /**
+     * @param string $fileName
+     * @return void
+     */
+    private function writeDataToHiddenSheet($fileName)
+    {
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
+        $writer = EntityFactory::createWriter(Type::XLSX);
+        $writer->openToFile($resourcePath);
+
+        $sheet = $writer->getCurrentSheet();
+        $sheet->setIsVisible(false);
+
+        $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
+        $writer->close();
     }
 
     /**

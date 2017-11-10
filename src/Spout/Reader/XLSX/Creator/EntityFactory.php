@@ -53,6 +53,7 @@ class EntityFactory implements EntityFactoryInterface
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $sheetName Name of the sheet
      * @param bool $isSheetActive Whether the sheet was defined as active
+     * @param bool $isSheetVisible Whether the sheet is visible
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
      * @param SharedStringsManager $sharedStringsManager Manages shared strings
      * @return Sheet
@@ -63,12 +64,13 @@ class EntityFactory implements EntityFactoryInterface
         $sheetIndex,
         $sheetName,
         $isSheetActive,
+        $isSheetVisible,
         $optionsManager,
         $sharedStringsManager
     ) {
         $rowIterator = $this->createRowIterator($filePath, $sheetDataXMLFilePath, $optionsManager, $sharedStringsManager);
 
-        return new Sheet($rowIterator, $sheetIndex, $sheetName, $isSheetActive);
+        return new Sheet($rowIterator, $sheetIndex, $sheetName, $isSheetActive, $isSheetVisible);
     }
 
     /**
