@@ -133,7 +133,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testWriteShouldSkipEmptyRows()
+    public function testWriteShouldNotSkipEmptyRows()
     {
         $allRows = $this->createRowsFromValues([
             ['csv--11', 'csv--12'],
@@ -143,7 +143,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_empty_rows.csv');
         $writtenContent = $this->trimWrittenContent($writtenContent);
 
-        $this->assertEquals("csv--11,csv--12\ncsv--31,csv--32", $writtenContent, 'Empty rows should be skipped');
+        $this->assertEquals("csv--11,csv--12\n\ncsv--31,csv--32", $writtenContent, 'Empty rows should be skipped');
     }
 
     /**

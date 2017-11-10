@@ -178,18 +178,15 @@ abstract class WriterAbstract implements WriterInterface
     public function addRow(Row $row)
     {
         if ($this->isWriterOpened) {
-            // empty $dataRow should not add an empty line
-            if ($row->hasCells()) {
-                try {
-                    $this->addRowToWriter($row);
-                } catch (SpoutException $e) {
-                    // if an exception occurs while writing data,
-                    // close the writer and remove all files created so far.
-                    $this->closeAndAttemptToCleanupAllFiles();
+            try {
+                $this->addRowToWriter($row);
+            } catch (SpoutException $e) {
+                // if an exception occurs while writing data,
+                // close the writer and remove all files created so far.
+                $this->closeAndAttemptToCleanupAllFiles();
 
-                    // re-throw the exception to alert developers of the error
-                    throw $e;
-                }
+                // re-throw the exception to alert developers of the error
+                throw $e;
             }
         } else {
             throw new WriterNotOpenedException('The writer needs to be opened before adding row.');
