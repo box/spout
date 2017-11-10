@@ -8,6 +8,7 @@ use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Entity\Style\Color;
@@ -39,7 +40,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
+    public function testAddRowShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $this->expectException(WriterNotOpenedException::class);
 
@@ -50,7 +51,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldThrowExceptionIfCalledBeforeOpeningWriter()
+    public function testAddRowShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
         $this->expectException(WriterNotOpenedException::class);
 
@@ -61,9 +62,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldListAllUsedFontsInCreatedStylesXmlFile()
+    public function testAddRowShouldListAllUsedFontsInCreatedStylesXmlFile()
     {
-        $fileName = 'test_add_row_with_style_should_list_all_used_fonts.xlsx';
+        $fileName = 'test_add_row_should_list_all_used_fonts.xlsx';
 
         $style = (new StyleBuilder())
             ->setFontBold()
@@ -119,9 +120,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldApplyStyleToCells()
+    public function testAddRowShouldApplyStyleToCells()
     {
-        $fileName = 'test_add_row_with_style_should_apply_style_to_cells.xlsx';
+        $fileName = 'test_add_row_should_apply_style_to_cells.xlsx';
 
         $style = (new StyleBuilder())->setFontBold()->build();
         $style2 = (new StyleBuilder())->setFontSize(15)->build();
@@ -145,9 +146,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldApplyStyleToEmptyCellsIfNeeded()
+    public function testAddRowShouldApplyStyleToEmptyCellsIfNeeded()
     {
-        $fileName = 'test_add_row_with_style_should_apply_style_to_empty_cells_if_needed.xlsx';
+        $fileName = 'test_add_row_should_apply_style_to_empty_cells_if_needed.xlsx';
 
         $styleWithFont = (new StyleBuilder())->setFontBold()->build();
         $styleWithBackground = (new StyleBuilder())->setBackgroundColor(Color::BLUE)->build();
@@ -193,9 +194,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldReuseDuplicateStyles()
+    public function testAddRowShouldReuseDuplicateStyles()
     {
-        $fileName = 'test_add_row_with_style_should_reuse_duplicate_styles.xlsx';
+        $fileName = 'test_add_row_should_reuse_duplicate_styles.xlsx';
 
         $style = (new StyleBuilder())->setFontBold()->build();
         $dataRows = $this->createStyledRowsFromValues([
@@ -213,9 +214,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldAddWrapTextAlignmentInfoInStylesXmlFileIfSpecified()
+    public function testAddRowShouldAddWrapTextAlignmentInfoInStylesXmlFileIfSpecified()
     {
-        $fileName = 'test_add_row_with_style_should_add_wrap_text_alignment.xlsx';
+        $fileName = 'test_add_row_should_add_wrap_text_alignment.xlsx';
 
         $style = (new StyleBuilder())->setShouldWrapText()->build();
         $dataRows = $this->createStyledRowsFromValues([
@@ -233,9 +234,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldApplyWrapTextIfCellContainsNewLine()
+    public function testAddRowShouldApplyWrapTextIfCellContainsNewLine()
     {
-        $fileName = 'test_add_row_with_style_should_apply_wrap_text_if_new_lines.xlsx';
+        $fileName = 'test_add_row_should_apply_wrap_text_if_new_lines.xlsx';
 
         $dataRows = $this->createStyledRowsFromValues([
             ["xlsx--11\nxlsx--11"],
@@ -248,6 +249,32 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
         $this->assertEquals(1, $xfElement->getAttribute('applyAlignment'));
         $this->assertFirstChildHasAttributeEquals('1', $xfElement, 'alignment', 'wrapText');
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldSupportCellStyling()
+    {
+        $fileName = 'test_add_row_should_support_cell_styling.xlsx';
+
+        $boldStyle = (new StyleBuilder())->setFontBold()->build();
+        $underlineStyle = (new StyleBuilder())->setFontUnderline()->build();
+
+        $dataRow = EntityFactory::createRow([
+            EntityFactory::createCell('xlsx--11', $boldStyle),
+            EntityFactory::createCell('xlsx--12', $underlineStyle),
+            EntityFactory::createCell('xlsx--13', $underlineStyle),
+        ]);
+
+        $this->writeToXLSXFile([$dataRow], $fileName);
+
+        $cellDomElements = $this->getCellElementsFromSheetXmlFile($fileName);
+
+        // First row should have 3 styled cells, with cell 2 and 3 sharing the same style
+        $this->assertEquals('1', $cellDomElements[0]->getAttribute('s'));
+        $this->assertEquals('2', $cellDomElements[1]->getAttribute('s'));
+        $this->assertEquals('2', $cellDomElements[2]->getAttribute('s'));
     }
 
     /**
@@ -421,7 +448,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testReUseBorders()
+    public function testReuseBorders()
     {
         $fileName = 'test_reuse_borders.xlsx';
 
