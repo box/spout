@@ -10,6 +10,7 @@ use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Worksheet;
+use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
 use Box\Spout\Writer\ODS\Manager\Style\StyleManager;
 
@@ -28,19 +29,25 @@ class WorksheetManager implements WorksheetManagerInterface
     /** @var StyleManager Manages styles */
     private $styleManager;
 
+    /** @var StyleMerger Helper to merge styles together */
+    private $styleMerger;
+
     /**
      * WorksheetManager constructor.
      *
      * @param StyleManager $styleManager
+     * @param StyleMerger $styleMerger
      * @param ODSEscaper $stringsEscaper
      * @param StringHelper $stringHelper
      */
     public function __construct(
         StyleManager $styleManager,
+        StyleMerger $styleMerger,
         ODSEscaper $stringsEscaper,
         StringHelper $stringHelper
     ) {
         $this->styleManager = $styleManager;
+        $this->styleMerger = $styleMerger;
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
     }
@@ -151,9 +158,11 @@ class WorksheetManager implements WorksheetManagerInterface
      */
     private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $currentCellIndex, $nextCellIndex)
     {
-        // Apply styles - the row style is merged at this point
-        $cell->applyStyle($rowStyle);
+        // Apply row and extra styles
+        $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
+        $cell->setStyle($mergedCellAndRowStyle);
         $newCellStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+
         $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
         $styleIndex = $registeredStyle->getId() + 1; // 1-based
 

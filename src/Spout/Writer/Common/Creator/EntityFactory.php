@@ -5,8 +5,6 @@ namespace Box\Spout\Writer\Common\Creator;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Style\Style;
-use Box\Spout\Writer\Common\Manager\RowManager;
-use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\WriterInterface;
 
 /**
@@ -34,10 +32,7 @@ class EntityFactory
      */
     public static function createRow(array $cells = [], Style $rowStyle = null)
     {
-        $styleMerger = new StyleMerger();
-        $rowManager = new RowManager($styleMerger);
-
-        return new Row($cells, $rowStyle, $rowManager);
+        return new Row($cells, $rowStyle);
     }
 
     /**
@@ -47,14 +42,11 @@ class EntityFactory
      */
     public static function createRowFromArray(array $cellValues = [], Style $rowStyle = null)
     {
-        $styleMerger = new StyleMerger();
-        $rowManager = new RowManager($styleMerger);
-
         $cells = array_map(function ($cellValue) {
             return new Cell($cellValue);
         }, $cellValues);
 
-        return new Row($cells, $rowStyle, $rowManager);
+        return new Row($cells, $rowStyle);
     }
 
     /**

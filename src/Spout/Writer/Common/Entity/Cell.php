@@ -198,20 +198,4 @@ class Cell
     {
         return (string) $this->value;
     }
-
-    /**
-     * @param Style|null $style
-     * @return Cell
-     */
-    public function applyStyle($style)
-    {
-        if ($style === null) {
-            return $this;
-        }
-
-        $mergedStyle = $this->styleMerger->merge($this->style, $style);
-        $this->setStyle($mergedStyle);
-
-        return $this;
-    }
 }
