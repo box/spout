@@ -37,7 +37,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
+    public function testAddRowShouldThrowExceptionIfCallAddRowBeforeOpeningWriter()
     {
         $this->expectException(WriterNotOpenedException::class);
 
@@ -48,7 +48,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldThrowExceptionIfCalledBeforeOpeningWriter()
+    public function testAddRowShouldThrowExceptionIfCalledBeforeOpeningWriter()
     {
         $this->expectException(WriterNotOpenedException::class);
 
@@ -59,9 +59,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldListAllUsedStylesInCreatedContentXmlFile()
+    public function testAddRowShouldListAllUsedStylesInCreatedContentXmlFile()
     {
-        $fileName = 'test_add_row_with_style_should_list_all_used_fonts.ods';
+        $fileName = 'test_add_row_should_list_all_used_fonts.ods';
 
         $style = (new StyleBuilder())
             ->setFontBold()
@@ -104,9 +104,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldWriteDefaultStyleSettings()
+    public function testAddRowShouldWriteDefaultStyleSettings()
     {
-        $fileName = 'test_add_row_with_style_should_write_default_style_settings.ods';
+        $fileName = 'test_add_row_should_write_default_style_settings.ods';
         $dataRow = $this->createStyledRowFromValues(['ods--11', 'ods--12'], $this->defaultStyle);
 
         $this->writeToODSFile([$dataRow], $fileName);
@@ -120,9 +120,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldApplyStyleToCells()
+    public function testAddRowShouldApplyStyleToCells()
     {
-        $fileName = 'test_add_row_with_style_should_apply_style_to_cells.ods';
+        $fileName = 'test_add_row_should_apply_style_to_cells.ods';
 
         $style = (new StyleBuilder())->setFontBold()->build();
         $style2 = (new StyleBuilder())->setFontSize(15)->build();
@@ -145,9 +145,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldReuseDuplicateStyles()
+    public function testAddRowShouldReuseDuplicateStyles()
     {
-        $fileName = 'test_add_row_with_style_should_reuse_duplicate_styles.ods';
+        $fileName = 'test_add_row_should_reuse_duplicate_styles.ods';
 
         $style = (new StyleBuilder())->setFontBold()->build();
         $dataRows = $this->createStyledRowsFromValues([
@@ -167,9 +167,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldAddWrapTextAlignmentInfoInStylesXmlFileIfSpecified()
+    public function testAddRowShouldAddWrapTextAlignmentInfoInStylesXmlFileIfSpecified()
     {
-        $fileName = 'test_add_row_with_style_should_add_wrap_text_alignment.ods';
+        $fileName = 'test_add_row_should_add_wrap_text_alignment.ods';
 
         $style = (new StyleBuilder())->setShouldWrapText()->build();
         $dataRows = $this->createStyledRowsFromValues([
@@ -188,9 +188,9 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
-    public function testAddRowWithStyleShouldApplyWrapTextIfCellContainsNewLine()
+    public function testAddRowShouldApplyWrapTextIfCellContainsNewLine()
     {
-        $fileName = 'test_add_row_with_style_should_apply_wrap_text_if_new_lines.ods';
+        $fileName = 'test_add_row_should_apply_wrap_text_if_new_lines.ods';
         $dataRows = $this->createStyledRowsFromValues([
             ["ods--11\nods--11"],
         ], $this->defaultStyle);
@@ -202,6 +202,32 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
 
         $customStyleElement = $styleElements[1];
         $this->assertFirstChildHasAttributeEquals('wrap', $customStyleElement, 'table-cell-properties', 'fo:wrap-option');
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldSupportCellStyling()
+    {
+        $fileName = 'test_add_row_should_support_cell_styling.ods';
+
+        $boldStyle = (new StyleBuilder())->setFontBold()->build();
+        $underlineStyle = (new StyleBuilder())->setFontUnderline()->build();
+
+        $dataRow = EntityFactory::createRow([
+            EntityFactory::createCell('ods--11', $boldStyle),
+            EntityFactory::createCell('ods--12', $underlineStyle),
+            EntityFactory::createCell('ods--13', $underlineStyle),
+        ]);
+
+        $this->writeToODSFile([$dataRow], $fileName);
+
+        $cellDomElements = $this->getCellElementsFromContentXmlFile($fileName);
+
+        // First row should have 3 styled cells, with cell 2 and 3 sharing the same style
+        $this->assertEquals('ce2', $cellDomElements[0]->getAttribute('table:style-name'));
+        $this->assertEquals('ce3', $cellDomElements[1]->getAttribute('table:style-name'));
+        $this->assertEquals('ce3', $cellDomElements[2]->getAttribute('table:style-name'));
     }
 
     /**
