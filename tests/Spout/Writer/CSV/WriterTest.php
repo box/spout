@@ -175,6 +175,17 @@ class WriterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('#This is, a comma#,csv--12,csv--13', $writtenContent, 'The fields should be enclosed with #');
     }
 
+    public function testWriteShouldSupportedEscapedCharacters()
+    {
+        $allRows = $this->createRowsFromValues([
+            ['"csv--11"', 'csv--12\\', 'csv--13\\\\', 'csv--14\\\\\\'],
+        ]);
+        $writtenContent = $this->writeToCsvFileAndReturnWrittenContent($allRows, 'csv_with_escaped_characters.csv');
+        $writtenContent = $this->trimWrittenContent($writtenContent);
+
+        $this->assertEquals('"""csv--11""",csv--12\\,csv--13\\\\,csv--14\\\\\\', $writtenContent, 'The \'"\' and \'\\\' characters should be properly escaped');
+    }
+
     /**
      * @param Row[]  $allRows
      * @param string $fileName

@@ -86,7 +86,13 @@ class GlobalFunctionsHelper
      */
     public function fgetcsv($handle, $length = null, $delimiter = null, $enclosure = null)
     {
-        return fgetcsv($handle, $length, $delimiter, $enclosure);
+        // PHP uses '\' as the default escape character. This is not RFC-4180 compliant...
+        // To fix that, simply disable the escape character.
+        // @see https://bugs.php.net/bug.php?id=43225
+        // @see http://tools.ietf.org/html/rfc4180
+        $escapeCharacter = "\0";
+
+        return fgetcsv($handle, $length, $delimiter, $enclosure, $escapeCharacter);
     }
 
     /**
@@ -101,7 +107,13 @@ class GlobalFunctionsHelper
      */
     public function fputcsv($handle, array $fields, $delimiter = null, $enclosure = null)
     {
-        return fputcsv($handle, $fields, $delimiter, $enclosure);
+        // PHP uses '\' as the default escape character. This is not RFC-4180 compliant...
+        // To fix that, simply disable the escape character.
+        // @see https://bugs.php.net/bug.php?id=43225
+        // @see http://tools.ietf.org/html/rfc4180
+        $escapeCharacter = "\0";
+
+        return fputcsv($handle, $fields, $delimiter, $enclosure, $escapeCharacter);
     }
 
     /**
