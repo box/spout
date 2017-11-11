@@ -51,8 +51,16 @@ class SharedStringsManagerTest extends \PHPUnit_Framework_TestCase
         $helperFactory = new HelperFactory();
         $managerFactory = new ManagerFactory($helperFactory, $cachingStrategyFactory);
         $entityFactory = new EntityFactory($managerFactory, $helperFactory);
+        $workbookRelationshipsManager = new WorkbookRelationshipsManager($resourcePath, $entityFactory);
 
-        $this->sharedStringsManager = new SharedStringsManager($resourcePath, $tempFolder, $entityFactory, $helperFactory, $cachingStrategyFactory);
+        $this->sharedStringsManager = new SharedStringsManager(
+            $resourcePath,
+            $tempFolder,
+            $workbookRelationshipsManager,
+            $entityFactory,
+            $helperFactory,
+            $cachingStrategyFactory
+        );
 
         return $this->sharedStringsManager;
     }

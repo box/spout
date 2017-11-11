@@ -6,6 +6,7 @@ use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Reader\XLSX\Manager\SheetManager;
 use Box\Spout\Reader\XLSX\Manager\StyleManager;
+use Box\Spout\Reader\XLSX\Manager\WorkbookRelationshipsManager;
 
 /**
  * Class ManagerFactory
@@ -18,6 +19,9 @@ class ManagerFactory
 
     /** @var CachingStrategyFactory */
     private $cachingStrategyFactory;
+
+    /** @var WorkbookRelationshipsManager */
+    private $cachedWorkbookRelationshipsManager;
 
     /**
      * @param HelperFactory $helperFactory Factory to create helpers
@@ -37,7 +41,30 @@ class ManagerFactory
      */
     public function createSharedStringsManager($filePath, $tempFolder, $entityFactory)
     {
-        return new SharedStringsManager($filePath, $tempFolder, $entityFactory, $this->helperFactory, $this->cachingStrategyFactory);
+        $workbookRelationshipsManager = $this->createWorkbookRelationshipsManager($filePath, $entityFactory);
+
+        return new SharedStringsManager(
+            $filePath,
+            $tempFolder,
+            $workbookRelationshipsManager,
+            $entityFactory,
+            $this->helperFactory,
+            $this->cachingStrategyFactory
+        );
+    }
+
+    /**
+     * @param string $filePath Path of the XLSX file being read
+     * @param EntityFactory $entityFactory Factory to create entities
+     * @return WorkbookRelationshipsManager
+     */
+    private function createWorkbookRelationshipsManager($filePath, $entityFactory)
+    {
+        if (!isset($this->cachedWorkbookRelationshipsManager)) {
+            $this->cachedWorkbookRelationshipsManager = new WorkbookRelationshipsManager($filePath, $entityFactory);
+        }
+
+        return $this->cachedWorkbookRelationshipsManager;
     }
 
     /**
@@ -61,6 +88,8 @@ class ManagerFactory
      */
     public function createStyleManager($filePath, $entityFactory)
     {
-        return new StyleManager($filePath, $entityFactory);
+        $workbookRelationshipsManager = $this->createWorkbookRelationshipsManager($filePath, $entityFactory);
+
+        return new StyleManager($filePath, $workbookRelationshipsManager, $entityFactory);
     }
 }

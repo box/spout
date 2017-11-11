@@ -45,7 +45,10 @@ class XMLReader extends \XMLReader
      */
     public function getRealPathURIForFileInZip($zipFilePath, $fileInsideZipPath)
     {
-        return (self::ZIP_WRAPPER . realpath($zipFilePath) . '#' . $fileInsideZipPath);
+        // The file path should not start with a '/', otherwise it won't be found
+        $fileInsideZipPathWithoutLeadingSlash = ltrim($fileInsideZipPath, '/');
+
+        return (self::ZIP_WRAPPER . realpath($zipFilePath) . '#' . $fileInsideZipPathWithoutLeadingSlash);
     }
 
     /**

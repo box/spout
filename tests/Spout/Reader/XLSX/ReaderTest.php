@@ -172,6 +172,23 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportFilesWithCapitalSharedStringsFileName()
+    {
+        $allRows = $this->getAllRowsForFile('one_sheet_with_capital_shared_strings_filename.xlsx');
+
+        $expectedRows = [
+            ['s1--A1', 's1--B1', 's1--C1', 's1--D1', 's1--E1'],
+            ['s1--A2', 's1--B2', 's1--C2', 's1--D2', 's1--E2'],
+            ['s1--A3', 's1--B3', 's1--C3', 's1--D3', 's1--E3'],
+            ['s1--A4', 's1--B4', 's1--C4', 's1--D4', 's1--E4'],
+            ['s1--A5', 's1--B5', 's1--C5', 's1--D5', 's1--E5'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldSupportFilesWithoutCellReference()
     {
         // file where the cell definition does not have a "r" attribute
