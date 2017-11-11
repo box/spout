@@ -90,7 +90,7 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $pathToWorkbookFile = $resourcePath . '#xl/workbook.xml';
         $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
 
-        $this->assertContains(" state=\"hidden\"", $xmlContents, 'The sheet visibility should have been changed to "hidden"');
+        $this->assertContains(' state="hidden"', $xmlContents, 'The sheet visibility should have been changed to "hidden"');
     }
 
     /**

@@ -98,11 +98,11 @@ class Sheet
         return $this->isVisible;
     }
 
-   /**
-    * @param bool $isVisible Visibility of the sheet
-    * @return Sheet
-    */
-   public function setIsVisible($isVisible)
+    /**
+     * @param bool $isVisible Visibility of the sheet
+     * @return Sheet
+     */
+    public function setIsVisible($isVisible)
     {
         $this->isVisible = $isVisible;
 

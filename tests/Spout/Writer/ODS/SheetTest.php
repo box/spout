@@ -79,6 +79,21 @@ class SheetTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testSetSheetVisibilityShouldCreateSheetHidden()
+    {
+        $fileName = 'test_set_visibility_should_create_sheet_hidden.xlsx';
+        $this->writeDataToHiddenSheet($fileName);
+
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $pathToContentFile = $resourcePath . '#content.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToContentFile);
+
+        $this->assertContains(' table:display="false"', $xmlContents, 'The sheet visibility should have been changed to "hidden"');
+    }
+
+    /**
      * @param string $fileName
      * @param string $sheetName
      * @return Sheet
@@ -119,6 +134,26 @@ class SheetTest extends \PHPUnit_Framework_TestCase
         $writer->close();
 
         return $writer->getSheets();
+    }
+
+    /**
+     * @param string $fileName
+     * @return void
+     */
+    private function writeDataToHiddenSheet($fileName)
+    {
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        /** @var \Box\Spout\Writer\ODS\Writer $writer */
+        $writer = EntityFactory::createWriter(Type::ODS);
+        $writer->openToFile($resourcePath);
+
+        $sheet = $writer->getCurrentSheet();
+        $sheet->setIsVisible(false);
+
+        $writer->addRow($this->createRowFromValues(['ods--11', 'ods--12']));
+        $writer->close();
     }
 
     /**

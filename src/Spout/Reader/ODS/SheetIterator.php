@@ -17,9 +17,16 @@ class SheetIterator implements IteratorInterface
 {
     const CONTENT_XML_FILE_PATH = 'content.xml';
 
+    const XML_STYLE_NAMESPACE = 'urn:oasis:names:tc:opendocument:xmlns:style:1.0';
+
     /** Definition of XML nodes name and attribute used to parse sheet data */
+    const XML_NODE_AUTOMATIC_STYLES = 'office:automatic-styles';
+    const XML_NODE_STYLE_TABLE_PROPERTIES = 'table-properties';
     const XML_NODE_TABLE = 'table:table';
+    const XML_ATTRIBUTE_STYLE_NAME = 'style:name';
     const XML_ATTRIBUTE_TABLE_NAME = 'table:name';
+    const XML_ATTRIBUTE_TABLE_STYLE_NAME = 'table:style-name';
+    const XML_ATTRIBUTE_TABLE_DISPLAY = 'table:display';
 
     /** @var string $filePath Path of the file to be read */
     protected $filePath;
@@ -44,6 +51,9 @@ class SheetIterator implements IteratorInterface
 
     /** @var string The name of the sheet that was defined as active */
     protected $activeSheetName;
+
+    /** @var array Associative array [STYLE_NAME] => [IS_SHEET_VISIBLE] */
+    protected $sheetsVisibility;
 
     /**
      * @param string $filePath Path of the file to be read
@@ -79,12 +89,40 @@ class SheetIterator implements IteratorInterface
         }
 
         try {
+            $this->sheetsVisibility = $this->readSheetsVisibility();
             $this->hasFoundSheet = $this->xmlReader->readUntilNodeFound(self::XML_NODE_TABLE);
         } catch (XMLProcessingException $exception) {
             throw new IOException("The content.xml file is invalid and cannot be read. [{$exception->getMessage()}]");
         }
 
         $this->currentSheetIndex = 0;
+    }
+
+    /**
+     * Extracts the visibility of the sheets
+     *
+     * @return array Associative array [STYLE_NAME] => [IS_SHEET_VISIBLE]
+     */
+    private function readSheetsVisibility()
+    {
+        $sheetsVisibility = [];
+
+        $this->xmlReader->readUntilNodeFound(self::XML_NODE_AUTOMATIC_STYLES);
+        $automaticStylesNode = $this->xmlReader->expand();
+
+        $tableStyleNodes = $automaticStylesNode->getElementsByTagNameNS(self::XML_STYLE_NAMESPACE, self::XML_NODE_STYLE_TABLE_PROPERTIES);
+
+        /** @var \DOMElement $tableStyleNode */
+        foreach ($tableStyleNodes as $tableStyleNode) {
+            $isSheetVisible = ($tableStyleNode->getAttribute(self::XML_ATTRIBUTE_TABLE_DISPLAY) !== 'false');
+
+            $parentStyleNode = $tableStyleNode->parentNode;
+            $styleName = $parentStyleNode->getAttribute(self::XML_ATTRIBUTE_STYLE_NAME);
+
+            $sheetsVisibility[$styleName] = $isSheetVisible;
+        }
+
+        return $sheetsVisibility;
     }
 
     /**
@@ -123,9 +161,20 @@ class SheetIterator implements IteratorInterface
     {
         $escapedSheetName = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_TABLE_NAME);
         $sheetName = $this->escaper->unescape($escapedSheetName);
-        $isActiveSheet = $this->isActiveSheet($sheetName, $this->currentSheetIndex, $this->activeSheetName);
 
-        return $this->entityFactory->createSheet($this->xmlReader, $this->currentSheetIndex, $sheetName, $isActiveSheet, $this->optionsManager);
+        $isSheetActive = $this->isSheetActive($sheetName, $this->currentSheetIndex, $this->activeSheetName);
+
+        $sheetStyleName = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_TABLE_STYLE_NAME);
+        $isSheetVisible = $this->isSheetVisible($sheetStyleName);
+
+        return $this->entityFactory->createSheet(
+            $this->xmlReader,
+            $this->currentSheetIndex,
+            $sheetName,
+            $isSheetActive,
+            $isSheetVisible,
+            $this->optionsManager
+        );
     }
 
     /**
@@ -136,7 +185,7 @@ class SheetIterator implements IteratorInterface
      * @param string|null $activeSheetName Name of the sheet that was defined as active or NULL if none defined
      * @return bool Whether the current sheet was defined as the active one
      */
-    private function isActiveSheet($sheetName, $sheetIndex, $activeSheetName)
+    private function isSheetActive($sheetName, $sheetIndex, $activeSheetName)
     {
         // The given sheet is active if its name matches the defined active sheet's name
         // or if no information about the active sheet was found, it defaults to the first sheet.
@@ -144,6 +193,19 @@ class SheetIterator implements IteratorInterface
             ($activeSheetName === null && $sheetIndex === 0) ||
             ($activeSheetName === $sheetName)
         );
+    }
+
+    /**
+     * Returns whether the current sheet is visible
+     *
+     * @param string $sheetStyleName Name of the sheet style
+     * @return bool Whether the current sheet is visible
+     */
+    private function isSheetVisible($sheetStyleName)
+    {
+        return isset($this->sheetsVisibility[$sheetStyleName]) ?
+            $this->sheetsVisibility[$sheetStyleName] :
+            true;
     }
 
     /**
