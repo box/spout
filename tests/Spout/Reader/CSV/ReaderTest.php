@@ -222,9 +222,20 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportEscapedCharacters()
+    {
+        $allRows = $this->getAllRowsForFile('csv_with_escaped_characters.csv');
+
+        $expectedRow = ['"csv--11"', 'csv--12\\', 'csv--13\\\\', 'csv--14\\\\\\'];
+        $this->assertEquals([$expectedRow], $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldNotTruncateLineBreak()
     {
-        $allRows = $this->getAllRowsForFile('csv_with_line_breaks.csv', ',');
+        $allRows = $this->getAllRowsForFile('csv_with_line_breaks.csv');
         $this->assertEquals("This is,\na comma", $allRows[0][0]);
     }
 
