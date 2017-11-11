@@ -9,6 +9,7 @@ use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyInterface;
+use Box\Spout\Writer\Common\Entity\Workbook;
 
 /**
  * Class SharedStringsManager
@@ -16,9 +17,6 @@ use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyInterface;
  */
 class SharedStringsManager
 {
-    /** Path of sharedStrings XML file inside the XLSX file */
-    const SHARED_STRINGS_XML_FILE_PATH = 'xl/sharedStrings.xml';
-
     /** Main namespace for the sharedStrings.xml file */
     const MAIN_NAMESPACE_FOR_SHARED_STRINGS_XML = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
 
@@ -40,6 +38,9 @@ class SharedStringsManager
     /** @var string Temporary folder where the temporary files to store shared strings will be stored */
     protected $tempFolder;
 
+    /** @var WorkbookRelationshipsManager Helps retrieving workbook relationships */
+    protected $workbookRelationshipsManager;
+
     /** @var EntityFactory Factory to create entities */
     protected $entityFactory;
 
@@ -55,14 +56,22 @@ class SharedStringsManager
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param string $tempFolder Temporary folder where the temporary files to store shared strings will be stored
+     * @param WorkbookRelationshipsManager $workbookRelationshipsManager Helps retrieving workbook relationships
      * @param EntityFactory $entityFactory Factory to create entities
      * @param HelperFactory $helperFactory Factory to create helpers
      * @param CachingStrategyFactory $cachingStrategyFactory Factory to create shared strings caching strategies
      */
-    public function __construct($filePath, $tempFolder, $entityFactory, $helperFactory, $cachingStrategyFactory)
-    {
+    public function __construct(
+        $filePath,
+        $tempFolder,
+        $workbookRelationshipsManager,
+        $entityFactory,
+        $helperFactory,
+        $cachingStrategyFactory
+    ) {
         $this->filePath = $filePath;
         $this->tempFolder = $tempFolder;
+        $this->workbookRelationshipsManager = $workbookRelationshipsManager;
         $this->entityFactory = $entityFactory;
         $this->helperFactory = $helperFactory;
         $this->cachingStrategyFactory = $cachingStrategyFactory;
@@ -75,15 +84,7 @@ class SharedStringsManager
      */
     public function hasSharedStrings()
     {
-        $hasSharedStrings = false;
-        $zip = $this->entityFactory->createZipArchive();
-
-        if ($zip->open($this->filePath) === true) {
-            $hasSharedStrings = ($zip->locateName(self::SHARED_STRINGS_XML_FILE_PATH) !== false);
-            $zip->close();
-        }
-
-        return $hasSharedStrings;
+        return $this->workbookRelationshipsManager->hasSharedStringsXMLFile();
     }
 
     /**
@@ -96,16 +97,17 @@ class SharedStringsManager
      * The XML file can be really big with sheets containing a lot of data. That is why
      * we need to use a XML reader that provides streaming like the XMLReader library.
      *
-     * @throws \Box\Spout\Common\Exception\IOException If sharedStrings.xml can't be read
+     * @throws \Box\Spout\Common\Exception\IOException If shared strings XML file can't be read
      * @return void
      */
     public function extractSharedStrings()
     {
+        $sharedStringsXMLFilePath = $this->workbookRelationshipsManager->getSharedStringsXMLFilePath();
         $xmlReader = $this->entityFactory->createXMLReader();
         $sharedStringIndex = 0;
 
-        if ($xmlReader->openFileInZip($this->filePath, self::SHARED_STRINGS_XML_FILE_PATH) === false) {
-            throw new IOException('Could not open "' . self::SHARED_STRINGS_XML_FILE_PATH . '".');
+        if ($xmlReader->openFileInZip($this->filePath, $sharedStringsXMLFilePath) === false) {
+            throw new IOException('Could not open "' . $sharedStringsXMLFilePath . '".');
         }
 
         try {

@@ -10,9 +10,6 @@ use Box\Spout\Reader\XLSX\Creator\EntityFactory;
  */
 class StyleManager
 {
-    /** Paths of XML files relative to the XLSX file root */
-    const STYLES_XML_FILE_PATH = 'xl/styles.xml';
-
     /** Nodes used to find relevant information in the styles XML file */
     const XML_NODE_NUM_FMTS = 'numFmts';
     const XML_NODE_NUM_FMT = 'numFmt';
@@ -51,6 +48,9 @@ class StyleManager
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
+    /** @var string Path of the styles XML file */
+    protected $stylesXMLFilePath;
+
     /** @var EntityFactory Factory to create entities */
     protected $entityFactory;
 
@@ -68,13 +68,15 @@ class StyleManager
 
     /**
      * @param string $filePath Path of the XLSX file being read
+     * @param WorkbookRelationshipsManager $workbookRelationshipsManager Helps retrieving workbook relationships
      * @param EntityFactory $entityFactory Factory to create entities
      */
-    public function __construct($filePath, $entityFactory)
+    public function __construct($filePath, $workbookRelationshipsManager, $entityFactory)
     {
         $this->filePath = $filePath;
         $this->entityFactory = $entityFactory;
         $this->builtinNumFmtIdIndicatingDates = array_keys(self::$builtinNumFmtIdToNumFormatMapping);
+        $this->stylesXMLFilePath = $workbookRelationshipsManager->getStylesXMLFilePath();
     }
 
     /**
@@ -112,7 +114,7 @@ class StyleManager
 
         $xmlReader = $this->entityFactory->createXMLReader();
 
-        if ($xmlReader->openFileInZip($this->filePath, self::STYLES_XML_FILE_PATH)) {
+        if ($xmlReader->openFileInZip($this->filePath, $this->stylesXMLFilePath)) {
             while ($xmlReader->read()) {
                 if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_NUM_FMTS)) {
                     $this->extractNumberFormats($xmlReader);

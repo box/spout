@@ -3,9 +3,6 @@
 namespace Box\Spout\Reader\XLSX\Manager;
 
 use Box\Spout\Reader\XLSX\Creator\EntityFactory;
-use Box\Spout\Reader\XLSX\Creator\HelperFactory;
-use Box\Spout\Reader\XLSX\Creator\ManagerFactory;
-use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 
 /**
  * Class StyleManagerTest
@@ -19,13 +16,12 @@ class StyleManagerTest extends \PHPUnit_Framework_TestCase
      */
     private function getStyleManagerMock($styleAttributes = [], $customNumberFormats = [])
     {
-        $helperFactory = new HelperFactory();
-        $managerFactory = new ManagerFactory($helperFactory, new CachingStrategyFactory());
-        $entityFactory = new EntityFactory($managerFactory, $helperFactory);
+        $entityFactory = $this->createMock(EntityFactory::class);
+        $workbookRelationshipsManager = $this->createMock(WorkbookRelationshipsManager::class);
 
         /** @var StyleManager $styleManager */
         $styleManager = $this->getMockBuilder('\Box\Spout\Reader\XLSX\Manager\StyleManager')
-                             ->setConstructorArgs(['/path/to/file.xlsx', $entityFactory])
+                             ->setConstructorArgs(['/path/to/file.xlsx', $workbookRelationshipsManager, $entityFactory])
                              ->setMethods(['getCustomNumberFormats', 'getStylesAttributes'])
                              ->getMock();
 
