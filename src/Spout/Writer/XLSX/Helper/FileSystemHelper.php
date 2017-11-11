@@ -309,7 +309,7 @@ EOD;
             $worksheetName = $worksheet->getExternalSheet()->getName();
             $worksheetVisibility = $worksheet->getExternalSheet()->isVisible() ? 'visible' : 'hidden';
             $worksheetId = $worksheet->getId();
-            $workbookXmlFileContents .= '<sheet name="' . $this->escaper->escape($worksheetName) . '" sheetId="' . $worksheetId . '" r:id="rIdSheet' . $worksheetId . '" state="' . $worksheetVisibility. '"/>';
+            $workbookXmlFileContents .= '<sheet name="' . $this->escaper->escape($worksheetName) . '" sheetId="' . $worksheetId . '" r:id="rIdSheet' . $worksheetId . '" state="' . $worksheetVisibility . '"/>';
         }
 
         $workbookXmlFileContents .= <<<'EOD'

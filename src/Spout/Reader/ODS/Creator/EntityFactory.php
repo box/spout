@@ -45,14 +45,15 @@ class EntityFactory implements EntityFactoryInterface
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $sheetName Name of the sheet
      * @param bool $isSheetActive Whether the sheet was defined as active
+     * @param bool $isSheetVisible Whether the sheet is visible
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
      * @return Sheet
      */
-    public function createSheet($xmlReader, $sheetIndex, $sheetName, $isSheetActive, $optionsManager)
+    public function createSheet($xmlReader, $sheetIndex, $sheetName, $isSheetActive, $isSheetVisible, $optionsManager)
     {
         $rowIterator = $this->createRowIterator($xmlReader, $optionsManager);
 
-        return new Sheet($rowIterator, $sheetIndex, $sheetName, $isSheetActive);
+        return new Sheet($rowIterator, $sheetIndex, $sheetName, $isSheetActive, $isSheetVisible);
     }
 
     /**

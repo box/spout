@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\ODS\Manager\Style;
 
 use Box\Spout\Writer\Common\Entity\Style\BorderPart;
+use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\ODS\Helper\BorderHelper;
 
 /**
@@ -149,10 +150,10 @@ EOD;
     /**
      * Returns the contents of the "<office:automatic-styles>" section, inside "content.xml" file.
      *
-     * @param int $numWorksheets Number of worksheets created
+     * @param Worksheet[] $worksheets
      * @return string
      */
-    public function getContentXmlAutomaticStylesSectionContent($numWorksheets)
+    public function getContentXmlAutomaticStylesSectionContent($worksheets)
     {
         $content = '<office:automatic-styles>';
 
@@ -169,10 +170,13 @@ EOD;
 </style:style>
 EOD;
 
-        for ($i = 1; $i <= $numWorksheets; $i++) {
+        foreach ($worksheets as $worksheet) {
+            $worksheetId = $worksheet->getId();
+            $isSheetVisible = $worksheet->getExternalSheet()->isVisible() ? 'true' : 'false';
+
             $content .= <<<EOD
-<style:style style:family="table" style:master-page-name="mp$i" style:name="ta$i">
-    <style:table-properties style:writing-mode="lr-tb" table:display="true"/>
+<style:style style:family="table" style:master-page-name="mp$worksheetId" style:name="ta$worksheetId">
+    <style:table-properties style:writing-mode="lr-tb" table:display="$isSheetVisible"/>
 </style:style>
 EOD;
         }
