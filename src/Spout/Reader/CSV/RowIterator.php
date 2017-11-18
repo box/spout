@@ -3,7 +3,11 @@
 namespace Box\Spout\Reader\CSV;
 
 use Box\Spout\Common\Helper\EncodingHelper;
+use Box\Spout\Common\Helper\GlobalFunctionsHelper;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Reader\Common\Entity\Options;
+use Box\Spout\Reader\Common\Entity\Row;
+use Box\Spout\Reader\CSV\Creator\InternalEntityFactory;
 use Box\Spout\Reader\IteratorInterface;
 
 /**
@@ -23,7 +27,7 @@ class RowIterator implements IteratorInterface
     /** @var int Number of read rows */
     protected $numReadRows = 0;
 
-    /** @var array|null Buffer used to store the row data, while checking if there are more rows to read */
+    /** @var Row|null Buffer used to store the row data, while checking if there are more rows to read */
     protected $rowDataBuffer;
 
     /** @var bool Indicates whether all rows have been read */
@@ -41,26 +45,36 @@ class RowIterator implements IteratorInterface
     /** @var bool Whether empty rows should be returned or skipped */
     protected $shouldPreserveEmptyRows;
 
-    /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
-    protected $globalFunctionsHelper;
-
     /** @var \Box\Spout\Common\Helper\EncodingHelper Helper to work with different encodings */
     protected $encodingHelper;
 
+    /** @var \Box\Spout\Reader\CSV\Creator\InternalEntityFactory Factory to create entities */
+    protected $entityFactory;
+
+    /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
+    protected $globalFunctionsHelper;
+
     /**
      * @param resource $filePointer Pointer to the CSV file to read
-     * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager
-     * @param \Box\Spout\Common\Helper\EncodingHelper $encodingHelper
-     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper $globalFunctionsHelper
+     * @param OptionsManagerInterface $optionsManager
+     * @param EncodingHelper $encodingHelper
+     * @param InternalEntityFactory $entityFactory
+     * @param GlobalFunctionsHelper $globalFunctionsHelper
      */
-    public function __construct($filePointer, $optionsManager, $encodingHelper, $globalFunctionsHelper)
-    {
+    public function __construct(
+        $filePointer,
+        OptionsManagerInterface $optionsManager,
+        EncodingHelper $encodingHelper,
+        InternalEntityFactory $entityFactory,
+        GlobalFunctionsHelper $globalFunctionsHelper
+    ) {
         $this->filePointer = $filePointer;
         $this->fieldDelimiter = $optionsManager->getOption(Options::FIELD_DELIMITER);
         $this->fieldEnclosure = $optionsManager->getOption(Options::FIELD_ENCLOSURE);
         $this->encoding = $optionsManager->getOption(Options::ENCODING);
         $this->shouldPreserveEmptyRows = $optionsManager->getOption(Options::SHOULD_PRESERVE_EMPTY_ROWS);
         $this->encodingHelper = $encodingHelper;
+        $this->entityFactory = $entityFactory;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
     }
 
@@ -133,7 +147,8 @@ class RowIterator implements IteratorInterface
 
         if ($rowData !== false) {
             // str_replace will replace NULL values by empty strings
-            $this->rowDataBuffer = str_replace(null, null, $rowData);
+            $rowDataBufferAsArray = str_replace(null, null, $rowData);
+            $this->rowDataBuffer = $this->entityFactory->createRowFromArray($rowDataBufferAsArray);
             $this->numReadRows++;
         } else {
             // If we reach this point, it means end of file was reached.
@@ -207,7 +222,7 @@ class RowIterator implements IteratorInterface
      * Return the current element from the buffer
      * @see http://php.net/manual/en/iterator.current.php
      *
-     * @return array|null
+     * @return Row|null
      */
     public function current()
     {

@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Reader\XLSX\Creator;
 
-use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
+use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\Wrapper\XMLReader;
@@ -10,13 +10,12 @@ use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Reader\XLSX\RowIterator;
 use Box\Spout\Reader\XLSX\Sheet;
 use Box\Spout\Reader\XLSX\SheetIterator;
-use MongoDB\Driver\Manager;
 
 /**
  * Class EntityFactory
  * Factory to create entities
  */
-class EntityFactory implements EntityFactoryInterface
+class InternalEntityFactory implements InternalEntityFactoryInterface
 {
     /** @var HelperFactory */
     private $helperFactory;

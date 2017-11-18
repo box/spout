@@ -6,7 +6,7 @@ use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
-use Box\Spout\Reader\CSV\Creator\EntityFactory;
+use Box\Spout\Reader\CSV\Creator\InternalEntityFactory;
 use Box\Spout\Reader\CSV\Manager\OptionsManager;
 use Box\Spout\Reader\Exception\ReaderNotOpenedException;
 use Box\Spout\Reader\ReaderInterface;
@@ -320,7 +320,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
             }
         }
 
@@ -351,19 +351,19 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
                 break;
             }
 
             foreach ($sheet->getRowIterator() as $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
                 break;
             }
         }
 
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
                 break;
             }
         }
@@ -444,7 +444,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
             }
         }
 
@@ -482,7 +482,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     {
         $optionsManager = $optionsManager ?: new OptionsManager();
         $globalFunctionsHelper = $globalFunctionsHelper ?: new GlobalFunctionsHelper();
-        $entityFactory = new EntityFactory(new HelperFactory());
+        $entityFactory = new InternalEntityFactory(new HelperFactory());
 
         return new Reader($optionsManager, $globalFunctionsHelper, $entityFactory);
     }
@@ -516,7 +516,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
             foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
             }
         }
 

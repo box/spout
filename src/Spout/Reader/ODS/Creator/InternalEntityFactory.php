@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Reader\ODS\Creator;
 
-use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
+use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\ODS\RowIterator;
@@ -14,7 +14,7 @@ use Box\Spout\Reader\Wrapper\XMLReader;
  * Class EntityFactory
  * Factory to create entities
  */
-class EntityFactory implements EntityFactoryInterface
+class InternalEntityFactory implements InternalEntityFactoryInterface
 {
     /** @var HelperFactory */
     private $helperFactory;

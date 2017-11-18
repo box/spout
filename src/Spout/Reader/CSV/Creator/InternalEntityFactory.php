@@ -5,7 +5,9 @@ namespace Box\Spout\Reader\CSV\Creator;
 use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
+use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
+use Box\Spout\Reader\Common\Entity\Cell;
+use Box\Spout\Reader\Common\Entity\Row;
 use Box\Spout\Reader\CSV\RowIterator;
 use Box\Spout\Reader\CSV\Sheet;
 use Box\Spout\Reader\CSV\SheetIterator;
@@ -14,7 +16,7 @@ use Box\Spout\Reader\CSV\SheetIterator;
  * Class EntityFactory
  * Factory to create entities
  */
-class EntityFactory implements EntityFactoryInterface
+class InternalEntityFactory implements InternalEntityFactoryInterface
 {
     /** @var HelperFactory */
     private $helperFactory;
@@ -60,6 +62,19 @@ class EntityFactory implements EntityFactoryInterface
     {
         $encodingHelper = $this->helperFactory->createEncodingHelper($globalFunctionsHelper);
 
-        return new RowIterator($filePointer, $optionsManager, $encodingHelper, $globalFunctionsHelper);
+        return new RowIterator($filePointer, $optionsManager, $encodingHelper, $this, $globalFunctionsHelper);
+    }
+
+    /**
+     * @param array $cellValues
+     * @return Row
+     */
+    public function createRowFromArray(array $cellValues = [])
+    {
+        $cells = array_map(function ($cellValue) {
+            return new Cell($cellValue);
+        }, $cellValues);
+
+        return new Row($cells);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Reader\XLSX\Manager;
 
-use Box\Spout\Reader\XLSX\Creator\EntityFactory;
+use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 
 /**
  * Class StyleManagerTest
@@ -16,7 +16,7 @@ class StyleManagerTest extends \PHPUnit_Framework_TestCase
      */
     private function getStyleManagerMock($styleAttributes = [], $customNumberFormats = [])
     {
-        $entityFactory = $this->createMock(EntityFactory::class);
+        $entityFactory = $this->createMock(InternalEntityFactory::class);
         $workbookRelationshipsManager = $this->createMock(WorkbookRelationshipsManager::class);
 
         /** @var StyleManager $styleManager */

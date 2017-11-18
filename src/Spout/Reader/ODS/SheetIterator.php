@@ -5,7 +5,7 @@ namespace Box\Spout\Reader\ODS;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
-use Box\Spout\Reader\ODS\Creator\EntityFactory;
+use Box\Spout\Reader\ODS\Creator\InternalEntityFactory;
 use Box\Spout\Reader\ODS\Helper\SettingsHelper;
 use Box\Spout\Reader\Wrapper\XMLReader;
 
@@ -34,7 +34,7 @@ class SheetIterator implements IteratorInterface
     /** @var \Box\Spout\Common\Manager\OptionsManagerInterface Reader's options manager */
     protected $optionsManager;
 
-    /** @var EntityFactory $entityFactory Factory to create entities */
+    /** @var InternalEntityFactory $entityFactory Factory to create entities */
     protected $entityFactory;
 
     /** @var XMLReader The XMLReader object that will help read sheet's XML data */
@@ -60,7 +60,7 @@ class SheetIterator implements IteratorInterface
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager
      * @param \Box\Spout\Common\Helper\Escaper\ODS $escaper Used to unescape XML data
      * @param SettingsHelper $settingsHelper Helper to get data from "settings.xml"
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      */
     public function __construct($filePath, $optionsManager, $escaper, $settingsHelper, $entityFactory)
     {

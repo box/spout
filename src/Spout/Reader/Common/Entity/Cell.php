@@ -1,9 +1,8 @@
 <?php
 
-namespace Box\Spout\Writer\Common\Entity;
+namespace Box\Spout\Reader\Common\Entity;
 
 use Box\Spout\Common\Helper\CellTypeHelper;
-use Box\Spout\Writer\Common\Entity\Style\Style;
 
 /**
  * Class Cell
@@ -54,19 +53,11 @@ class Cell
     protected $type;
 
     /**
-     * The cell style
-     * @var Style
-     */
-    protected $style;
-
-    /**
      * @param $value mixed
-     * @param Style|null $style
      */
-    public function __construct($value, Style $style = null)
+    public function __construct($value)
     {
         $this->setValue($value);
-        $this->setStyle($style);
     }
 
     /**
@@ -84,22 +75,6 @@ class Cell
     public function getValue()
     {
         return $this->value;
-    }
-
-    /**
-     * @param Style|null $style
-     */
-    public function setStyle($style)
-    {
-        $this->style = $style ?: new Style();
-    }
-
-    /**
-     * @return Style
-     */
-    public function getStyle()
-    {
-        return $this->style;
     }
 
     /**
@@ -148,16 +123,6 @@ class Cell
     public function isEmpty()
     {
         return $this->type === self::TYPE_EMPTY;
-    }
-
-    /**
-     * Not used at the moment
-     *
-     * @return bool
-     */
-    public function isFormula()
-    {
-        return $this->type === self::TYPE_FORMULA;
     }
 
     /**

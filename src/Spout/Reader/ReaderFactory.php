@@ -39,7 +39,7 @@ class ReaderFactory
     {
         $optionsManager = new CSV\Manager\OptionsManager();
         $helperFactory = new HelperFactory();
-        $entityFactory = new CSV\Creator\EntityFactory($helperFactory);
+        $entityFactory = new CSV\Creator\InternalEntityFactory($helperFactory);
         $globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
 
         return new CSV\Reader($optionsManager, $globalFunctionsHelper, $entityFactory);
@@ -53,7 +53,7 @@ class ReaderFactory
         $optionsManager = new XLSX\Manager\OptionsManager();
         $helperFactory = new XLSX\Creator\HelperFactory();
         $managerFactory = new XLSX\Creator\ManagerFactory($helperFactory, new CachingStrategyFactory());
-        $entityFactory = new XLSX\Creator\EntityFactory($managerFactory, $helperFactory);
+        $entityFactory = new XLSX\Creator\InternalEntityFactory($managerFactory, $helperFactory);
         $globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
 
         return new XLSX\Reader($optionsManager, $globalFunctionsHelper, $entityFactory, $managerFactory);
@@ -66,7 +66,7 @@ class ReaderFactory
     {
         $optionsManager = new ODS\Manager\OptionsManager();
         $helperFactory = new ODS\Creator\HelperFactory();
-        $entityFactory = new ODS\Creator\EntityFactory($helperFactory);
+        $entityFactory = new ODS\Creator\InternalEntityFactory($helperFactory);
         $globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
 
         return new ODS\Reader($optionsManager, $globalFunctionsHelper, $entityFactory);

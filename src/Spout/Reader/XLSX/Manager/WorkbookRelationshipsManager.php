@@ -4,7 +4,7 @@ namespace Box\Spout\Reader\XLSX\Manager;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Wrapper\XMLReader;
-use Box\Spout\Reader\XLSX\Creator\EntityFactory;
+use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 
 /**
  * Class WorkbookRelationshipsManager
@@ -30,7 +30,7 @@ class WorkbookRelationshipsManager
     /** @var string Path of the XLSX file being read */
     private $filePath;
 
-    /** @var EntityFactory Factory to create entities */
+    /** @var InternalEntityFactory Factory to create entities */
     private $entityFactory;
 
     /** @var array Cache of the already read workbook relationships: [TYPE] => [FILE_NAME] */
@@ -38,7 +38,7 @@ class WorkbookRelationshipsManager
 
     /**
      * @param string $filePath Path of the XLSX file being read
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      */
     public function __construct($filePath, $entityFactory)
     {

@@ -36,7 +36,7 @@ class ManagerFactory
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param string $tempFolder Temporary folder where the temporary files to store shared strings will be stored
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      * @return SharedStringsManager
      */
     public function createSharedStringsManager($filePath, $tempFolder, $entityFactory)
@@ -55,7 +55,7 @@ class ManagerFactory
 
     /**
      * @param string $filePath Path of the XLSX file being read
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      * @return WorkbookRelationshipsManager
      */
     private function createWorkbookRelationshipsManager($filePath, $entityFactory)
@@ -71,7 +71,7 @@ class ManagerFactory
      * @param string $filePath Path of the XLSX file being read
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
      * @param \Box\Spout\Reader\XLSX\Manager\SharedStringsManager $sharedStringsManager Manages shared strings
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      * @return SheetManager
      */
     public function createSheetManager($filePath, $optionsManager, $sharedStringsManager, $entityFactory)
@@ -83,7 +83,7 @@ class ManagerFactory
 
     /**
      * @param string $filePath Path of the XLSX file being read
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      * @return StyleManager
      */
     public function createStyleManager($filePath, $entityFactory)

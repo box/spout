@@ -3,8 +3,8 @@
 namespace Box\Spout\Reader\XLSX\Manager;
 
 use Box\Spout\Reader\Exception\SharedStringNotFoundException;
-use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
+use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 use Box\Spout\Reader\XLSX\Creator\ManagerFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\FileBasedStrategy;
@@ -50,7 +50,7 @@ class SharedStringsManagerTest extends \PHPUnit_Framework_TestCase
         $cachingStrategyFactory = new CachingStrategyFactory();
         $helperFactory = new HelperFactory();
         $managerFactory = new ManagerFactory($helperFactory, $cachingStrategyFactory);
-        $entityFactory = new EntityFactory($managerFactory, $helperFactory);
+        $entityFactory = new InternalEntityFactory($managerFactory, $helperFactory);
         $workbookRelationshipsManager = new WorkbookRelationshipsManager($resourcePath, $entityFactory);
 
         $this->sharedStringsManager = new SharedStringsManager(
