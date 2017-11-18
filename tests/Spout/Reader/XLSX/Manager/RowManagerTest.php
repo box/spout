@@ -9,7 +9,7 @@ use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 use Box\Spout\Reader\XLSX\Creator\ManagerFactory;
 
 /**
- * Class SharedStringsManagerTest
+ * Class RowManagerTest
  */
 class RowManagerTest extends \PHPUnit_Framework_TestCase
 {

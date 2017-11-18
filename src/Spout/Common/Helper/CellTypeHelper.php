@@ -51,4 +51,18 @@ class CellTypeHelper
     {
         return gettype($value) === 'boolean';
     }
+
+    /**
+     * Returns whether the given value is a DateTime or DateInterval object.
+     *
+     * @param $value
+     * @return bool Whether the given value is a DateTime or DateInterval object
+     */
+    public static function isDateTimeOrDateInterval($value)
+    {
+        return (
+            $value instanceof \DateTime ||
+            $value instanceof \DateInterval
+        );
+    }
 }

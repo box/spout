@@ -71,7 +71,7 @@ class Row
     public function toArray()
     {
         return array_map(function (Cell $cell) {
-            return $cell->getValue();
+            return !$cell->isError() ? $cell->getValue() : null;
         }, $this->cells);
     }
 }

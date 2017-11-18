@@ -377,6 +377,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $allRows = [];
         $resourcePath = $this->getResourcePath('two_sheets_with_strings.ods');
 
+        /** @var Reader $reader */
         $reader = EntityFactory::createReader(Type::ODS);
         $reader->open($resourcePath);
 
@@ -387,7 +388,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         // this loop should only add the first row of each sheet
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
                 break;
             }
         }
@@ -395,7 +396,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         // this loop should only add the first row of the first sheet
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
                 break;
             }
 
@@ -536,7 +537,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
             foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
             }
         }
 

@@ -36,9 +36,14 @@ class Cell
     const TYPE_BOOLEAN = 4;
 
     /**
+     * Date cell type
+     */
+    const TYPE_DATE = 5;
+
+    /**
      * Error cell type
      */
-    const TYPE_ERROR = 5;
+    const TYPE_ERROR = 6;
 
     /**
      * The value of this cell
@@ -86,6 +91,14 @@ class Cell
     }
 
     /**
+     * @param int $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
      * Get the current value type
      *
      * @param mixed|null $value
@@ -99,8 +112,11 @@ class Cell
         if (CellTypeHelper::isEmpty($value)) {
             return self::TYPE_EMPTY;
         }
-        if (CellTypeHelper::isNumeric($this->getValue())) {
+        if (CellTypeHelper::isNumeric($value)) {
             return self::TYPE_NUMERIC;
+        }
+        if (CellTypeHelper::isDateTimeOrDateInterval($value)) {
+            return self::TYPE_DATE;
         }
         if (CellTypeHelper::isNonEmptyString($value)) {
             return self::TYPE_STRING;

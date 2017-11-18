@@ -66,7 +66,8 @@ class ReaderFactory
     {
         $optionsManager = new ODS\Manager\OptionsManager();
         $helperFactory = new ODS\Creator\HelperFactory();
-        $entityFactory = new ODS\Creator\InternalEntityFactory($helperFactory);
+        $managerFactory = new ODS\Creator\ManagerFactory();
+        $entityFactory = new ODS\Creator\InternalEntityFactory($helperFactory, $managerFactory);
         $globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
 
         return new ODS\Reader($optionsManager, $globalFunctionsHelper, $entityFactory);
