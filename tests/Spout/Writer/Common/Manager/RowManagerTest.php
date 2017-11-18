@@ -5,7 +5,6 @@ namespace Spout\Writer\Common\Manager;
 use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Manager\RowManager;
-use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use PHPUnit\Framework\TestCase;
 
 class RowManagerTest extends TestCase
@@ -33,7 +32,7 @@ class RowManagerTest extends TestCase
      */
     public function testIsEmptyRow(array $cells, $expectedIsEmpty)
     {
-        $rowManager = new RowManager(new StyleMerger());
+        $rowManager = new RowManager();
 
         $row = new Row($cells, null);
         $this->assertEquals($expectedIsEmpty, $rowManager->isEmpty($row));

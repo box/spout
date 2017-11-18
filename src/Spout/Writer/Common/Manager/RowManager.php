@@ -3,23 +3,9 @@
 namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Writer\Common\Entity\Row;
-use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 class RowManager
 {
-    /**
-     * @var StyleMerger
-     */
-    protected $styleMerger;
-
-    /**
-     * @param StyleMerger $styleMerger
-     */
-    public function __construct(StyleMerger $styleMerger)
-    {
-        $this->styleMerger = $styleMerger;
-    }
-
     /**
      * Detect whether a row is considered empty.
      * An empty row has all of its cells empty.
