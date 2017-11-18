@@ -2,6 +2,8 @@
 
 namespace Box\Spout\Reader\ODS\Helper;
 
+use Box\Spout\Reader\Exception\InvalidValueException;
+
 /**
  * Class CellValueFormatter
  * This class provides helper functions to format cell values
@@ -54,7 +56,8 @@ class CellValueFormatter
      * @see http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#refTable13
      *
      * @param \DOMNode $node
-     * @return string|int|float|bool|\DateTime|\DateInterval|null The value associated with the cell, empty string if cell's type is void/undefined, null on error
+     * @throws InvalidValueException If the node value is not valid
+     * @return string|int|float|bool|\DateTime|\DateInterval The value associated with the cell, empty string if cell's type is void/undefined
      */
     public function extractAndFormatNodeValue($node)
     {
@@ -150,7 +153,8 @@ class CellValueFormatter
      * Returns the cell Date value from the given node.
      *
      * @param \DOMNode $node
-     * @return \DateTime|string|null The value associated with the cell or NULL if invalid date value
+     * @throws InvalidValueException If the value is not a valid date
+     * @return \DateTime|string The value associated with the cell
      */
     protected function formatDateCellValue($node)
     {
@@ -165,11 +169,11 @@ class CellValueFormatter
             $cellValue = $nodeWithValueAlreadyFormatted->nodeValue;
         } else {
             // otherwise, get it from the "date-value" attribute
+            $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_DATE_VALUE);
             try {
-                $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_DATE_VALUE);
                 $cellValue = new \DateTime($nodeValue);
             } catch (\Exception $e) {
-                $cellValue = null;
+                throw new InvalidValueException($nodeValue);
             }
         }
 
@@ -180,7 +184,8 @@ class CellValueFormatter
      * Returns the cell Time value from the given node.
      *
      * @param \DOMNode $node
-     * @return \DateInterval|string|null The value associated with the cell or NULL if invalid time value
+     * @throws InvalidValueException If the value is not a valid time
+     * @return \DateInterval|string The value associated with the cell
      */
     protected function formatTimeCellValue($node)
     {
@@ -195,11 +200,11 @@ class CellValueFormatter
             $cellValue = $nodeWithValueAlreadyFormatted->nodeValue;
         } else {
             // otherwise, get it from the "time-value" attribute
+            $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_TIME_VALUE);
             try {
-                $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_TIME_VALUE);
                 $cellValue = new \DateInterval($nodeValue);
             } catch (\Exception $e) {
-                $cellValue = null;
+                throw new InvalidValueException($nodeValue);
             }
         }
 

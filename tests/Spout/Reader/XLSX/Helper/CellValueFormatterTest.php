@@ -3,6 +3,7 @@
 namespace Box\Spout\Reader\XLSX\Helper;
 
 use Box\Spout\Common\Helper\Escaper;
+use Box\Spout\Reader\Exception\InvalidValueException;
 use Box\Spout\Reader\XLSX\Manager\StyleManager;
 
 /**
@@ -96,13 +97,18 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
 
         $formatter = new CellValueFormatter(null, $styleManagerMock, false, $shouldUse1904Dates, new Escaper\XLSX());
-        $result = $formatter->extractAndFormatNodeValue($nodeMock);
 
-        if ($expectedDateAsString === null) {
-            $this->assertNull($result);
-        } else {
-            $this->assertInstanceOf('DateTime', $result);
-            $this->assertSame($expectedDateAsString, $result->format('Y-m-d H:i:s'));
+        try {
+            $result = $formatter->extractAndFormatNodeValue($nodeMock);
+
+            if ($expectedDateAsString === null) {
+                $this->fail('An exception should have been thrown');
+            } else {
+                $this->assertInstanceOf('DateTime', $result);
+                $this->assertSame($expectedDateAsString, $result->format('Y-m-d H:i:s'));
+            }
+        } catch (InvalidValueException $exception) {
+            // do nothing
         }
     }
 

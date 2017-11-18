@@ -3,7 +3,9 @@
 namespace Box\Spout\Reader\ODS\Creator;
 
 use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
+use Box\Spout\Reader\Common\Entity\Cell;
 use Box\Spout\Reader\Common\Entity\Options;
+use Box\Spout\Reader\Common\Entity\Row;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\ODS\RowIterator;
 use Box\Spout\Reader\ODS\Sheet;
@@ -19,12 +21,17 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
     /** @var HelperFactory */
     private $helperFactory;
 
+    /** @var ManagerFactory */
+    private $managerFactory;
+
     /**
      * @param HelperFactory $helperFactory
+     * @param ManagerFactory $managerFactory
      */
-    public function __construct(HelperFactory $helperFactory)
+    public function __construct(HelperFactory $helperFactory, ManagerFactory $managerFactory)
     {
         $this->helperFactory = $helperFactory;
+        $this->managerFactory = $managerFactory;
     }
 
     /**
@@ -66,8 +73,27 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
         $shouldFormatDates = $optionsManager->getOption(Options::SHOULD_FORMAT_DATES);
         $cellValueFormatter = $this->helperFactory->createCellValueFormatter($shouldFormatDates);
         $xmlProcessor = $this->createXMLProcessor($xmlReader);
+        $rowManager = $this->managerFactory->createRowManager();
 
-        return new RowIterator($xmlReader, $optionsManager, $cellValueFormatter, $xmlProcessor);
+        return new RowIterator($xmlReader, $optionsManager, $cellValueFormatter, $xmlProcessor, $rowManager, $this);
+    }
+
+    /**
+     * @param Cell[] $cells
+     * @return Row
+     */
+    public function createRow(array $cells)
+    {
+        return new Row($cells);
+    }
+
+    /**
+     * @param mixed $cellValue
+     * @return Cell
+     */
+    public function createCell($cellValue)
+    {
+        return new Cell($cellValue);
     }
 
     /**

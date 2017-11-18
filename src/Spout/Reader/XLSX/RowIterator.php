@@ -6,6 +6,7 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Common\Entity\Cell;
 use Box\Spout\Reader\Common\Entity\Row;
 use Box\Spout\Reader\Common\XMLProcessor;
+use Box\Spout\Reader\Exception\InvalidValueException;
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Reader\Wrapper\XMLReader;
@@ -356,9 +357,15 @@ class RowIterator implements IteratorInterface
      */
     protected function getCell($node)
     {
-        $cellValue = $this->cellValueFormatter->extractAndFormatNodeValue($node);
+        try {
+            $cellValue = $this->cellValueFormatter->extractAndFormatNodeValue($node);
+            $cell = $this->entityFactory->createCell($cellValue);
+        } catch (InvalidValueException $exception) {
+            $cell = $this->entityFactory->createCell($exception->getInvalidValue());
+            $cell->setType(Cell::TYPE_ERROR);
+        }
 
-        return $this->entityFactory->createCell($cellValue);
+        return $cell;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Reader\XLSX\Helper;
 
+use Box\Spout\Reader\Exception\InvalidValueException;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Reader\XLSX\Manager\StyleManager;
 
@@ -74,7 +75,8 @@ class CellValueFormatter
      * Returns the (unescaped) correctly marshalled, cell value associated to the given XML node.
      *
      * @param \DOMNode $node
-     * @return string|int|float|bool|\DateTime|null The value associated with the cell (null when the cell has an error)
+     * @throws InvalidValueException If the value is not valid
+     * @return string|int|float|bool|\DateTime The value associated with the cell
      */
     public function extractAndFormatNodeValue($node)
     {
@@ -101,7 +103,7 @@ class CellValueFormatter
             case self::CELL_TYPE_DATE:
                 return $this->formatDateCellValue($vNodeValue);
             default:
-                return null;
+                throw new InvalidValueException($vNodeValue);
         }
     }
 
@@ -124,7 +126,7 @@ class CellValueFormatter
      * Returns the cell String value where string is inline.
      *
      * @param \DOMNode $node
-     * @return string The value associated with the cell (null when the cell has an error)
+     * @return string The value associated with the cell
      */
     protected function formatInlineStringCellValue($node)
     {
@@ -140,7 +142,7 @@ class CellValueFormatter
      * Returns the cell String value from shared-strings file using nodeValue index.
      *
      * @param string $nodeValue
-     * @return string The value associated with the cell (null when the cell has an error)
+     * @return string The value associated with the cell
      */
     protected function formatSharedStringCellValue($nodeValue)
     {
@@ -157,7 +159,7 @@ class CellValueFormatter
      * Returns the cell String value, where string is stored in value node.
      *
      * @param string $nodeValue
-     * @return string The value associated with the cell (null when the cell has an error)
+     * @return string The value associated with the cell
      */
     protected function formatStrCellValue($nodeValue)
     {
@@ -173,7 +175,7 @@ class CellValueFormatter
      *
      * @param string $nodeValue
      * @param int $cellStyleId 0 being the default style
-     * @return int|float|\DateTime|null The value associated with the cell
+     * @return int|float|\DateTime The value associated with the cell
      */
     protected function formatNumericCellValue($nodeValue, $cellStyleId)
     {
@@ -202,15 +204,15 @@ class CellValueFormatter
      *
      * @param float $nodeValue
      * @param int $cellStyleId 0 being the default style
-     * @return \DateTime|null The value associated with the cell or NULL if invalid date value
+     * @throws InvalidValueException If the value is not a valid timestamp
+     * @return \DateTime The value associated with the cell
      */
     protected function formatExcelTimestampValue($nodeValue, $cellStyleId)
     {
         if ($this->isValidTimestampValue($nodeValue)) {
             $cellValue = $this->formatExcelTimestampValueAsDateTimeValue($nodeValue, $cellStyleId);
         } else {
-            // invalid date
-            $cellValue = null;
+            throw new InvalidValueException($nodeValue);
         }
 
         return $cellValue;
@@ -280,7 +282,8 @@ class CellValueFormatter
      * @see ECMA-376 Part 1 - §18.17.4
      *
      * @param string $nodeValue ISO 8601 Date string
-     * @return \DateTime|string|null The value associated with the cell or NULL if invalid date value
+     * @throws InvalidValueException If the value is not a valid date
+     * @return \DateTime|string The value associated with the cell
      */
     protected function formatDateCellValue($nodeValue)
     {
@@ -288,7 +291,7 @@ class CellValueFormatter
         try {
             $cellValue = ($this->shouldFormatDates) ? $nodeValue : new \DateTime($nodeValue);
         } catch (\Exception $e) {
-            $cellValue = null;
+            throw new InvalidValueException($nodeValue);
         }
 
         return $cellValue;
