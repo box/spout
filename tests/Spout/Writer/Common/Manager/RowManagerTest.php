@@ -19,6 +19,7 @@ class RowManagerTest extends TestCase
             // cells, expected isEmpty
             [[], true],
             [[new Cell('')], true],
+            [[new Cell(''), new Cell('')], true],
             [[new Cell(''), new Cell(''), new Cell('Okay')], false],
         ];
     }
@@ -34,7 +35,7 @@ class RowManagerTest extends TestCase
     {
         $rowManager = new RowManager(new StyleMerger());
 
-        $row = new Row($cells, null, $rowManager);
+        $row = new Row($cells, null);
         $this->assertEquals($expectedIsEmpty, $rowManager->isEmpty($row));
     }
 }

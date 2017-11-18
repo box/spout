@@ -19,30 +19,6 @@ class CellHelper
     ];
 
     /**
-     * Fills the missing indexes of an array with a given value.
-     * For instance, $dataArray = []; $a[1] = 1; $a[3] = 3;
-     * Calling fillMissingArrayIndexes($dataArray, 'FILL') will return this array: ['FILL', 1, 'FILL', 3]
-     *
-     * @param array $dataArray The array to fill
-     * @param string $fillValue optional
-     * @return array
-     */
-    public static function fillMissingArrayIndexes($dataArray, $fillValue = '')
-    {
-        if (empty($dataArray)) {
-            return [];
-        }
-        $existingIndexes = array_keys($dataArray);
-
-        $newIndexes = array_fill_keys(range(0, max($existingIndexes)), $fillValue);
-        $dataArray += $newIndexes;
-
-        ksort($dataArray);
-
-        return $dataArray;
-    }
-
-    /**
      * Returns the base 10 column index associated to the cell index (base 26).
      * Excel uses A to Z letters for column indexing, where A is the 1st column,
      * Z is the 26th and AA is the 27th.

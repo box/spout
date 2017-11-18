@@ -3,12 +3,16 @@
 namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Reader\Common\Entity\Cell;
+use Box\Spout\Reader\Common\Entity\Row;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Reader\Wrapper\XMLReader;
+use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 use Box\Spout\Reader\XLSX\Helper\CellHelper;
 use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
+use Box\Spout\Reader\XLSX\Manager\RowManager;
 
 /**
  * Class RowIterator
@@ -42,17 +46,23 @@ class RowIterator implements IteratorInterface
     /** @var Helper\CellValueFormatter Helper to format cell values */
     protected $cellValueFormatter;
 
+    /** @var \Box\Spout\Reader\XLSX\Manager\RowManager Manages rows */
+    protected $rowManager;
+
+    /** @var \Box\Spout\Reader\XLSX\Creator\InternalEntityFactory Factory to create entities */
+    protected $entityFactory;
+
     /**
      * TODO: This variable can be deleted when row indices get preserved
      * @var int Number of read rows
      */
     protected $numReadRows = 0;
 
-    /** @var array Contains the data for the currently processed row (key = cell index, value = cell value) */
-    protected $currentlyProcessedRowData = [];
+    /** @var Row Contains the row currently processed */
+    protected $currentlyProcessedRow;
 
-    /** @var array|null Buffer used to store the row data, while checking if there are more rows to read */
-    protected $rowDataBuffer;
+    /** @var Row|null Buffer used to store the current row, while checking if there are more rows to read */
+    protected $rowBuffer;
 
     /** @var bool Indicates whether all rows have been read */
     protected $hasReachedEndOfFile = false;
@@ -79,14 +89,26 @@ class RowIterator implements IteratorInterface
      * @param XMLReader $xmlReader XML Reader
      * @param XMLProcessor $xmlProcessor Helper to process XML files
      * @param CellValueFormatter $cellValueFormatter Helper to format cell values
+     * @param RowManager $rowManager Manages rows
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      */
-    public function __construct($filePath, $sheetDataXMLFilePath, $shouldPreserveEmptyRows, $xmlReader, $xmlProcessor, $cellValueFormatter)
-    {
+    public function __construct(
+        $filePath,
+        $sheetDataXMLFilePath,
+        $shouldPreserveEmptyRows,
+        $xmlReader,
+        XMLProcessor $xmlProcessor,
+        CellValueFormatter $cellValueFormatter,
+        RowManager $rowManager,
+        InternalEntityFactory $entityFactory
+    ) {
         $this->filePath = $filePath;
         $this->sheetDataXMLFilePath = $this->normalizeSheetDataXMLFilePath($sheetDataXMLFilePath);
+        $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
         $this->xmlReader = $xmlReader;
         $this->cellValueFormatter = $cellValueFormatter;
-        $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
+        $this->rowManager = $rowManager;
+        $this->entityFactory = $entityFactory;
 
         // Register all callbacks to process different nodes when reading the XML file
         $this->xmlProcessor = $xmlProcessor;
@@ -127,7 +149,7 @@ class RowIterator implements IteratorInterface
         $this->numReadRows = 0;
         $this->lastRowIndexProcessed = 0;
         $this->nextRowIndexToBeProcessed = 0;
-        $this->rowDataBuffer = null;
+        $this->rowBuffer = null;
         $this->hasReachedEndOfFile = false;
         $this->numColumns = 0;
 
@@ -192,7 +214,7 @@ class RowIterator implements IteratorInterface
      */
     protected function readDataForNextRow()
     {
-        $this->currentlyProcessedRowData = [];
+        $this->currentlyProcessedRow = $this->entityFactory->createRow([]);
 
         try {
             $this->xmlProcessor->readUntilStopped();
@@ -200,7 +222,7 @@ class RowIterator implements IteratorInterface
             throw new IOException("The {$this->sheetDataXMLFilePath} file cannot be read. [{$exception->getMessage()}]");
         }
 
-        $this->rowDataBuffer = $this->currentlyProcessedRowData;
+        $this->rowBuffer = $this->currentlyProcessedRow;
     }
 
     /**
@@ -238,7 +260,8 @@ class RowIterator implements IteratorInterface
             $numberOfColumnsForRow = (int) $numberOfColumnsForRow;
         }
 
-        $this->currentlyProcessedRowData = ($numberOfColumnsForRow !== 0) ? array_fill(0, $numberOfColumnsForRow, '') : [];
+        $cells = array_fill(0, $numberOfColumnsForRow, $this->entityFactory->createCell(''));
+        $this->currentlyProcessedRow->setCells($cells);
 
         return XMLProcessor::PROCESSING_CONTINUE;
     }
@@ -253,7 +276,9 @@ class RowIterator implements IteratorInterface
 
         // NOTE: expand() will automatically decode all XML entities of the child nodes
         $node = $xmlReader->expand();
-        $this->currentlyProcessedRowData[$currentColumnIndex] = $this->getCellValue($node);
+        $cell = $this->getCell($node);
+
+        $this->currentlyProcessedRow->setCellAtIndex($cell, $currentColumnIndex);
         $this->lastColumnIndexProcessed = $currentColumnIndex;
 
         return XMLProcessor::PROCESSING_CONTINUE;
@@ -265,7 +290,7 @@ class RowIterator implements IteratorInterface
     protected function processRowEndingNode()
     {
         // if the fetched row is empty and we don't want to preserve it..,
-        if (!$this->shouldPreserveEmptyRows && $this->isEmptyRow($this->currentlyProcessedRowData)) {
+        if (!$this->shouldPreserveEmptyRows && $this->rowManager->isEmpty($this->currentlyProcessedRow)) {
             // ... skip it
             return XMLProcessor::PROCESSING_CONTINUE;
         }
@@ -274,7 +299,7 @@ class RowIterator implements IteratorInterface
 
         // If needed, we fill the empty cells
         if ($this->numColumns === 0) {
-            $this->currentlyProcessedRowData = CellHelper::fillMissingArrayIndexes($this->currentlyProcessedRowData);
+            $this->currentlyProcessedRow = $this->rowManager->fillMissingIndexesWithEmptyCells($this->currentlyProcessedRow);
         }
 
         // at this point, we have all the data we need for the row
@@ -324,34 +349,27 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * Returns the (unescaped) correctly marshalled, cell value associated to the given XML node.
+     * Returns the cell with (unescaped) correctly marshalled, cell value associated to the given XML node.
      *
      * @param \DOMNode $node
-     * @return string|int|float|bool|\DateTime|null The value associated with the cell (null when the cell has an error)
+     * @return Cell The cell set with the associated with the cell
      */
-    protected function getCellValue($node)
+    protected function getCell($node)
     {
-        return $this->cellValueFormatter->extractAndFormatNodeValue($node);
-    }
+        $cellValue = $this->cellValueFormatter->extractAndFormatNodeValue($node);
 
-    /**
-     * @param array $rowData
-     * @return bool Whether the given row is empty
-     */
-    protected function isEmptyRow($rowData)
-    {
-        return (count($rowData) === 1 && reset($rowData) === '');
+        return $this->entityFactory->createCell($cellValue);
     }
 
     /**
      * Return the current element, either an empty row or from the buffer.
      * @see http://php.net/manual/en/iterator.current.php
      *
-     * @return array|null
+     * @return Row|null
      */
     public function current()
     {
-        $rowDataForRowToBeProcessed = $this->rowDataBuffer;
+        $rowToBeProcessed = $this->rowBuffer;
 
         if ($this->shouldPreserveEmptyRows) {
             // when we need to preserve empty rows, we will either return
@@ -361,11 +379,11 @@ class RowIterator implements IteratorInterface
             if ($this->lastRowIndexProcessed !== $this->nextRowIndexToBeProcessed) {
                 // return empty row if mismatch between last processed row
                 // and the row that needs to be returned
-                $rowDataForRowToBeProcessed = [''];
+                $rowToBeProcessed = $this->entityFactory->createRow([]);
             }
         }
 
-        return $rowDataForRowToBeProcessed;
+        return $rowToBeProcessed;
     }
 
     /**
