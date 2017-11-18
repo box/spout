@@ -3,7 +3,9 @@
 namespace Box\Spout\Reader\XLSX\Creator;
 
 use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
+use Box\Spout\Reader\Common\Entity\Cell;
 use Box\Spout\Reader\Common\Entity\Options;
+use Box\Spout\Reader\Common\Entity\Row;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
@@ -85,6 +87,7 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
         $xmlProcessor = $this->createXMLProcessor($xmlReader);
 
         $styleManager = $this->managerFactory->createStyleManager($filePath, $this);
+        $rowManager = $this->managerFactory->createRowManager($this);
         $shouldFormatDates = $optionsManager->getOption(Options::SHOULD_FORMAT_DATES);
         $shouldUse1904Dates = $optionsManager->getOption(Options::SHOULD_USE_1904_DATES);
 
@@ -103,8 +106,28 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
             $shouldPreserveEmptyRows,
             $xmlReader,
             $xmlProcessor,
-            $cellValueFormatter
+            $cellValueFormatter,
+            $rowManager,
+            $this
         );
+    }
+
+    /**
+     * @param Cell[] $cells
+     * @return Row
+     */
+    public function createRow(array $cells)
+    {
+        return new Row($cells);
+    }
+
+    /**
+     * @param mixed $cellValue
+     * @return Cell
+     */
+    public function createCell($cellValue)
+    {
+        return new Cell($cellValue);
     }
 
     /**

@@ -12,29 +12,6 @@ class CellHelperTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function dataProviderForTestFillMissingArrayIndexes()
-    {
-        return [
-            [null, []],
-            [[], []],
-            [[1 => 1, 3 => 3], ['FILL', 1, 'FILL', 3]],
-        ];
-    }
-
-    /**
-     * @dataProvider dataProviderForTestFillMissingArrayIndexes
-     * @param array $arrayToFill
-     * @param array $expectedFilledArray
-     */
-    public function testFillMissingArrayIndexes($arrayToFill, array $expectedFilledArray)
-    {
-        $filledArray = CellHelper::fillMissingArrayIndexes($arrayToFill, 'FILL');
-        $this->assertEquals($expectedFilledArray, $filledArray);
-    }
-
-    /**
-     * @return array
-     */
     public function dataProviderForTestGetColumnIndexFromCellIndex()
     {
         return [

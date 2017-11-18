@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Reader\XLSX\Creator;
 
+use Box\Spout\Reader\XLSX\Manager\RowManager;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Reader\XLSX\Manager\SheetManager;
@@ -91,5 +92,14 @@ class ManagerFactory
         $workbookRelationshipsManager = $this->createWorkbookRelationshipsManager($filePath, $entityFactory);
 
         return new StyleManager($filePath, $workbookRelationshipsManager, $entityFactory);
+    }
+
+    /**
+     * @param InternalEntityFactory $entityFactory Factory to create entities
+     * @return RowManager
+     */
+    public function createRowManager($entityFactory)
+    {
+        return new RowManager($entityFactory);
     }
 }

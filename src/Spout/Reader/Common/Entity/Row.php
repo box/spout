@@ -29,7 +29,7 @@ class Row
 
     /**
      * @param Cell[] $cells
-     * @return $this
+     * @return Row
      */
     public function setCells(array $cells)
     {
@@ -37,6 +37,19 @@ class Row
         foreach ($cells as $cell) {
             $this->addCell($cell);
         }
+
+        return $this;
+    }
+
+    /**
+     * @param Cell $cell
+     * @param mixed $cellIndex
+     * @parma int $cellIndex
+     * @return Row
+     */
+    public function setCellAtIndex(Cell $cell, $cellIndex)
+    {
+        $this->cells[$cellIndex] = $cell;
 
         return $this;
     }

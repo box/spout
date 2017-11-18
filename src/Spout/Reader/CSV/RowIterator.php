@@ -27,8 +27,8 @@ class RowIterator implements IteratorInterface
     /** @var int Number of read rows */
     protected $numReadRows = 0;
 
-    /** @var Row|null Buffer used to store the row data, while checking if there are more rows to read */
-    protected $rowDataBuffer;
+    /** @var Row|null Buffer used to store the current row, while checking if there are more rows to read */
+    protected $rowBuffer;
 
     /** @var bool Indicates whether all rows have been read */
     protected $hasReachedEndOfFile = false;
@@ -89,7 +89,7 @@ class RowIterator implements IteratorInterface
         $this->rewindAndSkipBom();
 
         $this->numReadRows = 0;
-        $this->rowDataBuffer = null;
+        $this->rowBuffer = null;
 
         $this->next();
     }
@@ -148,7 +148,7 @@ class RowIterator implements IteratorInterface
         if ($rowData !== false) {
             // str_replace will replace NULL values by empty strings
             $rowDataBufferAsArray = str_replace(null, null, $rowData);
-            $this->rowDataBuffer = $this->entityFactory->createRowFromArray($rowDataBufferAsArray);
+            $this->rowBuffer = $this->entityFactory->createRowFromArray($rowDataBufferAsArray);
             $this->numReadRows++;
         } else {
             // If we reach this point, it means end of file was reached.
@@ -226,7 +226,7 @@ class RowIterator implements IteratorInterface
      */
     public function current()
     {
-        return $this->rowDataBuffer;
+        return $this->rowBuffer;
     }
 
     /**

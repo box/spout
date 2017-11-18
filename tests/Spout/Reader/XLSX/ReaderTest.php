@@ -237,7 +237,6 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
                 'weird string', // valid 'str' string
                 null, // invalid date
             ],
-            ['', '', '', '', '', '', '', '', ''],
         ];
         $this->assertEquals($expectedRows, $allRows);
     }
@@ -451,10 +450,10 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(6, count($allRows), 'There should be 6 rows');
 
         $expectedRows = [
-            [''],
+            [],
             ['s1--A2', 's1--B2', 's1--C2'],
-            [''],
-            [''],
+            [],
+            [],
             ['s1--A5', 's1--B5', 's1--C5'],
             ['s1--A6', 's1--B6', 's1--C6'],
         ];
@@ -580,14 +579,14 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         foreach ($reader->getSheetIterator() as $sheet) {
             // this loop should only add the first row of the first sheet
             foreach ($sheet->getRowIterator() as $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
                 break;
             }
 
             // this loop should rewind the iterator and restart reading from the 1st row again
             // therefore, it should only add the first row of the first sheet
             foreach ($sheet->getRowIterator() as $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
                 break;
             }
 
@@ -598,7 +597,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         foreach ($reader->getSheetIterator() as $sheet) {
             // this loop should only add the first row of the current sheet
             foreach ($sheet->getRowIterator() as $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
                 break;
             }
 
@@ -708,7 +707,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
             foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                $allRows[] = $row;
+                $allRows[] = $row->toArray();
             }
         }
 

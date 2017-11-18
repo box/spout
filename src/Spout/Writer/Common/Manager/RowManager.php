@@ -22,15 +22,19 @@ class RowManager
 
     /**
      * Detect whether a row is considered empty.
-     * An empty row has either no cells at all - or only one empty cell
+     * An empty row has all of its cells empty.
      *
      * @param Row $row
      * @return bool
      */
     public function isEmpty(Row $row)
     {
-        $cells = $row->getCells();
+        foreach ($row->getCells() as $cell) {
+            if (!$cell->isEmpty()) {
+                return false;
+            }
+        }
 
-        return count($cells) === 0 || (count($cells) === 1 && $cells[0]->isEmpty());
+        return true;
     }
 }
