@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Reader\XLSX\Manager;
 
-use Box\Spout\Reader\XLSX\Creator\EntityFactory;
+use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 
 /**
  * Class StyleManager
@@ -51,7 +51,7 @@ class StyleManager
     /** @var string Path of the styles XML file */
     protected $stylesXMLFilePath;
 
-    /** @var EntityFactory Factory to create entities */
+    /** @var InternalEntityFactory Factory to create entities */
     protected $entityFactory;
 
     /** @var array Array containing the IDs of built-in number formats indicating a date */
@@ -69,7 +69,7 @@ class StyleManager
     /**
      * @param string $filePath Path of the XLSX file being read
      * @param WorkbookRelationshipsManager $workbookRelationshipsManager Helps retrieving workbook relationships
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      */
     public function __construct($filePath, $workbookRelationshipsManager, $entityFactory)
     {

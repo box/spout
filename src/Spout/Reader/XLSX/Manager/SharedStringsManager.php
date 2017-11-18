@@ -5,8 +5,8 @@ namespace Box\Spout\Reader\XLSX\Manager;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\Wrapper\XMLReader;
-use Box\Spout\Reader\XLSX\Creator\EntityFactory;
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
+use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyInterface;
 use Box\Spout\Writer\Common\Entity\Workbook;
@@ -41,7 +41,7 @@ class SharedStringsManager
     /** @var WorkbookRelationshipsManager Helps retrieving workbook relationships */
     protected $workbookRelationshipsManager;
 
-    /** @var EntityFactory Factory to create entities */
+    /** @var InternalEntityFactory Factory to create entities */
     protected $entityFactory;
 
     /** @var HelperFactory $helperFactory Factory to create helpers */
@@ -57,7 +57,7 @@ class SharedStringsManager
      * @param string $filePath Path of the XLSX file being read
      * @param string $tempFolder Temporary folder where the temporary files to store shared strings will be stored
      * @param WorkbookRelationshipsManager $workbookRelationshipsManager Helps retrieving workbook relationships
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      * @param HelperFactory $helperFactory Factory to create helpers
      * @param CachingStrategyFactory $cachingStrategyFactory Factory to create shared strings caching strategies
      */

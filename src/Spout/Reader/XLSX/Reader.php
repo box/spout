@@ -5,10 +5,10 @@ namespace Box\Spout\Reader\XLSX;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
+use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\ReaderAbstract;
-use Box\Spout\Reader\XLSX\Creator\EntityFactory;
+use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 use Box\Spout\Reader\XLSX\Creator\ManagerFactory;
 
 /**
@@ -32,13 +32,13 @@ class Reader extends ReaderAbstract
     /**
      * @param OptionsManagerInterface $optionsManager
      * @param GlobalFunctionsHelper $globalFunctionsHelper
-     * @param EntityFactoryInterface $entityFactory
+     * @param InternalEntityFactoryInterface $entityFactory
      * @param ManagerFactory $managerFactory
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
         GlobalFunctionsHelper $globalFunctionsHelper,
-        EntityFactoryInterface $entityFactory,
+        InternalEntityFactoryInterface $entityFactory,
         ManagerFactory $managerFactory
     ) {
         parent::__construct($optionsManager, $globalFunctionsHelper, $entityFactory);
@@ -78,7 +78,7 @@ class Reader extends ReaderAbstract
      */
     protected function openReader($filePath)
     {
-        /** @var EntityFactory $entityFactory */
+        /** @var InternalEntityFactory $entityFactory */
         $entityFactory = $this->entityFactory;
 
         $this->zip = $entityFactory->createZipArchive();

@@ -4,7 +4,7 @@ namespace Box\Spout\Reader\CSV;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Common\Entity\Options;
-use Box\Spout\Reader\CSV\Creator\EntityFactory;
+use Box\Spout\Reader\CSV\Creator\InternalEntityFactory;
 use Box\Spout\Reader\ReaderAbstract;
 
 /**
@@ -92,7 +92,7 @@ class Reader extends ReaderAbstract
             throw new IOException("Could not open file $filePath for reading.");
         }
 
-        /** @var EntityFactory $entityFactory */
+        /** @var InternalEntityFactory $entityFactory */
         $entityFactory = $this->entityFactory;
 
         $this->sheetIterator = $entityFactory->createSheetIterator(

@@ -5,7 +5,7 @@ namespace Box\Spout\Reader;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
-use Box\Spout\Reader\Common\Creator\EntityFactoryInterface;
+use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Exception\ReaderNotOpenedException;
 
@@ -19,7 +19,7 @@ abstract class ReaderAbstract implements ReaderInterface
     /** @var bool Indicates whether the stream is currently open */
     protected $isStreamOpened = false;
 
-    /** @var EntityFactoryInterface Factory to create entities */
+    /** @var InternalEntityFactoryInterface Factory to create entities */
     protected $entityFactory;
 
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
@@ -60,12 +60,12 @@ abstract class ReaderAbstract implements ReaderInterface
     /**
      * @param OptionsManagerInterface $optionsManager
      * @param GlobalFunctionsHelper $globalFunctionsHelper
-     * @param EntityFactoryInterface $entityFactory
+     * @param InternalEntityFactoryInterface $entityFactory
      */
     public function __construct(
         OptionsManagerInterface $optionsManager,
         GlobalFunctionsHelper $globalFunctionsHelper,
-        EntityFactoryInterface $entityFactory
+        InternalEntityFactoryInterface $entityFactory
     ) {
         $this->optionsManager = $optionsManager;
         $this->globalFunctionsHelper = $globalFunctionsHelper;

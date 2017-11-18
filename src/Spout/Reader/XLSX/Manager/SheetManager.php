@@ -4,7 +4,7 @@ namespace Box\Spout\Reader\XLSX\Manager;
 
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Common\XMLProcessor;
-use Box\Spout\Reader\XLSX\Creator\EntityFactory;
+use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 use Box\Spout\Reader\XLSX\Sheet;
 
 /**
@@ -48,7 +48,7 @@ class SheetManager
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var EntityFactory Factory to create entities */
+    /** @var InternalEntityFactory Factory to create entities */
     protected $entityFactory;
 
     /** @var \Box\Spout\Common\Helper\Escaper\XLSX Used to unescape XML data */
@@ -68,7 +68,7 @@ class SheetManager
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface $optionsManager Reader's options manager
      * @param \Box\Spout\Reader\XLSX\Manager\SharedStringsManager $sharedStringsManager Manages shared strings
      * @param \Box\Spout\Common\Helper\Escaper\XLSX $escaper Used to unescape XML data
-     * @param EntityFactory $entityFactory Factory to create entities
+     * @param InternalEntityFactory $entityFactory Factory to create entities
      * @param mixed $sharedStringsManager
      */
     public function __construct($filePath, $optionsManager, $sharedStringsManager, $escaper, $entityFactory)

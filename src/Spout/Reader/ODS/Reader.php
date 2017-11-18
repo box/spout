@@ -3,7 +3,7 @@
 namespace Box\Spout\Reader\ODS;
 
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Reader\ODS\Creator\EntityFactory;
+use Box\Spout\Reader\ODS\Creator\InternalEntityFactory;
 use Box\Spout\Reader\ReaderAbstract;
 
 /**
@@ -38,13 +38,13 @@ class Reader extends ReaderAbstract
      */
     protected function openReader($filePath)
     {
-        /** @var EntityFactory $entityFactory */
+        /** @var InternalEntityFactory $entityFactory */
         $entityFactory = $this->entityFactory;
 
         $this->zip = $entityFactory->createZipArchive();
 
         if ($this->zip->open($filePath) === true) {
-            /** @var EntityFactory $entityFactory */
+            /** @var InternalEntityFactory $entityFactory */
             $entityFactory = $this->entityFactory;
             $this->sheetIterator = $entityFactory->createSheetIterator($filePath, $this->optionsManager);
         } else {

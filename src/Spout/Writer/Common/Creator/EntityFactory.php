@@ -14,7 +14,7 @@ use Box\Spout\Writer\WriterInterface;
 class EntityFactory
 {
     /**
-     * This creates an instance of the appropriate writer, given the type of the file to be read
+     * This creates an instance of the appropriate writer, given the type of the file to be written
      *
      * @param  string $writerType Type of the writer to instantiate
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
