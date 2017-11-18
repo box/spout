@@ -4,7 +4,6 @@ namespace Box\Spout\Writer\Common\Entity;
 
 use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Helper\CellHelper;
-use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 /**
  * Class Cell
@@ -61,11 +60,6 @@ class Cell
     protected $style;
 
     /**
-     * @var StyleMerger
-     */
-    protected $styleMerger;
-
-    /**
      * @param $value mixed
      * @param Style|null $style
      */
@@ -73,7 +67,6 @@ class Cell
     {
         $this->setValue($value);
         $this->setStyle($style);
-        $this->styleMerger = new StyleMerger();
     }
 
     /**
