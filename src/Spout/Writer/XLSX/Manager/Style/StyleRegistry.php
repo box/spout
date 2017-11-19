@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\XLSX\Manager\Style;
 
-use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Common\Entity\Style\Style;
 
 /**
  * Class StyleRegistry

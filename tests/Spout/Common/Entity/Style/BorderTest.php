@@ -1,11 +1,8 @@
 <?php
 
-namespace Box\Spout\Writer\Common\EntityStyle;
+namespace Box\Spout\Common\Entity\Style;
 
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
-use Box\Spout\Writer\Common\Entity\Style\Border;
-use Box\Spout\Writer\Common\Entity\Style\BorderPart;
-use Box\Spout\Writer\Common\Entity\Style\Color;
 use Box\Spout\Writer\Exception\Border\InvalidNameException;
 use Box\Spout\Writer\Exception\Border\InvalidStyleException;
 use Box\Spout\Writer\Exception\Border\InvalidWidthException;

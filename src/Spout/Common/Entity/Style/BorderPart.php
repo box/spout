@@ -1,6 +1,6 @@
 <?php
 
-namespace Box\Spout\Writer\Common\Entity\Style;
+namespace Box\Spout\Common\Entity\Style;
 
 use Box\Spout\Writer\Exception\Border\InvalidNameException;
 use Box\Spout\Writer\Exception\Border\InvalidStyleException;

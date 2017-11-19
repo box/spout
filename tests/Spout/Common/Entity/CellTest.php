@@ -1,11 +1,8 @@
 <?php
 
-namespace Box\Spout\Writer\Common\Entity;
+namespace Box\Spout\Common\Entity;
 
-use Box\Spout\Writer\Common\Entity\Style\Style;
-use PHPUnit\Framework\TestCase;
-
-class CellTest extends TestCase
+class CellTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return void
@@ -13,7 +10,6 @@ class CellTest extends TestCase
     public function testValidInstance()
     {
         $this->assertInstanceOf(Cell::class, new Cell('cell'));
-        $this->assertInstanceOf(Cell::class, new Cell('cell-with-style', $this->createMock(Style::class)));
     }
 
     /**

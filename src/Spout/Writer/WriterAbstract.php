@@ -3,14 +3,14 @@
 namespace Box\Spout\Writer;
 
 use Box\Spout\Common\Creator\HelperFactory;
+use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
-use Box\Spout\Writer\Common\Entity\Row;
-use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 

@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Writer;
 
-use Box\Spout\Writer\Common\Entity\Row;
-use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Entity\Style\Style;
 
 /**
  * Interface WriterInterface

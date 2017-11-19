@@ -2,16 +2,16 @@
 
 namespace Box\Spout\Writer\ODS;
 
+use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Entity\Style\Border;
+use Box\Spout\Common\Entity\Style\Color;
+use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Entity\Row;
-use Box\Spout\Writer\Common\Entity\Style\Border;
-use Box\Spout\Writer\Common\Entity\Style\Color;
-use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 

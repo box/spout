@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\Exception\Border;
 
-use Box\Spout\Writer\Common\Entity\Style\BorderPart;
+use Box\Spout\Common\Entity\Style\BorderPart;
 use Box\Spout\Writer\Exception\WriterException;
 
 class InvalidNameException extends WriterException

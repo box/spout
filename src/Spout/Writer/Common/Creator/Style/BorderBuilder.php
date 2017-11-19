@@ -2,9 +2,9 @@
 
 namespace Box\Spout\Writer\Common\Creator\Style;
 
-use Box\Spout\Writer\Common\Entity\Style\Border;
-use Box\Spout\Writer\Common\Entity\Style\BorderPart;
-use Box\Spout\Writer\Common\Entity\Style\Color;
+use Box\Spout\Common\Entity\Style\Border;
+use Box\Spout\Common\Entity\Style\BorderPart;
+use Box\Spout\Common\Entity\Style\Color;
 
 /**
  * Class BorderBuilder

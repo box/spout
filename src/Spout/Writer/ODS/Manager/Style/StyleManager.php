@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\ODS\Manager\Style;
 
-use Box\Spout\Writer\Common\Entity\Style\BorderPart;
+use Box\Spout\Common\Entity\Style\BorderPart;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\ODS\Helper\BorderHelper;
 
@@ -189,7 +189,7 @@ EOD;
     /**
      * Returns the contents of the "<style:style>" section, inside "<office:automatic-styles>" section
      *
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
+     * @param \Box\Spout\Common\Entity\Style\Style $style
      * @return string
      */
     protected function getStyleSectionContent($style)
@@ -209,7 +209,7 @@ EOD;
     /**
      * Returns the contents of the "<style:text-properties>" section, inside "<style:style>" section
      *
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
+     * @param \Box\Spout\Common\Entity\Style\Style $style
      * @return string
      */
     private function getTextPropertiesSectionContent($style)
@@ -226,7 +226,7 @@ EOD;
     /**
      * Returns the contents of the "<style:text-properties>" section, inside "<style:style>" section
      *
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
+     * @param \Box\Spout\Common\Entity\Style\Style $style
      * @return string
      */
     private function getFontSectionContent($style)
@@ -271,7 +271,7 @@ EOD;
     /**
      * Returns the contents of the "<style:table-cell-properties>" section, inside "<style:style>" section
      *
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
+     * @param \Box\Spout\Common\Entity\Style\Style $style
      * @return string
      */
     private function getTableCellPropertiesSectionContent($style)
@@ -306,7 +306,7 @@ EOD;
     /**
      * Returns the contents of the borders definition for the "<style:table-cell-properties>" section
      *
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
+     * @param \Box\Spout\Common\Entity\Style\Style $style
      * @return string
      */
     private function getBorderXMLContent($style)
@@ -323,7 +323,7 @@ EOD;
     /**
      * Returns the contents of the background color definition for the "<style:table-cell-properties>" section
      *
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style $style
+     * @param \Box\Spout\Common\Entity\Style\Style $style
      * @return string
      */
     private function getBackgroundColorXMLContent($style)

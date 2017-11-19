@@ -2,8 +2,8 @@
 
 namespace Spout\Writer\Common\Manager;
 
+use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Manager\CellManager;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use PHPUnit\Framework\TestCase;

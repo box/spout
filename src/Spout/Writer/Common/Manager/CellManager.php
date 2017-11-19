@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Writer\Common\Manager;
 
-use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 class CellManager

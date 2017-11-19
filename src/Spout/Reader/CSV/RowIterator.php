@@ -2,11 +2,11 @@
 
 namespace Box\Spout\Reader\CSV;
 
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Reader\Common\Entity\Options;
-use Box\Spout\Reader\Common\Entity\Row;
 use Box\Spout\Reader\CSV\Creator\InternalEntityFactory;
 use Box\Spout\Reader\IteratorInterface;
 

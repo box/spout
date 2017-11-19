@@ -2,8 +2,8 @@
 
 namespace Spout\Writer\Common\Manager;
 
-use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Row;
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Writer\Common\Manager\RowManager;
 use PHPUnit\Framework\TestCase;
 

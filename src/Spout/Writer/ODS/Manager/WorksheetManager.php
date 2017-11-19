@@ -2,13 +2,13 @@
 
 namespace Box\Spout\Writer\ODS\Manager;
 
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\Escaper\ODS as ODSEscaper;
 use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Row;
-use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;

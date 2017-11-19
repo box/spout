@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Writer\Common\Creator\Style;
 
-use Box\Spout\Writer\Common\Entity\Style\Border;
-use Box\Spout\Writer\Common\Entity\Style\Color;
+use Box\Spout\Common\Entity\Style\Border;
+use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 
 /**
@@ -37,7 +37,7 @@ class StyleBuilderTest extends \PHPUnit_Framework_TestCase
         $mergedStyle = $styleMerger->merge($currentStyle, $baseStyle);
 
         $this->assertEquals(null, $currentStyle->getBorder(), 'Current style has no border');
-        $this->assertInstanceOf('Box\Spout\Writer\Common\Entity\Style\Border', $baseStyle->getBorder(), 'Base style has a border');
-        $this->assertInstanceOf('Box\Spout\Writer\Common\Entity\Style\Border', $mergedStyle->getBorder(), 'Merged style has a border');
+        $this->assertInstanceOf(Border::class, $baseStyle->getBorder(), 'Base style has a border');
+        $this->assertInstanceOf(Border::class, $mergedStyle->getBorder(), 'Merged style has a border');
     }
 }

@@ -3,11 +3,11 @@
 namespace Box\Spout\Reader\CSV\Creator;
 
 use Box\Spout\Common\Creator\HelperFactory;
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
-use Box\Spout\Reader\Common\Entity\Cell;
-use Box\Spout\Reader\Common\Entity\Row;
 use Box\Spout\Reader\CSV\RowIterator;
 use Box\Spout\Reader\CSV\Sheet;
 use Box\Spout\Reader\CSV\SheetIterator;
@@ -71,7 +71,7 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
      */
     public function createRow(array $cells = [])
     {
-        return new Row($cells);
+        return new Row($cells, null);
     }
 
     /**

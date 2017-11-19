@@ -2,10 +2,10 @@
 
 namespace Box\Spout\Reader\ODS\Creator;
 
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
-use Box\Spout\Reader\Common\Entity\Cell;
 use Box\Spout\Reader\Common\Entity\Options;
-use Box\Spout\Reader\Common\Entity\Row;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\ODS\RowIterator;
 use Box\Spout\Reader\ODS\Sheet;
@@ -84,7 +84,7 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
      */
     public function createRow(array $cells = [])
     {
-        return new Row($cells);
+        return new Row($cells, null);
     }
 
     /**

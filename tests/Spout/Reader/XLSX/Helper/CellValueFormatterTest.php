@@ -104,7 +104,7 @@ class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
             if ($expectedDateAsString === null) {
                 $this->fail('An exception should have been thrown');
             } else {
-                $this->assertInstanceOf('DateTime', $result);
+                $this->assertInstanceOf(\DateTime::class, $result);
                 $this->assertSame($expectedDateAsString, $result->format('Y-m-d H:i:s'));
             }
         } catch (InvalidValueException $exception) {

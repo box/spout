@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Writer\Common\Manager\Style;
 
-use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Style\Style;
 
 /**
  * Interface StyleHManagernterface

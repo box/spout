@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\ODS;
 
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
@@ -9,7 +10,6 @@ use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;

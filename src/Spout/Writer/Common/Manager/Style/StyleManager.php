@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Writer\Common\Manager\Style;
 
-use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Style\Style;
 
 /**
  * Class StyleManager
@@ -69,7 +69,7 @@ class StyleManager implements StyleManagerInterface
      *        on the Windows version of Excel...
      *
      * @param Cell $cell The cell the style should be applied to
-     * @return \Box\Spout\Writer\Common\Entity\Style\Style The eventually updated style
+     * @return \Box\Spout\Common\Entity\Style\Style The eventually updated style
      */
     protected function applyWrapTextIfCellContainsNewLine(Cell $cell)
     {
