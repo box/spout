@@ -2,17 +2,17 @@
 
 namespace Box\Spout\Writer\XLSX;
 
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Entity\Style\Border;
+use Box\Spout\Common\Entity\Style\Color;
+use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Row;
-use Box\Spout\Writer\Common\Entity\Style\Border;
-use Box\Spout\Writer\Common\Entity\Style\Color;
-use Box\Spout\Writer\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
@@ -26,7 +26,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     use TestUsingResource;
     use RowCreationHelper;
 
-    /** @var \Box\Spout\Writer\Common\Entity\Style\Style */
+    /** @var \Box\Spout\Common\Entity\Style\Style */
     private $defaultStyle;
 
     /**
@@ -531,7 +531,7 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
     /**
      * @param Row[] $allRows
      * @param string $fileName
-     * @param \Box\Spout\Writer\Common\Entity\Style\Style|null $defaultStyle
+     * @param \Box\Spout\Common\Entity\Style\Style|null $defaultStyle
      * @return Writer
      */
     private function writeToXLSXFileWithDefaultStyle($allRows, $fileName, $defaultStyle)

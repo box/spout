@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Reader\Common\Creator;
 
-use Box\Spout\Reader\Common\Entity\Cell;
-use Box\Spout\Reader\Common\Entity\Row;
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Row;
 
 /**
  * Interface EntityFactoryInterface

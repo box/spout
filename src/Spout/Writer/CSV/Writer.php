@@ -2,10 +2,10 @@
 
 namespace Box\Spout\Writer\CSV;
 
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Writer\Common\Entity\Options;
-use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\WriterAbstract;
 
 /**

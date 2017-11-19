@@ -2,8 +2,8 @@
 
 namespace Box\Spout\Reader\Common\Manager;
 
-use Box\Spout\Reader\Common\Entity\Cell;
-use Box\Spout\Reader\Common\Entity\Row;
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 use Box\Spout\Reader\XLSX\Creator\ManagerFactory;
@@ -37,7 +37,7 @@ class RowManagerTest extends \PHPUnit_Framework_TestCase
     {
         $rowManager = $this->createRowManager();
 
-        $rowToFill = new Row([]);
+        $rowToFill = new Row([], null);
         foreach ($rowCells as $cellIndex => $cell) {
             $rowToFill->setCellAtIndex($cell, $cellIndex);
         }
@@ -70,7 +70,7 @@ class RowManagerTest extends \PHPUnit_Framework_TestCase
     public function testIsEmptyRow(array $cells, $expectedIsEmpty)
     {
         $rowManager = $this->createRowManager();
-        $row = new Row($cells);
+        $row = new Row($cells, null);
 
         $this->assertEquals($expectedIsEmpty, $rowManager->isEmpty($row));
     }

@@ -2,9 +2,9 @@
 
 namespace Box\Spout\Reader\XLSX;
 
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\IOException;
-use Box\Spout\Reader\Common\Entity\Cell;
-use Box\Spout\Reader\Common\Entity\Row;
 use Box\Spout\Reader\Common\Manager\RowManager;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\Exception\InvalidValueException;

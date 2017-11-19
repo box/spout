@@ -2,12 +2,12 @@
 
 namespace Box\Spout\Writer\Common\Manager;
 
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
-use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Common\Entity\Workbook;
 use Box\Spout\Writer\Common\Entity\Worksheet;

@@ -2,9 +2,9 @@
 
 namespace Box\Spout\Writer\Common\Creator;
 
-use Box\Spout\Writer\Common\Entity\Cell;
-use Box\Spout\Writer\Common\Entity\Row;
-use Box\Spout\Writer\Common\Entity\Style\Style;
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Writer\WriterInterface;
 
 /**

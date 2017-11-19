@@ -2,9 +2,9 @@
 
 namespace Box\Spout\Writer\XLSX\Manager\Style;
 
+use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Entity\Style\Color;
 
 /**
  * Class StyleRegistryTest

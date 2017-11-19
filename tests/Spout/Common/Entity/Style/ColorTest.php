@@ -1,8 +1,8 @@
 <?php
 
-namespace Box\Spout\Writer\Common\Entity\Style;
+namespace Box\Spout\Common\Entity\Style;
 
-use Box\Spout\Writer\Exception\InvalidColorException;
+use Box\Spout\Common\Exception\InvalidColorException;
 
 /**
  * Class ColorTest

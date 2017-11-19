@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Writer\Common\Manager;
 
-use Box\Spout\Writer\Common\Entity\Row;
+use Box\Spout\Common\Entity\Row;
 
 class RowManager
 {

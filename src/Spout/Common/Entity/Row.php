@@ -1,6 +1,8 @@
 <?php
 
-namespace Box\Spout\Reader\Common\Entity;
+namespace Box\Spout\Common\Entity;
+
+use Box\Spout\Common\Entity\Style\Style;
 
 class Row
 {
@@ -11,12 +13,21 @@ class Row
     protected $cells = [];
 
     /**
+     * The row style
+     * @var Style
+     */
+    protected $style;
+
+    /**
      * Row constructor.
      * @param Cell[] $cells
+     * @param Style|null $style
      */
-    public function __construct(array $cells)
+    public function __construct(array $cells, $style)
     {
-        $this->setCells($cells);
+        $this
+            ->setCells($cells)
+            ->setStyle($style);
     }
 
     /**
@@ -71,6 +82,25 @@ class Row
     public function getNumCells()
     {
         return count($this->cells);
+    }
+
+    /**
+     * @return Style
+     */
+    public function getStyle()
+    {
+        return $this->style;
+    }
+
+    /**
+     * @param Style|null $style
+     * @return Row
+     */
+    public function setStyle($style)
+    {
+        $this->style = $style ?: new Style();
+
+        return $this;
     }
 
     /**

@@ -2,13 +2,13 @@
 
 namespace Box\Spout\Writer\CSV;
 
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
-use Box\Spout\Writer\Common\Entity\Row;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 

@@ -2,10 +2,10 @@
 
 namespace Box\Spout\Reader\XLSX\Creator;
 
+use Box\Spout\Common\Entity\Cell;
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
-use Box\Spout\Reader\Common\Entity\Cell;
 use Box\Spout\Reader\Common\Entity\Options;
-use Box\Spout\Reader\Common\Entity\Row;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
@@ -118,7 +118,7 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
      */
     public function createRow(array $cells = [])
     {
-        return new Row($cells);
+        return new Row($cells, null);
     }
 
     /**

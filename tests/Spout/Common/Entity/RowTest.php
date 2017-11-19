@@ -1,11 +1,10 @@
 <?php
 
-namespace Box\Spout\Writer\Common\Entity;
+namespace Box\Spout\Common\Entity;
 
-use Box\Spout\Writer\Common\Entity\Style\Style;
-use PHPUnit\Framework\TestCase;
+use Box\Spout\Common\Entity\Style\Style;
 
-class RowTest extends TestCase
+class RowTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|Style
