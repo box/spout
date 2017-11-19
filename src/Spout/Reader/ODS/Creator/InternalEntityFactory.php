@@ -73,7 +73,7 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
         $shouldFormatDates = $optionsManager->getOption(Options::SHOULD_FORMAT_DATES);
         $cellValueFormatter = $this->helperFactory->createCellValueFormatter($shouldFormatDates);
         $xmlProcessor = $this->createXMLProcessor($xmlReader);
-        $rowManager = $this->managerFactory->createRowManager();
+        $rowManager = $this->managerFactory->createRowManager($this);
 
         return new RowIterator($xmlReader, $optionsManager, $cellValueFormatter, $xmlProcessor, $rowManager, $this);
     }
@@ -82,7 +82,7 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
      * @param Cell[] $cells
      * @return Row
      */
-    public function createRow(array $cells)
+    public function createRow(array $cells = [])
     {
         return new Row($cells);
     }

@@ -1,22 +1,22 @@
 <?php
 
-namespace Box\Spout\Reader\XLSX\Manager;
+namespace Box\Spout\Reader\Common\Manager;
 
+use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
 use Box\Spout\Reader\Common\Entity\Row;
-use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 
 /**
  * Class RowManager
  */
 class RowManager
 {
-    /** @var InternalEntityFactory Factory to create entities */
+    /** @var InternalEntityFactoryInterface Factory to create entities */
     private $entityFactory;
 
     /**
-     * @param InternalEntityFactory $entityFactory Factory to create entities
+     * @param InternalEntityFactoryInterface $entityFactory Factory to create entities
      */
-    public function __construct(InternalEntityFactory $entityFactory)
+    public function __construct(InternalEntityFactoryInterface $entityFactory)
     {
         $this->entityFactory = $entityFactory;
     }
@@ -47,11 +47,11 @@ class RowManager
      */
     public function fillMissingIndexesWithEmptyCells(Row $row)
     {
-        $rowCells = $row->getCells();
-        if (count($rowCells) === 0) {
+        if ($row->getNumCells() === 0) {
             return $row;
         }
 
+        $rowCells = $row->getCells();
         $maxCellIndex = max(array_keys($rowCells));
 
         for ($cellIndex = 0; $cellIndex < $maxCellIndex; $cellIndex++) {

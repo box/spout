@@ -259,7 +259,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
 
         // update max num columns for the worksheet
         $currentMaxNumColumns = $worksheet->getMaxNumColumns();
-        $cellsCount = count($row->getCells());
+        $cellsCount = $row->getNumCells();
         $worksheet->setMaxNumColumns(max($currentMaxNumColumns, $cellsCount));
     }
 

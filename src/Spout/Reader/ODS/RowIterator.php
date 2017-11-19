@@ -7,6 +7,7 @@ use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Reader\Common\Entity\Cell;
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\Common\Entity\Row;
+use Box\Spout\Reader\Common\Manager\RowManager;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\Exception\InvalidValueException;
 use Box\Spout\Reader\Exception\IteratorNotRewindableException;
@@ -14,7 +15,6 @@ use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\Reader\IteratorInterface;
 use Box\Spout\Reader\ODS\Creator\InternalEntityFactory;
 use Box\Spout\Reader\ODS\Helper\CellValueFormatter;
-use Box\Spout\Reader\ODS\Manager\RowManager;
 use Box\Spout\Reader\Wrapper\XMLReader;
 
 /**
@@ -190,7 +190,7 @@ class RowIterator implements IteratorInterface
      */
     protected function readDataForNextRow()
     {
-        $this->currentlyProcessedRow = $this->entityFactory->createRow([]);
+        $this->currentlyProcessedRow = $this->entityFactory->createRow();
 
         try {
             $this->xmlProcessor->readUntilStopped();
@@ -257,7 +257,7 @@ class RowIterator implements IteratorInterface
 
         // if the row is empty, we don't want to return more than one cell
         $actualNumColumnsRepeated = (!$isEmptyRow) ? $this->numColumnsRepeated : 1;
-        $numCellsInCurrentlyProcessedRow = count($this->currentlyProcessedRow->getCells());
+        $numCellsInCurrentlyProcessedRow = $this->currentlyProcessedRow->getNumCells();
 
         // Only add the value if the last read cell is not a trailing empty cell repeater in Excel.
         // The current count of read columns is determined by counting the values in "$this->currentlyProcessedRowData".

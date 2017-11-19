@@ -111,7 +111,6 @@ class WorksheetManager implements WorksheetManagerInterface
     public function addRow(Worksheet $worksheet, Row $row)
     {
         $cells = $row->getCells();
-        $cellsCount = count($cells);
         $rowStyle = $row->getStyle();
 
         $data = '<table:table-row table:style-name="ro1">';
@@ -119,7 +118,7 @@ class WorksheetManager implements WorksheetManagerInterface
         $currentCellIndex = 0;
         $nextCellIndex = 1;
 
-        for ($i = 0; $i < $cellsCount; $i++) {
+        for ($i = 0; $i < $row->getNumCells(); $i++) {
             /** @var Cell $cell */
             $cell = $cells[$currentCellIndex];
             /** @var Cell|null $nextCell */

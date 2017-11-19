@@ -116,7 +116,7 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
      * @param Cell[] $cells
      * @return Row
      */
-    public function createRow(array $cells)
+    public function createRow(array $cells = [])
     {
         return new Row($cells);
     }

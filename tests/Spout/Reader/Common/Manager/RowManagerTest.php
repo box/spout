@@ -1,6 +1,6 @@
 <?php
 
-namespace Box\Spout\Reader\XLSX\Manager;
+namespace Box\Spout\Reader\Common\Manager;
 
 use Box\Spout\Reader\Common\Entity\Cell;
 use Box\Spout\Reader\Common\Entity\Row;
