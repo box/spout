@@ -81,4 +81,12 @@ class Row
 
         return $this;
     }
+
+    /**
+     * @return int
+     */
+    public function getNumCells()
+    {
+        return count($this->cells);
+    }
 }

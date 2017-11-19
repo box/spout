@@ -2,7 +2,7 @@
 
 namespace Box\Spout\Reader\XLSX\Creator;
 
-use Box\Spout\Reader\XLSX\Manager\RowManager;
+use Box\Spout\Reader\Common\Manager\RowManager;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Reader\XLSX\Manager\SheetManager;

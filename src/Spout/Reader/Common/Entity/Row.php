@@ -66,6 +66,14 @@ class Row
     }
 
     /**
+     * @return int
+     */
+    public function getNumCells()
+    {
+        return count($this->cells);
+    }
+
+    /**
      * @return array The row values, as array
      */
     public function toArray()

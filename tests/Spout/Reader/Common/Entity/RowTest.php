@@ -28,7 +28,7 @@ class RowTest extends \PHPUnit\Framework\TestCase
         $row = new Row([], null);
         $row->setCells([$this->getCellMock(), $this->getCellMock()]);
 
-        $this->assertEquals(2, count($row->getCells()));
+        $this->assertEquals(2, $row->getNumCells());
     }
 
     /**
@@ -39,11 +39,11 @@ class RowTest extends \PHPUnit\Framework\TestCase
         $row = new Row([], null);
         $row->setCells([$this->getCellMock(), $this->getCellMock()]);
 
-        $this->assertEquals(2, count($row->getCells()));
+        $this->assertEquals(2, $row->getNumCells());
 
         $row->setCells([$this->getCellMock()]);
 
-        $this->assertEquals(1, count($row->getCells()));
+        $this->assertEquals(1, $row->getNumCells());
     }
 
     /**
@@ -53,11 +53,11 @@ class RowTest extends \PHPUnit\Framework\TestCase
     {
         $row = new Row([], null);
 
-        $this->assertEquals(0, count($row->getCells()));
+        $this->assertEquals(0, $row->getNumCells());
 
         $row->setCells([$this->getCellMock(), $this->getCellMock()]);
 
-        $this->assertEquals(2, count($row->getCells()));
+        $this->assertEquals(2, $row->getNumCells());
     }
 
     /**
@@ -68,11 +68,11 @@ class RowTest extends \PHPUnit\Framework\TestCase
         $row = new Row([], null);
         $row->setCells([$this->getCellMock(), $this->getCellMock()]);
 
-        $this->assertEquals(2, count($row->getCells()));
+        $this->assertEquals(2, $row->getNumCells());
 
         $row->addCell($this->getCellMock());
 
-        $this->assertEquals(3, count($row->getCells()));
+        $this->assertEquals(3, $row->getNumCells());
     }
 
     /**

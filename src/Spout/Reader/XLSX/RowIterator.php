@@ -5,6 +5,7 @@ namespace Box\Spout\Reader\XLSX;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Reader\Common\Entity\Cell;
 use Box\Spout\Reader\Common\Entity\Row;
+use Box\Spout\Reader\Common\Manager\RowManager;
 use Box\Spout\Reader\Common\XMLProcessor;
 use Box\Spout\Reader\Exception\InvalidValueException;
 use Box\Spout\Reader\Exception\XMLProcessingException;
@@ -13,7 +14,6 @@ use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 use Box\Spout\Reader\XLSX\Helper\CellHelper;
 use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
-use Box\Spout\Reader\XLSX\Manager\RowManager;
 
 /**
  * Class RowIterator
@@ -47,7 +47,7 @@ class RowIterator implements IteratorInterface
     /** @var Helper\CellValueFormatter Helper to format cell values */
     protected $cellValueFormatter;
 
-    /** @var \Box\Spout\Reader\XLSX\Manager\RowManager Manages rows */
+    /** @var \Box\Spout\Reader\Common\Manager\RowManager Manages rows */
     protected $rowManager;
 
     /** @var \Box\Spout\Reader\XLSX\Creator\InternalEntityFactory Factory to create entities */
@@ -215,7 +215,7 @@ class RowIterator implements IteratorInterface
      */
     protected function readDataForNextRow()
     {
-        $this->currentlyProcessedRow = $this->entityFactory->createRow([]);
+        $this->currentlyProcessedRow = $this->entityFactory->createRow();
 
         try {
             $this->xmlProcessor->readUntilStopped();
@@ -386,7 +386,7 @@ class RowIterator implements IteratorInterface
             if ($this->lastRowIndexProcessed !== $this->nextRowIndexToBeProcessed) {
                 // return empty row if mismatch between last processed row
                 // and the row that needs to be returned
-                $rowToBeProcessed = $this->entityFactory->createRow([]);
+                $rowToBeProcessed = $this->entityFactory->createRow();
             }
         }
 

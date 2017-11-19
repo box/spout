@@ -66,15 +66,33 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
     }
 
     /**
+     * @param Cell[] $cells
+     * @return Row
+     */
+    public function createRow(array $cells = [])
+    {
+        return new Row($cells);
+    }
+
+    /**
+     * @param mixed $cellValue
+     * @return Cell
+     */
+    public function createCell($cellValue)
+    {
+        return new Cell($cellValue);
+    }
+
+    /**
      * @param array $cellValues
      * @return Row
      */
     public function createRowFromArray(array $cellValues = [])
     {
         $cells = array_map(function ($cellValue) {
-            return new Cell($cellValue);
+            return $this->createCell($cellValue);
         }, $cellValues);
 
-        return new Row($cells);
+        return $this->createRow($cells);
     }
 }

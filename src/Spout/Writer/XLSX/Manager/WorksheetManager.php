@@ -156,7 +156,7 @@ EOD;
         $cellIndex = 0;
         $rowStyle = $row->getStyle();
         $rowIndex = $worksheet->getLastWrittenRowIndex() + 1;
-        $numCells = count($row->getCells());
+        $numCells = $row->getNumCells();
 
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
