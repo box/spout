@@ -1,0 +1,14 @@
+{% assign sectionClass = "section-odd centered" %}
+{% assign sectionTitle = "Supported Spreadsheet Types" %}
+{% assign sectionIcons = "icon-xlsx.png~~icon-ods.png~~icon-csv.png" %}
+
+{% assign emS = '<span class="light-em">' %}
+{% assign emE = '</span>' %}
+
+{% capture sectionContent %}
+    {{ site.spout_html }} supports 3 types of spreadsheets: {{emS}}XLSX{{emE}}, {{emS}}ODS{{emE}} and {{emS}}CSV{{emE}}.<br>
+    {{ site.spout_html }} provides a simple and unified API to read or create these different types of spreadsheets.
+    Switching from one type to another is ridiculously easy!
+{% endcapture %}
+
+{% include section.html %}

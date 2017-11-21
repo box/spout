@@ -1,0 +1,11 @@
+{% assign sectionClass = "section-even centered" %}
+{% assign sectionTitle = "Fast and Scalable" %}
+{% assign sectionIcons = "icon-lightning-bolt.png" %}
+
+{% capture sectionContent %}
+    Reading a small CSV file? No problem!<br>
+    Reading a huge XLSX file? No extra code needed!<br>
+    Writing an ODS file with millions of rows? {{ site.spout_html }} can do it in no time!
+{% endcapture %}
+
+{% include section.html %}
