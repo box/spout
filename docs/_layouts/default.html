@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+  {% include head.html %}
+
+  <body>
+
+    {% include header.html %}
+
+    {% if page.banner %}
+      {% include banner.html %}
+    {% endif %}
+
+    {{ content }}
+
+<!--
+    <div class="page-content">
+      <div class="wrapper">
+
+      </div>
+    </div>
+-->
+
+    {% include footer.html %}
+    {% include algolia.html %}
+
+  </body>
+
+</html>
