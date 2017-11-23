@@ -2,10 +2,12 @@
 
 namespace Box\Spout\Common\Manager;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class OptionsManagerTest
  */
-class OptionsManagerTest extends \PHPUnit_Framework_TestCase
+class OptionsManagerTest extends TestCase
 {
     /**
      * @return void

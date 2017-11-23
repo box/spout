@@ -11,11 +11,12 @@ use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class WriterTest
  */
-class WriterTest extends \PHPUnit_Framework_TestCase
+class WriterTest extends TestCase
 {
     use TestUsingResource;
     use RowCreationHelper;

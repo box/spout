@@ -3,11 +3,12 @@
 namespace Box\Spout\Common\Helper\Escaper;
 
 use Box\Spout\Common\Helper\Escaper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class XLSXTest
  */
-class XLSXTest extends \PHPUnit_Framework_TestCase
+class XLSXTest extends TestCase
 {
     /**
      * @return array

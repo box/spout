@@ -6,11 +6,12 @@ use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Exception\Border\InvalidNameException;
 use Box\Spout\Writer\Exception\Border\InvalidStyleException;
 use Box\Spout\Writer\Exception\Border\InvalidWidthException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class BorderTest
  */
-class BorderTest extends \PHPUnit_Framework_TestCase
+class BorderTest extends TestCase
 {
     /**
      * @return void

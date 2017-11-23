@@ -14,11 +14,12 @@ use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class WriterWithStyleTest
  */
-class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
+class WriterWithStyleTest extends TestCase
 {
     use TestUsingResource;
     use RowCreationHelper;

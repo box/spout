@@ -2,10 +2,12 @@
 
 namespace Box\Spout\Common\Helper;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class CellTypeHelperTest
  */
-class CellTypeHelperTest extends \PHPUnit_Framework_TestCase
+class CellTypeHelperTest extends TestCase
 {
     /**
      * @return array

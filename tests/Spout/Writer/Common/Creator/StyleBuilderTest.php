@@ -5,11 +5,12 @@ namespace Box\Spout\Writer\Common\Creator\Style;
 use Box\Spout\Common\Entity\Style\Border;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class StyleManagerTest
  */
-class StyleBuilderTest extends \PHPUnit_Framework_TestCase
+class StyleBuilderTest extends TestCase
 {
     /**
      * @return void

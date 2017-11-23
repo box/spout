@@ -3,11 +3,12 @@
 namespace Box\Spout\Common\Helper;
 
 use Box\Spout\Common\Exception\IOException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class FileSystemHelperTest
  */
-class FileSystemHelperTest extends \PHPUnit_Framework_TestCase
+class FileSystemHelperTest extends TestCase
 {
     /** @var \Box\Spout\Writer\XLSX\Helper\FileSystemHelper */
     protected $fileSystemHelper;

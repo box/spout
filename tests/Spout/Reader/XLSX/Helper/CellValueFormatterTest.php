@@ -5,11 +5,12 @@ namespace Box\Spout\Reader\XLSX\Helper;
 use Box\Spout\Common\Helper\Escaper;
 use Box\Spout\Reader\Exception\InvalidValueException;
 use Box\Spout\Reader\XLSX\Manager\StyleManager;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CellValueFormatterTest
  */
-class CellValueFormatterTest extends \PHPUnit_Framework_TestCase
+class CellValueFormatterTest extends TestCase
 {
     /**
      * @return array

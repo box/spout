@@ -3,11 +3,12 @@
 namespace Box\Spout\Writer\Common\Creator;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class WriterFactoryTest
  */
-class WriterFactoryTest extends \PHPUnit_Framework_TestCase
+class WriterFactoryTest extends TestCase
 {
     /**
      * @return void

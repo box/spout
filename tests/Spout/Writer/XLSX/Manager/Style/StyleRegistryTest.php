@@ -5,11 +5,12 @@ namespace Box\Spout\Writer\XLSX\Manager\Style;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class StyleRegistryTest
  */
-class StyleRegistryTest extends \PHPUnit_Framework_TestCase
+class StyleRegistryTest extends TestCase
 {
     /**
      * @return StyleRegistry

@@ -7,11 +7,12 @@ use Box\Spout\Common\Entity\Row;
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 use Box\Spout\Reader\XLSX\Creator\ManagerFactory;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class RowManagerTest
  */
-class RowManagerTest extends \PHPUnit_Framework_TestCase
+class RowManagerTest extends TestCase
 {
     /**
      * @return array

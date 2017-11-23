@@ -8,11 +8,12 @@ use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Exception\InvalidSheetNameException;
 use Box\Spout\Writer\RowCreationHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SheetTest
  */
-class SheetTest extends \PHPUnit_Framework_TestCase
+class SheetTest extends TestCase
 {
     use TestUsingResource;
     use RowCreationHelper;

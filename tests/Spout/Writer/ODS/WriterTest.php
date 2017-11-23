@@ -14,11 +14,12 @@ use Box\Spout\Writer\Common\Helper\ZipHelper;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class WriterTest
  */
-class WriterTest extends \PHPUnit_Framework_TestCase
+class WriterTest extends TestCase
 {
     use TestUsingResource;
     use RowCreationHelper;
@@ -135,7 +136,7 @@ class WriterTest extends \PHPUnit_Framework_TestCase
             $writer->addRows($dataRows);
             $this->fail('Exception should have been thrown');
         } catch (SpoutException $e) {
-            $this->assertFalse(file_exists($fileName), 'Output file should have been deleted');
+            $this->assertFileNotExists($fileName, 'Output file should have been deleted');
 
             $numFiles = iterator_count(new \FilesystemIterator($tempFolderPath, \FilesystemIterator::SKIP_DOTS));
             $this->assertEquals(0, $numFiles, 'All temp files should have been deleted');

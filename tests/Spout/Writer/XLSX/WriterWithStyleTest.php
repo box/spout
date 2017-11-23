@@ -17,11 +17,12 @@ use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 use Box\Spout\Writer\XLSX\Manager\OptionsManager;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class WriterWithStyleTest
  */
-class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
+class WriterWithStyleTest extends TestCase
 {
     use TestUsingResource;
     use RowCreationHelper;
