@@ -4,11 +4,12 @@ namespace Box\Spout\Writer\Common\Manager\Style;
 
 use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class StyleRegistryTest
  */
-class StyleRegistryTest extends \PHPUnit_Framework_TestCase
+class StyleRegistryTest extends TestCase
 {
     /** @var Style */
     private $defaultStyle;

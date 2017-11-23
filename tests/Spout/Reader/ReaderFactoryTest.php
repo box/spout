@@ -3,11 +3,12 @@
 namespace Box\Spout\Reader;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ReaderFactoryTest
  */
-class ReaderFactoryTest extends \PHPUnit_Framework_TestCase
+class ReaderFactoryTest extends TestCase
 {
     /**
      * @return void

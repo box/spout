@@ -2,10 +2,12 @@
 
 namespace Box\Spout\Writer\XLSX\Manager\Style;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class StyleManagerTest
  */
-class StyleManagerTest extends \PHPUnit_Framework_TestCase
+class StyleManagerTest extends TestCase
 {
     /**
      * @return array

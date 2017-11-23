@@ -4,11 +4,12 @@ namespace Box\Spout\Writer\Common\Manager\Style;
 
 use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class StyleManagerTest
  */
-class StyleManagerTest extends \PHPUnit_Framework_TestCase
+class StyleManagerTest extends TestCase
 {
     /**
      * @return StyleManager

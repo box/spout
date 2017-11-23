@@ -3,11 +3,12 @@
 namespace Box\Spout\Common\Helper\Escaper;
 
 use Box\Spout\Common\Helper\Escaper;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ODSTest
  */
-class ODSTest extends \PHPUnit_Framework_TestCase
+class ODSTest extends TestCase
 {
     /**
      * @return array

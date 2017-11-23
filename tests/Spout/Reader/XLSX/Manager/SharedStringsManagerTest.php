@@ -10,11 +10,12 @@ use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\FileBasedStrategy;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\InMemoryStrategy;
 use Box\Spout\TestUsingResource;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SharedStringsManagerTest
  */
-class SharedStringsManagerTest extends \PHPUnit_Framework_TestCase
+class SharedStringsManagerTest extends TestCase
 {
     use TestUsingResource;
 

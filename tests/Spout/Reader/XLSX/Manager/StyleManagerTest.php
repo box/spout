@@ -3,11 +3,12 @@
 namespace Box\Spout\Reader\XLSX\Manager;
 
 use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class StyleManagerTest
  */
-class StyleManagerTest extends \PHPUnit_Framework_TestCase
+class StyleManagerTest extends TestCase
 {
     /**
      * @param array $styleAttributes

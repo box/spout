@@ -5,11 +5,12 @@ namespace Box\Spout\Reader\ODS;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Common\Creator\EntityFactory;
 use Box\Spout\TestUsingResource;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SheetTest
  */
-class SheetTest extends \PHPUnit_Framework_TestCase
+class SheetTest extends TestCase
 {
     use TestUsingResource;
 

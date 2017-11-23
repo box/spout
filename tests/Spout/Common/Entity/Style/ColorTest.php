@@ -3,11 +3,12 @@
 namespace Box\Spout\Common\Entity\Style;
 
 use Box\Spout\Common\Exception\InvalidColorException;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ColorTest
  */
-class ColorTest extends \PHPUnit_Framework_TestCase
+class ColorTest extends TestCase
 {
     /**
      * @return array

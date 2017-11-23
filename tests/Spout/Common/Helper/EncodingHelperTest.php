@@ -4,11 +4,12 @@ namespace Box\Spout\Common\Helper;
 
 use Box\Spout\Common\Exception\EncodingConversionException;
 use Box\Spout\TestUsingResource;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class EncodingHelperTest
  */
-class EncodingHelperTest extends \PHPUnit_Framework_TestCase
+class EncodingHelperTest extends TestCase
 {
     use TestUsingResource;
 

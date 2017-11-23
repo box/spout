@@ -3,11 +3,12 @@
 namespace Box\Spout\Reader\XLSX\Manager\SharedStringsCaching;
 
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CachingStrategyFactoryTest
  */
-class CachingStrategyFactoryTest extends \PHPUnit_Framework_TestCase
+class CachingStrategyFactoryTest extends TestCase
 {
     /**
      * @return array

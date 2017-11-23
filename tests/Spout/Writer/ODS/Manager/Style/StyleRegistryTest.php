@@ -3,11 +3,12 @@
 namespace Box\Spout\Writer\ODS\Manager\Style;
 
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class StyleRegistryTest
  */
-class StyleRegistryTest extends \PHPUnit_Framework_TestCase
+class StyleRegistryTest extends TestCase
 {
     /**
      * @return StyleRegistry

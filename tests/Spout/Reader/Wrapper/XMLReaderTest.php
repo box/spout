@@ -4,11 +4,12 @@ namespace Box\Spout\Reader\Wrapper;
 
 use Box\Spout\Reader\Exception\XMLProcessingException;
 use Box\Spout\TestUsingResource;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class XMLReaderTest
  */
-class XMLReaderTest extends \PHPUnit_Framework_TestCase
+class XMLReaderTest extends TestCase
 {
     use TestUsingResource;
 

@@ -17,7 +17,7 @@
         "ext-xmlreader" : "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^5.7.0",
+        "phpunit/phpunit": "^5.7.0 || ^6.4.0",
         "friendsofphp/php-cs-fixer": "^2.7.0"
     },
     "suggest": {

@@ -2,10 +2,12 @@
 
 namespace Box\Spout\Writer\Common\Helper;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class CellHelperTest
  */
-class CellHelperTest extends \PHPUnit_Framework_TestCase
+class CellHelperTest extends TestCase
 {
     /**
      * @return array
