@@ -137,7 +137,7 @@ class WriterWithStyleTest extends TestCase
         $this->writeToXLSXFile($dataRows, $fileName);
 
         $cellDomElements = $this->getCellElementsFromSheetXmlFile($fileName);
-        $this->assertEquals(3, count($cellDomElements), 'There should be 3 cells.');
+        $this->assertCount(3, $cellDomElements, 'There should be 3 cells.');
 
         $this->assertEquals('1', $cellDomElements[0]->getAttribute('s'));
         $this->assertEquals('2', $cellDomElements[1]->getAttribute('s'));
@@ -171,7 +171,7 @@ class WriterWithStyleTest extends TestCase
         // The first and second rows should not have a reference to the empty cell
         // The other rows should have the reference because style should be applied to them
         // So that's: 2 + 2 + 3 + 3 = 10 cells
-        $this->assertEquals(10, count($cellDomElements));
+        $this->assertCount(10, $cellDomElements);
 
         // First row has 2 styled cells
         $this->assertEquals('0', $cellDomElements[0]->getAttribute('s'));
@@ -499,9 +499,9 @@ class WriterWithStyleTest extends TestCase
             $shouldApplyBorder = ((int) $node->getAttribute('applyBorder') === 1);
             if ($shouldApplyBorder) {
                 $bordersApplied++;
-                $this->assertTrue((int) $node->getAttribute('borderId') > 0, 'BorderId is greater than 0');
+                $this->assertGreaterThan(0, (int) $node->getAttribute('borderId'), 'BorderId is greater than 0');
             } else {
-                $this->assertTrue((int) $node->getAttribute('borderId') === 0, 'BorderId is 0');
+                $this->assertSame(0, (int) $node->getAttribute('borderId'), 'BorderId is 0');
             }
         }
 

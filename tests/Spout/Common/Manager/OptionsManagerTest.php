@@ -16,7 +16,7 @@ class OptionsManagerTest extends TestCase
     {
         $optionsManager = new FakeOptionsManager();
         $this->assertEquals('foo-val', $optionsManager->getOption('foo'));
-        $this->assertEquals(false, $optionsManager->getOption('bar'));
+        $this->assertFalse($optionsManager->getOption('bar'));
     }
 
     /**

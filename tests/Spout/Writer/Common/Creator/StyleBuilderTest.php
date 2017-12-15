@@ -37,7 +37,7 @@ class StyleBuilderTest extends TestCase
         $styleMerger = new StyleMerger();
         $mergedStyle = $styleMerger->merge($currentStyle, $baseStyle);
 
-        $this->assertEquals(null, $currentStyle->getBorder(), 'Current style has no border');
+        $this->assertNull($currentStyle->getBorder(), 'Current style has no border');
         $this->assertInstanceOf(Border::class, $baseStyle->getBorder(), 'Base style has a border');
         $this->assertInstanceOf(Border::class, $mergedStyle->getBorder(), 'Merged style has a border');
     }

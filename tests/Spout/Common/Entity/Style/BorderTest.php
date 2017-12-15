@@ -67,7 +67,7 @@ class BorderTest extends TestCase
             ->addPart(new BorderPart(Border::BOTTOM))
             ->addPart(new BorderPart(Border::LEFT));
 
-        $this->assertEquals(4, count($border->getParts()), 'There should never be more than 4 border parts');
+        $this->assertCount(4, $border->getParts(), 'There should never be more than 4 border parts');
     }
 
     /**
@@ -80,7 +80,7 @@ class BorderTest extends TestCase
             new BorderPart(Border::LEFT),
         ]);
 
-        $this->assertEquals(1, count($border->getParts()), 'It should be possible to set the border parts');
+        $this->assertCount(1, $border->getParts(), 'It should be possible to set the border parts');
     }
 
     /**
@@ -94,7 +94,7 @@ class BorderTest extends TestCase
             ->setBorderLeft()
             ->setBorderRight()
             ->build();
-        $this->assertEquals(4, count($border->getParts()), 'The border builder exposes a fluent interface');
+        $this->assertCount(4, $border->getParts(), 'The border builder exposes a fluent interface');
     }
 
     /**
@@ -110,7 +110,7 @@ class BorderTest extends TestCase
                     $borderPart = new BorderPart($allowedName, $color, $allowedWidth, $allowedStyle);
                     $border = new Border();
                     $border->addPart($borderPart);
-                    $this->assertEquals(1, count($border->getParts()));
+                    $this->assertCount(1, $border->getParts());
 
                     /** @var $part BorderPart */
                     $part = $border->getParts()[$allowedName];

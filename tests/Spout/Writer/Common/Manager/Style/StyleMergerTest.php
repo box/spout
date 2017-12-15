@@ -153,6 +153,6 @@ class StyleMergerTest extends TestCase
         $fakeStyle = (new StyleBuilder())->build();
         $styleRegistry = new StyleRegistry($fakeStyle);
 
-        $this->assertTrue($styleRegistry->serialize($style1) === $styleRegistry->serialize($style2));
+        $this->assertSame($styleRegistry->serialize($style1), $styleRegistry->serialize($style2));
     }
 }

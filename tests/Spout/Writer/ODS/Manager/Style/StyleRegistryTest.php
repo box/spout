@@ -27,7 +27,7 @@ class StyleRegistryTest extends TestCase
     {
         $styleRegistry = $this->getStyleRegistry();
 
-        $this->assertEquals(1, count($styleRegistry->getUsedFonts()), 'There should only be the default font name');
+        $this->assertCount(1, $styleRegistry->getUsedFonts(), 'There should only be the default font name');
 
         $style1 = (new StyleBuilder())->setFontName('MyFont1')->build();
         $styleRegistry->registerStyle($style1);
@@ -35,6 +35,6 @@ class StyleRegistryTest extends TestCase
         $style2 = (new StyleBuilder())->setFontName('MyFont2')->build();
         $styleRegistry->registerStyle($style2);
 
-        $this->assertEquals(3, count($styleRegistry->getUsedFonts()), 'There should be 3 fonts registered');
+        $this->assertCount(3, $styleRegistry->getUsedFonts(), 'There should be 3 fonts registered');
     }
 }

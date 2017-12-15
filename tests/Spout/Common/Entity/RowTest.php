@@ -96,6 +96,6 @@ class RowTest extends \PHPUnit\Framework\TestCase
             ->setStyle($this->getStyleMock())
             ->setCells([]);
 
-        $this->assertTrue(is_object($row));
+        $this->assertInternalType('object', $row);
     }
 }

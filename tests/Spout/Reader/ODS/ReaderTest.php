@@ -64,9 +64,9 @@ class ReaderTest extends TestCase
     {
         $allRows = $this->getAllRowsForFile($resourceName);
 
-        $this->assertEquals($expectedNumOfRows, count($allRows), "There should be $expectedNumOfRows rows");
+        $this->assertCount($expectedNumOfRows, $allRows, "There should be $expectedNumOfRows rows");
         foreach ($allRows as $row) {
-            $this->assertEquals($expectedNumOfCellsPerRow, count($row), "There should be $expectedNumOfCellsPerRow cells for every row");
+            $this->assertCount($expectedNumOfCellsPerRow, $row, "There should be $expectedNumOfCellsPerRow cells for every row");
         }
     }
 
@@ -228,7 +228,7 @@ class ReaderTest extends TestCase
     {
         $allRows = $this->getAllRowsForFile('sheet_with_empty_rows.ods');
 
-        $this->assertEquals(3, count($allRows), 'There should be only 3 rows, because the empty rows are skipped');
+        $this->assertCount(3, $allRows, 'There should be only 3 rows, because the empty rows are skipped');
 
         $expectedRows = [
             // skipped row here
@@ -248,7 +248,7 @@ class ReaderTest extends TestCase
     {
         $allRows = $this->getAllRowsForFile('sheet_with_empty_rows.ods', false, true);
 
-        $this->assertEquals(6, count($allRows), 'There should be 6 rows');
+        $this->assertCount(6, $allRows, 'There should be 6 rows');
 
         $expectedRows = [
             [''],
