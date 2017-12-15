@@ -25,7 +25,7 @@ class XMLReaderTest extends TestCase
         // using "@" to prevent errors/warning to be displayed
         $wasOpenSuccessful = @$xmlReader->openFileInZip($resourcePath, 'path/to/fake/file.xml');
 
-        $this->assertTrue($wasOpenSuccessful === false);
+        $this->assertFalse($wasOpenSuccessful);
     }
 
     /**
@@ -47,8 +47,8 @@ class XMLReaderTest extends TestCase
 
             // using the built-in XMLReader
             $xmlReader = new \XMLReader();
-            $this->assertTrue($xmlReader->open($nonExistingXMLFilePath) !== false);
-            $this->assertTrue(libxml_get_last_error() === false);
+            $this->assertNotFalse($xmlReader->open($nonExistingXMLFilePath));
+            $this->assertFalse(libxml_get_last_error());
 
             libxml_use_internal_errors($initialUseInternalErrorsSetting);
         }

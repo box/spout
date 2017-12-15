@@ -25,7 +25,7 @@ class SheetTest extends TestCase
     {
         $sheets = $this->writeDataToMulitpleSheetsAndReturnSheets('test_get_sheet_index.ods');
 
-        $this->assertEquals(2, count($sheets), '2 sheets should have been created');
+        $this->assertCount(2, $sheets, '2 sheets should have been created');
         $this->assertEquals(0, $sheets[0]->getIndex(), 'The first sheet should be index 0');
         $this->assertEquals(1, $sheets[1]->getIndex(), 'The second sheet should be index 1');
     }
@@ -37,7 +37,7 @@ class SheetTest extends TestCase
     {
         $sheets = $this->writeDataToMulitpleSheetsAndReturnSheets('test_get_sheet_name.ods');
 
-        $this->assertEquals(2, count($sheets), '2 sheets should have been created');
+        $this->assertCount(2, $sheets, '2 sheets should have been created');
         $this->assertEquals('Sheet1', $sheets[0]->getName(), 'Invalid name for the first sheet');
         $this->assertEquals('Sheet2', $sheets[1]->getName(), 'Invalid name for the second sheet');
     }

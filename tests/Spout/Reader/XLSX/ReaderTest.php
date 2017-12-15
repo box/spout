@@ -67,9 +67,9 @@ class ReaderTest extends TestCase
     {
         $allRows = $this->getAllRowsForFile($resourceName);
 
-        $this->assertEquals($expectedNumOfRows, count($allRows), "There should be $expectedNumOfRows rows");
+        $this->assertCount($expectedNumOfRows, $allRows, "There should be $expectedNumOfRows rows");
         foreach ($allRows as $row) {
-            $this->assertEquals($expectedNumOfCellsPerRow, count($row), "There should be $expectedNumOfCellsPerRow cells for every row");
+            $this->assertCount($expectedNumOfCellsPerRow, $row, "There should be $expectedNumOfCellsPerRow cells for every row");
         }
     }
 
@@ -373,9 +373,9 @@ class ReaderTest extends TestCase
     {
         $allRows = $this->getAllRowsForFile('sheet_without_dimensions_but_spans_and_empty_cells.xlsx');
 
-        $this->assertEquals(2, count($allRows), 'There should be 2 rows');
+        $this->assertCount(2, $allRows, 'There should be 2 rows');
         foreach ($allRows as $row) {
-            $this->assertEquals(5, count($row), 'There should be 5 cells for every row, because empty rows should be preserved');
+            $this->assertCount(5, $row, 'There should be 5 cells for every row, because empty rows should be preserved');
         }
 
         $expectedRows = [
@@ -392,9 +392,9 @@ class ReaderTest extends TestCase
     {
         $allRows = $this->getAllRowsForFile('sheet_without_dimensions_and_empty_cells.xlsx');
 
-        $this->assertEquals(2, count($allRows), 'There should be 2 rows');
-        $this->assertEquals(5, count($allRows[0]), 'There should be 5 cells in the first row');
-        $this->assertEquals(3, count($allRows[1]), 'There should be only 3 cells in the second row, because empty rows at the end should be skip');
+        $this->assertCount(2, $allRows, 'There should be 2 rows');
+        $this->assertCount(5, $allRows[0], 'There should be 5 cells in the first row');
+        $this->assertCount(3, $allRows[1], 'There should be only 3 cells in the second row, because empty rows at the end should be skip');
 
         $expectedRows = [
             ['s1--A1', 's1--B1', 's1--C1', 's1--D1', 's1--E1'],
@@ -410,9 +410,9 @@ class ReaderTest extends TestCase
     {
         $allRows = $this->getAllRowsForFile('sheet_without_dimensions_and_empty_cells.xlsx');
 
-        $this->assertEquals(2, count($allRows), 'There should be 2 rows');
-        $this->assertEquals(5, count($allRows[0]), 'There should be 5 cells in the first row');
-        $this->assertEquals(3, count($allRows[1]), 'There should be only 3 cells in the second row, because empty rows at the end should be skip');
+        $this->assertCount(2, $allRows, 'There should be 2 rows');
+        $this->assertCount(5, $allRows[0], 'There should be 5 cells in the first row');
+        $this->assertCount(3, $allRows[1], 'There should be only 3 cells in the second row, because empty rows at the end should be skip');
 
         $expectedRows = [
             ['s1--A1', 's1--B1', 's1--C1', 's1--D1', 's1--E1'],
@@ -428,7 +428,7 @@ class ReaderTest extends TestCase
     {
         $allRows = $this->getAllRowsForFile('sheet_with_empty_rows_and_missing_row_index.xlsx');
 
-        $this->assertEquals(3, count($allRows), 'There should be only 3 rows, because the empty rows are skipped');
+        $this->assertCount(3, $allRows, 'There should be only 3 rows, because the empty rows are skipped');
 
         $expectedRows = [
             // skipped row here
@@ -448,7 +448,7 @@ class ReaderTest extends TestCase
     {
         $allRows = $this->getAllRowsForFile('sheet_with_empty_rows_and_missing_row_index.xlsx', false, true);
 
-        $this->assertEquals(6, count($allRows), 'There should be 6 rows');
+        $this->assertCount(6, $allRows, 'There should be 6 rows');
 
         $expectedRows = [
             [],

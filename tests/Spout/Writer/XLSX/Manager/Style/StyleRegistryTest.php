@@ -39,7 +39,7 @@ class StyleRegistryTest extends TestCase
         $styleRegistry->registerStyle($styleOrangeBold);
         $styleRegistry->registerStyle($styleNoBackgroundColor);
 
-        $this->assertEquals(2, count($styleRegistry->getRegisteredFills()), 'There should be 2 registered fills');
+        $this->assertCount(2, $styleRegistry->getRegisteredFills(), 'There should be 2 registered fills');
 
         $this->assertEquals(2, $styleRegistry->getFillIdForStyleId($styleBlack->getId()), 'First style with background color set should have index 2 (0 and 1 being reserved)');
         $this->assertEquals(3, $styleRegistry->getFillIdForStyleId($styleOrange->getId()), 'Second style with background color set - different from first style - should have index 3');
@@ -67,7 +67,7 @@ class StyleRegistryTest extends TestCase
         $styleRegistry->registerStyle($styleBoderRightBold);
         $styleRegistry->registerStyle($styleNoBorder);
 
-        $this->assertEquals(2, count($styleRegistry->getRegisteredBorders()), 'There should be 2 registered borders');
+        $this->assertCount(2, $styleRegistry->getRegisteredBorders(), 'There should be 2 registered borders');
 
         $this->assertEquals(1, $styleRegistry->getBorderIdForStyleId($styleBorderLeft->getId()), 'First style with border set should have index 1 (0 is for the default style)');
         $this->assertEquals(2, $styleRegistry->getBorderIdForStyleId($styleBoderRight->getId()), 'Second style with border set - different from first style - should have index 2');

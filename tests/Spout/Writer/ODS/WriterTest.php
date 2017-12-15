@@ -159,7 +159,7 @@ class WriterTest extends TestCase
         $writer->close();
 
         $sheets = $writer->getSheets();
-        $this->assertEquals(2, count($sheets), 'There should be 2 sheets');
+        $this->assertCount(2, $sheets, 'There should be 2 sheets');
         $this->assertEquals($sheets[1], $writer->getCurrentSheet(), 'The current sheet should be the second one.');
     }
 
@@ -398,7 +398,7 @@ class WriterTest extends TestCase
         \ReflectionHelper::setStaticValue('\Box\Spout\Writer\ODS\Manager\WorkbookManager', 'maxRowsPerWorksheet', 2);
 
         $writer = $this->writeToODSFile($dataRows, $fileName, $shouldCreateSheetsAutomatically = true);
-        $this->assertEquals(2, count($writer->getSheets()), '2 sheets should have been created.');
+        $this->assertCount(2, $writer->getSheets(), '2 sheets should have been created.');
 
         $this->assertValueWasNotWrittenToSheet($fileName, 1, 'ods--sheet2--11');
         $this->assertValueWasWrittenToSheet($fileName, 2, 'ods--sheet2--11');
@@ -422,7 +422,7 @@ class WriterTest extends TestCase
         \ReflectionHelper::setStaticValue('\Box\Spout\Writer\ODS\Manager\WorkbookManager', 'maxRowsPerWorksheet', 2);
 
         $writer = $this->writeToODSFile($dataRows, $fileName, $shouldCreateSheetsAutomatically = false);
-        $this->assertEquals(1, count($writer->getSheets()), 'Only 1 sheet should have been created.');
+        $this->assertCount(1, $writer->getSheets(), 'Only 1 sheet should have been created.');
 
         $this->assertValueWasNotWrittenToSheet($fileName, 1, 'ods--sheet1--31');
 
