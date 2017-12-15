@@ -63,9 +63,9 @@ class CachingStrategyFactory
     {
         if ($this->isInMemoryStrategyUsageSafe($sharedStringsUniqueCount)) {
             return new InMemoryStrategy($sharedStringsUniqueCount);
-        } else {
-            return new FileBasedStrategy($tempFolder, self::MAX_NUM_STRINGS_PER_TEMP_FILE, $helperFactory);
         }
+
+        return new FileBasedStrategy($tempFolder, self::MAX_NUM_STRINGS_PER_TEMP_FILE, $helperFactory);
     }
 
     /**
