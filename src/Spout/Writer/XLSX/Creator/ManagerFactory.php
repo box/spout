@@ -80,7 +80,7 @@ class ManagerFactory implements ManagerFactoryInterface
         StyleMerger $styleMerger,
         SharedStringsManager $sharedStringsManager
     ) {
-        $rowManager = $this->createRowManager($styleMerger);
+        $rowManager = $this->createRowManager();
         $stringsEscaper = $this->helperFactory->createStringsEscaper();
         $stringsHelper = $this->helperFactory->createStringHelper();
 
@@ -107,12 +107,11 @@ class ManagerFactory implements ManagerFactoryInterface
     }
 
     /**
-     * @param StyleMerger $styleMerger
      * @return RowManager
      */
-    public function createRowManager(StyleMerger $styleMerger)
+    public function createRowManager()
     {
-        return new RowManager($styleMerger);
+        return new RowManager();
     }
 
     /**
