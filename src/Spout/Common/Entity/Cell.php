@@ -185,6 +185,14 @@ class Cell
     /**
      * @return bool
      */
+    public function isDate()
+    {
+        return $this->type === self::TYPE_DATE;
+    }
+
+    /**
+     * @return bool
+     */
     public function isError()
     {
         return $this->type === self::TYPE_ERROR;

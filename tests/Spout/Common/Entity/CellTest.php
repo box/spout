@@ -57,6 +57,15 @@ class CellTest extends \PHPUnit\Framework\TestCase
     /**
      * @return void
      */
+    public function testCellTypeDate()
+    {
+        $this->assertTrue((new Cell(new \DateTime()))->isDate());
+        $this->assertTrue((new Cell(new \DateInterval('P2Y4DT6H8M')))->isDate());
+    }
+
+    /**
+     * @return void
+     */
     public function testCellTypeError()
     {
         $this->assertTrue((new Cell([]))->isError());
