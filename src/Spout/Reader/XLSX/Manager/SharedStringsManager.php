@@ -9,7 +9,6 @@ use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyInterface;
-use Box\Spout\Writer\Common\Entity\Workbook;
 
 /**
  * Class SharedStringsManager
