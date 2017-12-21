@@ -43,7 +43,12 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
      */
     public function createSheetIterator($filePath, $optionsManager, $sharedStringsManager)
     {
-        $sheetManager = $this->managerFactory->createSheetManager($filePath, $optionsManager, $sharedStringsManager, $this);
+        $sheetManager = $this->managerFactory->createSheetManager(
+            $filePath,
+            $optionsManager,
+            $sharedStringsManager,
+            $this
+        );
 
         return new SheetIterator($sheetManager);
     }

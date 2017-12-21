@@ -92,7 +92,11 @@ class Reader extends ReaderAbstract
                 $this->sharedStringsManager->extractSharedStrings();
             }
 
-            $this->sheetIterator = $entityFactory->createSheetIterator($filePath, $this->optionsManager, $this->sharedStringsManager, $this->globalFunctionsHelper);
+            $this->sheetIterator = $entityFactory->createSheetIterator(
+                $filePath,
+                $this->optionsManager,
+                $this->sharedStringsManager
+            );
         } else {
             throw new IOException("Could not open $filePath for reading.");
         }
