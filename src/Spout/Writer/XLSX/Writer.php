@@ -30,6 +30,44 @@ class Writer extends AbstractMultiSheetsWriter
     /** @var Internal\Workbook The workbook for the XLSX file */
     protected $book;
 
+    /** @var array Collection of column dimensions */
+    protected $columnsWidth = [];
+
+    /**
+     * Defines column width for one or more columns of the worksheet.
+     *
+     * @param int $width
+     * @param int $min first column affected by this 'column info' record
+     * @param int|null $max last column affected by this 'column info' record
+     * @return Writer
+     */
+    public function setColumnsWidth($width, $min = 1, $max = null)
+    {
+        $columnLength = count($this->columnsWidth);
+
+        if ($columnLength > 0 and $min == 1) {
+            $min = $columnLength + 1;
+        } elseif ($columnLength > 0 and $min > 1) {
+            $min = $columnLength;
+        }
+
+        if ($max === null) {
+            $max = $min;
+        }
+
+        $this->columnsWidth[] = [
+            'width' => $width,
+            'min' => $min,
+            'max' => $max
+        ];
+
+        if ($this->book) {
+            $this->book->setColumnsWidth($this->columnsWidth);
+        }
+
+        return $this;
+    }
+
     /**
      * Sets a custom temporary folder for creating intermediate files/folders.
      * This must be set before opening the writer.
@@ -74,7 +112,7 @@ class Writer extends AbstractMultiSheetsWriter
     {
         if (!$this->book) {
             $tempFolder = ($this->tempFolder) ? : sys_get_temp_dir();
-            $this->book = new Workbook($tempFolder, $this->shouldUseInlineStrings, $this->shouldCreateNewSheetsAutomatically, $this->defaultRowStyle);
+            $this->book = new Workbook($tempFolder, $this->shouldUseInlineStrings, $this->shouldCreateNewSheetsAutomatically, $this->defaultRowStyle, $this->columnsWidth);
             $this->book->addNewSheetAndMakeItCurrent();
         }
     }
