@@ -35,14 +35,18 @@ class Workbook extends AbstractWorkbook
     /** @var \Box\Spout\Writer\XLSX\Helper\StyleHelper Helper to apply styles */
     protected $styleHelper;
 
+    /** @var array Collection of column width */
+    protected $columnsWidth;
+
     /**
      * @param string $tempFolder
      * @param bool $shouldUseInlineStrings
      * @param bool $shouldCreateNewSheetsAutomatically
+     * @param array $columnsWidth
      * @param \Box\Spout\Writer\Style\Style $defaultRowStyle
      * @throws \Box\Spout\Common\Exception\IOException If unable to create at least one of the base folders
      */
-    public function __construct($tempFolder, $shouldUseInlineStrings, $shouldCreateNewSheetsAutomatically, $defaultRowStyle)
+    public function __construct($tempFolder, $shouldUseInlineStrings, $shouldCreateNewSheetsAutomatically, $defaultRowStyle, $columnsWidth)
     {
         parent::__construct($shouldCreateNewSheetsAutomatically, $defaultRowStyle);
 
@@ -52,6 +56,7 @@ class Workbook extends AbstractWorkbook
         $this->fileSystemHelper->createBaseFilesAndFolders();
 
         $this->styleHelper = new StyleHelper($defaultRowStyle);
+        $this->columnsWidth = $columnsWidth;
 
         // This helper will be shared by all sheets
         $xlFolder = $this->fileSystemHelper->getXlFolder();
@@ -75,6 +80,17 @@ class Workbook extends AbstractWorkbook
     }
 
     /**
+     * Defines column width for one or more columns of the worksheet.
+     *
+     * @param array $columnsWidth
+     * @return void
+     */
+    public function setColumnsWidth($columnsWidth)
+    {
+        $this->columnsWidth = $columnsWidth;
+    }
+
+    /**
      * Creates a new sheet in the workbook. The current sheet remains unchanged.
      *
      * @return Worksheet The created sheet
@@ -86,7 +102,7 @@ class Workbook extends AbstractWorkbook
         $sheet = new Sheet($newSheetIndex, $this->internalId);
 
         $worksheetFilesFolder = $this->fileSystemHelper->getXlWorksheetsFolder();
-        $worksheet = new Worksheet($sheet, $worksheetFilesFolder, $this->sharedStringsHelper, $this->styleHelper, $this->shouldUseInlineStrings);
+        $worksheet = new Worksheet($sheet, $worksheetFilesFolder, $this->sharedStringsHelper, $this->styleHelper, $this->shouldUseInlineStrings, $this->columnsWidth);
         $this->worksheets[] = $worksheet;
 
         return $worksheet;
