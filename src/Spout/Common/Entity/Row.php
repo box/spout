@@ -54,8 +54,7 @@ class Row
 
     /**
      * @param Cell $cell
-     * @param mixed $cellIndex
-     * @parma int $cellIndex
+     * @param int $cellIndex
      * @return Row
      */
     public function setCellAtIndex(Cell $cell, $cellIndex)
@@ -63,6 +62,15 @@ class Row
         $this->cells[$cellIndex] = $cell;
 
         return $this;
+    }
+
+    /**
+     * @param int $cellIndex
+     * @return Cell|null
+     */
+    public function getCellAtIndex($cellIndex)
+    {
+        return isset($this->cells[$cellIndex]) ? $this->cells[$cellIndex] : null;
     }
 
     /**
