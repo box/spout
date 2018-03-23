@@ -22,6 +22,7 @@ class BorderTest extends TestCase
         $withConstructorParams = new Border([
             new BorderPart(Border::LEFT),
         ]);
+        $this->assertTrue(true);
     }
 
     /**

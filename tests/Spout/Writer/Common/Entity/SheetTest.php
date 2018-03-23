@@ -101,6 +101,7 @@ class SheetTest extends TestCase
         $sheet = $this->createSheet(0, 'workbookId1');
         $sheet->setName($customSheetName);
         $sheet->setName($customSheetName);
+        $this->assertTrue(true);
     }
 
     /**
@@ -134,5 +135,6 @@ class SheetTest extends TestCase
 
         $sheet = $this->createSheet(1, 'workbookId3');
         $sheet->setName($customSheetName);
+        $this->assertTrue(true);
     }
 }

@@ -51,6 +51,8 @@ class XMLReaderTest extends TestCase
             $this->assertFalse(libxml_get_last_error());
 
             libxml_use_internal_errors($initialUseInternalErrorsSetting);
+        } else {
+            $this->markTestSkipped();
         }
     }
 
