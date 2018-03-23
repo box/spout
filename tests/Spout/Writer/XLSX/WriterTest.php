@@ -233,6 +233,7 @@ class WriterTest extends TestCase
         $writer->openToFile($resourcePath);
         $writer->close();
         $writer->close(); // This call should not cause any error
+        $this->assertTrue(true);
     }
 
     /**
@@ -249,8 +250,8 @@ class WriterTest extends TestCase
         $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = true);
 
         foreach ($dataRows as $dataRow) {
-            foreach ($dataRow as $cellValue) {
-                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cellValue);
+            foreach ($dataRow->getCells() as $cell) {
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cell->getValue());
             }
         }
     }
@@ -271,8 +272,8 @@ class WriterTest extends TestCase
 
         for ($i = 1; $i <= $numSheets; $i++) {
             foreach ($dataRows as $dataRow) {
-                foreach ($dataRow as $cellValue) {
-                    $this->assertInlineDataWasWrittenToSheet($fileName, $numSheets, $cellValue);
+                foreach ($dataRow->getCells() as $cell) {
+                    $this->assertInlineDataWasWrittenToSheet($fileName, $numSheets, $cell->getValue());
                 }
             }
         }
@@ -292,8 +293,8 @@ class WriterTest extends TestCase
         $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
 
         foreach ($dataRows as $dataRow) {
-            foreach ($dataRow as $cellValue) {
-                $this->assertSharedStringWasWritten($fileName, $cellValue);
+            foreach ($dataRow->getCells() as $cell) {
+                $this->assertSharedStringWasWritten($fileName, $cell->getValue());
             }
         }
     }
@@ -314,8 +315,8 @@ class WriterTest extends TestCase
 
         for ($i = 1; $i <= $numSheets; $i++) {
             foreach ($dataRows as $dataRow) {
-                foreach ($dataRow as $cellValue) {
-                    $this->assertSharedStringWasWritten($fileName, $cellValue);
+                foreach ($dataRow->getCells() as $cell) {
+                    $this->assertSharedStringWasWritten($fileName, $cell->getValue());
                 }
             }
         }
@@ -334,8 +335,8 @@ class WriterTest extends TestCase
         $this->writeToXLSXFile($dataRows, $fileName);
 
         foreach ($dataRows as $dataRow) {
-            foreach ($dataRow as $cellValue) {
-                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cellValue);
+            foreach ($dataRow->getCells() as $cell) {
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cell->getValue());
             }
         }
     }
@@ -422,18 +423,18 @@ class WriterTest extends TestCase
         $writer->close();
 
         foreach ($dataRowsSheet1 as $dataRow) {
-            foreach ($dataRow as $cellValue) {
-                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cellValue, 'Data should have been written in Sheet 1');
+            foreach ($dataRow->getCells() as $cell) {
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cell->getValue(), 'Data should have been written in Sheet 1');
             }
         }
         foreach ($dataRowsSheet2 as $dataRow) {
-            foreach ($dataRow as $cellValue) {
-                $this->assertInlineDataWasWrittenToSheet($fileName, 2, $cellValue, 'Data should have been written in Sheet 2');
+            foreach ($dataRow->getCells() as $cell) {
+                $this->assertInlineDataWasWrittenToSheet($fileName, 2, $cell->getValue(), 'Data should have been written in Sheet 2');
             }
         }
         foreach ($dataRowsSheet1Again as $dataRow) {
-            foreach ($dataRow as $cellValue) {
-                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cellValue, 'Data should have been written in Sheet 1');
+            foreach ($dataRow->getCells() as $cell) {
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cell->getValue(), 'Data should have been written in Sheet 1');
             }
         }
     }
