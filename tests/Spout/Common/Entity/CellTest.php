@@ -2,7 +2,9 @@
 
 namespace Box\Spout\Common\Entity;
 
-class CellTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class CellTest extends TestCase
 {
     /**
      * @return void
@@ -69,5 +71,15 @@ class CellTest extends \PHPUnit\Framework\TestCase
     public function testCellTypeError()
     {
         $this->assertTrue((new Cell([]))->isError());
+    }
+
+    /**
+     * @return void
+     */
+    public function testErroredCellValueShouldBeNull()
+    {
+        $cell = new Cell([]);
+        $this->assertTrue($cell->isError());
+        $this->assertNull($cell->getValue());
     }
 }

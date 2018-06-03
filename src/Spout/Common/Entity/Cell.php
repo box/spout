@@ -88,7 +88,7 @@ class Cell
      */
     public function getValue()
     {
-        return $this->value;
+        return !$this->isError() ? $this->value : null;
     }
 
     /**
@@ -203,6 +203,6 @@ class Cell
      */
     public function __toString()
     {
-        return (string) $this->value;
+        return (string) $this->getValue();
     }
 }

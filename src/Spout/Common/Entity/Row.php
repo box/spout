@@ -117,7 +117,7 @@ class Row
     public function toArray()
     {
         return array_map(function (Cell $cell) {
-            return !$cell->isError() ? $cell->getValue() : null;
+            return $cell->getValue();
         }, $this->cells);
     }
 }
