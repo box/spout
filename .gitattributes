@@ -1,4 +1,5 @@
-# Ignore all test, documentation and dot files for archive
+# Ignore all tests, documentation and dot files for archive
+/docs               export-ignore
 /tests              export-ignore
 /.editorconfig      export-ignore
 /.gitattributes     export-ignore
