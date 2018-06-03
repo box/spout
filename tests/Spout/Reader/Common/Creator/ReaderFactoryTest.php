@@ -1,6 +1,6 @@
 <?php
 
-namespace Box\Spout\Reader;
+namespace Box\Spout\Reader\Common\Creator;
 
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use PHPUnit\Framework\TestCase;
