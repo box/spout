@@ -5,17 +5,13 @@ language: php
 
 matrix:
   include:
-    - php: 5.6
-      env: WITH_PHPUNIT=true
-    - php: 5.6
+    - php: 7.1
       env: WITH_CS=true
-    - php: 7.0
-      env: WITH_PHPUNIT=true
     - php: 7.1
       env: WITH_PHPUNIT=true WITH_COVERAGE=true
     - php: 7.2
       env: WITH_PHPUNIT=true
-      
+
 cache:
   directories:
     - $HOME/.composer/cache
