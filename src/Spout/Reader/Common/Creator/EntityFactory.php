@@ -2,7 +2,6 @@
 
 namespace Box\Spout\Reader\Common\Creator;
 
-use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\ReaderInterface;
 
 /**
