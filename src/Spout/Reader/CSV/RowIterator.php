@@ -8,6 +8,7 @@ use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\CSV\Creator\InternalEntityFactory;
+use Box\Spout\Reader\Exception\InvalidReaderOptionValueException;
 use Box\Spout\Reader\IteratorInterface;
 
 /**
@@ -54,6 +55,9 @@ class RowIterator implements IteratorInterface
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
+    /** @var OptionsManagerInterface */
+    protected $optionsManager;
+
     /**
      * @param resource $filePointer Pointer to the CSV file to read
      * @param OptionsManagerInterface $optionsManager
@@ -76,6 +80,7 @@ class RowIterator implements IteratorInterface
         $this->encodingHelper = $encodingHelper;
         $this->entityFactory = $entityFactory;
         $this->globalFunctionsHelper = $globalFunctionsHelper;
+        $this->optionsManager = $optionsManager;
     }
 
     /**
@@ -177,15 +182,41 @@ class RowIterator implements IteratorInterface
      * Returns the next row, converted if necessary to UTF-8.
      * As fgetcsv() does not manage correctly encoding for non UTF-8 data,
      * we remove manually whitespace with ltrim or rtrim (depending on the order of the bytes)
-     *
-     * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
-     * @return array|false The row for the current file pointer, encoded in UTF-8 or FALSE if nothing to read
+     * @throws InvalidReaderOptionValueException
+     * @return array|false If unable to convert data to UTF-8
      */
     protected function getNextUTF8EncodedRow()
     {
         $encodedRowData = $this->globalFunctionsHelper->fgetcsv($this->filePointer, self::MAX_READ_BYTES_PER_LINE, $this->fieldDelimiter, $this->fieldEnclosure);
         if ($encodedRowData === false) {
             return false;
+        }
+
+        // The start and end column index should be able to be set after the reader has been opened
+        $startColumnIndex = $this->optionsManager->getOption(Options::START_COLUMN);
+        $endColumnIndex = $this->optionsManager->getOption(Options::END_COLUMN);
+
+        if ($startColumnIndex < 0) {
+            throw new InvalidReaderOptionValueException(
+                'The start column index has to be a non negative number'
+            );
+        }
+
+        if ($endColumnIndex && $endColumnIndex <= $startColumnIndex) {
+            throw new InvalidReaderOptionValueException(
+                'The end column index has to be a larger number than the start index'
+            );
+        }
+
+        // The range of the cells to be read is determined by the start and end column index
+        $readerLength = $endColumnIndex ? ($endColumnIndex - $startColumnIndex) + 1 : null;
+        $encodedRowData = \array_slice($encodedRowData, $startColumnIndex, $readerLength);
+
+        // If there is an end column index  - the resulting data is a fixed array
+        // starting at $startColumnIndex and ending at $endColumnIndex.
+        // Missing array values are filled with the empty value ''.
+        if ($endColumnIndex && count($encodedRowData) < $readerLength) {
+            $encodedRowData = $encodedRowData + \array_fill(0, $readerLength, '');
         }
 
         foreach ($encodedRowData as $cellIndex => $cellValue) {
@@ -202,7 +233,6 @@ class RowIterator implements IteratorInterface
                     $cellValue = rtrim($cellValue);
                     break;
             }
-
             $encodedRowData[$cellIndex] = $this->encodingHelper->attemptConversionToUTF8($cellValue, $this->encoding);
         }
 

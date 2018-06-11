@@ -28,6 +28,12 @@ abstract class ReaderAbstract implements ReaderInterface
     /** @var OptionsManagerInterface Writer options manager */
     protected $optionsManager;
 
+    /** @var int The column index where the reader should start */
+    protected $startColumnIndex;
+
+    /** @var int The column index where the reader should stop */
+    protected $endColumnIndex;
+
     /**
      * Returns whether stream wrappers are supported
      *
@@ -94,6 +100,28 @@ abstract class ReaderAbstract implements ReaderInterface
     public function setShouldPreserveEmptyRows($shouldPreserveEmptyRows)
     {
         $this->optionsManager->setOption(Options::SHOULD_PRESERVE_EMPTY_ROWS, $shouldPreserveEmptyRows);
+
+        return $this;
+    }
+
+    /**
+     * @param int $startColumnIndex The 0 based start column index
+     * @return ReaderAbstract
+     */
+    public function setStartColumnIndex(int $startColumnIndex) : ReaderAbstract
+    {
+        $this->optionsManager->setOption(Options::START_COLUMN, $startColumnIndex);
+
+        return $this;
+    }
+
+    /**
+     * @param int $endColumnIndex
+     * @return ReaderAbstract
+     */
+    public function setEndColumnIndex(int $endColumnIndex) : ReaderAbstract
+    {
+        $this->optionsManager->setOption(Options::END_COLUMN, $endColumnIndex);
 
         return $this;
     }

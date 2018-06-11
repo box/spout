@@ -23,6 +23,8 @@ class OptionsManager extends OptionsManagerAbstract
             Options::FIELD_DELIMITER,
             Options::FIELD_ENCLOSURE,
             Options::ENCODING,
+            Options::START_COLUMN,
+            Options::END_COLUMN,
         ];
     }
 

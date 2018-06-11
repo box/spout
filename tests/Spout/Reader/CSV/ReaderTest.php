@@ -3,13 +3,13 @@
 namespace Box\Spout\Reader\CSV;
 
 use Box\Spout\Common\Creator\HelperFactory;
+use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Reader\CSV\Creator\InternalEntityFactory;
 use Box\Spout\Reader\CSV\Manager\OptionsManager;
 use Box\Spout\Reader\Exception\ReaderNotOpenedException;
-use Box\Spout\Reader\ReaderInterface;
 use Box\Spout\TestUsingResource;
 use PHPUnit\Framework\TestCase;
 
@@ -475,9 +475,143 @@ class ReaderTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testReadWithStartAndEndColumn()
+    {
+        $fileName = 'csv_with_headers.csv';
+        $allRows = $this->getAllRowsForFile($fileName);
+
+        $expectedRows = [
+            ['Header-1', 'Header-2', 'Header-3', ''],
+            ['Test-1', 'Test-2', 'Test-3', ''],
+            ['Test-1', '', '', ''],
+            ['Test-1', 'Test-2', 'Test-3', 'Test-4'],
+            ['', '', 'Test-3', ''],
+        ];
+
+        $this->assertEquals($expectedRows, $allRows, 'All columns are respected without starting column');
+
+        $expectedRowsWithStartAndEnd = [
+            ['Header-2', 'Header-3'],
+            ['Test-2', 'Test-3'],
+            ['', ''],
+            ['Test-2', 'Test-3'],
+            ['', 'Test-3'],
+        ];
+
+        $rowsWithRange = $this->getAllRowsForFileWithRange($fileName, 1, 2);
+
+        $this->assertEquals(
+            $expectedRowsWithStartAndEnd,
+            $rowsWithRange,
+            'All columns are read starting at index 1 and ending at index 2'
+        );
+
+        $expectedRowsWithStart = [
+            ['Header-3', ''],
+            ['Test-3', ''],
+            ['', ''],
+            ['Test-3', 'Test-4'],
+            ['Test-3', ''],
+        ];
+
+        $rowsWithStart = $this->getAllRowsForFileWithRange($fileName, 2);
+
+        $this->assertEquals(
+            $expectedRowsWithStart,
+            $rowsWithStart,
+            'All columns are read starting at index 2'
+        );
+
+        $expectedRowsWithEnd = [
+            ['Header-1', 'Header-2', 'Header-3'],
+            ['Test-1', 'Test-2', 'Test-3'],
+            ['Test-1', '', ''],
+            ['Test-1', 'Test-2', 'Test-3'],
+            ['', '', 'Test-3'],
+        ];
+
+        $rowsWithEnd = $this->getAllRowsForFileWithRange($fileName, 0, 2);
+
+        $this->assertEquals(
+            $expectedRowsWithEnd,
+            $rowsWithEnd,
+            'All columns are read ending at index 2'
+        );
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetStartAndEndColumnAfterReaderOpened()
+    {
+        $fileName = 'csv_with_headers.csv';
+        $resourcePath = $this->getResourcePath($fileName);
+        $allRows = [];
+        $expectedRowsWithStartAndEnd = [
+            ['Header-2', 'Header-3'],
+            ['Test-2', 'Test-3'],
+            ['', ''],
+            ['Test-2', 'Test-3'],
+            ['', 'Test-3'],
+        ];
+
+        /** @var \Box\Spout\Reader\CSV\Reader $reader */
+        $reader = $this->createCSVReader();
+        $reader->open($resourcePath);
+        $reader->setStartColumnIndex(1);
+        $reader->setEndColumnIndex(2);
+        foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
+            /**
+             * @var int
+             * @var Row $row
+             */
+            foreach ($sheet->getRowIterator() as $rowIndex => $row) {
+                $allRows[] = $row->toArray();
+            }
+        }
+        $reader->close();
+        $this->assertEquals($expectedRowsWithStartAndEnd, $allRows, 'Correct range set after reader was opened');
+    }
+
+    public function testDifferentCellsAndRange()
+    {
+        $fileName = 'csv_with_different_cells_number.csv';
+        $allRows = $this->getAllRowsForFileWithRange($fileName, 0, 2);
+
+        $expectedRows = [
+            ['csv--11', 'csv--12', 'csv--13'],
+            ['csv--21', 'csv--22', ''],
+            ['csv--31', '', ''],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     * @expectedException \Box\Spout\Reader\Exception\InvalidReaderOptionValueException
+     */
+    public function testNegativeStartColumnIndex()
+    {
+        $fileName = 'csv_with_headers.csv';
+        $this->getAllRowsForFileWithRange($fileName, -1);
+    }
+
+    /**
+     * @return void
+     * @expectedException \Box\Spout\Reader\Exception\InvalidReaderOptionValueException
+     */
+    public function testEndColumnIndexSmallerThanStartIndex()
+    {
+        $fileName = 'csv_with_headers.csv';
+        $this->getAllRowsForFileWithRange($fileName, 3, 1);
+    }
+
+    /**
      * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper|null $optionsManager
      * @param \Box\Spout\Common\Manager\OptionsManagerInterface|null $globalFunctionsHelper
-     * @return ReaderInterface
+     * @return Reader
      */
     private function createCSVReader($optionsManager = null, $globalFunctionsHelper = null)
     {
@@ -494,28 +628,42 @@ class ReaderTest extends TestCase
      * @param string $fieldEnclosure
      * @param string $encoding
      * @param bool $shouldPreserveEmptyRows
+     * @param int $startColumnIndex
+     * @param int|null $endColumnIndex
      * @return array All the read rows the given file
      */
     private function getAllRowsForFile(
-        $fileName,
-        $fieldDelimiter = ',',
-        $fieldEnclosure = '"',
-        $encoding = EncodingHelper::ENCODING_UTF8,
-        $shouldPreserveEmptyRows = false
-    ) {
+        string $fileName,
+        string $fieldDelimiter = ',',
+        string $fieldEnclosure = '"',
+        string $encoding = EncodingHelper::ENCODING_UTF8,
+        bool $shouldPreserveEmptyRows = false,
+        int $startColumnIndex = 0,
+        int $endColumnIndex = null
+    ) : array {
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
         /** @var \Box\Spout\Reader\CSV\Reader $reader */
         $reader = $this->createCSVReader();
+
+        if ($endColumnIndex) {
+            $reader->setEndColumnIndex($endColumnIndex);
+        }
+
         $reader
             ->setFieldDelimiter($fieldDelimiter)
             ->setFieldEnclosure($fieldEnclosure)
             ->setEncoding($encoding)
             ->setShouldPreserveEmptyRows($shouldPreserveEmptyRows)
+            ->setStartColumnIndex($startColumnIndex)
             ->open($resourcePath);
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
+            /**
+             * @var int
+             * @var Row $row
+             */
             foreach ($sheet->getRowIterator() as $rowIndex => $row) {
                 $allRows[] = $row->toArray();
             }
@@ -524,5 +672,27 @@ class ReaderTest extends TestCase
         $reader->close();
 
         return $allRows;
+    }
+
+    /**
+     * @param string $fileName
+     * @param int $startColumnIndex
+     * @param int|null $endColumnIndex
+     * @return array
+     */
+    protected function getAllRowsForFileWithRange(
+        string $fileName,
+        int $startColumnIndex = 0,
+        int $endColumnIndex = null
+    ) : array {
+        return $this->getAllRowsForFile(
+            $fileName,
+            ',',
+            '"',
+            EncodingHelper::ENCODING_UTF8,
+            false,
+            $startColumnIndex,
+            $endColumnIndex
+        );
     }
 }

@@ -9,15 +9,18 @@ namespace Box\Spout\Reader\Common\Entity;
 abstract class Options
 {
     // Common options
-    const SHOULD_FORMAT_DATES = 'shouldFormatDates';
-    const SHOULD_PRESERVE_EMPTY_ROWS = 'shouldPreserveEmptyRows';
+    public const SHOULD_FORMAT_DATES = 'shouldFormatDates';
+    public const SHOULD_PRESERVE_EMPTY_ROWS = 'shouldPreserveEmptyRows';
+
+    public const START_COLUMN = 'startColumn';
+    public const END_COLUMN = 'endColumn';
 
     // CSV specific options
-    const FIELD_DELIMITER = 'fieldDelimiter';
-    const FIELD_ENCLOSURE = 'fieldEnclosure';
-    const ENCODING = 'encoding';
+    public const FIELD_DELIMITER = 'fieldDelimiter';
+    public const FIELD_ENCLOSURE = 'fieldEnclosure';
+    public const ENCODING = 'encoding';
 
     // XLSX specific options
-    const TEMP_FOLDER = 'tempFolder';
-    const SHOULD_USE_1904_DATES = 'shouldUse1904Dates';
+    public const TEMP_FOLDER = 'tempFolder';
+    public const SHOULD_USE_1904_DATES = 'shouldUse1904Dates';
 }
