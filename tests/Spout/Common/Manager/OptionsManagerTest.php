@@ -10,11 +10,37 @@ use PHPUnit\Framework\TestCase;
 class OptionsManagerTest extends TestCase
 {
     /**
+     * @var OptionsManagerAbstract
+     */
+    protected $optionsManager;
+
+    protected function setUp()
+    {
+        $this->optionsManager = new class() extends OptionsManagerAbstract {
+            protected function getSupportedOptions()
+            {
+                return [
+                    'foo',
+                    'bar',
+                    'baz',
+                ];
+            }
+
+            protected function setDefaultOptions()
+            {
+                $this->setOption('foo', 'foo-val');
+                $this->setOption('bar', false);
+            }
+        };
+        parent::setUp();
+    }
+
+    /**
      * @return void
      */
     public function testOptionsManagerShouldReturnDefaultOptionsIfNothingSet()
     {
-        $optionsManager = new FakeOptionsManager();
+        $optionsManager = $this->optionsManager;
         $this->assertEquals('foo-val', $optionsManager->getOption('foo'));
         $this->assertFalse($optionsManager->getOption('bar'));
     }
@@ -24,7 +50,7 @@ class OptionsManagerTest extends TestCase
      */
     public function testOptionsManagerShouldReturnUpdatedOptionValue()
     {
-        $optionsManager = new FakeOptionsManager();
+        $optionsManager = $this->optionsManager;
         $optionsManager->setOption('foo', 'new-val');
         $this->assertEquals('new-val', $optionsManager->getOption('foo'));
     }
@@ -34,7 +60,7 @@ class OptionsManagerTest extends TestCase
      */
     public function testOptionsManagerShouldReturnNullIfNoDefaultValueSet()
     {
-        $optionsManager = new FakeOptionsManager();
+        $optionsManager = $this->optionsManager;
         $this->assertNull($optionsManager->getOption('baz'));
     }
 
@@ -43,27 +69,8 @@ class OptionsManagerTest extends TestCase
      */
     public function testOptionsManagerShouldReturnNullIfNoOptionNotSupported()
     {
-        $optionsManager = new FakeOptionsManager();
+        $optionsManager = $this->optionsManager;
         $optionsManager->setOption('not-supported', 'something');
         $this->assertNull($optionsManager->getOption('not-supported'));
-    }
-}
-
-// TODO: Convert this to anonymous class when PHP < 7 support is dropped
-class FakeOptionsManager extends OptionsManagerAbstract
-{
-    protected function getSupportedOptions()
-    {
-        return [
-            'foo',
-            'bar',
-            'baz',
-        ];
-    }
-
-    protected function setDefaultOptions()
-    {
-        $this->setOption('foo', 'foo-val');
-        $this->setOption('bar', false);
     }
 }
