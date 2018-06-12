@@ -27,7 +27,6 @@ class XMLReader extends \XMLReader
 
         // We need to check first that the file we are trying to read really exist because:
         //  - PHP emits a warning when trying to open a file that does not exist.
-        //  - HHVM does not check if file exists within zip file (@link https://github.com/facebook/hhvm/issues/5779)
         if ($this->fileExistsWithinZip($realPathURI)) {
             $wasOpenSuccessful = $this->open($realPathURI, null, LIBXML_NONET);
         }

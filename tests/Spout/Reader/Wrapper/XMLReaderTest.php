@@ -29,42 +29,6 @@ class XMLReaderTest extends TestCase
     }
 
     /**
-     * Testing a HHVM bug: https://github.com/facebook/hhvm/issues/5779
-     * The associated code in XMLReader::open() can be removed when the issue is fixed (and this test starts failing).
-     * @see XMLReader::open()
-     *
-     * @return void
-     */
-    public function testHHVMStillDoesNotComplainWhenCallingOpenWithFileInsideZipNotExisting()
-    {
-        // Test should only be run on HHVM
-        if ($this->isRunningHHVM()) {
-            $resourcePath = $this->getResourcePath('one_sheet_with_inline_strings.xlsx');
-            $nonExistingXMLFilePath = 'zip://' . $resourcePath . '#path/to/fake/file.xml';
-
-            libxml_clear_errors();
-            $initialUseInternalErrorsSetting = libxml_use_internal_errors(true);
-
-            // using the built-in XMLReader
-            $xmlReader = new \XMLReader();
-            $this->assertNotFalse($xmlReader->open($nonExistingXMLFilePath));
-            $this->assertFalse(libxml_get_last_error());
-
-            libxml_use_internal_errors($initialUseInternalErrorsSetting);
-        } else {
-            $this->markTestSkipped();
-        }
-    }
-
-    /**
-     * @return bool TRUE if running on HHVM, FALSE otherwise
-     */
-    private function isRunningHHVM()
-    {
-        return defined('HHVM_VERSION');
-    }
-
-    /**
      * @return void
      */
     public function testReadShouldThrowExceptionOnError()
