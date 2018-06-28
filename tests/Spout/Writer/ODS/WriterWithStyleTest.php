@@ -9,9 +9,9 @@ use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +42,7 @@ class WriterWithStyleTest extends TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = EntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createWriter(Type::ODS);
         $writer->addRow($this->createStyledRowFromValues(['ods--11', 'ods--12'], $this->defaultStyle));
     }
 
@@ -53,7 +53,7 @@ class WriterWithStyleTest extends TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = EntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createWriter(Type::ODS);
         $writer->addRow($this->createStyledRowFromValues(['ods--11', 'ods--12'], $this->defaultStyle));
     }
 
@@ -215,10 +215,10 @@ class WriterWithStyleTest extends TestCase
         $boldStyle = (new StyleBuilder())->setFontBold()->build();
         $underlineStyle = (new StyleBuilder())->setFontUnderline()->build();
 
-        $dataRow = EntityFactory::createRow([
-            EntityFactory::createCell('ods--11', $boldStyle),
-            EntityFactory::createCell('ods--12', $underlineStyle),
-            EntityFactory::createCell('ods--13', $underlineStyle),
+        $dataRow = WriterEntityFactory::createRow([
+            WriterEntityFactory::createCell('ods--11', $boldStyle),
+            WriterEntityFactory::createCell('ods--12', $underlineStyle),
+            WriterEntityFactory::createCell('ods--13', $underlineStyle),
         ]);
 
         $this->writeToODSFile([$dataRow], $fileName);
@@ -347,7 +347,7 @@ class WriterWithStyleTest extends TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = EntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createWriter(Type::ODS);
 
         $writer->openToFile($resourcePath);
         $writer->addRows($allRows);
@@ -368,7 +368,7 @@ class WriterWithStyleTest extends TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = EntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createWriter(Type::ODS);
         $writer->setDefaultRowStyle($defaultStyle);
 
         $writer->openToFile($resourcePath);

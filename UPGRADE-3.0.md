@@ -15,11 +15,11 @@ Finally, **_Spout 3.0 only supports PHP 7.1 and above_**, as other PHP versions 
 
 Reader changes
 --------------
-Creating a reader should now be done through the Reader `EntityFactory`, instead of using the `ReaderFactory`:
+Creating a reader should now be done through the Reader `ReaderEntityFactory`, instead of using the `ReaderFactory`:
 ```php
-use Box\Spout\Reader\Common\Creator\EntityFactory; // namespace is no longer "Box\Spout\Reader"
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory; // namespace is no longer "Box\Spout\Reader"
 ...
-$reader = EntityFactory::createReader(Type::XLSX);
+$reader = ReaderEntityFactory::createReader(Type::XLSX);
 ```
 
 When iterating over the spreadsheet rows, Spout now returns `Row` objects, instead of an array containing row values. Accessing the row values should now be done this way:
@@ -37,23 +37,23 @@ foreach ($reader->getSheetIterator() as $sheet) {
 
 Writer changes
 --------------
-Writer creation follows the same change as the reader. It should now be done through the Writer `EntityFactory`, instead of using the `WriterFactory`:
+Writer creation follows the same change as the reader. It should now be done through the Writer `WriterEntityFactory`, instead of using the `WriterFactory`:
 ```php
-use Box\Spout\Writer\Common\Creator\EntityFactory; // namespace is no longer "Box\Spout\Writer"
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory; // namespace is no longer "Box\Spout\Writer"
 ...
-$writer = EntityFactory::createWriter(Type::ODS);
+$writer = WriterEntityFactory::createWriter(Type::ODS);
 ```
 
 Adding rows is also done differently: instead of passing an array, the writer now takes in a `Row` object (or an array of `Row`). Creating such objects can easily be done this way:
 ```php
 // Adding a row from an array of values (2.x equivalent)
 $cellValues = ['foo', 12345];
-$row1 = EntityFactory::createRowFromArray($cellValues, $rowStyle);
+$row1 = WriterEntityFactory::createRowFromArray($cellValues, $rowStyle);
 
 // Adding a row from an array of Cell
-$cell1 = EntityFactory::createCell('foo', $cellStyle1); // this cell has its own style
-$cell2 = EntityFactory::createCell(12345, $cellStyle2); // this cell has its own style
-$row2 = EntityFactory::createRow([$cell1, $cell2]);
+$cell1 = WriterEntityFactory::createCell('foo', $cellStyle1); // this cell has its own style
+$cell2 = WriterEntityFactory::createCell(12345, $cellStyle2); // this cell has its own style
+$row2 = WriterEntityFactory::createRow([$cell1, $cell2]);
 
 $writer->addRows([$row1, $row2]);
 ```

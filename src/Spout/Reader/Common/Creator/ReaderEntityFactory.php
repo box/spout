@@ -5,10 +5,10 @@ namespace Box\Spout\Reader\Common\Creator;
 use Box\Spout\Reader\ReaderInterface;
 
 /**
- * Class EntityFactory
+ * Class ReaderEntityFactory
  * Factory to create external entities
  */
-class EntityFactory
+class ReaderEntityFactory
 {
     /**
      * This creates an instance of the appropriate reader, given the type of the file to be read

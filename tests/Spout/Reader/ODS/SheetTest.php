@@ -3,7 +3,7 @@
 namespace Box\Spout\Reader\ODS;
 
 use Box\Spout\Common\Type;
-use Box\Spout\Reader\Common\Creator\EntityFactory;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\TestUsingResource;
 use PHPUnit\Framework\TestCase;
 
@@ -61,7 +61,7 @@ class SheetTest extends TestCase
     private function openFileAndReturnSheets($fileName)
     {
         $resourcePath = $this->getResourcePath($fileName);
-        $reader = EntityFactory::createReader(Type::ODS);
+        $reader = ReaderEntityFactory::createReader(Type::ODS);
         $reader->open($resourcePath);
 
         $sheets = [];

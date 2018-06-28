@@ -4,7 +4,7 @@ namespace Box\Spout\Writer;
 
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Style\Style;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 
 /**
  * Trait RowCreationHelper
@@ -27,7 +27,7 @@ trait RowCreationHelper
      */
     protected function createStyledRowFromValues(array $cellValues, Style $rowStyle = null)
     {
-        return EntityFactory::createRowFromArray($cellValues, $rowStyle);
+        return WriterEntityFactory::createRowFromArray($cellValues, $rowStyle);
     }
 
     /**

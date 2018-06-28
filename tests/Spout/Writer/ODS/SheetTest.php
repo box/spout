@@ -4,7 +4,7 @@ namespace Box\Spout\Writer\ODS;
 
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Exception\InvalidSheetNameException;
 use Box\Spout\Writer\RowCreationHelper;
@@ -66,7 +66,7 @@ class SheetTest extends TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = EntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createWriter(Type::ODS);
         $writer->openToFile($resourcePath);
 
         $customSheetName = 'Sheet name';
@@ -105,7 +105,7 @@ class SheetTest extends TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = EntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createWriter(Type::ODS);
         $writer->openToFile($resourcePath);
 
         $sheet = $writer->getCurrentSheet();
@@ -125,7 +125,7 @@ class SheetTest extends TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = EntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createWriter(Type::ODS);
         $writer->openToFile($resourcePath);
 
         $writer->addRow($this->createRowFromValues(['ods--sheet1--11', 'ods--sheet1--12']));
@@ -147,7 +147,7 @@ class SheetTest extends TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = EntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createWriter(Type::ODS);
         $writer->openToFile($resourcePath);
 
         $sheet = $writer->getCurrentSheet();

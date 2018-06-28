@@ -14,7 +14,7 @@ use Box\Spout\Reader\XLSX\Sheet;
 use Box\Spout\Reader\XLSX\SheetIterator;
 
 /**
- * Class EntityFactory
+ * Class InternalEntityFactory
  * Factory to create entities
  */
 class InternalEntityFactory implements InternalEntityFactoryInterface

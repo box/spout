@@ -8,7 +8,7 @@ use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +32,7 @@ class WriterTest extends TestCase
         $this->createUnwritableFolderIfNeeded();
         $filePath = $this->getGeneratedUnwritableResourcePath($fileName);
 
-        $writer = EntityFactory::createWriter(Type::CSV);
+        $writer = WriterEntityFactory::createWriter(Type::CSV);
         @$writer->openToFile($filePath);
         $writer->addRow($this->createRowFromValues(['csv--11', 'csv--12']));
         $writer->close();
@@ -45,7 +45,7 @@ class WriterTest extends TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = EntityFactory::createWriter(Type::CSV);
+        $writer = WriterEntityFactory::createWriter(Type::CSV);
         $writer->addRow($this->createRowFromValues(['csv--11', 'csv--12']));
         $writer->close();
     }
@@ -57,7 +57,7 @@ class WriterTest extends TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = EntityFactory::createWriter(Type::CSV);
+        $writer = WriterEntityFactory::createWriter(Type::CSV);
         $writer->addRow($this->createRowFromValues(['csv--11', 'csv--12']));
         $writer->close();
     }
@@ -69,7 +69,7 @@ class WriterTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $writer = EntityFactory::createWriter(Type::CSV);
+        $writer = WriterEntityFactory::createWriter(Type::CSV);
         $writer->addRows([['csv--11', 'csv--12']]);
         $writer->close();
     }
@@ -83,7 +83,7 @@ class WriterTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        $writer = EntityFactory::createWriter(Type::CSV);
+        $writer = WriterEntityFactory::createWriter(Type::CSV);
         $writer->close(); // This call should not cause any error
 
         $writer->openToFile($resourcePath);
@@ -202,7 +202,7 @@ class WriterTest extends TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\CSV\Writer $writer */
-        $writer = EntityFactory::createWriter(Type::CSV);
+        $writer = WriterEntityFactory::createWriter(Type::CSV);
         $writer->setFieldDelimiter($fieldDelimiter);
         $writer->setFieldEnclosure($fieldEnclosure);
         $writer->setShouldAddBOM($shouldAddBOM);

@@ -6,7 +6,7 @@ use Box\Spout\Reader\ODS\Helper\CellValueFormatter;
 use Box\Spout\Reader\ODS\Helper\SettingsHelper;
 
 /**
- * Class EntityFactory
+ * Class HelperFactory
  * Factory to create helpers
  */
 class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory

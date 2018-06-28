@@ -3,7 +3,7 @@
 namespace Box\Spout\Reader\CSV;
 
 use Box\Spout\Common\Type;
-use Box\Spout\Reader\Common\Creator\EntityFactory;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\TestUsingResource;
 use PHPUnit\Framework\TestCase;
 
@@ -33,7 +33,7 @@ class SheetTest extends TestCase
     private function openFileAndReturnSheet($fileName)
     {
         $resourcePath = $this->getResourcePath($fileName);
-        $reader = EntityFactory::createReader(Type::CSV);
+        $reader = ReaderEntityFactory::createReader(Type::CSV);
         $reader->open($resourcePath);
 
         $sheet = $reader->getSheetIterator()->current();
