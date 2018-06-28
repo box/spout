@@ -8,10 +8,10 @@ use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Writer\WriterInterface;
 
 /**
- * Class EntityFactory
+ * Class WriterEntityFactory
  * Factory to create external entities
  */
-class EntityFactory
+class WriterEntityFactory
 {
     /**
      * This creates an instance of the appropriate writer, given the type of the file to be written

@@ -10,9 +10,9 @@ use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
-use Box\Spout\Writer\Common\Creator\EntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
@@ -45,7 +45,7 @@ class WriterWithStyleTest extends TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = EntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createWriter(Type::XLSX);
         $writer->addRow($this->createStyledRowFromValues(['xlsx--11', 'xlsx--12'], $this->defaultStyle));
     }
 
@@ -56,7 +56,7 @@ class WriterWithStyleTest extends TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = EntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createWriter(Type::XLSX);
         $writer->addRow($this->createStyledRowFromValues(['xlsx--11', 'xlsx--12'], $this->defaultStyle));
     }
 
@@ -262,10 +262,10 @@ class WriterWithStyleTest extends TestCase
         $boldStyle = (new StyleBuilder())->setFontBold()->build();
         $underlineStyle = (new StyleBuilder())->setFontUnderline()->build();
 
-        $dataRow = EntityFactory::createRow([
-            EntityFactory::createCell('xlsx--11', $boldStyle),
-            EntityFactory::createCell('xlsx--12', $underlineStyle),
-            EntityFactory::createCell('xlsx--13', $underlineStyle),
+        $dataRow = WriterEntityFactory::createRow([
+            WriterEntityFactory::createCell('xlsx--11', $boldStyle),
+            WriterEntityFactory::createCell('xlsx--12', $underlineStyle),
+            WriterEntityFactory::createCell('xlsx--13', $underlineStyle),
         ]);
 
         $this->writeToXLSXFile([$dataRow], $fileName);
@@ -519,7 +519,7 @@ class WriterWithStyleTest extends TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = EntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createWriter(Type::XLSX);
         $writer->setShouldUseInlineStrings(true);
 
         $writer->openToFile($resourcePath);
@@ -541,7 +541,7 @@ class WriterWithStyleTest extends TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = EntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createWriter(Type::XLSX);
         $writer->setShouldUseInlineStrings(true);
         $writer->setDefaultRowStyle($defaultStyle);
 

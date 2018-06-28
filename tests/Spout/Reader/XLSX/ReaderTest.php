@@ -4,7 +4,7 @@ namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Type;
-use Box\Spout\Reader\Common\Creator\EntityFactory;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\TestUsingResource;
 use PHPUnit\Framework\TestCase;
 
@@ -570,7 +570,7 @@ class ReaderTest extends TestCase
         $allRows = [];
         $resourcePath = $this->getResourcePath('two_sheets_with_inline_strings.xlsx');
 
-        $reader = EntityFactory::createReader(Type::XLSX);
+        $reader = ReaderEntityFactory::createReader(Type::XLSX);
         $reader->open($resourcePath);
 
         foreach ($reader->getSheetIterator() as $sheet) {
@@ -624,7 +624,7 @@ class ReaderTest extends TestCase
         $this->expectException(IOException::class);
 
         /** @var \Box\Spout\Reader\XLSX\Reader $reader */
-        $reader = EntityFactory::createReader(Type::XLSX);
+        $reader = ReaderEntityFactory::createReader(Type::XLSX);
         $reader->open('unsupported://foobar');
     }
 
@@ -636,7 +636,7 @@ class ReaderTest extends TestCase
         $this->expectException(IOException::class);
 
         /** @var \Box\Spout\Reader\XLSX\Reader $reader */
-        $reader = EntityFactory::createReader(Type::XLSX);
+        $reader = ReaderEntityFactory::createReader(Type::XLSX);
         $reader->open('php://memory');
     }
 
@@ -701,7 +701,7 @@ class ReaderTest extends TestCase
         $resourcePath = $this->getResourcePath($fileName);
 
         /** @var \Box\Spout\Reader\XLSX\Reader $reader */
-        $reader = EntityFactory::createReader(Type::XLSX);
+        $reader = ReaderEntityFactory::createReader(Type::XLSX);
         $reader->setShouldFormatDates($shouldFormatDates);
         $reader->setShouldPreserveEmptyRows($shouldPreserveEmptyRows);
         $reader->open($resourcePath);
