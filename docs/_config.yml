@@ -19,7 +19,7 @@ kramdown:
   input: GFM
   syntax_highlighter: rouge
 
-exclude: ["bower.json", "README.md"]
+exclude: ["README.md"]
 collections:
   pages:
     output: true
