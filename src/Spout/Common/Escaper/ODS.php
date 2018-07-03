@@ -22,17 +22,17 @@ class ODS implements EscaperInterface
      */
     public function escape($string)
     {
+        // @NOTE: ODS files are basically XML, so we need to escape <, > and &.
+        // Mostly values are saved in element contents, but a few things (e.g. worksheet names)
+        // are stored in attributes, so we also need to escape " and ', hence ENT_QUOTES.
         if (defined('ENT_DISALLOWED')) {
             // 'ENT_DISALLOWED' ensures that invalid characters in the given document type are replaced.
             // Otherwise control characters like a vertical tab "\v" will make the XML document unreadable by the XML processor
             // @link https://github.com/box/spout/issues/329
-            $replacedString = htmlspecialchars($string, ENT_NOQUOTES | ENT_DISALLOWED, 'UTF-8');
+            $replacedString = htmlspecialchars($string, ENT_QUOTES | ENT_DISALLOWED, 'UTF-8');
         } else {
             // We are on hhvm or any other engine that does not support ENT_DISALLOWED.
-            //
-            // @NOTE: Using ENT_NOQUOTES as only XML entities ('<', '>', '&') need to be encoded.
-            //        Single and double quotes can be left as is.
-            $escapedString =  htmlspecialchars($string, ENT_NOQUOTES, 'UTF-8');
+            $escapedString =  htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
 
             // control characters values are from 0 to 1F (hex values) in the ASCII table
             // some characters should not be escaped though: "\t", "\r" and "\n".

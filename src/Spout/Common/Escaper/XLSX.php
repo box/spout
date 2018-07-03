@@ -42,9 +42,10 @@ class XLSX implements EscaperInterface
     public function escape($string)
     {
         $escapedString = $this->escapeControlCharacters($string);
-        // @NOTE: Using ENT_NOQUOTES as only XML entities ('<', '>', '&') need to be encoded.
-        //        Single and double quotes can be left as is.
-        $escapedString = htmlspecialchars($escapedString, ENT_NOQUOTES, 'UTF-8');
+        // @NOTE: Excel files are basically XML, so we need to escape <, > and &.
+        // Mostly values are saved in element contents, but a few things (e.g. worksheet names)
+        // are stored in attributes, so we also need to escape " and ', hence ENT_QUOTES.
+        $escapedString = htmlspecialchars($escapedString, ENT_QUOTES, 'UTF-8');
 
         return $escapedString;
     }
