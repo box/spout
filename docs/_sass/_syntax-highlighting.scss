@@ -42,7 +42,7 @@
 
     color: $default;
     background-color: $bg;
-    border: 1px solid darken($bg, 5%);
+    //border: 1px solid darken($bg, 5%);
 
     .bp { color: $caret; } // Name.Builtin.Pseudo
     .c { color: $comment; } // Comment
