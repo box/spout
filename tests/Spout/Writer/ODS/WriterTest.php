@@ -201,7 +201,7 @@ class WriterTest extends TestCase
         $writer->openToFile($resourcePath);
         $writer->close();
         $writer->close(); // This call should not cause any error
-        $this->assertTrue(true);
+        $this->expectNotToPerformAssertions();
     }
 
     /**
