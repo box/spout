@@ -186,7 +186,7 @@ class Worksheet
      */
     public function getColWidthXML()
     {
-        if (empty($colWidths)) {
+        if (empty($this->colWidths)) {
             return '';
         }
         $xml = '<cols>';
