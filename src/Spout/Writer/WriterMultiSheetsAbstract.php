@@ -187,13 +187,14 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     }
 
     /**
-     * @param string $col
+     * @param string $colFrom
+     * @param string $colTo
      * @param float $width
      * @throws \Box\Spout\Common\Exception\IOException
      */
-    public function setColWidth(string $col, float $width)
+    public function setColWidth(int $colFrom, int $colTo, float $width)
     {
-        $this->workbookManager->getCurrentWorksheet()->setColWidth($col, $width);
+        $this->workbookManager->getCurrentWorksheet()->setColWidth($colFrom, $colTo, $width);
     }
 
     /**
@@ -221,14 +222,5 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     public function mergeCells(string $leftCell, string $rightCell)
     {
         $this->workbookManager->getCurrentWorksheet()->mergeCells($leftCell,$rightCell);
-    }
-
-    /**
-     * @param string $leftCell
-     * @param string $rightCell
-     */
-    public function unMergeCells(string $leftCell, string $rightCell)
-    {
-        $this->workbookManager->getCurrentWorksheet()->unMergeCells($leftCell,$rightCell);
     }
 }

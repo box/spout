@@ -127,10 +127,10 @@ class Worksheet
      * @param float $width
      * @throws IOException
      */
-    public function setColWidth(string $col, float $width)
+    public function setColWidth(int $colFrom, int $colTo, float $width)
     {
         $this->throwIfSheetFilePointerIsAlreadyCreated();
-        $this->colWidths[$col] = $width;
+        $this->colWidths[] = [$colFrom,$colTo,$width];
     }
 
     /**
@@ -166,16 +166,6 @@ class Worksheet
     }
 
     /**
-     * remove merged cell reference.
-     * @param string $leftCell
-     * @param string $rightCell
-     */
-    public function unMergeCells(string $leftCell, string $rightCell)
-    {
-        $this->merges = array_diff($this->merges,[$leftCell . ':' . $rightCell]);
-    }
-
-    /**
      * used by WorksheetManager to get default row height and width xml to inject into worksheet xml file
      * @return string
      */
@@ -200,8 +190,8 @@ class Worksheet
             return '';
         }
         $xml = '<cols>';
-        foreach ($this->colWidths as $col => $width) {
-            $xml .= '<col min="'.$col.'" max="'.$col.'" width="'.$width.'" style="1" customWidth="1"/>'; //style and customWidth may be unnecessary ??
+        foreach ($this->colWidths as $entry) {
+            $xml .= '<col min="'.$entry[0].'" max="'.$entry[1].'" width="'.$entry[2].'" style="1" customWidth="1"/>'; //style and customWidth may be unnecessary ??
         }
         $xml .= '</cols>';
         return $xml;
