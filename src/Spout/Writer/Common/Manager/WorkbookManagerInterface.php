@@ -31,6 +31,11 @@ interface WorkbookManagerInterface
     public function addNewSheetAndMakeItCurrent();
 
     /**
+     * @return void starts the current sheet and opens its file pointer
+     */
+    public function startCurrentSheet();
+
+    /**
      * @return Worksheet[] All the workbook's sheets
      */
     public function getWorksheets();

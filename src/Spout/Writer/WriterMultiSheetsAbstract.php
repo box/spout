@@ -4,6 +4,7 @@ namespace Box\Spout\Writer;
 
 use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Exception\SpoutException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
@@ -105,6 +106,24 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
         $worksheet = $this->workbookManager->addNewSheetAndMakeItCurrent();
 
         return $worksheet->getExternalSheet();
+    }
+
+    public function startCurrentSheet()
+    {
+        $this->workbookManager->startCurrentSheet();
+    }
+
+    /**
+     * @param Row $row
+     * @throws WriterNotOpenedException|SpoutException
+     * @return WriterAbstract
+     */
+    public function addRow(Row $row)
+    {
+        if (!$this->workbookManager->getCurrentWorksheet()->getFilePointer()){
+            $this->startCurrentSheet();
+        }
+        return parent::addRow($row);
     }
 
     /**

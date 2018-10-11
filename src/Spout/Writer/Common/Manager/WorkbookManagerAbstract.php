@@ -131,8 +131,6 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
         $worksheetFilePath = $this->getWorksheetFilePath($sheet);
         $worksheet = $this->entityFactory->createWorksheet($worksheetFilePath, $sheet);
 
-        $this->worksheetManager->startSheet($worksheet);
-
         $worksheets[] = $worksheet;
         $this->workbook->setWorksheets($worksheets);
 
@@ -155,6 +153,16 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     public function getCurrentWorksheet()
     {
         return $this->currentWorksheet;
+    }
+
+    /**
+     * starts the current sheet and opens the file pointer
+     *
+     * @throws IOException
+     */
+    public function startCurrentSheet()
+    {
+        $this->worksheetManager->startSheet($this->getCurrentWorksheet());
     }
 
     /**
