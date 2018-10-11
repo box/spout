@@ -113,6 +113,8 @@ EOD;
         $worksheet->setFilePointer($sheetFilePointer);
 
         fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        fwrite($sheetFilePointer, $worksheet->getDefaultXML());
+        fwrite($sheetFilePointer, $worksheet->getColWidthXML());
         fwrite($sheetFilePointer, '<sheetData>');
     }
 
@@ -268,6 +270,7 @@ EOD;
         }
 
         fwrite($worksheetFilePointer, '</sheetData>');
+        fwrite($worksheetFilePointer, $worksheet->getMergeXML());
         fwrite($worksheetFilePointer, '</worksheet>');
         fclose($worksheetFilePointer);
     }
