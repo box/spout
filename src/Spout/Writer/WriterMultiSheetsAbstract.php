@@ -185,4 +185,50 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
             $this->workbookManager->close($this->filePointer);
         }
     }
+
+    /**
+     * @param string $col
+     * @param float $width
+     * @throws \Box\Spout\Common\Exception\IOException
+     */
+    public function setColWidth(string $col, float $width)
+    {
+        $this->workbookManager->getCurrentWorksheet()->setColWidth($col, $width);
+    }
+
+    /**
+     * @param float $width
+     * @throws \Box\Spout\Common\Exception\IOException
+     */
+    public function setDefaultColWidth(float $width)
+    {
+        $this->workbookManager->getCurrentWorksheet()->setDefaultColWidth($width);
+    }
+
+    /**
+     * @param float $height
+     * @throws \Box\Spout\Common\Exception\IOException
+     */
+    public function setDefaultRowHeight(float $height)
+    {
+        $this->workbookManager->getCurrentWorksheet()->setDefaultRowHeight($height);
+    }
+
+    /**
+     * @param string $leftCell
+     * @param string $rightCell
+     */
+    public function mergeCells(string $leftCell, string $rightCell)
+    {
+        $this->workbookManager->getCurrentWorksheet()->mergeCells($leftCell,$rightCell);
+    }
+
+    /**
+     * @param string $leftCell
+     * @param string $rightCell
+     */
+    public function unMergeCells(string $leftCell, string $rightCell)
+    {
+        $this->workbookManager->getCurrentWorksheet()->unMergeCells($leftCell,$rightCell);
+    }
 }
