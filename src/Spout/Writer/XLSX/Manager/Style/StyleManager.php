@@ -222,8 +222,9 @@ EOD;
             $styleId = $style->getId();
             $fillId = $this->getFillIdForStyleId($styleId);
             $borderId = $this->getBorderIdForStyleId($styleId);
+            $numberFormatId = !empty($style->getNumberFormat()) ? $style->getNumberFormat()->getId() : 0;
 
-            $content .= '<xf numFmtId="'.$style->getNumberFormat()->getId().'" fontId="' . $styleId . '" fillId="' . $fillId . '" borderId="' . $borderId . '" xfId="0"';
+            $content .= '<xf numFmtId="'.$numberFormatId.'" fontId="' . $styleId . '" fillId="' . $fillId . '" borderId="' . $borderId . '" xfId="0"';
 
             if ($style->shouldApplyFont()) {
                 $content .= ' applyFont="1"';
