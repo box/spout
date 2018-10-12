@@ -83,6 +83,9 @@ class NumberFormat
                 $this->setCurrencySymbol('$');
             }
         }
+        if ($type == self::TYPE_PERCENTAGE) {
+            $this->setCommas(false);
+        }
         return $this;
     }
 
