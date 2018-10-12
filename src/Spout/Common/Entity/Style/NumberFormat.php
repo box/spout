@@ -27,7 +27,7 @@ class NumberFormat
 
     private $currencySymbol;
 
-    private $commas;
+    private $commas = true;
 
     public function __construct(int $type = null)
     {
@@ -43,6 +43,16 @@ class NumberFormat
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @param bool $commas
+     * @return NumberFormat
+     */
+    public function setCommas($commas)
+    {
+        $this->commas = $commas;
         return $this;
     }
 
