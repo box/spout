@@ -29,6 +29,13 @@ class NumberFormat
 
     private $commas;
 
+    public function __construct(int $type = null)
+    {
+        if (!empty($type)) {
+            $this->setType($type);
+        }
+    }
+
     /**
      * @param int $id
      * @return NumberFormat
@@ -55,7 +62,7 @@ class NumberFormat
     {
         if (!in_array($type,self::TYPES)) {
             return $this;
-            //todo throw some excpection or something
+            //todo throw some exception or something?
         }
         $this->type = $type;
         if ($type == self::TYPE_CURRENCY) {
