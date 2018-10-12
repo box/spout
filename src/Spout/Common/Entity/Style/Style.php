@@ -71,6 +71,8 @@ class Style
     /** @var bool */
     private $hasSetBackgroundColor = false;
 
+    private $numberFormat;
+
     /**
      * @return int|null
      */
@@ -106,6 +108,25 @@ class Style
     {
         $this->shouldApplyBorder = true;
         $this->border = $border;
+
+        return $this;
+    }
+
+    /**
+     * @return NumberFormat
+     */
+    public function getNumberFormat()
+    {
+        return $this->numberFormat ?? null;
+    }
+
+    /**
+     * @param NumberFormat $format
+     * @return Style
+     */
+    public function setNumberFormat(NumberFormat $format)
+    {
+        $this->numberFormat = $format;
 
         return $this;
     }

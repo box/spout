@@ -47,7 +47,7 @@ class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 EOD;
-
+        $content .= $this->getNumberFormatSectionContent();
         $content .= $this->getFontsSectionContent();
         $content .= $this->getFillsSectionContent();
         $content .= $this->getBordersSectionContent();
@@ -59,6 +59,22 @@ EOD;
 </styleSheet>
 EOD;
 
+        return $content;
+    }
+
+    protected function getNumberFormatSectionContent()
+    {
+        $registeredFormats = $this->styleRegistry->getRegisteredNumberFormats();
+        if (empty($registeredFormats)) {
+            return '<numFmts count="0"/>';
+        }
+
+        $content = '<numFmts count="'.count($registeredFormats).'">';
+        foreach ($registeredFormats as $format) {
+
+            $content .= '<numFmt numFmtId="'.$format->getId().'" formatCode="'.$format->getFormatCode().'"/>';
+        }
+        $content .= '</numFmts>';
         return $content;
     }
 
@@ -207,7 +223,7 @@ EOD;
             $fillId = $this->getFillIdForStyleId($styleId);
             $borderId = $this->getBorderIdForStyleId($styleId);
 
-            $content .= '<xf numFmtId="0" fontId="' . $styleId . '" fillId="' . $fillId . '" borderId="' . $borderId . '" xfId="0"';
+            $content .= '<xf numFmtId="'.$style->getNumberFormat()->getId().'" fontId="' . $styleId . '" fillId="' . $fillId . '" borderId="' . $borderId . '" xfId="0"';
 
             if ($style->shouldApplyFont()) {
                 $content .= ' applyFont="1"';
