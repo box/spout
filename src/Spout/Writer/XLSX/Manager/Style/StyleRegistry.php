@@ -20,6 +20,10 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
      */
     protected $styleIdToFillMappingTable = [];
 
+    protected $registeredNumberFormats = [];
+
+    protected $styleIdToNumberFormatMappingTable = [];
+
     /**
      * Excel preserves two default fills with index 0 and 1
      * Since Excel is the dominant vendor - we play along here
@@ -49,6 +53,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
         $registeredStyle = parent::registerStyle($style);
         $this->registerFill($registeredStyle);
         $this->registerBorder($registeredStyle);
+        $this->registerNumberFormat($registeredStyle);
 
         return $registeredStyle;
     }
@@ -93,6 +98,47 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
     {
         return (isset($this->styleIdToFillMappingTable[$styleId])) ?
             $this->styleIdToFillMappingTable[$styleId] :
+            null;
+    }
+
+    /**
+     * Register a number format definition
+     *
+     * @param Style $style
+     */
+    private function registerNumberFormat(Style $style)
+    {
+        $styleId = $style->getId();
+
+        if ($style->shouldApplyNumberFormat()) {
+            $format = $style->getNumberFormat();
+            $serializedFormat = serialize($format);
+            $isNumberFormatRegistered = isset($this->registeredNumberFormats[$serializedFormat]);
+
+            // We need to track the already registered background definitions
+            if ($isNumberFormatRegistered) {
+                $registeredStyleId = $this->registeredFills[$serializedFormat];
+                $registeredFormatId = $this->styleIdToNumberFormatMappingTable[$registeredStyleId];
+                $this->styleIdToNumberFormatMappingTable[$styleId] = $registeredFormatId;
+            } else {
+                $this->registeredFills[$serializedFormat] = $styleId;
+                $this->styleIdToNumberFormatMappingTable[$styleId] = $this->fillIndex++;
+            }
+        } else {
+            // The fillId maps a style to a fill declaration
+            // When there is no background color definition - we default to 0
+            $this->styleIdToNumberFormatMappingTable[$styleId] = 0;
+        }
+    }
+
+    /**
+     * @param int $styleId
+     * @return int|null Number Format ID associated to the given style ID
+     */
+    public function getNumberFormatIdForStyleId($styleId)
+    {
+        return (isset($this->styleIdToNumberFormatMappingTable[$styleId])) ?
+            $this->styleIdToNumberFormatMappingTable[$styleId] :
             null;
     }
 
@@ -150,5 +196,12 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
     public function getRegisteredBorders()
     {
         return $this->registeredBorders;
+    }
+    /**
+     * @return array
+     */
+    public function getRegisteredNumberFormats()
+    {
+        return $this->registeredNumberFormats;
     }
 }

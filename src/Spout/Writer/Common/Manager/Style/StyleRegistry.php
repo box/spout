@@ -2,7 +2,6 @@
 
 namespace Box\Spout\Writer\Common\Manager\Style;
 
-use Box\Spout\Common\Entity\Style\NumberFormat;
 use Box\Spout\Common\Entity\Style\Style;
 
 /**
@@ -38,11 +37,6 @@ class StyleRegistry
      */
     public function registerStyle(Style $style)
     {
-        $format = $style->getNumberFormat();
-        if (!empty($format)) {
-            $registeredFormat = $this->registerNumberFormat($format);
-            $style->setNumberFormat($registeredFormat);
-        }
         $serializedStyle = $this->serialize($style);
 
         if (!$this->hasStyleAlreadyBeenRegistered($style)) {
@@ -56,18 +50,6 @@ class StyleRegistry
         return $this->getStyleFromSerializedStyle($serializedStyle);
     }
 
-    public function registerNumberFormat(NumberFormat $format)
-    {
-        $serializedFormat = $this->serializeFormat($format);
-        if (!$this->hasFormatAlreadyBeenRegistered($format)) {
-            $nextFormatId = count($this->serializedNumberFormatToFormatIdMappingTable);
-            $format->setId($nextFormatId);
-
-            $this->serializedNumberFormatToFormatIdMappingTable[$serializedFormat] = $nextFormatId;
-            $this->numberFormats[$nextFormatId] = $format;
-        }
-        return $this->getFormatFromSerializedFormat($serializedFormat);
-    }
 
     /**
      * Returns whether the given style has already been registered.
@@ -83,19 +65,6 @@ class StyleRegistry
         return isset($this->serializedStyleToStyleIdMappingTable[$serializedStyle]);
     }
 
-    /**
-     * Returns whether the given number format has already been registered.
-     *
-     * @param NumberFormat $format
-     * @return bool
-     */
-    protected function hasFormatAlreadyBeenRegistered(NumberFormat $format)
-    {
-        $serializedFormat = $this->serializeFormat($format);
-
-        // Using isset here because it is way faster than array_key_exists...
-        return isset($this->serializedNumberFormatToFormatIdMappingTable[$serializedFormat]);
-    }
 
     /**
      * Returns the registered style associated to the given serialization.
@@ -111,32 +80,11 @@ class StyleRegistry
     }
 
     /**
-     * Returns the registered number format associated to the given serialization.
-     *
-     * @param string $serializedFormat The serialized number format from which the actual format should be fetched from
-     * @return NumberFormat
-     */
-    protected function getFormatFromSerializedFormat($serializedFormat)
-    {
-        $formatId = $this->serializedNumberFormatToFormatIdMappingTable[$serializedFormat];
-
-        return $this->numberFormats[$formatId];
-    }
-
-    /**
      * @return Style[] List of registered styles
      */
     public function getRegisteredStyles()
     {
         return array_values($this->styleIdToStyleMappingTable);
-    }
-
-    /**
-     * @return NumberFormat[] List of registered number formats
-     */
-    public function getRegisteredNumberFormats()
-    {
-        return array_values($this->numberFormats);
     }
 
     /**
@@ -167,26 +115,5 @@ class StyleRegistry
         $style->setId($currentId);
 
         return $serializedStyle;
-    }
-
-    /**
-     * Serializes the number format for future comparison with other formats.
-     * The ID is excluded from the comparison, as we only care about
-     * actual number format properties.
-     *
-     * @param Style $style
-     * @return string The serialized style
-     */
-    public function serializeFormat(NumberFormat $format)
-    {
-        // In order to be able to properly compare style, set static ID value
-        $currentId = $format->getId();
-        $format->setId(0);
-
-        $serializedFormat = serialize($format);
-
-        $format->setId($currentId);
-
-        return $serializedFormat;
     }
 }

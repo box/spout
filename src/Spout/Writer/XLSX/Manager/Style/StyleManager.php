@@ -3,6 +3,7 @@
 namespace Box\Spout\Writer\XLSX\Manager\Style;
 
 use Box\Spout\Common\Entity\Style\Color;
+use Box\Spout\Common\Entity\Style\NumberFormat;
 use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Writer\XLSX\Helper\BorderHelper;
 
@@ -70,6 +71,7 @@ EOD;
         }
 
         $content = '<numFmts count="'.count($registeredFormats).'">';
+        /** @var NumberFormat $format */
         foreach ($registeredFormats as $format) {
 
             $content .= '<numFmt numFmtId="'.$format->getId().'" formatCode="'.$format->getFormatCode().'"/>';

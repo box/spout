@@ -72,6 +72,9 @@ class Style
     private $hasSetBackgroundColor = false;
 
     private $numberFormat;
+    /** @var bool Whether border properties should be applied */
+    private $shouldApplyNumberFormat = false;
+
 
     /**
      * @return int|null
@@ -117,7 +120,7 @@ class Style
      */
     public function getNumberFormat()
     {
-        return $this->numberFormat ?? null;
+        return $this->numberFormat;
     }
 
     /**
@@ -126,6 +129,7 @@ class Style
      */
     public function setNumberFormat(NumberFormat $format)
     {
+        $this->shouldApplyNumberFormat = true;
         $this->numberFormat = $format;
 
         return $this;
@@ -137,6 +141,13 @@ class Style
     public function shouldApplyBorder()
     {
         return $this->shouldApplyBorder;
+    }
+    /**
+     * @return bool
+     */
+    public function shouldApplyNumberFormat()
+    {
+        return $this->shouldApplyNumberFormat;
     }
 
     /**
