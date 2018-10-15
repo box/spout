@@ -233,6 +233,7 @@ EOD;
             }
 
             $content .= sprintf(' applyBorder="%d"', $style->shouldApplyBorder() ? 1 : 0);
+            $content .= sprintf(' applyNumberFormat="%d"', $style->shouldApplyNumberFormat() ? 1 : 0);
 
             if ($style->shouldWrapText()) {
                 $content .= ' applyAlignment="1">';
