@@ -121,10 +121,8 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
                 $registeredFormatId = $this->styleIdToNumberFormatMappingTable[$registeredStyleId];
                 $this->styleIdToNumberFormatMappingTable[$styleId] = $registeredFormatId;
             } else {
-                $formatId = count($this->registeredNumberFormats);
                 $this->registeredNumberFormats[$serializedFormat] = $styleId;
-                $this->styleIdToNumberFormatMappingTable[$styleId] = $formatId;
-                $format->setId($formatId);
+                $this->styleIdToNumberFormatMappingTable[$styleId] = count($this->registeredNumberFormats);
             }
         } else {
             // The fillId maps a style to a fill declaration

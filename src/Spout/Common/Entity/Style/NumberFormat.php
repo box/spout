@@ -37,16 +37,6 @@ class NumberFormat
     }
 
     /**
-     * @param int $id
-     * @return NumberFormat
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
-
-    /**
      * @param bool $commas
      * @return NumberFormat
      */
@@ -54,14 +44,6 @@ class NumberFormat
     {
         $this->commas = $commas;
         return $this;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**

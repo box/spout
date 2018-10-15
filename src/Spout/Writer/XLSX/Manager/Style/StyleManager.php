@@ -75,7 +75,8 @@ EOD;
         foreach ($registeredFormats as $styleId) {
             $style = $this->styleRegistry->getStyleFromStyleId($styleId);
             $format = $style->getNumberFormat();
-            $content .= '<numFmt numFmtId="'.$format->getId().'" formatCode="'.$format->getFormatCode().'"/>';
+            $formatId = $this->styleRegistry->getNumberFormatIdForStyleId($styleId);
+            $content .= '<numFmt numFmtId="'.$formatId.'" formatCode="'.$format->getFormatCode().'"/>';
         }
 
         $content .= '</numFmts>';
