@@ -14,7 +14,7 @@ class OptionsManager extends OptionsManagerAbstract
 {
     /** Default style font values */
     const DEFAULT_FONT_SIZE = 12;
-    const DEFAULT_FONT_NAME = 'Calibri';
+    const DEFAULT_FONT_NAME = 'Arial';
 
     /** @var StyleBuilder Style builder */
     protected $styleBuilder;

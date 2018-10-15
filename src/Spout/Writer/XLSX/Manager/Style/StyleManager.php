@@ -225,7 +225,7 @@ EOD;
             $styleId = $style->getId();
             $fillId = $this->getFillIdForStyleId($styleId);
             $borderId = $this->getBorderIdForStyleId($styleId);
-            $numberFormatId = !empty($style->getNumberFormat()) ? $style->getNumberFormat()->getId() : 0;
+            $numberFormatId = $this->getNumberFormatIdForStyleId($styleId);
 
             $content .= '<xf numFmtId="'.$numberFormatId.'" fontId="' . $styleId . '" fillId="' . $fillId . '" borderId="' . $borderId . '" xfId="0"';
 
@@ -280,6 +280,22 @@ EOD;
         $isDefaultStyle = ($styleId === 0);
 
         return $isDefaultStyle ? 0 : ($this->styleRegistry->getBorderIdForStyleId($styleId) ?: 0);
+    }
+
+    /**
+     * Returns the fill ID associated to the given style ID.
+     * For the default style, we don't a border.
+     *
+     * @param int $styleId
+     * @return int
+     */
+    private function getNumberFormatIdForStyleId($styleId)
+    {
+        // For the default style (ID = 0), we don't want to override the border.
+        // Otherwise all cells of the spreadsheet will have a border.
+        $isDefaultStyle = ($styleId === 0);
+
+        return $isDefaultStyle ? 0 : ($this->styleRegistry->getNumberFormatIdForStyleId($styleId) ?: 0);
     }
 
     /**
