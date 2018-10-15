@@ -12,12 +12,9 @@ class StyleRegistry
 {
     /** @var array [SERIALIZED_STYLE] => [STYLE_ID] mapping table, keeping track of the registered styles */
     protected $serializedStyleToStyleIdMappingTable = [];
-    protected $serializedNumberFormatToFormatIdMappingTable = [];
 
     /** @var array [STYLE_ID] => [STYLE] mapping table, keeping track of the registered styles */
     protected $styleIdToStyleMappingTable = [];
-
-    protected $numberFormats = [];
 
     /**
      * @param Style $defaultStyle

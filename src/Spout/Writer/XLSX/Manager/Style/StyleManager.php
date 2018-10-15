@@ -72,8 +72,9 @@ EOD;
 
         $content = '<numFmts count="'.count($registeredFormats).'">';
         /** @var NumberFormat $format */
-        foreach ($registeredFormats as $format) {
-
+        foreach ($registeredFormats as $styleId) {
+            $style = $this->styleRegistry->getStyleFromStyleId($styleId);
+            $format = $style->getNumberFormat();
             $content .= '<numFmt numFmtId="'.$format->getId().'" formatCode="'.$format->getFormatCode().'"/>';
         }
         $content .= '</numFmts>';
