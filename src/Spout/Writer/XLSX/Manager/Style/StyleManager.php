@@ -77,6 +77,7 @@ EOD;
             $format = $style->getNumberFormat();
             $content .= '<numFmt numFmtId="'.$format->getId().'" formatCode="'.$format->getFormatCode().'"/>';
         }
+
         $content .= '</numFmts>';
         return $content;
     }
