@@ -117,7 +117,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
 
             // We need to track the already registered background definitions
             if ($isNumberFormatRegistered) {
-                $registeredStyleId = $this->registeredFills[$serializedFormat];
+                $registeredStyleId = $this->registeredNumberFormats[$serializedFormat];
                 $registeredFormatId = $this->styleIdToNumberFormatMappingTable[$registeredStyleId];
                 $this->styleIdToNumberFormatMappingTable[$styleId] = $registeredFormatId;
             } else {
