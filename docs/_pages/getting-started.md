@@ -68,6 +68,17 @@ $reader->close();
 
 If there are multiple sheets in the file, the reader will read all of them sequentially.
 
+---
+
+In addition to passing a reader type to ```ReaderEntityFactory::createReader```, it is also possible to provide a path to a file and create the reader.
+
+```php
+
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+
+$reader = ReaderEntityFactory::createReaderFromFile('/path/to/file.xlsx');
+```
+
 ### Writer
 
 As with the reader, there is one common interface to write data to a file:

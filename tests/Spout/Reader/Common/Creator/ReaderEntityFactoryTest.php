@@ -7,10 +7,7 @@ use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\TestUsingResource;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class ReaderFactoryTest
- */
-class ReaderFactoryTest extends TestCase
+class ReaderEntityFactoryTest extends TestCase
 {
     use TestUsingResource;
 
@@ -20,7 +17,7 @@ class ReaderFactoryTest extends TestCase
     public function testCreateFromFileCSV()
     {
         $validCsv = $this->getResourcePath('csv_test_create_from_file.csv');
-        $reader = ReaderFactory::createFromFile($validCsv);
+        $reader = ReaderEntityFactory::createReaderFromFile($validCsv);
         $this->assertInstanceOf('Box\Spout\Reader\CSV\Reader', $reader);
     }
 
@@ -30,7 +27,7 @@ class ReaderFactoryTest extends TestCase
     public function testCreateFromFileCSVAllCaps()
     {
         $validCsv = $this->getResourcePath('csv_test_create_from_file.CSV');
-        $reader = ReaderFactory::createFromFile($validCsv);
+        $reader = ReaderEntityFactory::createReaderFromFile($validCsv);
         $this->assertInstanceOf('Box\Spout\Reader\CSV\Reader', $reader);
     }
 
@@ -40,7 +37,7 @@ class ReaderFactoryTest extends TestCase
     public function testCreateFromFileODS()
     {
         $validOds = $this->getResourcePath('csv_test_create_from_file.ods');
-        $reader = ReaderFactory::createFromFile($validOds);
+        $reader = ReaderEntityFactory::createReaderFromFile($validOds);
         $this->assertInstanceOf('Box\Spout\Reader\ODS\Reader', $reader);
     }
 
@@ -50,18 +47,8 @@ class ReaderFactoryTest extends TestCase
     public function testCreateFromFileXLSX()
     {
         $validXlsx = $this->getResourcePath('csv_test_create_from_file.xlsx');
-        $reader = ReaderFactory::createFromFile($validXlsx);
+        $reader = ReaderEntityFactory::createReaderFromFile($validXlsx);
         $this->assertInstanceOf('Box\Spout\Reader\XLSX\Reader', $reader);
-    }
-
-    /**
-     * @return void
-     */
-    public function testCreateReaderShouldThrowWithUnsupportedType()
-    {
-        $this->expectException(UnsupportedTypeException::class);
-
-        ReaderFactory::create('unsupportedType');
     }
 
     /**
@@ -71,7 +58,7 @@ class ReaderFactoryTest extends TestCase
     {
         $this->expectException(UnsupportedTypeException::class);
         $invalid = $this->getResourcePath('test_unsupported_file_type.other');
-        $reader = ReaderFactory::createFromFile($invalid);
+        $reader = ReaderEntityFactory::createReaderFromFile($invalid);
     }
 
     /**
@@ -81,6 +68,6 @@ class ReaderFactoryTest extends TestCase
     {
         $this->expectException(IOException::class);
         $invalid = 'thereisnosuchfile.ext';
-        $reader = ReaderFactory::createFromFile($invalid);
+        $reader = ReaderEntityFactory::createReaderFromFile($invalid);
     }
 }

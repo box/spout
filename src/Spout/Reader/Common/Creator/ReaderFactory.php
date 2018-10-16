@@ -3,6 +3,7 @@
 namespace Box\Spout\Reader\Common\Creator;
 
 use Box\Spout\Common\Creator\HelperFactory;
+use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\CSV\Creator\InternalEntityFactory as CSVInternalEntityFactory;
@@ -29,6 +30,16 @@ use Box\Spout\Reader\XLSX\Reader as XLSXReader;
 class ReaderFactory
 {
     /**
+     * Map file extensions to reader types
+     * @var array
+     */
+    private static $extensionReaderMap = [
+        'csv' => Type::CSV,
+        'ods' => Type::ODS,
+        'xlsx' => Type::XLSX,
+    ];
+
+    /**
      * This creates an instance of the appropriate reader, given the type of the file to be read
      *
      * @param  string $readerType Type of the reader to instantiate
@@ -44,6 +55,34 @@ class ReaderFactory
             default:
                 throw new UnsupportedTypeException('No readers supporting the given type: ' . $readerType);
         }
+    }
+
+    /**
+     * Creates a reader by file extension
+     *
+     * @param string The path to the spreadsheet file. Supported extensions are .csv,.ods and .xlsx
+     * @throws \Box\Spout\Common\Exception\IOException
+     * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
+     * @return ReaderInterface
+     */
+    public static function createFromFile(string $path)
+    {
+        if (!\is_file($path)) {
+            throw new IOException(
+                sprintf('Could not open "%s" for reading! File does not exist.', $path)
+            );
+        }
+
+        $ext = \pathinfo($path, PATHINFO_EXTENSION);
+        $ext = \strtolower($ext);
+        $readerType = self::$extensionReaderMap[$ext] ?? null;
+        if ($readerType === null) {
+            throw new UnsupportedTypeException(
+                sprintf('No readers supporting the file extension "%s".', $ext)
+            );
+        }
+
+        return self::create($readerType);
     }
 
     /**
