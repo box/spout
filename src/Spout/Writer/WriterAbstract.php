@@ -142,6 +142,33 @@ abstract class WriterAbstract implements WriterInterface
 
         return $this;
     }
+    
+    public function openToMemory()
+    {
+        $this->filePointer = $this->globalFunctionsHelper->fopen('php://temp', 'r+');
+        $this->throwIfFilePointerIsNotAvailable();
+
+        $this->openWriter();
+        $this->isWriterOpened = true;
+
+        return $this;
+    }
+
+    public function closeAndGetStream()
+    {
+        if (!$this->isWriterOpened) {
+            return;
+        }
+
+        $this->closeWriter();
+
+        $this->isWriterOpened = false;
+
+        rewind($this->filePointer);
+        fpassthru($this->filePointer);
+
+        return $this->filePointer;
+    }
 
     /**
      * Checks if the pointer to the file/stream to write to is available.
