@@ -165,7 +165,6 @@ abstract class WriterAbstract implements WriterInterface
         $this->isWriterOpened = false;
 
         rewind($this->filePointer);
-        fpassthru($this->filePointer);
 
         return $this->filePointer;
     }
