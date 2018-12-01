@@ -515,4 +515,31 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $reader->open('unsupported://foobar');
     }
 
+    /**
+     * @return void
+     */
+    public function testReadWithoutCallingRewindFirst()
+    {
+        $resourcePath = $this->getResourcePath('csv_standard.csv');
+
+        /** @var Reader $reader */
+        $reader = ReaderFactory::create(Type::CSV);
+        $reader->open($resourcePath);
+
+        $sheetIterator = $reader->getSheetIterator();
+        /** @var Sheet $sheet */
+        $sheet = $sheetIterator->current();
+
+        /** @var RowIterator $readerIterator */
+        $readerIterator = $sheet->getRowIterator();
+
+        $row = $readerIterator->current();
+
+        $reader->close();
+
+        $expectedRow = ['csv--11', 'csv--12', 'csv--13'];
+
+        $this->assertEquals($expectedRow, $row);
+    }
+
 }
