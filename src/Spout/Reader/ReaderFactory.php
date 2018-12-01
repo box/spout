@@ -29,20 +29,56 @@ class ReaderFactory
 
         switch ($readerType) {
             case Type::CSV:
-                $reader = new CSV\Reader();
+                $reader = self::createCsvReader();
                 break;
             case Type::XLSX:
-                $reader = new XLSX\Reader();
+                $reader = self::createXlsxReader();
                 break;
             case Type::ODS:
-                $reader = new ODS\Reader();
+                $reader = self::createOdsReader();
                 break;
             default:
                 throw new UnsupportedTypeException('No readers supporting the given type: ' . $readerType);
         }
 
-        $reader->setGlobalFunctionsHelper(new GlobalFunctionsHelper());
+        return $reader;
+    }
+
+    /**
+     * @return CSV\Reader
+     */
+    public static function createCsvReader() {
+        $reader = new CSV\Reader();
+        self::setDefaultGlobalFunctionHelper($reader);
 
         return $reader;
+    }
+
+    /**
+     * @return XLSX\Reader
+     */
+    public static function createXlsxReader() {
+        $reader = new XLSX\Reader();
+        self::setDefaultGlobalFunctionHelper($reader);
+
+        return $reader;
+    }
+
+    /**
+     * @return ODS\Reader
+     */
+    public static function createOdsReader() {
+        $reader = new ODS\Reader();
+        self::setDefaultGlobalFunctionHelper($reader);
+
+        return $reader;
+    }
+
+    /**
+     * @param AbstractReader $reader
+     */
+    private static function setDefaultGlobalFunctionHelper($reader)
+    {
+        $reader->setGlobalFunctionsHelper(new GlobalFunctionsHelper());
     }
 }

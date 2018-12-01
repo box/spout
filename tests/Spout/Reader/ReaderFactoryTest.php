@@ -18,4 +18,25 @@ class ReaderFactoryTest extends \PHPUnit_Framework_TestCase
     {
         ReaderFactory::create('unsupportedType');
     }
+
+    public function testCreateCsvReaderShouldProvideACsvReader()
+    {
+        $reader = ReaderFactory::createCsvReader();
+
+        $this->assertInstanceOf('Box\Spout\Reader\CSV\Reader', $reader);
+    }
+
+    public function testCreateXlsxReaderShouldProvideAXlsxReader()
+    {
+        $reader = ReaderFactory::createXlsxReader();
+
+        $this->assertInstanceOf('Box\Spout\Reader\XLSX\Reader', $reader);
+    }
+
+    public function testCreateOdsReaderShouldProvideAOdsReader()
+    {
+        $reader = ReaderFactory::createOdsReader();
+
+        $this->assertInstanceOf('Box\Spout\Reader\ODS\Reader', $reader);
+    }
 }
