@@ -9,7 +9,7 @@ use Box\Spout\Common\Type;
 /**
  * Class ReaderFactory
  * This factory is used to create readers, based on the type of the file to be read.
- * It supports CSV and XLSX formats.
+ * It supports CSV, ODS and XLSX formats.
  *
  * @package Box\Spout\Reader
  */
