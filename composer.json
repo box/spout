@@ -33,6 +33,10 @@
         "branch-alias": {
             "dev-master": "3.1.x-dev"
         }
+    },
+    "config": {
+        "platform": {
+            "php": "7.1"
+        }
     }
-
 }
