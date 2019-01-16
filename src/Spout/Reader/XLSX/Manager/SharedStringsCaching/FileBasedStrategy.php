@@ -17,6 +17,9 @@ class FileBasedStrategy implements CachingStrategyInterface
     /** Value to use to escape the line feed character ("\n") */
     const ESCAPED_LINE_FEED_CHARACTER = '_x000A_';
 
+	/** Index entry size uint32 for offset and uint16 for length */
+	const INDEX_ENTRY_SIZE = 6;
+
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
@@ -33,19 +36,7 @@ class FileBasedStrategy implements CachingStrategyInterface
     protected $maxNumStringsPerTempFile;
 
     /** @var resource Pointer to the last temp file a shared string was written to */
-    protected $tempFilePointer;
-
-    /**
-     * @var string Path of the temporary file whose contents is currently stored in memory
-     * @see CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE
-     */
-    protected $inMemoryTempFilePath;
-
-    /**
-     * @var array Contents of the temporary file that was last read
-     * @see CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE
-     */
-    protected $inMemoryTempFileContents;
+    protected $tempFilePointers;
 
     /**
      * @param string $tempFolder Temporary folder where the temporary files to store shared strings will be stored
@@ -60,8 +51,29 @@ class FileBasedStrategy implements CachingStrategyInterface
         $this->maxNumStringsPerTempFile = $maxNumStringsPerTempFile;
 
         $this->globalFunctionsHelper = $helperFactory->createGlobalFunctionsHelper();
-        $this->tempFilePointer = null;
+        $this->tempFilePointers = [];
     }
+
+	/**
+	 * Open file with cache
+	 *
+	 * @param string $tempFilePath filename with shared strings
+	 */
+    private function openCache($tempFilePath) {
+    	if (!array_key_exists($tempFilePath, $this->tempFilePointers)) {
+			// Open index file and seek to end
+			$index = $this->globalFunctionsHelper->fopen($tempFilePath  . '.index', 'c+');
+			$this->globalFunctionsHelper->fseek($index, 0, SEEK_END);
+
+    		// Open data file and seek to end
+			$data = $this->globalFunctionsHelper->fopen($tempFilePath, 'c+');
+			$this->globalFunctionsHelper->fseek($data, 0, SEEK_END);
+
+			$this->tempFilePointers[$tempFilePath] = [$index, $data];
+		}
+
+    	return $this->tempFilePointers[$tempFilePath];
+	}
 
     /**
      * Adds the given string to the cache.
@@ -74,18 +86,14 @@ class FileBasedStrategy implements CachingStrategyInterface
     {
         $tempFilePath = $this->getSharedStringTempFilePath($sharedStringIndex);
 
-        if (!$this->globalFunctionsHelper->file_exists($tempFilePath)) {
-            if ($this->tempFilePointer) {
-                $this->globalFunctionsHelper->fclose($this->tempFilePointer);
-            }
-            $this->tempFilePointer = $this->globalFunctionsHelper->fopen($tempFilePath, 'w');
-        }
+        list($index, $data) = $this->openCache($tempFilePath);
 
         // The shared string retrieval logic expects each cell data to be on one line only
         // Encoding the line feed character allows to preserve this assumption
         $lineFeedEncodedSharedString = $this->escapeLineFeed($sharedString);
 
-        $this->globalFunctionsHelper->fwrite($this->tempFilePointer, $lineFeedEncodedSharedString . PHP_EOL);
+		$this->globalFunctionsHelper->fwrite($index, pack('Nn', $this->globalFunctionsHelper->ftell($data), strlen($lineFeedEncodedSharedString) + strlen(PHP_EOL)));
+        $this->globalFunctionsHelper->fwrite($data, $lineFeedEncodedSharedString . PHP_EOL);
     }
 
     /**
@@ -110,9 +118,13 @@ class FileBasedStrategy implements CachingStrategyInterface
     public function closeCache()
     {
         // close pointer to the last temp file that was written
-        if ($this->tempFilePointer) {
-            $this->globalFunctionsHelper->fclose($this->tempFilePointer);
+        if (!empty($this->tempFilePointers)) {
+        	foreach ($this->tempFilePointers as $pointer) {
+				$this->globalFunctionsHelper->fclose($pointer[0]);
+				$this->globalFunctionsHelper->fclose($pointer[1]);
+			}
         }
+		$this->tempFilePointers = [];
     }
 
     /**
@@ -131,21 +143,19 @@ class FileBasedStrategy implements CachingStrategyInterface
             throw new SharedStringNotFoundException("Shared string temp file not found: $tempFilePath ; for index: $sharedStringIndex");
         }
 
-        if ($this->inMemoryTempFilePath !== $tempFilePath) {
-            // free memory
-            unset($this->inMemoryTempFileContents);
+        list($index, $data) = $this->openCache($tempFilePath);
 
-            $this->inMemoryTempFileContents = explode(PHP_EOL, $this->globalFunctionsHelper->file_get_contents($tempFilePath));
-            $this->inMemoryTempFilePath = $tempFilePath;
-        }
+        // Read index entry
+		$this->globalFunctionsHelper->fseek($index, $indexInFile * self::INDEX_ENTRY_SIZE);
+		$indexEntryBytes = $this->globalFunctionsHelper->fread($index, self::INDEX_ENTRY_SIZE);
+		$indexEntry = unpack('Noffset/nlen', $indexEntryBytes);
 
-        $sharedString = null;
-
-        // Using isset here because it is way faster than array_key_exists...
-        if (isset($this->inMemoryTempFileContents[$indexInFile])) {
-            $escapedSharedString = $this->inMemoryTempFileContents[$indexInFile];
-            $sharedString = $this->unescapeLineFeed($escapedSharedString);
-        }
+		$sharedString = null;
+		if ($indexEntry['offset'] + $indexEntry['len'] <= filesize($tempFilePath)) {
+			$this->globalFunctionsHelper->fseek($data, $indexEntry['offset']);
+			$escapedSharedString  = $this->globalFunctionsHelper->fread($data, $indexEntry['len']);
+			$sharedString = $this->unescapeLineFeed($escapedSharedString);
+		}
 
         if ($sharedString === null) {
             throw new SharedStringNotFoundException("Shared string not found for index: $sharedStringIndex");
