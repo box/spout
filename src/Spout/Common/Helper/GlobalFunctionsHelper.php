@@ -23,18 +23,18 @@ class GlobalFunctionsHelper
         return fopen($fileName, $mode);
     }
 
-	/**
-	 * Wrapper around global function fread()
-	 * @see fread()
-	 *
-	 * @param resource $handle
-	 * @param int|null $length
-	 * @return string
-	 */
-	public function fread($handle, $length = null)
-	{
-		return fread($handle, $length);
-	}
+    /**
+     * Wrapper around global function fread()
+     * @see fread()
+     *
+     * @param resource $handle
+     * @param int|null $length
+     * @return string
+     */
+    public function fread($handle, $length = null)
+    {
+        return fread($handle, $length);
+    }
 
     /**
      * Wrapper around global function fgets()
@@ -88,17 +88,17 @@ class GlobalFunctionsHelper
         return fseek($handle, $offset, $whence);
     }
 
-	/**
-	 * Wrapper around global function ftell()
-	 * @see fseek()
-	 *
-	 * @param resource $handle
-	 * @return bool|int
-	 */
-	public function ftell($handle)
-	{
-		return ftell($handle);
-	}
+    /**
+     * Wrapper around global function ftell()
+     * @see fseek()
+     *
+     * @param resource $handle
+     * @return bool|int
+     */
+    public function ftell($handle)
+    {
+        return ftell($handle);
+    }
 
     /**
      * Wrapper around global function fgetcsv()
