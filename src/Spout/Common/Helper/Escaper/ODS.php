@@ -16,17 +16,16 @@ class ODS implements EscaperInterface
      */
     public function escape($string)
     {
+        // @NOTE: Using ENT_QUOTES as XML entities ('<', '>', '&') as well as
+        //        single/double quotes (for XML attributes) need to be encoded.
         if (defined('ENT_DISALLOWED')) {
             // 'ENT_DISALLOWED' ensures that invalid characters in the given document type are replaced.
             // Otherwise control characters like a vertical tab "\v" will make the XML document unreadable by the XML processor
             // @link https://github.com/box/spout/issues/329
-            $replacedString = htmlspecialchars($string, ENT_NOQUOTES | ENT_DISALLOWED);
+            $replacedString = htmlspecialchars($string, ENT_QUOTES | ENT_DISALLOWED);
         } else {
             // We are on hhvm or any other engine that does not support ENT_DISALLOWED.
-            //
-            // @NOTE: Using ENT_NOQUOTES as only XML entities ('<', '>', '&') need to be encoded.
-            //        Single and double quotes can be left as is.
-            $escapedString =  htmlspecialchars($string, ENT_NOQUOTES);
+            $escapedString =  htmlspecialchars($string, ENT_QUOTES);
 
             // control characters values are from 0 to 1F (hex values) in the ASCII table
             // some characters should not be escaped though: "\t", "\r" and "\n".
