@@ -441,7 +441,7 @@ class WriterTest extends TestCase
 
         $this->writeToODSFile($dataRows, $fileName);
 
-        $this->assertValueWasWritten($fileName, 'I\'m in "great" mood', 'Quotes should not be escaped');
+        $this->assertValueWasWritten($fileName, 'I&#039;m in &quot;great&quot; mood', 'Quotes should not be escaped');
         $this->assertValueWasWritten($fileName, 'This &lt;must&gt; be escaped &amp; tested', '<, > and & should be escaped');
     }
 

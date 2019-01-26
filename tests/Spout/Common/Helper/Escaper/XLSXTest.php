@@ -17,7 +17,7 @@ class XLSXTest extends TestCase
     {
         return [
             ['test', 'test'],
-            ['adam\'s "car"', 'adam\'s "car"'],
+            ['adam\'s "car"', 'adam&#039;s &quot;car&quot;'],
             ["\n", "\n"],
             ["\r", "\r"],
             ["\t", "\t"],
@@ -26,7 +26,7 @@ class XLSXTest extends TestCase
             ['_x0000_', '_x005F_x0000_'],
             [chr(21), '_x0015_'],
             ['control ' . chr(21) . ' character', 'control _x0015_ character'],
-            ['control\'s ' . chr(21) . ' "character"', 'control\'s _x0015_ "character"'],
+            ['control\'s ' . chr(21) . ' "character"', 'control&#039;s _x0015_ &quot;character&quot;'],
         ];
     }
 

@@ -498,7 +498,7 @@ class WriterTest extends TestCase
 
         $this->writeToXLSXFile($dataRows, $fileName);
 
-        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'I\'m in "great" mood', 'Quotes should not be escaped');
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'I&#039;m in &quot;great&quot; mood', 'Quotes should not be escaped');
         $this->assertInlineDataWasWrittenToSheet($fileName, 1, 'This &lt;must&gt; be escaped &amp; tested', '<, > and & should be escaped');
     }
 

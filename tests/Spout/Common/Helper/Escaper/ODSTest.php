@@ -17,7 +17,7 @@ class ODSTest extends TestCase
     {
         return [
             ['test', 'test'],
-            ['carl\'s "pokemon"', 'carl\'s "pokemon"'],
+            ['carl\'s "pokemon"', 'carl&#039;s &quot;pokemon&quot;'],
             ["\n", "\n"],
             ["\r", "\r"],
             ["\t", "\t"],
