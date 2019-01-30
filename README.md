@@ -27,16 +27,13 @@ Full documentation can be found at [http://opensource.box.com/spout/](http://ope
 
 ## Running tests
 
-On the `master` branch, only unit and functional tests are included. The performance tests require very large files and have been excluded.
-If you just want to check that everything is working as expected, executing the tests of the `master` branch is enough.
+The `master` branch includes unit, functional and performance tests.
+If you just want to check that everything is working as expected, executing the unit and functional tests is enough.
 
-If you want to run performance tests, you will need to checkout the `perf-tests` branch. Multiple test suites can then be run, depending on the expected output:
-
-* `phpunit` - runs the whole test suite (unit + functional + performance tests)
-* `phpunit --exclude-group perf-tests` - only runs the unit and functional tests
+* `phpunit` - runs unit and functional tests
 * `phpunit --group perf-tests` - only runs the performance tests
 
-For information, the performance tests take about 30 minutes to run (processing 1 million rows files is not a quick thing).
+For information, the performance tests take about 10 minutes to run (processing 1 million rows files is not a quick thing).
 
 > Performance tests status: [![Build Status](https://travis-ci.org/box/spout.svg?branch=perf-tests)](https://travis-ci.org/box/spout)
 
