@@ -58,6 +58,24 @@ $row2 = WriterEntityFactory::createRow([$cell1, $cell2]);
 $writer->addRows([$row1, $row2]);
 ```
 
+Namespace changes for styles
+-----------------
+The namespaces for styles have changed. Styles are still created by using a `builder` class.
+
+For the builder, please update your import statements to use the following namespaces:
+
+    Box\Spout\Writer\Common\Creator\Style\StyleBuilder
+    Box\Spout\Writer\Common\Creator\Style\BorderBuilder
+
+The `Style` base class and style definitions like `Border`, `BorderPart` and `Color` also have a new namespace.
+
+If your are using these classes directly via an import statement in your code, please use the following namespaces:
+
+    Box\Spout\Common\Entity\Style\Border
+    Box\Spout\Common\Entity\Style\BorderPart
+    Box\Spout\Common\Entity\Style\Color
+    Box\Spout\Common\Entity\Style\Style
+
 Handling of empty rows
 ----------------------
 In 2.x, empty rows were not added to the spreadsheet.

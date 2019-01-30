@@ -24,6 +24,9 @@ Full documentation can be found at [http://opensource.box.com/spout/](http://ope
 * PHP extension `php_zip` enabled
 * PHP extension `php_xmlreader` enabled
 
+## Upgrade guide
+
+Version 3 introduced new functionality but also some breaking changes. If you want to upgrade your Spout codebase from version 2 please consult the [Upgrade guide](UPGRADE-3.0.md). 
 
 ## Running tests
 
