@@ -45,4 +45,34 @@ class WriterFactory
 
         return $writer;
     }
+
+    /**
+     * @return CSV\Writer
+     */
+    public static function createCSVWriter()
+    {
+        $writer = new CSV\Writer();
+        $writer->setGlobalFunctionsHelper(new GlobalFunctionsHelper());
+        return $writer;
+    }
+
+    /**
+     * @return XLSX\Writer
+     */
+    public static function createXLSXWriter()
+    {
+        $writer = new XLSX\Writer();
+        $writer->setGlobalFunctionsHelper(new GlobalFunctionsHelper());
+        return $writer;
+    }
+
+    /**
+     * @return ODS\Writer
+     */
+    public static function createODSWriter()
+    {
+        $writer = new ODS\Writer();
+        $writer->setGlobalFunctionsHelper(new GlobalFunctionsHelper());
+        return $writer;
+    }
 }
