@@ -26,6 +26,31 @@ class WriterEntityFactory
     }
 
     /**
+     * @return \Box\Spout\Writer\CSV\Writer
+     */
+    public static function createCSVWriter()
+    {
+        return (new WriterFactory())->getCSVWriter();
+    }
+
+    /**
+     * @return \Box\Spout\Writer\XLSX\Writer
+     */
+    public static function createXLSXWriter()
+    {
+        return (new WriterFactory())->getXLSXWriter();
+    }
+
+    /**
+     * @return \Box\Spout\Writer\ODS\Writer
+     */
+    public static function createODSWriter()
+    {
+        return (new WriterFactory())->getODSWriter();
+    }
+
+
+    /**
      * @param Cell[] $cells
      * @param Style|null $rowStyle
      * @return Row

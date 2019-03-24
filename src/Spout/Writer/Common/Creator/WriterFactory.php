@@ -47,7 +47,7 @@ class WriterFactory
     /**
      * @return CSVWriter
      */
-    private function getCSVWriter()
+    public function getCSVWriter()
     {
         $optionsManager = new CSVOptionsManager();
         $globalFunctionsHelper = new GlobalFunctionsHelper();
@@ -60,7 +60,7 @@ class WriterFactory
     /**
      * @return XLSXWriter
      */
-    private function getXLSXWriter()
+    public function getXLSXWriter()
     {
         $styleBuilder = new StyleBuilder();
         $optionsManager = new XLSXOptionsManager($styleBuilder);
@@ -75,7 +75,7 @@ class WriterFactory
     /**
      * @return ODSWriter
      */
-    private function getODSWriter()
+    public function getODSWriter()
     {
         $styleBuilder = new StyleBuilder();
         $optionsManager = new ODSOptionsManager($styleBuilder);
