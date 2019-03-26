@@ -2,10 +2,23 @@
 
 namespace Box\Spout\Writer\Common\Creator;
 
+use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Style\Style;
+use Box\Spout\Common\Helper\GlobalFunctionsHelper;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Writer\CSV\Manager\OptionsManager as CSVOptionsManager;
+use Box\Spout\Writer\CSV\Writer as CSVWriter;
+use Box\Spout\Writer\ODS\Creator\HelperFactory as ODSHelperFactory;
+use Box\Spout\Writer\ODS\Creator\ManagerFactory as ODSManagerFactory;
+use Box\Spout\Writer\ODS\Manager\OptionsManager as ODSOptionsManager;
+use Box\Spout\Writer\ODS\Writer as ODSWriter;
 use Box\Spout\Writer\WriterInterface;
+use Box\Spout\Writer\XLSX\Creator\HelperFactory as XLSXHelperFactory;
+use Box\Spout\Writer\XLSX\Creator\ManagerFactory as XLSXManagerFactory;
+use Box\Spout\Writer\XLSX\Manager\OptionsManager as XLSXOptionsManager;
+use Box\Spout\Writer\XLSX\Writer as XLSXWriter;
 
 /**
  * Class WriterEntityFactory
@@ -30,7 +43,12 @@ class WriterEntityFactory
      */
     public static function createCSVWriter()
     {
-        return (new WriterFactory())->getCSVWriter();
+        $optionsManager = new CSVOptionsManager();
+        $globalFunctionsHelper = new GlobalFunctionsHelper();
+
+        $helperFactory = new HelperFactory();
+
+        return new CSVWriter($optionsManager, $globalFunctionsHelper, $helperFactory);
     }
 
     /**
@@ -38,7 +56,14 @@ class WriterEntityFactory
      */
     public static function createXLSXWriter()
     {
-        return (new WriterFactory())->getXLSXWriter();
+        $styleBuilder = new StyleBuilder();
+        $optionsManager = new XLSXOptionsManager($styleBuilder);
+        $globalFunctionsHelper = new GlobalFunctionsHelper();
+
+        $helperFactory = new XLSXHelperFactory();
+        $managerFactory = new XLSXManagerFactory(new InternalEntityFactory(), $helperFactory);
+
+        return new XLSXWriter($optionsManager, $globalFunctionsHelper, $helperFactory, $managerFactory);
     }
 
     /**
@@ -46,7 +71,14 @@ class WriterEntityFactory
      */
     public static function createODSWriter()
     {
-        return (new WriterFactory())->getODSWriter();
+        $styleBuilder = new StyleBuilder();
+        $optionsManager = new ODSOptionsManager($styleBuilder);
+        $globalFunctionsHelper = new GlobalFunctionsHelper();
+
+        $helperFactory = new ODSHelperFactory();
+        $managerFactory = new ODSManagerFactory(new InternalEntityFactory(), $helperFactory);
+
+        return new ODSWriter($optionsManager, $globalFunctionsHelper, $helperFactory, $managerFactory);
     }
 
 
