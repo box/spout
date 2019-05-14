@@ -1,20 +1,40 @@
 {
-    "name": "box/spout",
+    "name": "smart145/spout",
     "description": "PHP Library to read and write spreadsheet files (CSV, XLSX and ODS), in a fast and scalable way",
     "type": "library",
-    "keywords": ["php","read","write","csv","xlsx","ods","odf","open","office","excel","spreadsheet","scale","memory","stream","ooxml"],
+    "keywords": [
+        "php",
+        "read",
+        "write",
+        "csv",
+        "xlsx",
+        "ods",
+        "odf",
+        "open",
+        "office",
+        "excel",
+        "spreadsheet",
+        "scale",
+        "memory",
+        "stream",
+        "ooxml"
+    ],
     "license": "Apache-2.0",
-    "homepage": "https://www.github.com/box/spout",
+    "homepage": "https://www.github.com/smart145/spout",
     "authors": [
         {
             "name": "Adrien Loison",
             "email": "adrien@box.com"
+        },
+        {
+            "name": "Dariel Ramos",
+            "email": "vdariel90@gmail.com"
         }
     ],
     "require": {
         "php": ">=5.4.0",
         "ext-zip": "*",
-        "ext-xmlreader" : "*"
+        "ext-xmlreader": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8.0"
@@ -38,5 +58,4 @@
             "php": "5.4.0"
         }
     }
-
 }

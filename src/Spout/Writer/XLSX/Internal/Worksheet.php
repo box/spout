@@ -65,8 +65,14 @@ EOD;
      * @param bool $shouldUseInlineStrings Whether inline or shared strings should be used
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
-    public function __construct($externalSheet, $worksheetFilesFolder, $sharedStringsHelper, $styleHelper, $shouldUseInlineStrings)
-    {
+    public function __construct(
+        $externalSheet,
+        $worksheetFilesFolder,
+        $sharedStringsHelper,
+        $styleHelper,
+        $shouldUseInlineStrings,
+        $columnwidths
+    ) {
         $this->externalSheet = $externalSheet;
         $this->sharedStringsHelper = $sharedStringsHelper;
         $this->styleHelper = $styleHelper;
@@ -76,8 +82,8 @@ EOD;
         $this->stringsEscaper = \Box\Spout\Common\Escaper\XLSX::getInstance();
         $this->stringHelper = new StringHelper();
 
-        $this->worksheetFilePath = $worksheetFilesFolder . '/' . strtolower($this->externalSheet->getName()) . '.xml';
-        $this->startSheet();
+        $this->worksheetFilePath = $worksheetFilesFolder.'/'.strtolower($this->externalSheet->getName()).'.xml';
+        $this->startSheet($columnwidths);
     }
 
     /**
@@ -86,12 +92,24 @@ EOD;
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data file cannot be opened for writing
      */
-    protected function startSheet()
+    protected function startSheet($columnwidths = null)
     {
         $this->sheetFilePointer = fopen($this->worksheetFilePath, 'w');
         $this->throwIfSheetFilePointerIsNotAvailable();
 
         fwrite($this->sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+
+        if (!empty($columnwidths)) {
+            foreach ($columnwidths as $c) {
+                fwrite($this->sheetFilePointer,
+                    '<cols><col min="'.$c['min'].
+                    '" max="'.$c['max'].
+                    '" width="'.$c['width'].
+                    '" customWidth="1"/></cols>'
+                );
+            }
+        }
+
         fwrite($this->sheetFilePointer, '<sheetData>');
     }
 
@@ -162,6 +180,7 @@ EOD;
     protected function isEmptyRow($dataRow)
     {
         $numCells = count($dataRow);
+
         // using "reset()" instead of "$dataRow[0]" because $dataRow can be an associative array
         return ($numCells === 1 && CellHelper::isEmpty(reset($dataRow)));
     }
@@ -182,9 +201,9 @@ EOD;
         $rowIndex = $this->lastWrittenRowIndex + 1;
         $numCells = count($dataRow);
 
-        $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
+        $rowXML = '<row r="'.$rowIndex.'" spans="1:'.$numCells.'">';
 
-        foreach($dataRow as $cellValue) {
+        foreach ($dataRow as $cellValue) {
             $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cellValue, $style->getId());
             $cellNumber++;
         }
@@ -210,25 +229,31 @@ EOD;
     protected function getCellXML($rowIndex, $cellNumber, $cellValue, $styleId)
     {
         $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
-        $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
-        $cellXML .= ' s="' . $styleId . '"';
+        $cellXML = '<c r="'.$columnIndex.$rowIndex.'"';
+        $cellXML .= ' s="'.$styleId.'"';
 
         if (CellHelper::isNonEmptyString($cellValue)) {
             $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cellValue);
-        } else if (CellHelper::isBoolean($cellValue)) {
-            $cellXML .= ' t="b"><v>' . intval($cellValue) . '</v></c>';
-        } else if (CellHelper::isNumeric($cellValue)) {
-            $cellXML .= '><v>' . $cellValue . '</v></c>';
-        } else if (empty($cellValue)) {
-            if ($this->styleHelper->shouldApplyStyleOnEmptyCell($styleId)) {
-                $cellXML .= '/>';
-            } else {
-                // don't write empty cells that do no need styling
-                // NOTE: not appending to $cellXML is the right behavior!!
-                $cellXML = '';
-            }
         } else {
-            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
+            if (CellHelper::isBoolean($cellValue)) {
+                $cellXML .= ' t="b"><v>'.intval($cellValue).'</v></c>';
+            } else {
+                if (CellHelper::isNumeric($cellValue)) {
+                    $cellXML .= '><v>'.$cellValue.'</v></c>';
+                } else {
+                    if (empty($cellValue)) {
+                        if ($this->styleHelper->shouldApplyStyleOnEmptyCell($styleId)) {
+                            $cellXML .= '/>';
+                        } else {
+                            // don't write empty cells that do no need styling
+                            // NOTE: not appending to $cellXML is the right behavior!!
+                            $cellXML = '';
+                        }
+                    } else {
+                        throw new InvalidArgumentException('Trying to add a value with an unsupported type: '.gettype($cellValue));
+                    }
+                }
+            }
         }
 
         return $cellXML;
@@ -248,10 +273,10 @@ EOD;
         }
 
         if ($this->shouldUseInlineStrings) {
-            $cellXMLFragment = ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
+            $cellXMLFragment = ' t="inlineStr"><is><t>'.$this->stringsEscaper->escape($cellValue).'</t></is></c>';
         } else {
             $sharedStringId = $this->sharedStringsHelper->writeString($cellValue);
-            $cellXMLFragment = ' t="s"><v>' . $sharedStringId . '</v></c>';
+            $cellXMLFragment = ' t="s"><v>'.$sharedStringId.'</v></c>';
         }
 
         return $cellXMLFragment;
