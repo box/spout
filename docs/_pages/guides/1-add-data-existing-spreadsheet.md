@@ -14,20 +14,19 @@ In order to avoid memory issues when dealing with large spreadsheets, {{ site.sp
 ```php
 <?php
 
-use Box\Spout\Reader\ReaderFactory;
-use Box\Spout\Writer\WriterFactory;
-use Box\Spout\Common\Type;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 
 $existingFilePath = 'path/to/orders.xlsx';
 $newFilePath = 'path/to/new-orders.xlsx';
 
 // we need a reader to read the existing file...
-$reader = ReaderFactory::create(Type::XLSX);
-$reader->open($existingFilePath);
+$reader = ReaderEntityFactory::createReaderFromFile($existingFilePath);
 $reader->setShouldFormatDates(true); // this is to be able to copy dates
+$reader->open($existingFilePath);
 
 // ... and a writer to create the new file
-$writer = WriterFactory::create(Type::XLSX);
+$writer = WriterEntityFactory::createWriterFromFile($newFilePath);
 $writer->openToFile($newFilePath);
 
 // let's read the entire spreadsheet...
@@ -45,7 +44,9 @@ foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
 
 // At this point, the new spreadsheet contains the same data as the existing one.
 // So let's add the new data:
-$writer->addRow(['2015-12-25', 'Christmas gift', 29, 'USD']);
+$writer->addRow(
+    WriterEntityFactory::createRowFromArray(['2015-12-25', 'Christmas gift', 29, 'USD'])
+);
 
 $reader->close();
 $writer->close();
