@@ -2,7 +2,6 @@
 
 namespace Box\Spout\Reader\Common\Creator;
 
-use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\TestUsingResource;
 use PHPUnit\Framework\TestCase;
@@ -58,16 +57,16 @@ class ReaderEntityFactoryTest extends TestCase
     {
         $this->expectException(UnsupportedTypeException::class);
         $invalid = $this->getResourcePath('test_unsupported_file_type.other');
-        $reader = ReaderEntityFactory::createReaderFromFile($invalid);
+        ReaderEntityFactory::createReaderFromFile($invalid);
     }
 
     /**
      * @return void
      */
-    public function testCreateFromFileMissing()
+    public function testCreateFromFileMissingShouldWork()
     {
-        $this->expectException(IOException::class);
-        $invalid = 'thereisnosuchfile.ext';
-        $reader = ReaderEntityFactory::createReaderFromFile($invalid);
+        $notExistingFile = 'thereisnosuchfile.csv';
+        $reader = ReaderEntityFactory::createReaderFromFile($notExistingFile);
+        $this->assertInstanceOf('Box\Spout\Reader\CSV\Reader', $reader);
     }
 }

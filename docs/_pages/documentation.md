@@ -44,9 +44,8 @@ It is possible to change the behavior of the writers when the maximum number of 
 ```php
 
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Common\Type;
 
-$writer = WriterEntityFactory::createWriter(Type::ODS);
+$writer = WriterEntityFactory::createODSWriter();
 $writer->setShouldCreateNewSheetsAutomatically(true); // default value
 $writer->setShouldCreateNewSheetsAutomatically(false); // will stop writing new data when limit is reached
 ```
@@ -57,9 +56,8 @@ Processing XLSX and ODS files requires temporary files to be created. By default
 
 ```php
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Common\Type;
 
-$writer = WriterEntityFactory::createWriter(Type::XLSX);
+$writer = WriterEntityFactory::createXLSXWriter();
 $writer->setTempFolder($customTempFolderPath);
 ```
 
@@ -73,9 +71,8 @@ In order to keep the memory usage really low, {{ site.spout_html }} does not de-
 
 ```php
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Box\Spout\Common\Type;
 
-$writer = WriterEntityFactory::createWriter(Type::XLSX);
+$writer = WriterEntityFactory::createXLSXWriter();
 $writer->setShouldUseInlineStrings(true); // default (and recommended) value
 $writer->setShouldUseInlineStrings(false); // will use shared strings
 ```
@@ -91,9 +88,8 @@ It is possible to change this behavior and have a formatted date returned instea
 
 ```php
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use Box\Spout\Common\Type;
 
-$reader = ReaderEntityFactory::createReader(Type::XLSX);
+$reader = ReaderEntityFactory::createXLSXReader();
 $reader->setShouldFormatDates(false); // default value
 $reader->setShouldFormatDates(true); // will return formatted dates
 ```
@@ -137,12 +133,11 @@ For fonts and alignments, {{ site.spout_html }} does not support all the possibl
 It is possible to apply some formatting options to a row. In this case, all cells of the row will have the same style:
 
 ```php
-use Box\Spout\Common\Type;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Common\Entity\Style\Color;
 
-$writer = WriterEntityFactory::createWriter(Type::XLSX);
+$writer = WriterEntityFactory::createXLSXWriter();
 $writer->openToFile($filePath);
 
 /** Create a style with the StyleBuilder */
@@ -165,7 +160,6 @@ $writer->close();
 Adding borders to a row requires a ```Border``` object.
 
 ```php
-use Box\Spout\Common\Type;
 use Box\Spout\Common\Entity\Style\Border;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
 use Box\Spout\Common\Entity\Style\Color;
@@ -180,7 +174,7 @@ $style = (new StyleBuilder())
     ->setBorder($border)
     ->build();
 
-$writer = WriterEntityFactory::createWriter(Type::XLSX);
+$writer = WriterEntityFactory::createXLSXWriter();
 $writer->openToFile($filePath);
 
 $cells = WriterEntityFactory::createCell('Border Bottom Green Thin Dashed');
@@ -202,7 +196,6 @@ The styles applied to a specific cell will override any parent styles if present
 Example:
 
 ```php
-use Box\Spout\Common\Type;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
@@ -211,7 +204,7 @@ $defaultStyle = (new StyleBuilder())
     ->setFontSize(8)
     ->build();
 
-$writer = WriterEntityFactory::createWriter(Type::XLSX);
+$writer = WriterEntityFactory::createXLSXWriter();
 $writer->setDefaultRowStyle($defaultStyle)
     ->openToFile($filePath);
 
@@ -252,7 +245,7 @@ $defaultStyle = (new StyleBuilder())
                 ->setFontSize(11)
                 ->build();
 
-$writer = WriterEntityFactory::createWriter(Type::XLSX);
+$writer = WriterEntityFactory::createXLSXWriter();
 $writer->setDefaultRowStyle($defaultStyle)
        ->openToFile($filePath);
 ```

@@ -5,6 +5,8 @@ namespace Box\Spout\Writer\Common\Creator;
 use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Style\Style;
+use Box\Spout\Common\Exception\UnsupportedTypeException;
+use Box\Spout\Common\Type;
 use Box\Spout\Writer\WriterInterface;
 
 /**
@@ -22,20 +24,61 @@ class WriterEntityFactory
      */
     public static function createWriter($writerType)
     {
-        return WriterFactory::create($writerType);
+        return WriterFactory::createFromType($writerType);
     }
 
     /**
      * This creates an instance of the appropriate writer, given the extension of the file to be written
      *
      * @param string $path The path to the spreadsheet file. Supported extensions are .csv, .ods and .xlsx
-     * @throws \Box\Spout\Common\Exception\IOException
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      * @return WriterInterface
      */
     public static function createWriterFromFile(string $path)
     {
         return WriterFactory::createFromFile($path);
+    }
+
+    /**
+     * This creates an instance of a CSV writer
+     *
+     * @return \Box\Spout\Writer\CSV\Writer
+     */
+    public static function createCSVWriter()
+    {
+        try {
+            return WriterFactory::createFromType(Type::CSV);
+        } catch (UnsupportedTypeException $e) {
+            // should never happen
+        }
+    }
+
+    /**
+     * This creates an instance of a XLSX writer
+     *
+     * @return \Box\Spout\Writer\XLSX\Writer
+     */
+    public static function createXLSXWriter()
+    {
+        try {
+            return WriterFactory::createFromType(Type::XLSX);
+        } catch (UnsupportedTypeException $e) {
+            // should never happen
+        }
+    }
+
+    /**
+     * This creates an instance of a ODS writer
+     *
+     * @return \Box\Spout\Writer\ODS\Writer
+     */
+    public static function createODSWriter()
+    {
+        try {
+            return WriterFactory::createFromType(Type::ODS);
+        } catch (UnsupportedTypeException $e) {
+            // should never happen
+        }
     }
 
     /**

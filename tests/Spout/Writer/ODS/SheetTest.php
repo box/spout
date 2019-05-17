@@ -2,7 +2,6 @@
 
 namespace Box\Spout\Writer\ODS;
 
-use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Entity\Sheet;
@@ -65,8 +64,7 @@ class SheetTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createODSWriter();
         $writer->openToFile($resourcePath);
 
         $customSheetName = 'Sheet name';
@@ -104,8 +102,7 @@ class SheetTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createODSWriter();
         $writer->openToFile($resourcePath);
 
         $sheet = $writer->getCurrentSheet();
@@ -124,8 +121,7 @@ class SheetTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createODSWriter();
         $writer->openToFile($resourcePath);
 
         $writer->addRow($this->createRowFromValues(['ods--sheet1--11', 'ods--sheet1--12']));
@@ -146,8 +142,7 @@ class SheetTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\ODS\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createODSWriter();
         $writer->openToFile($resourcePath);
 
         $sheet = $writer->getCurrentSheet();

@@ -68,16 +68,14 @@ $reader->close();
 If there are multiple sheets in the file, the reader will read all of them sequentially.
 
 
-Note that {{ site.spout_html }} guesses the reader type based on the file extension. If the extension is not standard (`.csv`, `.ods`, `.xlsx` _- lower/uppercase_), the reader type needs to be specified:
+Note that {{ site.spout_html }} guesses the reader type based on the file extension. If the extension is not standard (`.csv`, `.ods`, `.xlsx` _- lower/uppercase_), a specific reader can be created directly:
 
 ```php
-
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
-use Box\Spout\Common\Type;
 
-$reader = ReaderEntityFactory::createReader(Type::XLSX); // for XLSX files
-// $reader = ReaderEntityFactory::createReader(Type::ODS); // for ODS files
-// $reader = ReaderEntityFactory::createReader(Type::CSV); // for CSV files
+$reader = ReaderEntityFactory::createXLSXReader();
+// $reader = ReaderEntityFactory::createODSReader();
+// $reader = ReaderEntityFactory::createCSVReader();
 ```
 
 ### Writer
@@ -124,9 +122,9 @@ Similar to the reader, if the file extension of the file to be written is not st
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Common\Entity\Row;
 
-$writer = WriterEntityFactory::createWriter(Type::XLSX);
-// $writer = WriterEntityFactory::createWriter(Type::ODS);
-// $writer = WriterEntityFactory::createWriter(Type::CSV);
+$writer = WriterEntityFactory::createXLSXWriter();
+// $writer = WriterEntityFactory::createODSWriter();
+// $writer = WriterEntityFactory::createCSVWriter();
 ```
 
 For XLSX and ODS files, the number of rows per sheet is limited to *1,048,576*. By default, once this limit is reached, the writer will automatically create a new sheet and continue writing data into it.

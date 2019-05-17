@@ -2,7 +2,6 @@
 
 namespace Box\Spout\Reader\XLSX;
 
-use Box\Spout\Common\Type;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\TestUsingResource;
 use PHPUnit\Framework\TestCase;
@@ -50,7 +49,7 @@ class ReaderPerfTest extends TestCase
         $fileName = ($shouldUseInlineStrings) ? 'xlsx_with_300k_rows_and_inline_strings.xlsx' : 'xlsx_with_300k_rows_and_shared_strings.xlsx';
         $resourcePath = $this->getResourcePath($fileName);
 
-        $reader = ReaderEntityFactory::createReader(Type::XLSX);
+        $reader = ReaderEntityFactory::createXLSXReader();
         $reader->open($resourcePath);
 
         $numReadRows = 0;

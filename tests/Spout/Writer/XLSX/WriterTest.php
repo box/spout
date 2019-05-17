@@ -6,7 +6,6 @@ use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
-use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
@@ -34,7 +33,7 @@ class WriterTest extends TestCase
         $this->createUnwritableFolderIfNeeded();
         $filePath = $this->getGeneratedUnwritableResourcePath($fileName);
 
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         @$writer->openToFile($filePath);
     }
 
@@ -45,7 +44,7 @@ class WriterTest extends TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
     }
 
@@ -56,7 +55,7 @@ class WriterTest extends TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->addRows($this->createRowsFromValues([['xlsx--11', 'xlsx--12']]));
     }
 
@@ -70,8 +69,7 @@ class WriterTest extends TestCase
         $fileName = 'file_that_wont_be_written.xlsx';
         $filePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->openToFile($filePath);
 
         $writer->setTempFolder('');
@@ -87,8 +85,7 @@ class WriterTest extends TestCase
         $fileName = 'file_that_wont_be_written.xlsx';
         $filePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->openToFile($filePath);
 
         $writer->setShouldUseInlineStrings(true);
@@ -104,8 +101,7 @@ class WriterTest extends TestCase
         $fileName = 'file_that_wont_be_written.xlsx';
         $filePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->openToFile($filePath);
 
         $writer->setShouldCreateNewSheetsAutomatically(true);
@@ -158,8 +154,7 @@ class WriterTest extends TestCase
         $this->recreateTempFolder();
         $tempFolderPath = $this->getTempFolderPath();
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->setTempFolder($tempFolderPath);
         $writer->openToFile($resourcePath);
 
@@ -183,8 +178,7 @@ class WriterTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->openToFile($resourcePath);
         $writer->addNewSheetAndMakeItCurrent();
         $writer->close();
@@ -203,8 +197,7 @@ class WriterTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->openToFile($resourcePath);
 
         $writer->addNewSheetAndMakeItCurrent();
@@ -227,7 +220,7 @@ class WriterTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->close(); // This call should not cause any error
 
         $writer->openToFile($resourcePath);
@@ -404,8 +397,7 @@ class WriterTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->setShouldUseInlineStrings(true);
 
         $writer->openToFile($resourcePath);
@@ -544,8 +536,7 @@ class WriterTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->setShouldUseInlineStrings($shouldUseInlineStrings);
         $writer->setShouldCreateNewSheetsAutomatically($shouldCreateSheetsAutomatically);
 
@@ -569,8 +560,7 @@ class WriterTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->setShouldUseInlineStrings($shouldUseInlineStrings);
         $writer->setShouldCreateNewSheetsAutomatically($shouldCreateSheetsAutomatically);
 

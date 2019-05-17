@@ -2,7 +2,6 @@
 
 namespace Box\Spout\Writer\ODS;
 
-use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use PHPUnit\Framework\TestCase;
@@ -38,8 +37,7 @@ class WriterPerfTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::ODS);
+        $writer = WriterEntityFactory::createODSWriter();
         $writer->setShouldCreateNewSheetsAutomatically(true);
 
         $writer->openToFile($resourcePath);

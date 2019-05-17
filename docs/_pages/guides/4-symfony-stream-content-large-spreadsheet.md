@@ -77,7 +77,7 @@ class MyStreamController extends Controller
         // a callback function to retrieve data chunks.
         $response->setCallback(function() use ($filePath) {
             // Same code goes inside the callback.
-            $reader = ReaderEntityFactory::createReader(Type::XLSX);
+            $reader = ReaderEntityFactory::createXLSXReader();
             $reader->open($filePath);
 
             $i = 0;

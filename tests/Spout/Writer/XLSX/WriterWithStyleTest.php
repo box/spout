@@ -2,12 +2,10 @@
 
 namespace Box\Spout\Writer\XLSX;
 
-use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Style\Border;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Common\Entity\Style\Style;
-use Box\Spout\Common\Type;
 use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\Style\BorderBuilder;
@@ -45,7 +43,7 @@ class WriterWithStyleTest extends TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->addRow($this->createStyledRowFromValues(['xlsx--11', 'xlsx--12'], $this->defaultStyle));
     }
 
@@ -56,7 +54,7 @@ class WriterWithStyleTest extends TestCase
     {
         $this->expectException(WriterNotOpenedException::class);
 
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->addRow($this->createStyledRowFromValues(['xlsx--11', 'xlsx--12'], $this->defaultStyle));
     }
 
@@ -518,8 +516,7 @@ class WriterWithStyleTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->setShouldUseInlineStrings(true);
 
         $writer->openToFile($resourcePath);
@@ -540,8 +537,7 @@ class WriterWithStyleTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        /** @var \Box\Spout\Writer\XLSX\Writer $writer */
-        $writer = WriterEntityFactory::createWriter(Type::XLSX);
+        $writer = WriterEntityFactory::createXLSXWriter();
         $writer->setShouldUseInlineStrings(true);
         $writer->setDefaultRowStyle($defaultStyle);
 

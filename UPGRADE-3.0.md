@@ -15,11 +15,14 @@ Finally, **_Spout 3.0 only supports PHP 7.1 and above_**, as other PHP versions 
 
 Reader changes
 --------------
-Creating a reader should now be done through the Reader `ReaderEntityFactory`, instead of using the `ReaderFactory`:
+Creating a reader should now be done through the Reader `ReaderEntityFactory`, instead of using the `ReaderFactory`.
+Also, the `ReaderFactory::create($type)` method was removed and replaced by methods for each reader:
 ```php
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory; // namespace is no longer "Box\Spout\Reader"
 ...
-$reader = ReaderEntityFactory::createReader(Type::XLSX);
+$reader = ReaderEntityFactory::createXLSXReader(); // replaces ReaderFactory::create(Type::XLSX)
+$reader = ReaderEntityFactory::createCSVReader();  // replaces ReaderFactory::create(Type::CSV)
+$reader = ReaderEntityFactory::createODSReader();  // replaces ReaderFactory::create(Type::ODS)
 ```
 
 When iterating over the spreadsheet rows, Spout now returns `Row` objects, instead of an array containing row values. Accessing the row values should now be done this way:
@@ -37,11 +40,15 @@ foreach ($reader->getSheetIterator() as $sheet) {
 
 Writer changes
 --------------
-Writer creation follows the same change as the reader. It should now be done through the Writer `WriterEntityFactory`, instead of using the `WriterFactory`:
+Writer creation follows the same change as the reader. It should now be done through the Writer `WriterEntityFactory`, instead of using the `WriterFactory`.
+Also, the `WriterFactory::create($type)` method was removed and replaced by methods for each writer:
+
 ```php
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory; // namespace is no longer "Box\Spout\Writer"
 ...
-$writer = WriterEntityFactory::createWriter(Type::ODS);
+$writer = WriterEntityFactory::createXLSXWriter(); // replaces WriterFactory::create(Type::XLSX)
+$writer = WriterEntityFactory::createCSVWriter();  // replaces WriterFactory::create(Type::CSV)
+$writer = WriterEntityFactory::createODSWriter();  // replaces WriterFactory::create(Type::ODS)
 ```
 
 Adding rows is also done differently: instead of passing an array, the writer now takes in a `Row` object (or an array of `Row`). Creating such objects can easily be done this way:
