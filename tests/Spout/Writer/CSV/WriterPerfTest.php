@@ -2,7 +2,6 @@
 
 namespace Box\Spout\Writer\CSV;
 
-use Box\Spout\Common\Type;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use PHPUnit\Framework\TestCase;
@@ -38,7 +37,7 @@ class WriterPerfTest extends TestCase
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
-        $writer = WriterEntityFactory::createWriter(Type::CSV);
+        $writer = WriterEntityFactory::createCSVWriter();
         $writer->openToFile($resourcePath);
 
         for ($i = 1; $i <= $numRows; $i++) {

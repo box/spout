@@ -2,7 +2,6 @@
 
 namespace Box\Spout\Reader\XLSX;
 
-use Box\Spout\Common\Type;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Box\Spout\TestUsingResource;
 use PHPUnit\Framework\TestCase;
@@ -49,7 +48,7 @@ class SheetTest extends TestCase
     private function openFileAndReturnSheets($fileName)
     {
         $resourcePath = $this->getResourcePath($fileName);
-        $reader = ReaderEntityFactory::createReader(Type::XLSX);
+        $reader = ReaderEntityFactory::createXLSXReader();
         $reader->open($resourcePath);
 
         $sheets = [];

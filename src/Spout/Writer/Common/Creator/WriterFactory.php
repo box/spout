@@ -3,7 +3,6 @@
 namespace Box\Spout\Writer\Common\Creator;
 
 use Box\Spout\Common\Creator\HelperFactory;
-use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Type;
@@ -28,65 +27,41 @@ use Box\Spout\Writer\XLSX\Writer as XLSXWriter;
 class WriterFactory
 {
     /**
-     * Map file extensions to reader types
-     * @var array
-     */
-    private static $extensionReaderMap = [
-        'csv' => Type::CSV,
-        'ods' => Type::ODS,
-        'xlsx' => Type::XLSX,
-    ];
-
-    /**
-     * This creates an instance of the appropriate writer, given the type of the file to be read
+     * This creates an instance of the appropriate writer, given the extension of the file to be written
      *
-     * @param  string $writerType Type of the writer to instantiate
+     * @param string $path The path to the spreadsheet file. Supported extensions are .csv,.ods and .xlsx
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      * @return WriterInterface
      */
-    public static function create($writerType)
+    public static function createFromFile(string $path)
+    {
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        return self::createFromType($extension);
+    }
+
+    /**
+     * This creates an instance of the appropriate writer, given the type of the file to be written
+     *
+     * @param string $writerType Type of the writer to instantiate
+     * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
+     * @return WriterInterface
+     */
+    public static function createFromType($writerType)
     {
         switch ($writerType) {
-            case Type::CSV: return self::getCSVWriter();
-            case Type::XLSX: return self::getXLSXWriter();
-            case Type::ODS: return self::getODSWriter();
+            case Type::CSV: return self::createCSVWriter();
+            case Type::XLSX: return self::createXLSXWriter();
+            case Type::ODS: return self::createODSWriter();
             default:
                 throw new UnsupportedTypeException('No writers supporting the given type: ' . $writerType);
         }
     }
 
     /**
-     * This creates an instance of the appropriate writer, given the extension of the file to be written
-     *
-     * @param string $path The path to the spreadsheet file. Supported extensions are .csv,.ods and .xlsx
-     * @throws \Box\Spout\Common\Exception\IOException
-     * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
-     * @return WriterInterface
-     */
-    public static function createFromFile(string $path)
-    {
-        if (!is_file($path)) {
-            throw new IOException(
-                sprintf('Could not open "%s" for reading! File does not exist.', $path)
-            );
-        }
-
-        $ext = pathinfo($path, PATHINFO_EXTENSION);
-        $ext = strtolower($ext);
-        $readerType = self::$extensionReaderMap[$ext] ?? null;
-        if ($readerType === null) {
-            throw new UnsupportedTypeException(
-                sprintf('No readers supporting the file extension "%s".', $ext)
-            );
-        }
-
-        return self::create($readerType);
-    }
-
-    /**
      * @return CSVWriter
      */
-    private static function getCSVWriter()
+    private static function createCSVWriter()
     {
         $optionsManager = new CSVOptionsManager();
         $globalFunctionsHelper = new GlobalFunctionsHelper();
@@ -99,7 +74,7 @@ class WriterFactory
     /**
      * @return XLSXWriter
      */
-    private static function getXLSXWriter()
+    private static function createXLSXWriter()
     {
         $styleBuilder = new StyleBuilder();
         $optionsManager = new XLSXOptionsManager($styleBuilder);
@@ -114,7 +89,7 @@ class WriterFactory
     /**
      * @return ODSWriter
      */
-    private static function getODSWriter()
+    private static function createODSWriter()
     {
         $styleBuilder = new StyleBuilder();
         $optionsManager = new ODSOptionsManager($styleBuilder);

@@ -60,7 +60,7 @@ class WriterFactoryTest extends TestCase
     {
         $this->expectException(UnsupportedTypeException::class);
 
-        WriterFactory::create('unsupportedType');
+        WriterFactory::createFromType('unsupportedType');
     }
 
     /**

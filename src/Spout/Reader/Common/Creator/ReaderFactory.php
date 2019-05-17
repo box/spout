@@ -3,7 +3,6 @@
 namespace Box\Spout\Reader\Common\Creator;
 
 use Box\Spout\Common\Creator\HelperFactory;
-use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\CSV\Creator\InternalEntityFactory as CSVInternalEntityFactory;
@@ -30,14 +29,18 @@ use Box\Spout\Reader\XLSX\Reader as XLSXReader;
 class ReaderFactory
 {
     /**
-     * Map file extensions to reader types
-     * @var array
+     * Creates a reader by file extension
+     *
+     * @param string $path The path to the spreadsheet file. Supported extensions are .csv,.ods and .xlsx
+     * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
+     * @return ReaderInterface
      */
-    private static $extensionReaderMap = [
-        'csv' => Type::CSV,
-        'ods' => Type::ODS,
-        'xlsx' => Type::XLSX,
-    ];
+    public static function createFromFile(string $path)
+    {
+        $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+
+        return self::createFromType($extension);
+    }
 
     /**
      * This creates an instance of the appropriate reader, given the type of the file to be read
@@ -46,49 +49,21 @@ class ReaderFactory
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      * @return ReaderInterface
      */
-    public static function create($readerType)
+    public static function createFromType($readerType)
     {
         switch ($readerType) {
-            case Type::CSV: return self::getCSVReader();
-            case Type::XLSX: return self::getXLSXReader();
-            case Type::ODS: return self::getODSReader();
+            case Type::CSV: return self::createCSVReader();
+            case Type::XLSX: return self::createXLSXReader();
+            case Type::ODS: return self::createODSReader();
             default:
                 throw new UnsupportedTypeException('No readers supporting the given type: ' . $readerType);
         }
     }
 
     /**
-     * Creates a reader by file extension
-     *
-     * @param string $path The path to the spreadsheet file. Supported extensions are .csv,.ods and .xlsx
-     * @throws \Box\Spout\Common\Exception\IOException
-     * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
-     * @return ReaderInterface
-     */
-    public static function createFromFile(string $path)
-    {
-        if (!is_file($path)) {
-            throw new IOException(
-                sprintf('Could not open "%s" for reading! File does not exist.', $path)
-            );
-        }
-
-        $ext = pathinfo($path, PATHINFO_EXTENSION);
-        $ext = strtolower($ext);
-        $readerType = self::$extensionReaderMap[$ext] ?? null;
-        if ($readerType === null) {
-            throw new UnsupportedTypeException(
-                sprintf('No readers supporting the file extension "%s".', $ext)
-            );
-        }
-
-        return self::create($readerType);
-    }
-
-    /**
      * @return CSVReader
      */
-    private static function getCSVReader()
+    private static function createCSVReader()
     {
         $optionsManager = new CSVOptionsManager();
         $helperFactory = new HelperFactory();
@@ -101,7 +76,7 @@ class ReaderFactory
     /**
      * @return XLSXReader
      */
-    private static function getXLSXReader()
+    private static function createXLSXReader()
     {
         $optionsManager = new XLSXOptionsManager();
         $helperFactory = new XLSXHelperFactory();
@@ -115,7 +90,7 @@ class ReaderFactory
     /**
      * @return ODSReader
      */
-    private static function getODSReader()
+    private static function createODSReader()
     {
         $optionsManager = new ODSOptionsManager();
         $helperFactory = new ODSHelperFactory();

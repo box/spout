@@ -12,10 +12,9 @@ Even though a spreadsheet contains multiple sheets, you may be interested in rea
 ```php
 <?php
 
-use Box\Spout\Common\Type;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 
-$reader = ReaderEntityFactory::createReader(Type::XLSX);
+$reader = ReaderEntityFactory::createXLSXReader();
 $reader->open($filePath);
 
 foreach ($reader->getSheetIterator() as $sheet) {
@@ -36,10 +35,9 @@ $reader->close();
 ```php
 <?php
 
-use Box\Spout\Common\Type;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 
-$reader = ReaderEntityFactory::createReader(Type::XLSX);
+$reader = ReaderEntityFactory::createXLSXReader();
 $reader->open($filePath);
 
 foreach ($reader->getSheetIterator() as $sheet) {
