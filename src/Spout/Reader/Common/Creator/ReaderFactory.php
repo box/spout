@@ -60,21 +60,21 @@ class ReaderFactory
     /**
      * Creates a reader by file extension
      *
-     * @param string The path to the spreadsheet file. Supported extensions are .csv,.ods and .xlsx
+     * @param string $path The path to the spreadsheet file. Supported extensions are .csv,.ods and .xlsx
      * @throws \Box\Spout\Common\Exception\IOException
      * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      * @return ReaderInterface
      */
     public static function createFromFile(string $path)
     {
-        if (!\is_file($path)) {
+        if (!is_file($path)) {
             throw new IOException(
                 sprintf('Could not open "%s" for reading! File does not exist.', $path)
             );
         }
 
-        $ext = \pathinfo($path, PATHINFO_EXTENSION);
-        $ext = \strtolower($ext);
+        $ext = pathinfo($path, PATHINFO_EXTENSION);
+        $ext = strtolower($ext);
         $readerType = self::$extensionReaderMap[$ext] ?? null;
         if ($readerType === null) {
             throw new UnsupportedTypeException(

@@ -71,7 +71,7 @@ class ReaderFactoryTest extends TestCase
     {
         $this->expectException(UnsupportedTypeException::class);
         $invalid = $this->getResourcePath('test_unsupported_file_type.other');
-        $reader = ReaderFactory::createFromFile($invalid);
+        ReaderFactory::createFromFile($invalid);
     }
 
     /**
@@ -81,6 +81,6 @@ class ReaderFactoryTest extends TestCase
     {
         $this->expectException(IOException::class);
         $invalid = 'thereisnosuchfile.ext';
-        $reader = ReaderFactory::createFromFile($invalid);
+        ReaderFactory::createFromFile($invalid);
     }
 }
