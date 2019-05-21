@@ -1,0 +1,20 @@
+{% assign sectionClass = "section-odd last-section" %}
+{% capture sectionTitle %}Why use {{ site.spout_html }}?{% endcapture %}
+{% assign sectionIcons = "" %}
+
+{% assign emS = '<span class="light-em">' %}
+{% assign emE = '</span>' %}
+
+{% capture sectionContent %}
+    <ul class="feature-list">
+        <li class="feature-check">{{ site.spout_html }} is capable of processing files of {{emS}}any size{{emE}}.</li>
+        <li class="feature-check">{{ site.spout_html }} needs {{emS}}only 3MB{{emE}} of memory to process any file.</li>
+        <li class="feature-check">{{ site.spout_html }}'s streaming mechanism makes it {{emS}}incredibly fast{{emE}}.</li>
+        <li class="feature-check">{{ site.spout_html }}'s API is {{emS}}developer-friendly{{emE}}.</li>
+    </ul><br>
+    <div class="btn-wrapper">
+        <a href="{{ site.github.url }}/getting-started/" class="page-link"><button class="btn">Get started</button></a>
+    </div>
+{% endcapture %}
+
+{% include section.html %}

@@ -1,0 +1,37 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+title: Spout
+email: oss@box.com
+description: "An open source PHP library to read and write spreadsheet files (XLSX, ODS and CSV), in a fast and scalable way."
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "http://opensource.box.com" # the base hostname & protocol for your site
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+exclude: ["bower.json", "README.md"]
+collections:
+  pages:
+    output: true
+  sections:
+    output: true
+
+# 3rd parties
+#google_analytics:
+algolia:
+  enabled: false
+  # apiKey:
+  # indexName:
+
+# Misc
+spout_html: <span class="spout">Spout</span>
