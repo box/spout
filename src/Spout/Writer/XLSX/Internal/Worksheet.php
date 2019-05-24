@@ -212,8 +212,10 @@ EOD;
         $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
         $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
         $cellXML .= ' s="' . $styleId . '"';
-
-        if (CellHelper::isNonEmptyString($cellValue)) {
+        
+        if (CellHelper::isFormulaString($cellValue)) {
+            $cellXML .= '><f>'.substr($cellValue,1).'</f><v>0</v></c>'; // seriously, that's it.
+        } else if (CellHelper::isNonEmptyString($cellValue)) {
             $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cellValue);
         } else if (CellHelper::isBoolean($cellValue)) {
             $cellXML .= ' t="b"><v>' . intval($cellValue) . '</v></c>';
