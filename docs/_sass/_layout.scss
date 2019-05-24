@@ -43,6 +43,10 @@
         &:not(:last-child) {
             margin-right: 20px;
         }
+
+        svg {
+            padding-bottom: 3px;
+        }
     }
 
     @include media-query($on-palm) {
