@@ -30,6 +30,15 @@ class Worksheet implements WorksheetInterface
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
 EOD;
 
+    const SHEET_VIEW_XML_DATA = <<<'EOD'
+<sheetViews>
+    <sheetView workbookViewId="0" tabSelected="1">
+        <pane state="frozen" activePane="bottomLeft" topLeftCell="A2" ySplit="1"/>
+        <selection sqref="A1:XFD1" pane="bottomLeft"/>
+    </sheetView>
+</sheetViews>
+EOD;
+
     /** @var \Box\Spout\Writer\Common\Sheet The "external" sheet */
     protected $externalSheet;
 
@@ -110,6 +119,7 @@ EOD;
             }
         }
 
+        fwrite($this->sheetFilePointer, self::SHEET_VIEW_XML_DATA);
         fwrite($this->sheetFilePointer, '<sheetData>');
     }
 
