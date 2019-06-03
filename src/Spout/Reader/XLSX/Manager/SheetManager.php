@@ -114,7 +114,9 @@ class SheetManager
      */
     protected function processWorkbookPropertiesStartingNode($xmlReader)
     {
-        $shouldUse1904Dates = (bool) $xmlReader->getAttribute(self::XML_ATTRIBUTE_DATE_1904);
+        // Using "filter_var($x, FILTER_VALIDATE_BOOLEAN)" here because the value of the "date1904" attribute
+        // may be the string "false", that is not mapped to the boolean "false" by default...
+        $shouldUse1904Dates = filter_var($xmlReader->getAttribute(self::XML_ATTRIBUTE_DATE_1904), FILTER_VALIDATE_BOOLEAN);
         $this->optionsManager->setOption(Options::SHOULD_USE_1904_DATES, $shouldUse1904Dates);
 
         return XMLProcessor::PROCESSING_CONTINUE;
