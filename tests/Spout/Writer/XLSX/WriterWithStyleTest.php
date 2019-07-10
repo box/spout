@@ -241,6 +241,44 @@ class WriterWithStyleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('1', $cellDomElements[0]->getAttribute('s'));
         $this->assertEquals('1', $cellDomElements[1]->getAttribute('s'));
     }
+    /**
+     * @return void
+     */
+    public function testAddRowWithNumFmtStyles()
+    {
+        $fileName = 'test_add_row_with_numfmt.xlsx';
+        $dataRows = [
+            [1.123456789],
+            [12.1],
+        ];
+        $style1 = (new StyleBuilder())
+            ->setFontBold()
+            ->setFormat('0.00') //Builtin format
+            ->build();
+        $style2 = (new StyleBuilder())
+            ->setFontBold()
+            ->setFormat('0.000')
+            ->build();
+
+        $this->writeToXLSXFileWithMultipleStyles($dataRows, $fileName, [$style1, $style2]);
+
+
+        $formatsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'numFmts');
+        $this->assertEquals(
+            1,
+            $formatsDomElement->getAttribute('count'),
+            'There should be 2 formats, including the 1 default ones'
+        );
+
+
+        $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
+
+        foreach ([2, 164] as $index => $expected) {
+            $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item($index + 1);
+            $this->assertEquals($expected, $xfElement->getAttribute('numFmtId'));
+
+        }
+    }
 
     /**
      * @return void

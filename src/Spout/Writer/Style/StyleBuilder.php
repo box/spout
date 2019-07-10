@@ -145,6 +145,18 @@ class StyleBuilder
         $this->style->setBackgroundColor($color);
         return $this;
     }
+    /**
+     *  Sets a format
+     *
+     * @api
+     * @param string $format Format
+     * @return StyleBuilder
+     */
+    public function setFormat($format)
+    {
+        $this->style->setFormat($format);
+        return $this;
+    }
 
     /**
      * Returns the configured style. The style is cached and can be reused.
