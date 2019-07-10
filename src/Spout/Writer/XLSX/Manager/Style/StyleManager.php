@@ -33,7 +33,10 @@ class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
         $associatedBorderId = $this->styleRegistry->getBorderIdForStyleId($styleId);
         $hasStyleCustomBorders = ($associatedBorderId !== null && $associatedBorderId !== 0);
 
-        return ($hasStyleCustomFill || $hasStyleCustomBorders);
+        $associatedFormatId = $this->styleRegistry->getFormatIdForStyleId($styleId);
+        $hasStyleCustomFormats = ($associatedFormatId !== null && $associatedFormatId !== 0);
+
+        return ($hasStyleCustomFill || $hasStyleCustomBorders || $hasStyleCustomFormats);
     }
 
     /**
@@ -48,6 +51,7 @@ class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 EOD;
 
+        $content .= $this->getFormatsSectionContent();
         $content .= $this->getFontsSectionContent();
         $content .= $this->getFillsSectionContent();
         $content .= $this->getBordersSectionContent();
@@ -58,6 +62,35 @@ EOD;
         $content .= <<<'EOD'
 </styleSheet>
 EOD;
+
+        return $content;
+    }
+
+    /**
+     * Returns the content of the "<numFmts>" section.
+     *
+     * @return string
+     */
+    protected function getFormatsSectionContent()
+    {
+        $tags = [];
+        $registeredFormats = $this->styleRegistry->getRegisteredFormats();
+        foreach ($registeredFormats as $styleId) {
+            $numFmtId = $this->styleRegistry->getFormatIdForStyleId($styleId);
+
+            //Built-in formats do not need to be declared, skip them
+            if ($numFmtId < 164) {
+                continue;
+            }
+
+            /** @var Style $style */
+            $style = $this->styleRegistry->getStyleFromStyleId($styleId);
+            $format = $style->getFormat();
+            $tags[] = '<numFmt numFmtId="' . $numFmtId . '" formatCode="' . $format . '"/>';
+        }
+        $content = '<numFmts count="' . count($tags) . '">';
+        $content .= implode('', $tags);
+        $content .= '</numFmts>';
 
         return $content;
     }
@@ -206,8 +239,9 @@ EOD;
             $styleId = $style->getId();
             $fillId = $this->getFillIdForStyleId($styleId);
             $borderId = $this->getBorderIdForStyleId($styleId);
+            $numFmtId = $this->getFormatIdForStyleId($styleId);
 
-            $content .= '<xf numFmtId="0" fontId="' . $styleId . '" fillId="' . $fillId . '" borderId="' . $borderId . '" xfId="0"';
+            $content .= '<xf numFmtId="' . $numFmtId . '" fontId="' . $styleId . '" fillId="' . $fillId . '" borderId="' . $borderId . '" xfId="0"';
 
             if ($style->shouldApplyFont()) {
                 $content .= ' applyFont="1"';
@@ -259,6 +293,22 @@ EOD;
         $isDefaultStyle = ($styleId === 0);
 
         return $isDefaultStyle ? 0 : ($this->styleRegistry->getBorderIdForStyleId($styleId) ?: 0);
+    }
+
+    /**
+     * Returns the format ID associated to the given style ID.
+     * For the default style use general format.
+     *
+     * @param int $styleId
+     * @return int
+     */
+    private function getFormatIdForStyleId($styleId)
+    {
+        // For the default style (ID = 0), we don't want to override the format.
+        // Otherwise all cells of the spreadsheet will have a format.
+        $isDefaultStyle = ($styleId === 0);
+
+        return $isDefaultStyle ? 0 : ($this->styleRegistry->getFormatIdForStyleId($styleId) ?: 0);
     }
 
     /**
