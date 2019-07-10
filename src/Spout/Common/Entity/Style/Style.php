@@ -72,7 +72,7 @@ class Style
     private $hasSetBackgroundColor = false;
 
     /** @var string Format */
-    private $format = null;
+    private $format;
 
     /** @var bool */
     private $hasSetFormat = false;
@@ -412,7 +412,6 @@ class Style
     }
 
     /**
-     *
      * @return bool Whether format should be applied
      */
     public function shouldApplyFormat()
