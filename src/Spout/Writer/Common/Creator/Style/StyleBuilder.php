@@ -147,16 +147,18 @@ class StyleBuilder
 
         return $this;
     }
+
     /**
      *  Sets a format
      *
-     * @api
      * @param string $format Format
      * @return StyleBuilder
+     * @api
      */
     public function setFormat($format)
     {
         $this->style->setFormat($format);
+
         return $this;
     }
 

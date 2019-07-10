@@ -15,7 +15,6 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
      * @var array Mapping between built-in format and the associated numFmtId
      */
     protected static $builtinNumFormatToIdMapping = [
-
         'General' => 0,
         '0' => 1,
         '0.00' => 2,
@@ -64,7 +63,6 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
         't# ?/?' => 69,
         't# ??/??' => 70,
     ];
-
 
     /**
      * @var array
@@ -123,7 +121,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
     {
         $registeredStyle = parent::registerStyle($style);
         $this->registerFill($registeredStyle);
-        $this->registerFormat($registeredStyle);;
+        $this->registerFormat($registeredStyle);
         $this->registerBorder($registeredStyle);
 
         return $registeredStyle;
@@ -149,6 +147,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
                 $this->styleIdToFormatsMappingTable[$styleId] = $registeredFormatId;
             } else {
                 $this->registeredFormats[$format] = $styleId;
+
                 if (isset(self::$builtinNumFormatToIdMapping[$format])) {
                     $id = self::$builtinNumFormatToIdMapping[$format];
                 } else {
@@ -156,7 +155,6 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
                 }
                 $this->styleIdToFormatsMappingTable[$styleId] = $id;
             }
-
         } else {
             // The formatId maps a style to a format declaration
             // When there is no format definition - we default to 0 ( General )
@@ -258,7 +256,6 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
             null;
     }
 
-
     /**
      * @return array
      */
@@ -275,7 +272,6 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
         return $this->registeredBorders;
     }
 
-
     /**
      * @return array
      */
@@ -283,5 +279,4 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
     {
         return $this->registeredFormats;
     }
-
 }
