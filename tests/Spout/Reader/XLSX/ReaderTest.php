@@ -476,6 +476,19 @@ class ReaderTest extends TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportMissingStylesXMLFile()
+    {
+        $allRows = $this->getAllRowsForFile('file_with_no_styles_in_workbook_xml.xlsx');
+
+        $expectedRows = [
+            ['s1--A1', 's1--B1'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldPreserveSpaceIfSpecified()
     {
         $allRows = $this->getAllRowsForFile('sheet_with_preserve_space_shared_strings.xlsx');

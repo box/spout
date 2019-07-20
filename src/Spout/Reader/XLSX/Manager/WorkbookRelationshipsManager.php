@@ -75,7 +75,17 @@ class WorkbookRelationshipsManager
     }
 
     /**
-     * @return string|null The path of the styles XML file
+     * @return bool Whether the XLSX file contains a styles XML file
+     */
+    public function hasStylesXMLFile()
+    {
+        $workbookRelationships = $this->getWorkbookRelationships();
+
+        return isset($workbookRelationships[self::RELATIONSHIP_TYPE_STYLES]);
+    }
+
+    /**
+     * @return string The path of the styles XML file
      */
     public function getStylesXMLFilePath()
     {

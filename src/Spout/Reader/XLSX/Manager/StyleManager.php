@@ -48,7 +48,10 @@ class StyleManager
     /** @var string Path of the XLSX file being read */
     protected $filePath;
 
-    /** @var string Path of the styles XML file */
+    /** @var bool Whether the XLSX file contains a styles XML file */
+    protected $hasStylesXMLFile;
+
+    /** @var string|null Path of the styles XML file */
     protected $stylesXMLFilePath;
 
     /** @var InternalEntityFactory Factory to create entities */
@@ -76,7 +79,10 @@ class StyleManager
         $this->filePath = $filePath;
         $this->entityFactory = $entityFactory;
         $this->builtinNumFmtIdIndicatingDates = array_keys(self::$builtinNumFmtIdToNumFormatMapping);
-        $this->stylesXMLFilePath = $workbookRelationshipsManager->getStylesXMLFilePath();
+        $this->hasStylesXMLFile = $workbookRelationshipsManager->hasStylesXMLFile();
+        if ($this->hasStylesXMLFile) {
+            $this->stylesXMLFilePath = $workbookRelationshipsManager->getStylesXMLFilePath();
+        }
     }
 
     /**
@@ -88,6 +94,10 @@ class StyleManager
      */
     public function shouldFormatNumericValueAsDate($styleId)
     {
+        if (!$this->hasStylesXMLFile) {
+            return false;
+        }
+
         $stylesAttributes = $this->getStylesAttributes();
 
         // Default style (0) does not format numeric values as timestamps. Only custom styles do.

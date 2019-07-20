@@ -19,6 +19,7 @@ class StyleManagerTest extends TestCase
     {
         $entityFactory = $this->createMock(InternalEntityFactory::class);
         $workbookRelationshipsManager = $this->createMock(WorkbookRelationshipsManager::class);
+        $workbookRelationshipsManager->method('hasStylesXMLFile')->willReturn(true);
 
         /** @var StyleManager $styleManager */
         $styleManager = $this->getMockBuilder('\Box\Spout\Reader\XLSX\Manager\StyleManager')
