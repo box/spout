@@ -86,7 +86,9 @@ As with the reader, there is one common interface to write data to a file:
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Common\Entity\Row;
 
-$reader = ReaderEntityFactory::createReaderFromFile('/path/to/file.ext');
+$writer = WriterEntityFactory::createXLSXWriter();
+// $writer = WriterEntityFactory::createODSWriter();
+// $writer = WriterEntityFactory::createCSVWriter();
 
 $writer->openToFile($filePath); // write data to a file or to a PHP stream
 //$writer->openToBrowser($fileName); // stream data directly to the browser
