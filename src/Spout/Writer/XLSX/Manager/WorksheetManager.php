@@ -161,7 +161,7 @@ EOD;
 
         $cells = $row->getCells();
         for ($cell_index=0; $cell_index<$numCells; $cell_index++) {
-            if(isset($cells[$cell_index])) {
+            if (isset($cells[$cell_index])) {
                 $rowXML .= $this->applyStyleAndGetCellXML($cells[$cell_index], $rowStyle, $rowIndex, $cell_index);
             }
         }
