@@ -153,16 +153,17 @@ EOD;
      */
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
-        $cellIndex = 0;
         $rowStyle = $row->getStyle();
         $rowIndex = $worksheet->getLastWrittenRowIndex() + 1;
-        $numCells = $row->getNumCells();
+        $numCells = max(array_keys($row->getCells()))+1;
 
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
-        foreach ($row->getCells() as $cell) {
-            $rowXML .= $this->applyStyleAndGetCellXML($cell, $rowStyle, $rowIndex, $cellIndex);
-            $cellIndex++;
+        $cells = $row->getCells();
+        for($cell_index=0;$cell_index<$numCells;$cell_index++) {
+            if(isset($cells[$cell_index])) {
+                $rowXML .= $this->applyStyleAndGetCellXML($cells[$cell_index], $rowStyle, $rowIndex, $cell_index);
+            }
         }
 
         $rowXML .= '</row>';
