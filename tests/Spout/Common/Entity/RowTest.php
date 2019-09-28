@@ -78,8 +78,22 @@ class RowTest extends \PHPUnit\Framework\TestCase
         $row = new Row([], null);
         $cellMock = $this->getCellMock();
         $row->setCellAtIndex($cellMock, 3);
+
         $this->assertEquals($cellMock, $row->getCellAtIndex(3));
         $this->assertNull($row->getCellAtIndex(10));
+    }
+
+    /**
+     * @return void
+     */
+    public function testSetCellAtIndex()
+    {
+        $row = new Row([], null);
+        $cellMock = $this->getCellMock();
+        $row->setCellAtIndex($cellMock, 1);
+
+        $this->assertEquals(2, $row->getNumCells());
+        $this->assertNull($row->getCellAtIndex(0));
     }
 
     /**

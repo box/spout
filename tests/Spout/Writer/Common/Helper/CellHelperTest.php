@@ -12,7 +12,7 @@ class CellHelperTest extends TestCase
     /**
      * @return array
      */
-    public function dataProviderForTestGetCellIndexFromColumnIndex()
+    public function dataProviderForTestGetColumnLettersFromColumnIndex()
     {
         return [
             [0, 'A'],
@@ -24,14 +24,15 @@ class CellHelperTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProviderForTestGetCellIndexFromColumnIndex
+     * @dataProvider dataProviderForTestGetColumnLettersFromColumnIndex
      *
-     * @param int $columnIndex
-     * @param string $expectedCellIndex
+     * @param int    $columnIndex
+     * @param string $expectedColumnLetters
+     *
      * @return void
      */
-    public function testGetCellIndexFromColumnIndex($columnIndex, $expectedCellIndex)
+    public function testGetColumnLettersFromColumnIndex($columnIndex, $expectedColumnLetters)
     {
-        $this->assertEquals($expectedCellIndex, CellHelper::getCellIndexFromColumnIndex($columnIndex));
+        $this->assertEquals($expectedColumnLetters, CellHelper::getColumnLettersFromColumnIndex($columnIndex));
     }
 }
