@@ -153,16 +153,14 @@ EOD;
      */
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
-        $cellIndex = 0;
         $rowStyle = $row->getStyle();
-        $rowIndex = $worksheet->getLastWrittenRowIndex() + 1;
+        $rowIndexOneBased = $worksheet->getLastWrittenRowIndex() + 1;
         $numCells = $row->getNumCells();
 
-        $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
+        $rowXML = '<row r="' . $rowIndexOneBased . '" spans="1:' . $numCells . '">';
 
-        foreach ($row->getCells() as $cell) {
-            $rowXML .= $this->applyStyleAndGetCellXML($cell, $rowStyle, $rowIndex, $cellIndex);
-            $cellIndex++;
+        foreach ($row->getCells() as $columnIndexZeroBased => $cell) {
+            $rowXML .= $this->applyStyleAndGetCellXML($cell, $rowStyle, $rowIndexOneBased, $columnIndexZeroBased);
         }
 
         $rowXML .= '</row>';
@@ -177,14 +175,15 @@ EOD;
      * Applies styles to the given style, merging the cell's style with its row's style
      * Then builds and returns xml for the cell.
      *
-     * @param Cell $cell
+     * @param Cell  $cell
      * @param Style $rowStyle
-     * @param int $rowIndex
-     * @param int $cellIndex
+     * @param int   $rowIndexOneBased
+     * @param int   $columnIndexZeroBased
+     *
      * @throws InvalidArgumentException If the given value cannot be processed
      * @return string
      */
-    private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $rowIndex, $cellIndex)
+    private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $rowIndexOneBased, $columnIndexZeroBased)
     {
         // Apply row and extra styles
         $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
@@ -193,23 +192,24 @@ EOD;
 
         $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
 
-        return $this->getCellXML($rowIndex, $cellIndex, $cell, $registeredStyle->getId());
+        return $this->getCellXML($rowIndexOneBased, $columnIndexZeroBased, $cell, $registeredStyle->getId());
     }
 
     /**
      * Builds and returns xml for a single cell.
      *
-     * @param int $rowIndex
-     * @param int $cellNumber
+     * @param int  $rowIndexOneBased
+     * @param int  $columnIndexZeroBased
      * @param Cell $cell
-     * @param int $styleId
+     * @param int  $styleId
+     *
      * @throws InvalidArgumentException If the given value cannot be processed
      * @return string
      */
-    private function getCellXML($rowIndex, $cellNumber, Cell $cell, $styleId)
+    private function getCellXML($rowIndexOneBased, $columnIndexZeroBased, Cell $cell, $styleId)
     {
-        $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
-        $cellXML = '<c r="' . $columnIndex . $rowIndex . '"';
+        $columnLetters = CellHelper::getColumnLettersFromColumnIndex($columnIndexZeroBased);
+        $cellXML = '<c r="' . $columnLetters . $rowIndexOneBased . '"';
         $cellXML .= ' s="' . $styleId . '"';
 
         if ($cell->isString()) {
