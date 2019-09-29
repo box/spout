@@ -148,11 +148,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
             } else {
                 $this->registeredFormats[$format] = $styleId;
 
-                if (isset(self::$builtinNumFormatToIdMapping[$format])) {
-                    $id = self::$builtinNumFormatToIdMapping[$format];
-                } else {
-                    $id = $this->formatIndex++;
-                }
+                $id = self::$builtinNumFormatToIdMapping[$format] ?? $this->formatIndex++;
                 $this->styleIdToFormatsMappingTable[$styleId] = $id;
             }
         } else {
@@ -168,9 +164,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
      */
     public function getFormatIdForStyleId($styleId)
     {
-        return (isset($this->styleIdToFormatsMappingTable[$styleId])) ?
-            $this->styleIdToFormatsMappingTable[$styleId] :
-            null;
+        return $this->styleIdToFormatsMappingTable[$styleId] ?? null;
     }
 
     /**
