@@ -41,4 +41,24 @@ class StyleBuilderTest extends TestCase
         $this->assertInstanceOf(Border::class, $baseStyle->getBorder(), 'Base style has a border');
         $this->assertInstanceOf(Border::class, $mergedStyle->getBorder(), 'Merged style has a border');
     }
+
+    /**
+     * @return void
+     */
+    public function testStyleBuilderShouldMergeFormats()
+    {
+        $baseStyle = (new StyleBuilder())
+            ->setFontBold()
+            ->setFormat('0.00')
+            ->build();
+
+        $currentStyle = (new StyleBuilder())->build();
+
+        $styleMerger = new StyleMerger();
+        $mergedStyle = $styleMerger->merge($currentStyle, $baseStyle);
+
+        $this->assertNull($currentStyle->getFormat(), 'Current style has no border');
+        $this->assertEquals('0.00', $baseStyle->getFormat(), 'Base style has a format 0.00');
+        $this->assertEquals('0.00', $mergedStyle->getFormat(), 'Merged style has a format 0.00');
+    }
 }

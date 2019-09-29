@@ -236,7 +236,7 @@ class WriterWithStyleTest extends TestCase
         $this->assertEquals(
             1,
             $formatsDomElement->getAttribute('count'),
-            'There should be 2 formats, including the 1 default ones'
+            'There should be 2 formats, including the default one'
         );
 
         $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');

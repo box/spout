@@ -74,4 +74,34 @@ class StyleRegistryTest extends TestCase
         $this->assertEquals(2, $styleRegistry->getBorderIdForStyleId($styleBoderRightBold->getId()), 'Style with border already set should have the same index');
         $this->assertEquals(0, $styleRegistry->getBorderIdForStyleId($styleNoBorder->getId()), 'Style with no border should have index 0');
     }
+
+    /**
+     * @return void
+     */
+    public function testRegisterStyleAlsoRegistersFormats()
+    {
+        $styleRegistry = $this->getStyleRegistry();
+
+        $styleBuiltinFormat = (new StyleBuilder())
+            ->setFontBold()
+            ->setFormat('0.00')//Builtin format
+            ->build();
+
+        $styleUserFormat = (new StyleBuilder())
+            ->setFontBold()
+            ->setFormat('0.000')
+            ->build();
+        $styleNoFormat = (new StyleBuilder())->setFontItalic()->build();
+
+        $styleRegistry->registerStyle($styleBuiltinFormat);
+        $styleRegistry->registerStyle($styleUserFormat);
+        $styleRegistry->registerStyle($styleNoFormat);
+
+        $this->assertCount(2, $styleRegistry->getRegisteredFormats(), 'There should be 2 registered formats');
+
+        $this->assertEquals(2, $styleRegistry->getFormatIdForStyleId($styleBuiltinFormat->getId()), 'First style with builtin format set should have index 2 (0 is for the default style)');
+        $this->assertEquals(164, $styleRegistry->getFormatIdForStyleId($styleUserFormat->getId()), 'Second style with user format set should have index 164 (0 is for the default style)');
+
+        $this->assertEquals(0, $styleRegistry->getFormatIdForStyleId($styleNoFormat->getId()), 'Style with no format should have index 0');
+    }
 }
