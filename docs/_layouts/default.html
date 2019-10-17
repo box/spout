@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html>
+
+  {% comment %}
+    This is a hack to force using HTTPS...
+    The URL of the docs should be changed in the repo settings instead
+  {% endcomment %}
   {% assign protocol_scheme = page.url | absolute_url | truncate: 5, "" %}
   {%- capture site_url -%}
     {%- if protocol_scheme == "https" -%}
-      <!-- This is a hack to force using HTTPS... -->
-      <!-- The URL of the docs should be changed in the repo settings instead -->
       {{ site.github.url | replace: "http", "https" }}
     {%- else -%}
       {{ site.github.url }}
