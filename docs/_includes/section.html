@@ -9,7 +9,7 @@
       {% assign sectionIconsAsArray = sectionIcons | split:'~~' %}
       <div class="icons">
       {% for icon in sectionIconsAsArray %}
-        <img src="{{ site.github.url }}/images/{{ icon }}"/>
+        <img src="{{ site_url }}/images/{{ icon }}"/>
       {% endfor %}
       </div>
     {% endif %}
