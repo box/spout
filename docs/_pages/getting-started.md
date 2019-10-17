@@ -4,6 +4,8 @@ title: Getting Started
 permalink: /getting-started/
 ---
 
+{% include set-global-site-url.html %}
+
 This guide will help you install {{ site.spout_html }} and teach you how to use it.
 
 ## Requirements
