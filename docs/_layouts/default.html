@@ -1,18 +1,7 @@
 <!DOCTYPE html>
 <html>
 
-  {% comment %}
-    This is a hack to force using HTTPS...
-    The URL of the docs should be changed in the repo settings instead
-  {% endcomment %}
-  {% assign protocol_scheme = page.url | absolute_url | truncate: 5, "" %}
-  {%- capture site_url -%}
-    {%- if protocol_scheme == "https" -%}
-      {{ site.github.url | replace: "http", "https" }}
-    {%- else -%}
-      {{ site.github.url }}
-    {%- endif -%}
-  {%- endcapture -%}
+  {% include set-global-site-url.html %}
 
   {% include head.html %}
 
@@ -25,14 +14,6 @@
     {% endif %}
 
     {{ content }}
-
-<!--
-    <div class="page-content">
-      <div class="wrapper">
-
-      </div>
-    </div>
--->
 
     {% include footer.html %}
     {% include algolia.html %}
