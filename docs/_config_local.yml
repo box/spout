@@ -1,0 +1,7 @@
+# Github Metadata plugin
+repository: box/spout
+plugins:
+  - "jekyll-github-metadata"
+
+github:
+  url: http://localhost:8080
