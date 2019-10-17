@@ -10,7 +10,7 @@ title: Spout
 email: oss@box.com
 description: "An open source PHP library to read and write spreadsheet files (XLSX, ODS and CSV), in a fast and scalable way."
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://opensource.box.com" # the base hostname & protocol for your site
+url: "https://opensource.box.com" # the base hostname & protocol for your site
 
 # Build settings
 markdown: kramdown
