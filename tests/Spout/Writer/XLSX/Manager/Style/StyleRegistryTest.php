@@ -58,20 +58,20 @@ class StyleRegistryTest extends TestCase
         $borderRight = (new BorderBuilder())->setBorderRight()->build();
 
         $styleBorderLeft = (new StyleBuilder())->setBorder($borderLeft)->build();
-        $styleBoderRight = (new StyleBuilder())->setBorder($borderRight)->build();
-        $styleBoderRightBold = (new StyleBuilder())->setBorder($borderRight)->setFontBold()->build();
+        $styleBorderRight = (new StyleBuilder())->setBorder($borderRight)->build();
+        $styleBorderRightBold = (new StyleBuilder())->setBorder($borderRight)->setFontBold()->build();
         $styleNoBorder = (new StyleBuilder())->setFontItalic()->build();
 
         $styleRegistry->registerStyle($styleBorderLeft);
-        $styleRegistry->registerStyle($styleBoderRight);
-        $styleRegistry->registerStyle($styleBoderRightBold);
+        $styleRegistry->registerStyle($styleBorderRight);
+        $styleRegistry->registerStyle($styleBorderRightBold);
         $styleRegistry->registerStyle($styleNoBorder);
 
         $this->assertCount(2, $styleRegistry->getRegisteredBorders(), 'There should be 2 registered borders');
 
         $this->assertEquals(1, $styleRegistry->getBorderIdForStyleId($styleBorderLeft->getId()), 'First style with border set should have index 1 (0 is for the default style)');
-        $this->assertEquals(2, $styleRegistry->getBorderIdForStyleId($styleBoderRight->getId()), 'Second style with border set - different from first style - should have index 2');
-        $this->assertEquals(2, $styleRegistry->getBorderIdForStyleId($styleBoderRightBold->getId()), 'Style with border already set should have the same index');
+        $this->assertEquals(2, $styleRegistry->getBorderIdForStyleId($styleBorderRight->getId()), 'Second style with border set - different from first style - should have index 2');
+        $this->assertEquals(2, $styleRegistry->getBorderIdForStyleId($styleBorderRightBold->getId()), 'Style with border already set should have the same index');
         $this->assertEquals(0, $styleRegistry->getBorderIdForStyleId($styleNoBorder->getId()), 'Style with no border should have index 0');
     }
 
