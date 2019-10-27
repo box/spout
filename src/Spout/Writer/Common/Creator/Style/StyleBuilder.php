@@ -3,7 +3,9 @@
 namespace Box\Spout\Writer\Common\Creator\Style;
 
 use Box\Spout\Common\Entity\Style\Border;
+use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Common\Entity\Style\Style;
+use Box\Spout\Common\Exception\InvalidArgumentException;
 
 /**
  * Class StyleBuilder
@@ -118,6 +120,25 @@ class StyleBuilder
     public function setShouldWrapText($shouldWrap = true)
     {
         $this->style->setShouldWrapText($shouldWrap);
+
+        return $this;
+    }
+
+    /**
+     * Sets the cell alignment.
+     *
+     * @param string $cellAlignment The cell alignment
+     *
+     * @throws InvalidArgumentException If the given cell alignment is not valid
+     * @return StyleBuilder
+     */
+    public function setCellAlignment($cellAlignment)
+    {
+        if (!CellAlignment::isValid($cellAlignment)) {
+            throw new InvalidArgumentException('Invalid cell alignment value');
+        }
+
+        $this->style->setCellAlignment($cellAlignment);
 
         return $this;
     }

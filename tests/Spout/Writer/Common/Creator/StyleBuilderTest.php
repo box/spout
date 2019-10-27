@@ -3,7 +3,9 @@
 namespace Box\Spout\Writer\Common\Creator\Style;
 
 use Box\Spout\Common\Entity\Style\Border;
+use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Common\Entity\Style\Color;
+use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use PHPUnit\Framework\TestCase;
 
@@ -45,20 +47,18 @@ class StyleBuilderTest extends TestCase
     /**
      * @return void
      */
-    public function testStyleBuilderShouldMergeFormats()
+    public function testStyleBuilderShouldApplyCellAlignment()
     {
-        $baseStyle = (new StyleBuilder())
-            ->setFontBold()
-            ->setFormat('0.00')
-            ->build();
+        $style = (new StyleBuilder())->setCellAlignment(CellAlignment::CENTER)->build();
+        $this->assertTrue($style->shouldApplyCellAlignment());
+    }
 
-        $currentStyle = (new StyleBuilder())->build();
-
-        $styleMerger = new StyleMerger();
-        $mergedStyle = $styleMerger->merge($currentStyle, $baseStyle);
-
-        $this->assertNull($currentStyle->getFormat(), 'Current style has no border');
-        $this->assertEquals('0.00', $baseStyle->getFormat(), 'Base style has a format 0.00');
-        $this->assertEquals('0.00', $mergedStyle->getFormat(), 'Merged style has a format 0.00');
+    /**
+     * @return void
+     */
+    public function testStyleBuilderShouldThrowOnInvalidCellAlignment()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new StyleBuilder())->setCellAlignment('invalid_cell_alignment')->build();
     }
 }

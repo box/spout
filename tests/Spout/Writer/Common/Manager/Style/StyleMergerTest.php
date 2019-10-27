@@ -45,6 +45,7 @@ class StyleMergerTest extends TestCase
                         ->setFontBold()
                         ->setFontColor(Color::YELLOW)
                         ->setBackgroundColor(Color::BLUE)
+                        ->setFormat('0.00')
                         ->build();
         $currentStyle = (new StyleBuilder())->setFontName('Font')->setFontUnderline()->build();
         $mergedStyle = $this->styleMerger->merge($currentStyle, $baseStyle);
@@ -60,6 +61,7 @@ class StyleMergerTest extends TestCase
         $this->assertTrue($mergedStyle->isFontUnderline());
         $this->assertEquals(Color::YELLOW, $mergedStyle->getFontColor());
         $this->assertEquals(Color::BLUE, $mergedStyle->getBackgroundColor());
+        $this->assertEquals('0.00', $mergedStyle->getFormat());
     }
 
     /**
