@@ -8,7 +8,7 @@ namespace Box\Spout\Common\Entity\Style;
  */
 class Style
 {
-    /** Default font values */
+    /** Default values */
     const DEFAULT_FONT_SIZE = 11;
     const DEFAULT_FONT_COLOR = Color::BLACK;
     const DEFAULT_FONT_NAME = 'Arial';
@@ -53,6 +53,13 @@ class Style
 
     /** @var bool Whether specific font properties should be applied */
     private $shouldApplyFont = false;
+
+    /** @var bool Whether specific cell alignment should be applied */
+    private $shouldApplyCellAlignment = false;
+    /** @var string Cell alignment */
+    private $cellAlignment;
+    /** @var bool Whether the cell alignment property was set */
+    private $hasSetCellAlignment = false;
 
     /** @var bool Whether the text should wrap in the cell (useful for long or multi-lines text) */
     private $shouldWrapText = false;
@@ -323,6 +330,44 @@ class Style
     public function hasSetFontName()
     {
         return $this->hasSetFontName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCellAlignment()
+    {
+        return $this->cellAlignment;
+    }
+
+    /**
+     * @param string $cellAlignment The cell alignment
+     *
+     * @return Style
+     */
+    public function setCellAlignment($cellAlignment)
+    {
+        $this->cellAlignment = $cellAlignment;
+        $this->hasSetCellAlignment = true;
+        $this->shouldApplyCellAlignment = true;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSetCellAlignment()
+    {
+        return $this->hasSetCellAlignment;
+    }
+
+    /**
+     * @return bool Whether specific cell alignment should be applied
+     */
+    public function shouldApplyCellAlignment()
+    {
+        return $this->shouldApplyCellAlignment;
     }
 
     /**

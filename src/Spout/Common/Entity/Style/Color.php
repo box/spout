@@ -8,7 +8,7 @@ use Box\Spout\Common\Exception\InvalidColorException;
  * Class Color
  * This class provides constants and functions to work with colors
  */
-class Color
+abstract class Color
 {
     /** Standard colors - based on Office Online */
     const BLACK = '000000';

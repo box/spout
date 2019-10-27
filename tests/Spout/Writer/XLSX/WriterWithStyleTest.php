@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Style\Border;
+use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Reader\Wrapper\XMLReader;
@@ -285,6 +286,24 @@ class WriterWithStyleTest extends TestCase
         $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
         $this->assertEquals(1, $xfElement->getAttribute('applyAlignment'));
         $this->assertFirstChildHasAttributeEquals('1', $xfElement, 'alignment', 'wrapText');
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldApplyCellAlignment()
+    {
+        $fileName = 'test_add_row_should_apply_cell_alignment.xlsx';
+
+        $rightAlignedStyle = (new StyleBuilder())->setCellAlignment(CellAlignment::RIGHT)->build();
+        $dataRows = $this->createStyledRowsFromValues([['xlsx--11']], $rightAlignedStyle);
+
+        $this->writeToXLSXFile($dataRows, $fileName);
+
+        $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
+        $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
+        $this->assertEquals(1, $xfElement->getAttribute('applyAlignment'));
+        $this->assertFirstChildHasAttributeEquals(CellAlignment::RIGHT, $xfElement, 'alignment', 'horizontal');
     }
 
     /**
