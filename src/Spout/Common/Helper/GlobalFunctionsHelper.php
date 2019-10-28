@@ -24,6 +24,19 @@ class GlobalFunctionsHelper
     }
 
     /**
+     * Wrapper around global function fread()
+     * @see fread()
+     *
+     * @param resource $handle
+     * @param int|null $length
+     * @return string
+     */
+    public function fread($handle, $length = null)
+    {
+        return fread($handle, $length);
+    }
+
+    /**
      * Wrapper around global function fgets()
      * @see fgets()
      *
@@ -67,11 +80,24 @@ class GlobalFunctionsHelper
      *
      * @param resource $handle
      * @param int $offset
+     * @param int $whence
      * @return int
      */
-    public function fseek($handle, $offset)
+    public function fseek($handle, $offset, $whence = SEEK_SET)
     {
-        return fseek($handle, $offset);
+        return fseek($handle, $offset, $whence);
+    }
+
+    /**
+     * Wrapper around global function ftell()
+     * @see fseek()
+     *
+     * @param resource $handle
+     * @return bool|int
+     */
+    public function ftell($handle)
+    {
+        return ftell($handle);
     }
 
     /**
