@@ -22,6 +22,8 @@ foreach ($reader->getSheetIterator() as $sheet) {
     if ($sheet->getName() === 'summary') {
         foreach ($sheet->getRowIterator() as $row) {
             // do something with the row
+            $row->getCells()[0]->getValue();
+            $row->getCells()[1]->getValue();
         }
         break; // no need to read more sheets
     }
