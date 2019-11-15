@@ -88,8 +88,8 @@ EOD;
             $format = $style->getFormat();
             $tags[] = '<numFmt numFmtId="' . $numFmtId . '" formatCode="' . $format . '"/>';
         }
-        $content = '<numFmts count="' . count($tags) . '">';
-        $content .= implode('', $tags);
+        $content = '<numFmts count="' . \count($tags) . '">';
+        $content .= \implode('', $tags);
         $content .= '</numFmts>';
 
         return $content;
@@ -104,7 +104,7 @@ EOD;
     {
         $registeredStyles = $this->styleRegistry->getRegisteredStyles();
 
-        $content = '<fonts count="' . count($registeredStyles) . '">';
+        $content = '<fonts count="' . \count($registeredStyles) . '">';
 
         /** @var Style $style */
         foreach ($registeredStyles as $style) {
@@ -145,8 +145,8 @@ EOD;
         $registeredFills = $this->styleRegistry->getRegisteredFills();
 
         // Excel reserves two default fills
-        $fillsCount = count($registeredFills) + 2;
-        $content = sprintf('<fills count="%d">', $fillsCount);
+        $fillsCount = \count($registeredFills) + 2;
+        $content = \sprintf('<fills count="%d">', $fillsCount);
 
         $content .= '<fill><patternFill patternType="none"/></fill>';
         $content .= '<fill><patternFill patternType="gray125"/></fill>';
@@ -157,7 +157,7 @@ EOD;
             $style = $this->styleRegistry->getStyleFromStyleId($styleId);
 
             $backgroundColor = $style->getBackgroundColor();
-            $content .= sprintf(
+            $content .= \sprintf(
                 '<fill><patternFill patternType="solid"><fgColor rgb="%s"/></patternFill></fill>',
                 $backgroundColor
             );
@@ -178,7 +178,7 @@ EOD;
         $registeredBorders = $this->styleRegistry->getRegisteredBorders();
 
         // There is one default border with index 0
-        $borderCount = count($registeredBorders) + 1;
+        $borderCount = \count($registeredBorders) + 1;
 
         $content = '<borders count="' . $borderCount . '">';
 
@@ -233,7 +233,7 @@ EOD;
     {
         $registeredStyles = $this->styleRegistry->getRegisteredStyles();
 
-        $content = '<cellXfs count="' . count($registeredStyles) . '">';
+        $content = '<cellXfs count="' . \count($registeredStyles) . '">';
 
         foreach ($registeredStyles as $style) {
             $styleId = $style->getId();
@@ -247,13 +247,13 @@ EOD;
                 $content .= ' applyFont="1"';
             }
 
-            $content .= sprintf(' applyBorder="%d"', $style->shouldApplyBorder() ? 1 : 0);
+            $content .= \sprintf(' applyBorder="%d"', $style->shouldApplyBorder() ? 1 : 0);
 
             if ($style->shouldApplyCellAlignment() || $style->shouldWrapText()) {
                 $content .= ' applyAlignment="1">';
                 $content .= '<alignment';
                 if ($style->shouldApplyCellAlignment()) {
-                    $content .= sprintf(' horizontal="%s"', $style->getCellAlignment());
+                    $content .= \sprintf(' horizontal="%s"', $style->getCellAlignment());
                 }
                 if ($style->shouldWrapText()) {
                     $content .= ' wrapText="1"';

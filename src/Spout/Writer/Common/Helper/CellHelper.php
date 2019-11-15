@@ -28,11 +28,11 @@ class CellHelper
         // Using isset here because it is way faster than array_key_exists...
         if (!isset(self::$columnIndexToColumnLettersCache[$originalColumnIndex])) {
             $columnLetters = '';
-            $capitalAAsciiValue = ord('A');
+            $capitalAAsciiValue = \ord('A');
 
             do {
                 $modulus = $columnIndexZeroBased % 26;
-                $columnLetters = chr($capitalAAsciiValue + $modulus) . $columnLetters;
+                $columnLetters = \chr($capitalAAsciiValue + $modulus) . $columnLetters;
 
                 // substracting 1 because it's zero-based
                 $columnIndexZeroBased = (int) ($columnIndexZeroBased / 26) - 1;

@@ -108,7 +108,7 @@ class CellValueFormatter
             $pNodeValues[] = $this->extractTextValueFromNode($pNode);
         }
 
-        $escapedCellValue = implode("\n", $pNodeValues);
+        $escapedCellValue = \implode("\n", $pNodeValues);
         $cellValue = $this->escaper->unescape($escapedCellValue);
 
         return $cellValue;
@@ -167,7 +167,7 @@ class CellValueFormatter
         $countAttribute = $node->getAttribute(self::XML_ATTRIBUTE_C); // only defined for "<text:s>"
         $numWhitespaces = (!empty($countAttribute)) ? (int) $countAttribute : 1;
 
-        return str_repeat(self::$WHITESPACE_XML_NODES[$node->nodeName], $numWhitespaces);
+        return \str_repeat(self::$WHITESPACE_XML_NODES[$node->nodeName], $numWhitespaces);
     }
 
     /**

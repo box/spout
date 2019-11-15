@@ -221,7 +221,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
 
         if ($style->shouldApplyBorder()) {
             $border = $style->getBorder();
-            $serializedBorder = serialize($border);
+            $serializedBorder = \serialize($border);
 
             $isBorderAlreadyRegistered = isset($this->registeredBorders[$serializedBorder]);
 
@@ -231,7 +231,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
                 $this->styleIdToBorderMappingTable[$styleId] = $registeredBorderId;
             } else {
                 $this->registeredBorders[$serializedBorder] = $styleId;
-                $this->styleIdToBorderMappingTable[$styleId] = count($this->registeredBorders);
+                $this->styleIdToBorderMappingTable[$styleId] = \count($this->registeredBorders);
             }
         } else {
             // If no border should be applied - the mapping is the default border: 0
