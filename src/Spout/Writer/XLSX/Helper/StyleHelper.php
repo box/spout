@@ -151,6 +151,7 @@ class StyleHelper extends AbstractStyleHelper
 <styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
 EOD;
 
+        $content .= $this->getNumberFormatSectionContent();
         $content .= $this->getFontsSectionContent();
         $content .= $this->getFillsSectionContent();
         $content .= $this->getBordersSectionContent();
@@ -162,6 +163,21 @@ EOD;
 </styleSheet>
 EOD;
 
+        return $content;
+    }
+
+    /**
+     * Return the content of the "<numFmt>" section
+     *
+     * @return string
+     */
+    protected function getNumberFormatSectionContent()
+    {
+        $content = <<<EOL
+<numFmts count="1">
+    <numFmt formatCode="$#,##0.00" numFmtId="164"/>
+</numFmts>
+EOL;
         return $content;
     }
 
@@ -298,8 +314,9 @@ EOD;
     protected function getCellXfsSectionContent()
     {
         $registeredStyles = $this->getRegisteredStyles();
+        $countStyles = count($registeredStyles) + 1;
 
-        $content = '<cellXfs count="' . count($registeredStyles) . '">';
+        $content = '<cellXfs count="' . $countStyles . '">';
 
         foreach ($registeredStyles as $style) {
             $styleId = $style->getId();
@@ -322,6 +339,9 @@ EOD;
                 $content .= '/>';
             }
         }
+
+         // Add default style for numberFormat
+        $content .= '<xf numFmtId="164" borderId="0" fillId="0" fontId="0" applyFont="1" xfId="0" applyNumberFormat="1"/>';
 
         $content .= '</cellXfs>';
 

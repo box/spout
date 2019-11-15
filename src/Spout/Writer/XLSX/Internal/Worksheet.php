@@ -238,6 +238,8 @@ EOD;
      */
     protected function getCellXML($rowIndex, $cellNumber, $cellValue, $styleId)
     {
+        // If $cellValue has double format then assign style from numFmt section (2) else default (1)
+        $styleId = preg_match('#^\d+\.\d+$#', $cellValue) === 1 ? 2 : $styleId;
         $columnIndex = CellHelper::getCellIndexFromColumnIndex($cellNumber);
         $cellXML = '<c r="'.$columnIndex.$rowIndex.'"';
         $cellXML .= ' s="'.$styleId.'"';
