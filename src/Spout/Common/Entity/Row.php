@@ -95,7 +95,7 @@ class Row
             return 0;
         }
 
-        return max(array_keys($this->cells)) + 1;
+        return \max(\array_keys($this->cells)) + 1;
     }
 
     /**
@@ -122,7 +122,7 @@ class Row
      */
     public function toArray()
     {
-        return array_map(function (Cell $cell) {
+        return \array_map(function (Cell $cell) {
             return $cell->getValue();
         }, $this->cells);
     }

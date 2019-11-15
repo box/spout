@@ -107,13 +107,13 @@ EOD;
      */
     public function startSheet(Worksheet $worksheet)
     {
-        $sheetFilePointer = fopen($worksheet->getFilePath(), 'w');
+        $sheetFilePointer = \fopen($worksheet->getFilePath(), 'w');
         $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
 
         $worksheet->setFilePointer($sheetFilePointer);
 
-        fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
-        fwrite($sheetFilePointer, '<sheetData>');
+        \fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        \fwrite($sheetFilePointer, '<sheetData>');
     }
 
     /**
@@ -165,7 +165,7 @@ EOD;
 
         $rowXML .= '</row>';
 
-        $wasWriteSuccessful = fwrite($worksheet->getFilePointer(), $rowXML);
+        $wasWriteSuccessful = \fwrite($worksheet->getFilePointer(), $rowXML);
         if ($wasWriteSuccessful === false) {
             throw new IOException("Unable to write data in {$worksheet->getFilePath()}");
         }
@@ -227,7 +227,7 @@ EOD;
                 $cellXML = '';
             }
         } else {
-            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cell->getValue()));
+            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . \gettype($cell->getValue()));
         }
 
         return $cellXML;
@@ -263,12 +263,12 @@ EOD;
     {
         $worksheetFilePointer = $worksheet->getFilePointer();
 
-        if (!is_resource($worksheetFilePointer)) {
+        if (!\is_resource($worksheetFilePointer)) {
             return;
         }
 
-        fwrite($worksheetFilePointer, '</sheetData>');
-        fwrite($worksheetFilePointer, '</worksheet>');
-        fclose($worksheetFilePointer);
+        \fwrite($worksheetFilePointer, '</sheetData>');
+        \fwrite($worksheetFilePointer, '</worksheet>');
+        \fclose($worksheetFilePointer);
     }
 }

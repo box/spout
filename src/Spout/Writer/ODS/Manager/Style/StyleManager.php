@@ -295,7 +295,7 @@ EOD;
      */
     private function getCellAlignmentSectionContent($style)
     {
-        return sprintf(
+        return \sprintf(
             ' fo:text-align="%s" ',
             $this->transformCellAlignment($style->getCellAlignment())
         );
@@ -364,11 +364,11 @@ EOD;
      */
     private function getBorderXMLContent($style)
     {
-        $borders = array_map(function (BorderPart $borderPart) {
+        $borders = \array_map(function (BorderPart $borderPart) {
             return BorderHelper::serializeBorderPart($borderPart);
         }, $style->getBorder()->getParts());
 
-        return sprintf(' %s ', implode(' ', $borders));
+        return \sprintf(' %s ', \implode(' ', $borders));
     }
 
     /**
@@ -379,6 +379,6 @@ EOD;
      */
     private function getBackgroundColorXMLContent($style)
     {
-        return sprintf(' fo:background-color="#%s" ', $style->getBackgroundColor());
+        return \sprintf(' fo:background-color="#%s" ', $style->getBackgroundColor());
     }
 }
