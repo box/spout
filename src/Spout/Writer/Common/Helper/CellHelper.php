@@ -61,7 +61,7 @@ class CellHelper
      */
     public static function isNonEmptyString($value)
     {
-        return (gettype($value) === 'string' && $value !== '' && !$this->isNumeric($value));
+        return (gettype($value) === 'string' && $value !== '' && !self::isNumeric($value));
     }
 
     /**
