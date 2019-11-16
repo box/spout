@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\XLSX;
 
+use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
@@ -373,6 +374,23 @@ class WriterTest extends TestCase
         $this->assertInlineDataWasWrittenToSheet($fileName, 1, 1); // true is converted to 1
         $this->assertInlineDataWasWrittenToSheet($fileName, 1, 0);
         $this->assertInlineDataWasWrittenToSheet($fileName, 1, 10.2);
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldSupportCellInError()
+    {
+        $fileName = 'test_add_row_should_support_cell_in_error.xlsx';
+
+        $cell = WriterEntityFactory::createCell('#DIV/0');
+        $cell->setType(Cell::TYPE_ERROR);
+
+        $row = WriterEntityFactory::createRow([$cell]);
+
+        $this->writeToXLSXFile([$row], $fileName);
+
+        $this->assertInlineDataWasWrittenToSheet($fileName, 1, 't="e"><v>#DIV/0</v>');
     }
 
     /**
