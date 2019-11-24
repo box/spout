@@ -29,6 +29,16 @@ use Box\Spout\Reader\XLSX\Reader as XLSXReader;
 class ReaderFactory
 {
     /**
+     * File extensions and readers mapped
+     */
+    protected const MAPPED_EXTENSIONS = [
+        'xlsx' => 'xlsx',
+        'csv' => 'csv',
+        'ods' => 'ods',
+        'xlsm' => 'xlsx',
+    ];
+
+    /**
      * Creates a reader by file extension
      *
      * @param string $path The path to the spreadsheet file. Supported extensions are .csv,.ods and .xlsx
@@ -42,6 +52,15 @@ class ReaderFactory
         return self::createFromType($extension);
     }
 
+    public static function getMappedFormats(string $fileExtension)
+    {
+        if (!(array_key_exists($fileExtension, self::MAPPED_EXTENSIONS))) {
+            throw new UnsupportedTypeException('No readers supporting the given type: ' . $fileExtension);
+        }
+
+        return self::MAPPED_EXTENSIONS[$fileExtension];
+    }
+
     /**
      * This creates an instance of the appropriate reader, given the type of the file to be read
      *
@@ -51,13 +70,10 @@ class ReaderFactory
      */
     public static function createFromType($readerType)
     {
-        switch ($readerType) {
-            case Type::CSV: return self::createCSVReader();
-            case Type::XLSX: return self::createXLSXReader();
-            case Type::ODS: return self::createODSReader();
-            default:
-                throw new UnsupportedTypeException('No readers supporting the given type: ' . $readerType);
-        }
+        $readerType = self::getMappedFormats($readerType);
+        $methodName = 'create' . strtoupper($readerType) . 'Reader';
+
+        return self::$methodName();
     }
 
     /**

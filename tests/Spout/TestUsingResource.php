@@ -8,7 +8,7 @@ namespace Box\Spout;
 trait TestUsingResource
 {
     /** @var string Path to the test resources folder */
-    private $resourcesPath = 'tests/resources';
+    private $resourcesPath = __DIR__ . '/../../tests/resources';
 
     /** @var string Path to the test generated resources folder */
     private $generatedResourcesPath = 'tests/resources/generated';
