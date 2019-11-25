@@ -52,6 +52,13 @@ class ReaderFactory
         return self::createFromType($extension);
     }
 
+    /**
+     * This returns the mapped file
+     *
+     * @param  string $fileExtension File extension of file to read
+     * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
+     * @return string
+     */
     public static function getMappedFormats(string $fileExtension)
     {
         if (!(array_key_exists($fileExtension, self::MAPPED_EXTENSIONS))) {
@@ -65,7 +72,6 @@ class ReaderFactory
      * This creates an instance of the appropriate reader, given the type of the file to be read
      *
      * @param  string $readerType Type of the reader to instantiate
-     * @throws \Box\Spout\Common\Exception\UnsupportedTypeException
      * @return ReaderInterface
      */
     public static function createFromType($readerType)
