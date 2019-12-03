@@ -1,4 +1,4 @@
-dist: trusty
+dist: bionic
 sudo: false
 
 language: php
@@ -13,6 +13,9 @@ matrix:
       env: WITH_PHPUNIT=true
     - php: 7.3
       env: WITH_PHPUNIT=true
+    - php: 7.4
+      env: WITH_PHPUNIT=true
+
 
 cache:
   directories:
