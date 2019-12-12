@@ -39,6 +39,9 @@ class OptionsManager extends OptionsManagerAbstract
             Options::DEFAULT_ROW_STYLE,
             Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY,
             Options::SHOULD_USE_INLINE_STRINGS,
+            Options::DEFAULT_COLUMN_WIDTH,
+            Options::DEFAULT_ROW_HEIGHT,
+            Options::COLUMN_WIDTHS,
         ];
     }
 

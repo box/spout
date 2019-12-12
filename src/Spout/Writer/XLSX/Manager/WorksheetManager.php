@@ -62,6 +62,18 @@ EOD;
     /** @var InternalEntityFactory Factory to create entities */
     private $entityFactory;
 
+    /** @var float|null The default column width to use */
+    private $defaultColumnWidth;
+
+    /** @var float|null The default row height to use */
+    private $defaultRowHeight;
+
+    /** @var bool Whether rows have been written */
+    private $hasWrittenRows = false;
+
+    /** @var array Array of min-max-width arrays */
+    private $columnWidths;
+
     /**
      * WorksheetManager constructor.
      *
@@ -85,6 +97,9 @@ EOD;
         InternalEntityFactory $entityFactory
     ) {
         $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
+        $this->setDefaultColumnWidth($optionsManager->getOption(Options::DEFAULT_COLUMN_WIDTH));
+        $this->setDefaultRowHeight($optionsManager->getOption(Options::DEFAULT_ROW_HEIGHT));
+        $this->columnWidths = $optionsManager->getOption(Options::COLUMN_WIDTHS) ?? [];
         $this->rowManager = $rowManager;
         $this->styleManager = $styleManager;
         $this->styleMerger = $styleMerger;
@@ -103,6 +118,39 @@ EOD;
     }
 
     /**
+     * @param float|null $width
+     */
+    public function setDefaultColumnWidth($width) {
+        $this->defaultColumnWidth = $width;
+    }
+
+    /**
+     * @param float|null $height
+     */
+    public function setDefaultRowHeight($height) {
+        $this->defaultRowHeight = $height;
+    }
+
+    /**
+     * @param float|null $width
+     * @param array $columns One or more columns with this width
+     */
+    public function setColumnWidth($width, ...$columns) {
+        // Gather sequences
+        $sequence = [];
+        foreach ($columns as $i) {
+            $sequenceLength = count($sequence);
+            $previousValue = $sequence[$sequenceLength - 1];
+            if ($sequenceLength > 0 && $i !== $previousValue + 1) {
+                $this->columnWidths[] = [$sequence[0], $previousValue, $width];
+                $sequence = [];
+            }
+            $sequence[] = $i;
+        }
+        $this->columnWidths[] = [$sequence[0], $sequence[count($sequence) - 1], $width];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function startSheet(Worksheet $worksheet)
@@ -113,7 +161,6 @@ EOD;
         $worksheet->setFilePointer($sheetFilePointer);
 
         fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
-        fwrite($sheetFilePointer, '<sheetData>');
     }
 
     /**
@@ -153,6 +200,12 @@ EOD;
      */
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
+        $sheetFilePointer = $worksheet->getFilePointer();
+        if (!$this->hasWrittenRows) {
+            fwrite($sheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
+            fwrite($sheetFilePointer, $this->getXMLFragmentForColumnWidths());
+            fwrite($sheetFilePointer, '<sheetData>');
+        }
         $cellIndex = 0;
         $rowStyle = $row->getStyle();
         $rowIndex = $worksheet->getLastWrittenRowIndex() + 1;
@@ -167,10 +220,11 @@ EOD;
 
         $rowXML .= '</row>';
 
-        $wasWriteSuccessful = fwrite($worksheet->getFilePointer(), $rowXML);
+        $wasWriteSuccessful = fwrite($sheetFilePointer, $rowXML);
         if ($wasWriteSuccessful === false) {
             throw new IOException("Unable to write data in {$worksheet->getFilePath()}");
         }
+        $this->hasWrittenRows = true;
     }
 
     /**
@@ -257,6 +311,41 @@ EOD;
     }
 
     /**
+     * Construct column width references xml to inject into worksheet xml file
+     *
+     * @return string
+     */
+    public function getXMLFragmentForColumnWidths()
+    {
+        if (empty($this->columnWidths)) {
+            return '';
+        }
+        $xml = '<cols>';
+        foreach ($this->columnWidths as $entry) {
+            $xml .= '<col min="'.$entry[0].'" max="'.$entry[1].'" width="'.$entry[2].'" customWidth="true"/>';
+        }
+        $xml .= '</cols>';
+        return $xml;
+    }
+
+    /**
+     * Constructs default row height and width xml to inject into worksheet xml file
+     *
+     * @return string
+     */
+    public function getXMLFragmentForDefaultCellSizing()
+    {
+        $rowHeightXml = empty($this->defaultRowHeight) ? '' : " defaultRowHeight=\"{$this->defaultRowHeight}\"";
+        $colWidthXml = empty($this->defaultColumnWidth) ? '' : " defaultColWidth=\"{$this->defaultColumnWidth}\"";
+        if (empty($colWidthXml) && empty($rowHeightXml)) {
+            return '';
+        }
+        // Ensure that the required defaultRowHeight is set
+        $rowHeightXml = empty($rowHeightXml) ? ' defaultRowHeight="0"' : $rowHeightXml;
+        return "<sheetFormatPr{$colWidthXml}{$rowHeightXml}/>";
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function close(Worksheet $worksheet)
@@ -267,7 +356,9 @@ EOD;
             return;
         }
 
-        fwrite($worksheetFilePointer, '</sheetData>');
+        if ($this->hasWrittenRows) {
+            fwrite($worksheetFilePointer, '</sheetData>');
+        }
         fwrite($worksheetFilePointer, '</worksheet>');
         fclose($worksheetFilePointer);
     }

@@ -6,6 +6,7 @@ use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Exception\InvalidSheetNameException;
+use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -90,6 +91,124 @@ class SheetTest extends TestCase
         $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
 
         $this->assertContains(' state="hidden"', $xmlContents, 'The sheet visibility should have been changed to "hidden"');
+    }
+
+    public function testThrowsIfWorkbookIsNotInitialized()
+    {
+        $this->expectException(WriterNotOpenedException::class);
+        $writer = WriterEntityFactory::createXLSXWriter();
+
+        $writer->addRow($this->createRowFromValues([]));
+    }
+
+    public function testThrowsWhenTryingToSetDefaultsBeforeWorkbookLoaded()
+    {
+        $this->expectException(WriterNotOpenedException::class);
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->setDefaultColumnWidth(10.0);
+    }
+
+    public function testWritesDefaultCellSizesIfSet()
+    {
+        $fileName = 'test_writes_default_cell_sizes_if_set.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->openToFile($resourcePath);
+        $writer->setDefaultColumnWidth(10.0);
+        $writer->setDefaultRowHeight(10.0);
+        $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
+        $writer->close();
+
+        $pathToWorkbookFile = $resourcePath . '#xl/worksheets/sheet1.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<sheetFormatPr', $xmlContents, 'No sheetFormatPr tag found in sheet');
+        $this->assertContains(' defaultColWidth="10', $xmlContents, 'No default column width found in sheet');
+        $this->assertContains(' defaultRowHeight="10', $xmlContents, 'No default row height found in sheet');
+    }
+
+    public function testWritesDefaultRequiredRowHeightIfOmitted()
+    {
+        $fileName = 'test_writes_default_required_row_height_if_omitted.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->openToFile($resourcePath);
+        $writer->setDefaultColumnWidth(10.0);
+        $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
+        $writer->close();
+
+        $pathToWorkbookFile = $resourcePath . '#xl/worksheets/sheet1.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<sheetFormatPr', $xmlContents, 'No sheetFormatPr tag found in sheet');
+        $this->assertContains(' defaultColWidth="10', $xmlContents, 'No default column width found in sheet');
+        $this->assertContains(' defaultRowHeight="0', $xmlContents, 'No default row height found in sheet');
+    }
+
+    public function testWritesColumnWidths()
+    {
+        $fileName = 'test_column_widths.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->openToFile($resourcePath);
+        $writer->setColumnWidth(100.0, 1);
+        $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
+        $writer->close();
+
+        $pathToWorkbookFile = $resourcePath . '#xl/worksheets/sheet1.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<cols', $xmlContents, 'No cols tag found in sheet');
+        $this->assertContains('<col min="1" max="1" width="100" customWidth="true"', $xmlContents, 'No expected column width definition found in sheet');
+    }
+
+    public function testWritesMultipleColumnWidths()
+    {
+        $fileName = 'test_multiple_column_widths.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->openToFile($resourcePath);
+        $writer->setColumnWidth(100.0, 1, 2, 3);
+        $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12', 'xlsx--13']));
+        $writer->close();
+
+        $pathToWorkbookFile = $resourcePath . '#xl/worksheets/sheet1.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<cols', $xmlContents, 'No cols tag found in sheet');
+        $this->assertContains('<col min="1" max="3" width="100" customWidth="true"', $xmlContents, 'No expected column width definition found in sheet');
+    }
+
+    public function testWritesMultipleColumnWidthsInRanges()
+    {
+        $fileName = 'test_multiple_column_widths_in_ranges.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->openToFile($resourcePath);
+        $writer->setColumnWidth(50.0, 1, 3, 4, 6);
+        $writer->setColumnWidth(100.0, 2, 5);
+        $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12', 'xlsx--13', 'xlsx--14', 'xlsx--15', 'xlsx--16']));
+        $writer->close();
+
+        $pathToWorkbookFile = $resourcePath . '#xl/worksheets/sheet1.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<cols', $xmlContents, 'No cols tag found in sheet');
+        $this->assertContains('<col min="1" max="1" width="50" customWidth="true"', $xmlContents, 'No expected column width definition found in sheet');
+        $this->assertContains('<col min="3" max="4" width="50" customWidth="true"', $xmlContents, 'No expected column width definition found in sheet');
+        $this->assertContains('<col min="6" max="6" width="50" customWidth="true"', $xmlContents, 'No expected column width definition found in sheet');
+        $this->assertContains('<col min="2" max="2" width="100" customWidth="true"', $xmlContents, 'No expected column width definition found in sheet');
+        $this->assertContains('<col min="5" max="5" width="100" customWidth="true"', $xmlContents, 'No expected column width definition found in sheet');
     }
 
     /**

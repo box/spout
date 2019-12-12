@@ -4,6 +4,7 @@ namespace Box\Spout\Writer;
 
 use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
@@ -96,8 +97,9 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /**
      * Creates a new sheet and make it the current sheet. The data will now be written to this sheet.
      *
-     * @throws WriterNotOpenedException If the writer has not been opened yet
      * @return Sheet The created sheet
+     * @throws IOException
+     * @throws WriterNotOpenedException If the writer has not been opened yet
      */
     public function addNewSheetAndMakeItCurrent()
     {
@@ -136,6 +138,36 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     }
 
     /**
+     * @param float $width
+     * @throws WriterNotOpenedException
+     */
+    public function setDefaultColumnWidth(float $width)
+    {
+        $this->throwIfWorkbookIsNotAvailable();
+        $this->workbookManager->setDefaultColumnWidth($width);
+    }
+
+    /**
+     * @param float $height
+     * @throws WriterNotOpenedException
+     */
+    public function setDefaultRowHeight(float $height)
+    {
+        $this->throwIfWorkbookIsNotAvailable();
+        $this->workbookManager->setDefaultRowHeight($height);
+    }
+
+    /**
+     * @param float|null $width
+     * @param array $columns One or more columns with this width
+     * @throws WriterNotOpenedException
+     */
+    public function setColumnWidth($width, ...$columns) {
+        $this->throwIfWorkbookIsNotAvailable();
+        $this->workbookManager->setColumnWidth($width, ...$columns);
+    }
+
+    /**
      * Checks if the workbook has been created. Throws an exception if not created yet.
      *
      * @throws WriterNotOpenedException If the workbook is not created yet
@@ -143,13 +175,15 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      */
     protected function throwIfWorkbookIsNotAvailable()
     {
-        if (!$this->workbookManager->getWorkbook()) {
+        if (empty($this->workbookManager) || !$this->workbookManager->getWorkbook()) {
             throw new WriterNotOpenedException('The writer must be opened before performing this action.');
         }
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @throws Exception\WriterException
      */
     protected function addRowToWriter(Row $row)
     {
