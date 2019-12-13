@@ -50,8 +50,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * This must be set before opening the writer.
      *
      * @param bool $shouldCreateNewSheetsAutomatically Whether new sheets should be automatically created when the max rows limit per sheet is reached
-     * @throws WriterAlreadyOpenedException If the writer was already opened
      * @return WriterMultiSheetsAbstract
+     * @throws WriterAlreadyOpenedException If the writer was already opened
      */
     public function setShouldCreateNewSheetsAutomatically($shouldCreateNewSheetsAutomatically)
     {
@@ -76,8 +76,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /**
      * Returns all the workbook's sheets
      *
-     * @throws WriterNotOpenedException If the writer has not been opened yet
      * @return Sheet[] All the workbook's sheets
+     * @throws WriterNotOpenedException If the writer has not been opened yet
      */
     public function getSheets()
     {
@@ -112,8 +112,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /**
      * Returns the current sheet
      *
-     * @throws WriterNotOpenedException If the writer has not been opened yet
      * @return Sheet The current sheet
+     * @throws WriterNotOpenedException If the writer has not been opened yet
      */
     public function getCurrentSheet()
     {
@@ -127,9 +127,9 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * The writing will resume where it stopped (i.e. data won't be truncated).
      *
      * @param Sheet $sheet The sheet to set as current
-     * @throws WriterNotOpenedException If the writer has not been opened yet
-     * @throws SheetNotFoundException If the given sheet does not exist in the workbook
      * @return void
+     * @throws SheetNotFoundException If the given sheet does not exist in the workbook
+     * @throws WriterNotOpenedException If the writer has not been opened yet
      */
     public function setCurrentSheet($sheet)
     {
@@ -162,7 +162,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * @param array $columns One or more columns with this width
      * @throws WriterNotOpenedException
      */
-    public function setColumnWidth($width, ...$columns) {
+    public function setColumnWidth($width, ...$columns)
+    {
         $this->throwIfWorkbookIsNotAvailable();
         $this->workbookManager->setColumnWidth($width, ...$columns);
     }
@@ -173,7 +174,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * @param int $end Last column index of the range
      * @throws WriterNotOpenedException
      */
-    public function setColumnWidthForRange(float $width, int $start, int $end) {
+    public function setColumnWidthForRange(float $width, int $start, int $end)
+    {
         $this->throwIfWorkbookIsNotAvailable();
         $this->workbookManager->setColumnWidthForRange($width, $start, $end);
     }
@@ -181,8 +183,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /**
      * Checks if the workbook has been created. Throws an exception if not created yet.
      *
-     * @throws WriterNotOpenedException If the workbook is not created yet
      * @return void
+     * @throws WriterNotOpenedException If the workbook is not created yet
      */
     protected function throwIfWorkbookIsNotAvailable()
     {

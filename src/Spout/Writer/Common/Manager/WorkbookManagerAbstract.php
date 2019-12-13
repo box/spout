@@ -171,8 +171,8 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * The writing will resume where it stopped (i.e. data won't be truncated).
      *
      * @param Sheet $sheet The "external" sheet to set as current
-     * @throws SheetNotFoundException If the given sheet does not exist in the workbook
      * @return void
+     * @throws SheetNotFoundException If the given sheet does not exist in the workbook
      */
     public function setCurrentSheet(Sheet $sheet)
     {
@@ -291,14 +291,16 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     /**
      * @param float|null $width
      */
-    public function setDefaultColumnWidth(float $width) {
+    public function setDefaultColumnWidth(float $width)
+    {
         $this->worksheetManager->setDefaultColumnWidth($width);
     }
 
     /**
      * @param float|null $height
      */
-    public function setDefaultRowHeight(float $height) {
+    public function setDefaultRowHeight(float $height)
+    {
         $this->worksheetManager->setDefaultRowHeight($height);
     }
 
@@ -306,7 +308,8 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * @param float $width
      * @param array $columns One or more columns with this width
      */
-    public function setColumnWidth(float $width, ...$columns) {
+    public function setColumnWidth(float $width, ...$columns)
+    {
         $this->worksheetManager->setColumnWidth($width, ...$columns);
     }
 
@@ -315,7 +318,8 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * @param int $start First column index of the range
      * @param int $end Last column index of the range
      */
-    public function setColumnWidthForRange(float $width, int $start, int $end) {
+    public function setColumnWidthForRange(float $width, int $start, int $end)
+    {
         $this->worksheetManager->setColumnWidthForRange($width, $start, $end);
     }
 

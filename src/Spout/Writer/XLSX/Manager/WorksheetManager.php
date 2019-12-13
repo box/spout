@@ -120,14 +120,16 @@ EOD;
     /**
      * @param float|null $width
      */
-    public function setDefaultColumnWidth($width) {
+    public function setDefaultColumnWidth($width)
+    {
         $this->defaultColumnWidth = $width;
     }
 
     /**
      * @param float|null $height
      */
-    public function setDefaultRowHeight($height) {
+    public function setDefaultRowHeight($height)
+    {
         $this->defaultRowHeight = $height;
     }
 
@@ -135,7 +137,8 @@ EOD;
      * @param float $width
      * @param array $columns One or more columns with this width
      */
-    public function setColumnWidth(float $width, ...$columns) {
+    public function setColumnWidth(float $width, ...$columns)
+    {
         // Gather sequences
         $sequence = [];
         foreach ($columns as $i) {
@@ -155,7 +158,8 @@ EOD;
      * @param int $start First column index of the range
      * @param int $end Last column index of the range
      */
-    public function setColumnWidthForRange(float $width, int $start, int $end) {
+    public function setColumnWidthForRange(float $width, int $start, int $end)
+    {
         $this->columnWidths[] = [$start, $end, $width];
     }
 
@@ -176,8 +180,8 @@ EOD;
      * Checks if the sheet has been sucessfully created. Throws an exception if not.
      *
      * @param bool|resource $sheetFilePointer Pointer to the sheet data file or FALSE if unable to open the file
-     * @throws IOException If the sheet data file cannot be opened for writing
      * @return void
+     * @throws IOException If the sheet data file cannot be opened for writing
      */
     private function throwIfSheetFilePointerIsNotAvailable($sheetFilePointer)
     {
@@ -203,9 +207,9 @@ EOD;
      *
      * @param Worksheet $worksheet The worksheet to add the row to
      * @param Row $row The row to be written
-     * @throws IOException If the data cannot be written
-     * @throws InvalidArgumentException If a cell value's type is not supported
      * @return void
+     * @throws InvalidArgumentException If a cell value's type is not supported
+     * @throws IOException If the data cannot be written
      */
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
@@ -244,8 +248,8 @@ EOD;
      * @param Style $rowStyle
      * @param int $rowIndex
      * @param int $cellIndex
-     * @throws InvalidArgumentException If the given value cannot be processed
      * @return string
+     * @throws InvalidArgumentException If the given value cannot be processed
      */
     private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $rowIndex, $cellIndex)
     {
@@ -266,8 +270,8 @@ EOD;
      * @param int $cellNumber
      * @param Cell $cell
      * @param int $styleId
-     * @throws InvalidArgumentException If the given value cannot be processed
      * @return string
+     * @throws InvalidArgumentException If the given value cannot be processed
      */
     private function getCellXML($rowIndex, $cellNumber, Cell $cell, $styleId)
     {
@@ -278,7 +282,7 @@ EOD;
         if ($cell->isString()) {
             $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cell->getValue());
         } elseif ($cell->isBoolean()) {
-            $cellXML .= ' t="b"><v>' . (int) ($cell->getValue()) . '</v></c>';
+            $cellXML .= ' t="b"><v>' . (int)($cell->getValue()) . '</v></c>';
         } elseif ($cell->isNumeric()) {
             $cellXML .= '><v>' . $cell->getValue() . '</v></c>';
         } elseif ($cell->isEmpty()) {
@@ -300,8 +304,8 @@ EOD;
      * Returns the XML fragment for a cell containing a non empty string
      *
      * @param string $cellValue The cell value
-     * @throws InvalidArgumentException If the string exceeds the maximum number of characters allowed per cell
      * @return string The XML fragment representing the cell
+     * @throws InvalidArgumentException If the string exceeds the maximum number of characters allowed per cell
      */
     private function getCellXMLFragmentForNonEmptyString($cellValue)
     {
@@ -331,7 +335,7 @@ EOD;
         }
         $xml = '<cols>';
         foreach ($this->columnWidths as $entry) {
-            $xml .= '<col min="'.$entry[0].'" max="'.$entry[1].'" width="'.$entry[2].'" customWidth="true"/>';
+            $xml .= '<col min="' . $entry[0] . '" max="' . $entry[1] . '" width="' . $entry[2] . '" customWidth="true"/>';
         }
         $xml .= '</cols>';
         return $xml;
