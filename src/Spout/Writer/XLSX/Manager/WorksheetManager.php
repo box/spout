@@ -132,22 +132,31 @@ EOD;
     }
 
     /**
-     * @param float|null $width
+     * @param float $width
      * @param array $columns One or more columns with this width
      */
-    public function setColumnWidth($width, ...$columns) {
+    public function setColumnWidth(float $width, ...$columns) {
         // Gather sequences
         $sequence = [];
         foreach ($columns as $i) {
             $sequenceLength = count($sequence);
             $previousValue = $sequence[$sequenceLength - 1];
             if ($sequenceLength > 0 && $i !== $previousValue + 1) {
-                $this->columnWidths[] = [$sequence[0], $previousValue, $width];
+                $this->setColumnWidthForRange($width, $sequence[0], $previousValue);
                 $sequence = [];
             }
             $sequence[] = $i;
         }
-        $this->columnWidths[] = [$sequence[0], $sequence[count($sequence) - 1], $width];
+        $this->setColumnWidthForRange($width, $sequence[0], $sequence[count($sequence) - 1]);
+    }
+
+    /**
+     * @param float $width The width to set
+     * @param int $start First column index of the range
+     * @param int $end Last column index of the range
+     */
+    public function setColumnWidthForRange(float $width, int $start, int $end) {
+        $this->columnWidths[] = [$start, $end, $width];
     }
 
     /**

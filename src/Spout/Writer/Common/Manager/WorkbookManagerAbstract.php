@@ -303,11 +303,20 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     }
 
     /**
-     * @param float|null $width
+     * @param float $width
      * @param array $columns One or more columns with this width
      */
-    public function setColumnWidth($width, ...$columns) {
+    public function setColumnWidth(float $width, ...$columns) {
         $this->worksheetManager->setColumnWidth($width, ...$columns);
+    }
+
+    /**
+     * @param float $width The width to set
+     * @param int $start First column index of the range
+     * @param int $end Last column index of the range
+     */
+    public function setColumnWidthForRange(float $width, int $start, int $end) {
+        $this->worksheetManager->setColumnWidthForRange($width, $start, $end);
     }
 
     /**

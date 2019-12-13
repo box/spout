@@ -168,6 +168,17 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     }
 
     /**
+     * @param float $width The width to set
+     * @param int $start First column index of the range
+     * @param int $end Last column index of the range
+     * @throws WriterNotOpenedException
+     */
+    public function setColumnWidthForRange(float $width, int $start, int $end) {
+        $this->throwIfWorkbookIsNotAvailable();
+        $this->workbookManager->setColumnWidthForRange($width, $start, $end);
+    }
+
+    /**
      * Checks if the workbook has been created. Throws an exception if not created yet.
      *
      * @throws WriterNotOpenedException If the workbook is not created yet

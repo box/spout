@@ -211,6 +211,25 @@ class SheetTest extends TestCase
         $this->assertContains('<col min="5" max="5" width="100" customWidth="true"', $xmlContents, 'No expected column width definition found in sheet');
     }
 
+    public function testCanTakeColumnWidthsAsRange()
+    {
+        $fileName = 'test_column_widths_as_ranges.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->openToFile($resourcePath);
+        $writer->setColumnWidthForRange(50.0, 1, 3);
+        $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12', 'xlsx--13']));
+        $writer->close();
+
+        $pathToWorkbookFile = $resourcePath . '#xl/worksheets/sheet1.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<cols', $xmlContents, 'No cols tag found in sheet');
+        $this->assertContains('<col min="1" max="3" width="50" customWidth="true"', $xmlContents, 'No expected column width definition found in sheet');
+    }
+
     /**
      * @param string $fileName
      * @param string $sheetName
