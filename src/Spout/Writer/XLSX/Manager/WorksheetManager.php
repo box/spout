@@ -143,10 +143,12 @@ EOD;
         $sequence = [];
         foreach ($columns as $i) {
             $sequenceLength = count($sequence);
-            $previousValue = $sequence[$sequenceLength - 1];
-            if ($sequenceLength > 0 && $i !== $previousValue + 1) {
-                $this->setColumnWidthForRange($width, $sequence[0], $previousValue);
-                $sequence = [];
+            if ($sequenceLength > 0) {
+                $previousValue = $sequence[$sequenceLength - 1];
+                if ($i !== $previousValue + 1) {
+                    $this->setColumnWidthForRange($width, $sequence[0], $previousValue);
+                    $sequence = [];
+                }
             }
             $sequence[] = $i;
         }
