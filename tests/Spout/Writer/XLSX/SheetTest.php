@@ -117,7 +117,7 @@ class SheetTest extends TestCase
         $writer = WriterEntityFactory::createXLSXWriter();
         $writer->openToFile($resourcePath);
         $writer->setDefaultColumnWidth(10.0);
-        $writer->setDefaultRowHeight(10.0);
+        $writer->setDefaultRowHeight(20.0);
         $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
         $writer->close();
 
@@ -126,7 +126,8 @@ class SheetTest extends TestCase
 
         $this->assertContains('<sheetFormatPr', $xmlContents, 'No sheetFormatPr tag found in sheet');
         $this->assertContains(' defaultColWidth="10', $xmlContents, 'No default column width found in sheet');
-        $this->assertContains(' defaultRowHeight="10', $xmlContents, 'No default row height found in sheet');
+        $this->assertContains(' defaultRowHeight="20', $xmlContents, 'No default row height found in sheet');
+        $this->assertContains(' customHeight="1"', $xmlContents, 'No row height override flag found in row');
     }
 
     public function testWritesDefaultRequiredRowHeightIfOmitted()
