@@ -6,6 +6,7 @@ use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Entity\Sheet;
 use Box\Spout\Writer\Exception\InvalidSheetNameException;
+use Box\Spout\Writer\Exception\WriterNotOpenedException;
 use Box\Spout\Writer\RowCreationHelper;
 use PHPUnit\Framework\TestCase;
 
@@ -82,7 +83,7 @@ class SheetTest extends TestCase
      */
     public function testSetSheetVisibilityShouldCreateSheetHidden()
     {
-        $fileName = 'test_set_visibility_should_create_sheet_hidden.xlsx';
+        $fileName = 'test_set_visibility_should_create_sheet_hidden.ods';
         $this->writeDataToHiddenSheet($fileName);
 
         $resourcePath = $this->getGeneratedResourcePath($fileName);
@@ -92,18 +93,59 @@ class SheetTest extends TestCase
         $this->assertContains(' table:display="false"', $xmlContents, 'The sheet visibility should have been changed to "hidden"');
     }
 
-    /**
-     * @param string $fileName
-     * @param string $sheetName
-     * @return Sheet
-     */
-    private function writeDataAndReturnSheetWithCustomName($fileName, $sheetName)
+    function testThrowsIfWorkbookIsNotInitialized()
+    {
+        $this->expectException(WriterNotOpenedException::class);
+        $writer = WriterEntityFactory::createODSWriter();
+
+        $writer->addRow($this->createRowFromValues([]));
+    }
+
+    public function testThrowsWhenTryingToSetDefaultsBeforeWorkbookLoaded()
+    {
+        $this->expectException(WriterNotOpenedException::class);
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->setDefaultColumnWidth(10.0);
+    }
+
+    public function testWritesDefaultCellSizesIfSet()
+    {
+        $fileName = 'test_writes_default_cell_sizes_if_set.ods';
+        $writer = $this->writerForFile($fileName);
+
+        $writer->setDefaultColumnWidth(100.0);
+        $writer->setDefaultRowHeight(20.0);
+        $writer->addRow($this->createRowFromValues(['ods--11', 'ods--12']));
+        $writer->close();
+
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $pathToWorkbookFile = $resourcePath . '#content.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains(' style:column-width="100pt"', $xmlContents, 'No default col width found in sheet');
+        $this->assertContains(' style:row-height="20pt"', $xmlContents, 'No default row height found in sheet');
+        $this->assertContains(' style:use-optimal-row-height="false', $xmlContents, 'No optimal row height override found in sheet');
+    }
+
+    private function writerForFile($fileName)
     {
         $this->createGeneratedFolderIfNeeded($fileName);
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         $writer = WriterEntityFactory::createODSWriter();
         $writer->openToFile($resourcePath);
+
+        return $writer;
+    }
+
+    /**
+     * @param string $fileName
+     * @param string $sheetName
+     * @return void
+     */
+    private function writeDataAndReturnSheetWithCustomName($fileName, $sheetName)
+    {
+        $writer = $this->writerForFile($fileName);
 
         $sheet = $writer->getCurrentSheet();
         $sheet->setName($sheetName);

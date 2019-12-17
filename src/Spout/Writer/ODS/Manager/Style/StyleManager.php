@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\ODS\Manager\Style;
 
 use Box\Spout\Common\Entity\Style\BorderPart;
 use Box\Spout\Writer\Common\Entity\Worksheet;
+use Box\Spout\Writer\Common\Manager\ManagesCellSize;
 use Box\Spout\Writer\ODS\Helper\BorderHelper;
 
 /**
@@ -12,6 +13,8 @@ use Box\Spout\Writer\ODS\Helper\BorderHelper;
  */
 class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
 {
+    use ManagesCellSize;
+
     /** @var StyleRegistry */
     protected $styleRegistry;
 
@@ -161,12 +164,16 @@ EOD;
             $content .= $this->getStyleSectionContent($style);
         }
 
-        $content .= <<<'EOD'
+        $useOptimalRowHeight = empty($this->defaultRowHeight) ? 'true' : 'false';
+        $defaultRowHeight = empty($this->defaultRowHeight) ? '15pt' : "{$this->defaultRowHeight}pt";
+        $defaultColumnWidth = empty($this->defaultColumnWidth) ? '' : "style:column-width=\"{$this->defaultColumnWidth}pt\"";
+
+        $content .= <<<EOD
 <style:style style:family="table-column" style:name="co1">
-    <style:table-column-properties fo:break-before="auto"/>
+    <style:table-column-properties fo:break-before="auto" {$defaultColumnWidth}/>
 </style:style>
 <style:style style:family="table-row" style:name="ro1">
-    <style:table-row-properties fo:break-before="auto" style:row-height="15pt" style:use-optimal-row-height="true"/>
+    <style:table-row-properties fo:break-before="auto" style:row-height="{$defaultRowHeight}" style:use-optimal-row-height="{$useOptimalRowHeight}"/>
 </style:style>
 EOD;
 
