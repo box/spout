@@ -13,7 +13,7 @@ trait ManagesCellSize
     private $defaultRowHeight;
 
     /** @var array Array of min-max-width arrays */
-    private $columnWidths;
+    private $columnWidths = [];
 
     /**
      * @param float|null $width
