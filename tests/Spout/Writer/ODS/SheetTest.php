@@ -127,6 +127,87 @@ class SheetTest extends TestCase
         $this->assertContains(' style:use-optimal-row-height="false', $xmlContents, 'No optimal row height override found in sheet');
     }
 
+    public function testWritesColumnWidths()
+    {
+        $fileName = 'test_column_widths.ods';
+        $writer = $this->writerForFile($fileName);
+
+        $writer->setColumnWidth(100.0, 1);
+        $writer->addRow($this->createRowFromValues(['ods--11', 'ods--12']));
+        $writer->close();
+
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $pathToWorkbookFile = $resourcePath . '#content.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<style:style style:family="table-column" style:name="co0">', $xmlContents, 'No matching custom col style definition found in sheet');
+        $this->assertContains('<style:table-column-properties fo:break-before="auto" style:use-optimal-column-width="false" style:column-width="100pt"/>', $xmlContents, 'No matching table-column-properties found in sheet');
+        $this->assertContains('table:style-name="co0"', $xmlContents, 'No matching table:style-name found in sheet');
+        $this->assertContains('table:number-columns-repeated="1"', $xmlContents, 'No matching table:number-columns-repeated count found in sheet');
+    }
+
+    public function testWritesMultipleColumnWidths()
+    {
+        $fileName = 'test_multiple_column_widths.ods';
+        $writer = $this->writerForFile($fileName);
+
+        $writer->setColumnWidth(100.0, 1, 2, 3);
+        $writer->addRow($this->createRowFromValues(['ods--11', 'ods--12', 'ods--13']));
+        $writer->close();
+
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $pathToWorkbookFile = $resourcePath . '#content.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<style:style style:family="table-column" style:name="co0">', $xmlContents, 'No matching custom col style definition found in sheet');
+        $this->assertContains('<style:table-column-properties fo:break-before="auto" style:use-optimal-column-width="false" style:column-width="100pt"/>', $xmlContents, 'No matching table-column-properties found in sheet');
+        $this->assertContains('table:style-name="co0"', $xmlContents, 'No matching table:style-name found in sheet');
+        $this->assertContains('table:number-columns-repeated="3"', $xmlContents, 'No matching table:number-columns-repeated count found in sheet');
+    }
+
+    public function testWritesMultipleColumnWidthsInRanges()
+    {
+        $fileName = 'test_multiple_column_widths_in_ranges.ods';
+        $writer = $this->writerForFile($fileName);
+
+        $writer->setColumnWidth(50.0, 1, 3, 4, 6);
+        $writer->setColumnWidth(100.0, 2, 5);
+        $writer->addRow($this->createRowFromValues(['ods--11', 'ods--12', 'ods--13', 'ods--14', 'ods--15', 'ods--16']));
+        $writer->close();
+
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $pathToWorkbookFile = $resourcePath . '#content.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<style:style style:family="table-column" style:name="co0">', $xmlContents, 'No matching custom col style 0 definition found in sheet');
+        $this->assertContains('<style:style style:family="table-column" style:name="co1">', $xmlContents, 'No matching custom col style 1 definition found in sheet');
+        $this->assertContains('<style:style style:family="table-column" style:name="co2">', $xmlContents, 'No matching custom col style 2 definition found in sheet');
+        $this->assertContains('<style:style style:family="table-column" style:name="co3">', $xmlContents, 'No matching custom col style 3 definition found in sheet');
+        $this->assertContains('<style:style style:family="table-column" style:name="co4">', $xmlContents, 'No matching custom col style 4 definition found in sheet');
+        $this->assertContains('<style:table-column-properties fo:break-before="auto" style:use-optimal-column-width="false" style:column-width="100pt"/>', $xmlContents, 'No matching table-column-properties found in sheet');
+        $this->assertContains('<style:table-column-properties fo:break-before="auto" style:use-optimal-column-width="false" style:column-width="50pt"/>', $xmlContents, 'No matching table-column-properties found in sheet');
+        $this->assertContains('<table:table-column table:default-cell-style-name=\'Default\' table:style-name="co0" table:number-columns-repeated="1"/><table:table-column table:default-cell-style-name=\'Default\' table:style-name="co1" table:number-columns-repeated="1"/><table:table-column table:default-cell-style-name=\'Default\' table:style-name="co2" table:number-columns-repeated="2"/><table:table-column table:default-cell-style-name=\'Default\' table:style-name="co3" table:number-columns-repeated="1"/><table:table-column table:default-cell-style-name=\'Default\' table:style-name="co4" table:number-columns-repeated="1"/>', $xmlContents, 'No matching table:number-columns-repeated count found in sheet');
+    }
+
+    public function testCanTakeColumnWidthsAsRange()
+    {
+        $fileName = 'test_column_widths_as_ranges.ods';
+        $writer = $this->writerForFile($fileName);
+
+        $writer->setColumnWidthForRange(150.0, 1, 3);
+        $writer->addRow($this->createRowFromValues(['ods--11', 'ods--12', 'ods--13']));
+        $writer->close();
+
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $pathToWorkbookFile = $resourcePath . '#content.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertContains('<style:style style:family="table-column" style:name="co0">', $xmlContents, 'No matching custom col style 0 definition found in sheet');
+        $this->assertContains('style:column-width="150pt"/>', $xmlContents, 'No matching table-column-properties found in sheet');
+        $this->assertContains('table:style-name="co0"', $xmlContents, 'No matching table:style-name found in sheet');
+        $this->assertContains('table:number-columns-repeated="3"', $xmlContents, 'No matching table:number-columns-repeated count found in sheet');
+    }
+
     private function writerForFile($fileName)
     {
         $this->createGeneratedFolderIfNeeded($fileName);

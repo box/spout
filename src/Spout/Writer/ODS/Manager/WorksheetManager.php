@@ -103,7 +103,7 @@ class WorksheetManager implements WorksheetManagerInterface
         $tableStyleName = 'ta' . ($externalSheet->getIndex() + 1);
 
         $tableElement  = '<table:table table:style-name="' . $tableStyleName . '" table:name="' . $escapedSheetName . '">';
-        $tableElement .= '<table:table-column table:default-cell-style-name="ce1" table:style-name="default-column-style" table:number-columns-repeated="' . $worksheet->getMaxNumColumns() . '"/>';
+        $tableElement .= $this->styleManager->getStyledTableColumnXMLContent($worksheet->getMaxNumColumns());
 
         return $tableElement;
     }

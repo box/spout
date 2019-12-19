@@ -188,6 +188,15 @@ EOD;
 EOD;
         }
 
+        // Sort column widths since ODS cares about order
+        usort($this->columnWidths, function($a, $b) {
+            if ($a[0] == $b[0]) {
+                return 0;
+            }
+            return ($a[0] < $b[0]) ? -1 : 1;
+        });
+        $content .= $this->getTableColumnStylesXMLContent();
+
         $content .= '</office:automatic-styles>';
 
         return $content;
@@ -339,5 +348,41 @@ EOD;
             '<style:table-cell-properties fo:background-color="#%s"/>',
             $style->getBackgroundColor()
         );
+    }
+
+    public function getTableColumnStylesXMLContent(): string
+    {
+        if (empty($this->columnWidths)) {
+            return '';
+        }
+
+        $content = '';
+        foreach ($this->columnWidths as $styleIndex => $entry) {
+            $content .= <<<EOD
+<style:style style:family="table-column" style:name="co{$styleIndex}">
+    <style:table-column-properties fo:break-before="auto" style:use-optimal-column-width="false" style:column-width="{$entry[2]}pt"/>
+</style:style>
+EOD;
+        }
+        return $content;
+    }
+
+    public function getStyledTableColumnXMLContent(int $maxNumColumns): string
+    {
+        if (empty($this->columnWidths)) {
+            return '';
+        }
+
+        $content = '';
+        foreach ($this->columnWidths as $styleIndex => $entry) {
+            $numCols = $entry[1] - $entry[0] + 1;
+            $content .= <<<EOD
+<table:table-column table:default-cell-style-name='Default' table:style-name="co{$styleIndex}" table:number-columns-repeated="{$numCols}"/>
+EOD;
+        }
+        // Note: This assumes the column widths are contiguous and default width is
+        // only applied to columns after the last custom column with a custom width
+        $content .= '<table:table-column table:default-cell-style-name="ce1" table:style-name="default-column-style" table:number-columns-repeated="' . ($maxNumColumns - $entry[1]) . '"/>';
+        return $content;
     }
 }
