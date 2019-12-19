@@ -169,7 +169,7 @@ EOD;
         $defaultColumnWidth = empty($this->defaultColumnWidth) ? '' : "style:column-width=\"{$this->defaultColumnWidth}pt\"";
 
         $content .= <<<EOD
-<style:style style:family="table-column" style:name="co1">
+<style:style style:family="table-column" style:name="default-column-style">
     <style:table-column-properties fo:break-before="auto" {$defaultColumnWidth}/>
 </style:style>
 <style:style style:family="table-row" style:name="ro1">
