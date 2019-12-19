@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\ODS;
 
+use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
@@ -319,6 +320,24 @@ class WriterTest extends TestCase
                 $this->assertFalse($tableCellNode->hasAttribute('table:number-columns-repeated'));
             }
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldSupportCellInError()
+    {
+        $fileName = 'test_add_row_should_support_cell_in_error.ods';
+
+        $cell = WriterEntityFactory::createCell('#DIV/0');
+        $cell->setType(Cell::TYPE_ERROR);
+
+        $row = WriterEntityFactory::createRow([$cell]);
+
+        $this->writeToODSFile([$row], $fileName);
+
+        $this->assertValueWasWritten($fileName, 'calcext:value-type="error"');
+        $this->assertValueWasWritten($fileName, '<text:p>#DIV/0</text:p>');
     }
 
     /**

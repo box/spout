@@ -1,7 +1,7 @@
 # Spout
 
 [![Latest Stable Version](https://poser.pugx.org/box/spout/v/stable)](https://packagist.org/packages/box/spout)
-[![Project Status](http://opensource.box.com/badges/active.svg)](http://opensource.box.com/badges)
+[![Project Status](https://opensource.box.com/badges/active.svg)](https://opensource.box.com/badges)
 [![Build Status](https://travis-ci.org/box/spout.svg?branch=master)](https://travis-ci.org/box/spout)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/box/spout/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/box/spout/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/box/spout/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/box/spout/?branch=master)
@@ -15,7 +15,7 @@ Join the community and come discuss about Spout: [![Gitter](https://badges.gitte
 
 ## Documentation
 
-Full documentation can be found at [http://opensource.box.com/spout/](http://opensource.box.com/spout/).
+Full documentation can be found at [https://opensource.box.com/spout/](https://opensource.box.com/spout/).
 
 
 ## Requirements

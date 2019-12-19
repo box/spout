@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 
+  {% include set-global-site-url.html %}
+
   {% include head.html %}
 
   <body>
@@ -12,14 +14,6 @@
     {% endif %}
 
     {{ content }}
-
-<!--
-    <div class="page-content">
-      <div class="wrapper">
-
-      </div>
-    </div>
--->
 
     {% include footer.html %}
     {% include algolia.html %}

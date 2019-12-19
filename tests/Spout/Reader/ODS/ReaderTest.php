@@ -278,6 +278,17 @@ class ReaderTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testReadShouldSupportWhitespaceAsXML()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_whitespaces_as_xml.ods');
+
+        $expectedRow = ["Lorem  ipsum\tdolor sit amet"];
+        $this->assertEquals([$expectedRow], $allRows);
+    }
+
+    /**
      * @NOTE: The LIBXML_NOENT is used to ACTUALLY substitute entities (and should therefore not be used)
      *
      * @return void

@@ -1,7 +1,9 @@
 version: "3"
 services:
   site:
-    command: jekyll serve
+    command: bash -c "
+      gem install 'jekyll-github-metadata'
+      && jekyll serve --config _config.yml,_config_local.yml"
     image: jekyll/jekyll:latest
     volumes:
       - $PWD:/srv/jekyll

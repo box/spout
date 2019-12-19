@@ -78,7 +78,7 @@ class StyleManager
     {
         $this->filePath = $filePath;
         $this->entityFactory = $entityFactory;
-        $this->builtinNumFmtIdIndicatingDates = array_keys(self::$builtinNumFmtIdToNumFormatMapping);
+        $this->builtinNumFmtIdIndicatingDates = \array_keys(self::$builtinNumFmtIdToNumFormatMapping);
         $this->hasStylesXMLFile = $workbookRelationshipsManager->hasStylesXMLFile();
         if ($this->hasStylesXMLFile) {
             $this->stylesXMLFilePath = $workbookRelationshipsManager->getStylesXMLFilePath();
@@ -273,7 +273,7 @@ class StyleManager
      */
     protected function isNumFmtIdBuiltInDateFormat($numFmtId)
     {
-        return in_array($numFmtId, $this->builtinNumFmtIdIndicatingDates);
+        return \in_array($numFmtId, $this->builtinNumFmtIdIndicatingDates);
     }
 
     /**
@@ -283,7 +283,7 @@ class StyleManager
     protected function isFormatCodeCustomDateFormat($formatCode)
     {
         // if no associated format code or if using the default "General" format
-        if ($formatCode === null || strcasecmp($formatCode, self::NUMBER_FORMAT_GENERAL) === 0) {
+        if ($formatCode === null || \strcasecmp($formatCode, self::NUMBER_FORMAT_GENERAL) === 0) {
             return false;
         }
 
@@ -298,7 +298,7 @@ class StyleManager
     {
         // Remove extra formatting (what's between [ ], the brackets should not be preceded by a "\")
         $pattern = '((?<!\\\)\[.+?(?<!\\\)\])';
-        $formatCode = preg_replace($pattern, '', $formatCode);
+        $formatCode = \preg_replace($pattern, '', $formatCode);
 
         // custom date formats contain specific characters to represent the date:
         // e - yy - m - d - h - s
@@ -310,7 +310,7 @@ class StyleManager
             // character not preceded by "\" (case insensitive)
             $pattern = '/(?<!\\\)' . $dateFormatCharacter . '/i';
 
-            if (preg_match($pattern, $formatCode)) {
+            if (\preg_match($pattern, $formatCode)) {
                 $hasFoundDateFormatCharacter = true;
                 break;
             }

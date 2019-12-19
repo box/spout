@@ -1,4 +1,3 @@
-
 <div class="section {{ sectionClass }} vertical-align-middle">
   <div class="wrapper">
     <div class="description mbl">
@@ -9,7 +8,7 @@
       {% assign sectionIconsAsArray = sectionIcons | split:'~~' %}
       <div class="icons">
       {% for icon in sectionIconsAsArray %}
-        <img src="{{ site.github.url }}/images/{{ icon }}"/>
+        <img src="{{ include.site_url }}/images/{{ icon }}"/>
       {% endfor %}
       </div>
     {% endif %}

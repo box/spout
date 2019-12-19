@@ -55,7 +55,7 @@ class WorkbookRelationshipsManager
         $sharedStringsXMLFilePath = $workbookRelationships[self::RELATIONSHIP_TYPE_SHARED_STRINGS];
 
         // the file path can be relative (e.g. "styles.xml") or absolute (e.g. "/xl/styles.xml")
-        $doesContainBasePath = (strpos($sharedStringsXMLFilePath, self::BASE_PATH) !== false);
+        $doesContainBasePath = (\strpos($sharedStringsXMLFilePath, self::BASE_PATH) !== false);
         if (!$doesContainBasePath) {
             // make sure we return an absolute file path
             $sharedStringsXMLFilePath = self::BASE_PATH . $sharedStringsXMLFilePath;
@@ -93,7 +93,7 @@ class WorkbookRelationshipsManager
         $stylesXMLFilePath = $workbookRelationships[self::RELATIONSHIP_TYPE_STYLES];
 
         // the file path can be relative (e.g. "styles.xml") or absolute (e.g. "/xl/styles.xml")
-        $doesContainBasePath = (strpos($stylesXMLFilePath, self::BASE_PATH) !== false);
+        $doesContainBasePath = (\strpos($stylesXMLFilePath, self::BASE_PATH) !== false);
         if (!$doesContainBasePath) {
             // make sure we return a full path
             $stylesXMLFilePath = self::BASE_PATH . $stylesXMLFilePath;

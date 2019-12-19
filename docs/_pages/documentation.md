@@ -116,16 +116,17 @@ $reader->setShouldPreserveEmptyRows(true);
 
 For fonts and alignments, {{ site.spout_html }} does not support all the possible formatting options yet. But you can find the most important ones:
 
-| Category  | Property      | API
-|:----------|:--------------|:--------------------------------------
-| Font      | Bold          | `StyleBuilder::setFontBold()`
-|           | Italic        | `StyleBuilder::setFontItalic()`
-|           | Underline     | `StyleBuilder::setFontUnderline()`
-|           | Strikethrough | `StyleBuilder::setFontStrikethrough()`
-|           | Font name     | `StyleBuilder::setFontName('Arial')`
-|           | Font size     | `StyleBuilder::setFontSize(14)`
-|           | Font color    | `StyleBuilder::setFontColor(Color::BLUE)`<br>`StyleBuilder::setFontColor(Color::rgb(0, 128, 255))`
-| Alignment | Wrap text     | `StyleBuilder::setShouldWrapText(true|false)`
+| Category  | Property       | API
+|:----------|:---------------|:--------------------------------------
+| Font      | Bold           | `StyleBuilder::setFontBold()`
+|           | Italic         | `StyleBuilder::setFontItalic()`
+|           | Underline      | `StyleBuilder::setFontUnderline()`
+|           | Strikethrough  | `StyleBuilder::setFontStrikethrough()`
+|           | Font name      | `StyleBuilder::setFontName('Arial')`
+|           | Font size      | `StyleBuilder::setFontSize(14)`
+|           | Font color     | `StyleBuilder::setFontColor(Color::BLUE)`<br>`StyleBuilder::setFontColor(Color::rgb(0, 128, 255))`
+| Alignment | Cell alignment | `StyleBuilder::setCellAlignment(CellAlignment::CENTER)`
+|           | Wrap text      | `StyleBuilder::setShouldWrapText(true)`
 
 
 ### Styling rows
@@ -135,6 +136,7 @@ It is possible to apply some formatting options to a row. In this case, all cell
 ```php
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Common\Entity\Style\Color;
 
 $writer = WriterEntityFactory::createXLSXWriter();
@@ -146,6 +148,7 @@ $style = (new StyleBuilder())
            ->setFontSize(15)
            ->setFontColor(Color::BLUE)
            ->setShouldWrapText()
+           ->setCellAlignment(CellAlignment::RIGHT)
            ->setBackgroundColor(Color::YELLOW)
            ->build();
 

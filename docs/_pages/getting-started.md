@@ -4,6 +4,8 @@ title: Getting Started
 permalink: /getting-started/
 ---
 
+{% include set-global-site-url.html %}
+
 This guide will help you install {{ site.spout_html }} and teach you how to use it.
 
 ## Requirements
@@ -134,4 +136,4 @@ For XLSX and ODS files, the number of rows per sheet is limited to *1,048,576*. 
 
 ## Advanced usage
 
-You can do a lot more with {{ site.spout_html }}! Check out the [full documentation]({{ site.github.url }}/docs/) to learn about all the features.
+You can do a lot more with {{ site.spout_html }}! Check out the [full documentation]({{ site_url }}/docs/) to learn about all the features.

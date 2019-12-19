@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\XLSX;
 
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Style\Border;
+use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Reader\Wrapper\XMLReader;
@@ -213,6 +214,43 @@ class WriterWithStyleTest extends TestCase
     /**
      * @return void
      */
+    public function testAddRowWithNumFmtStyles()
+    {
+        $fileName = 'test_add_row_with_numfmt.xlsx';
+        $style = (new StyleBuilder())
+            ->setFontBold()
+            ->setFormat('0.00')//Builtin format
+            ->build();
+        $style2 = (new StyleBuilder())
+            ->setFontBold()
+            ->setFormat('0.000')
+            ->build();
+
+        $dataRows = [
+            $this->createStyledRowFromValues([1.123456789], $style),
+            $this->createStyledRowFromValues([12.1], $style2),
+        ];
+
+        $this->writeToXLSXFile($dataRows, $fileName);
+
+        $formatsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'numFmts');
+        $this->assertEquals(
+            1,
+            $formatsDomElement->getAttribute('count'),
+            'There should be 2 formats, including the default one'
+        );
+
+        $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
+
+        foreach ([2, 164] as $index => $expected) {
+            $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item($index + 1);
+            $this->assertEquals($expected, $xfElement->getAttribute('numFmtId'));
+        }
+    }
+
+    /**
+     * @return void
+     */
     public function testAddRowShouldAddWrapTextAlignmentInfoInStylesXmlFileIfSpecified()
     {
         $fileName = 'test_add_row_should_add_wrap_text_alignment.xlsx';
@@ -248,6 +286,24 @@ class WriterWithStyleTest extends TestCase
         $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
         $this->assertEquals(1, $xfElement->getAttribute('applyAlignment'));
         $this->assertFirstChildHasAttributeEquals('1', $xfElement, 'alignment', 'wrapText');
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldApplyCellAlignment()
+    {
+        $fileName = 'test_add_row_should_apply_cell_alignment.xlsx';
+
+        $rightAlignedStyle = (new StyleBuilder())->setCellAlignment(CellAlignment::RIGHT)->build();
+        $dataRows = $this->createStyledRowsFromValues([['xlsx--11']], $rightAlignedStyle);
+
+        $this->writeToXLSXFile($dataRows, $fileName);
+
+        $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
+        $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
+        $this->assertEquals(1, $xfElement->getAttribute('applyAlignment'));
+        $this->assertFirstChildHasAttributeEquals(CellAlignment::RIGHT, $xfElement, 'alignment', 'horizontal');
     }
 
     /**

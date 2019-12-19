@@ -13,8 +13,9 @@
         <li class="feature-check">{{ site.spout_html }}'s API is {{emS}}developer-friendly{{emE}}.</li>
     </ul><br>
     <div class="btn-wrapper">
-        <a href="{{ site.github.url }}/getting-started/" class="page-link"><button class="btn">Get started</button></a>
+        <a href="{{ include.site_url }}/getting-started/" class="page-link"><button class="btn">Get started</button></a>
     </div>
+
 {% endcapture %}
 
-{% include section.html %}
+{% include section.html site_url=include.site_url %}

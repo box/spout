@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\ODS;
 
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Style\Border;
+use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Reader\Wrapper\XMLReader;
@@ -202,6 +203,25 @@ class WriterWithStyleTest extends TestCase
 
         $customStyleElement = $styleElements[1];
         $this->assertFirstChildHasAttributeEquals('wrap', $customStyleElement, 'table-cell-properties', 'fo:wrap-option');
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldApplyCellAlignment()
+    {
+        $fileName = 'test_add_row_should_apply_cell_alignment.xlsx';
+
+        $rightAlignedStyle = (new StyleBuilder())->setCellAlignment(CellAlignment::RIGHT)->build();
+        $dataRows = $this->createStyledRowsFromValues([['ods--11']], $rightAlignedStyle);
+
+        $this->writeToODSFile($dataRows, $fileName);
+
+        $styleElements = $this->getCellStyleElementsFromContentXmlFile($fileName);
+        $this->assertCount(2, $styleElements, 'There should be 2 styles (default and custom)');
+
+        $customStyleElement = $styleElements[1];
+        $this->assertFirstChildHasAttributeEquals('end', $customStyleElement, 'paragraph-properties', 'fo:text-align');
     }
 
     /**
