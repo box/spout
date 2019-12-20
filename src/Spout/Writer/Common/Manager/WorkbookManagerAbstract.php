@@ -289,7 +289,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     }
 
     /**
-     * @param float|null $width
+     * @param float $width
      */
     public function setDefaultColumnWidth(float $width)
     {
@@ -297,7 +297,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     }
 
     /**
-     * @param float|null $height
+     * @param float $height
      */
     public function setDefaultRowHeight(float $height)
     {
