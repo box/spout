@@ -128,8 +128,8 @@ EOD;
      * Checks if the sheet has been sucessfully created. Throws an exception if not.
      *
      * @param bool|resource $sheetFilePointer Pointer to the sheet data file or FALSE if unable to open the file
-     * @return void
      * @throws IOException If the sheet data file cannot be opened for writing
+     * @return void
      */
     private function throwIfSheetFilePointerIsNotAvailable($sheetFilePointer)
     {
@@ -155,9 +155,9 @@ EOD;
      *
      * @param Worksheet $worksheet The worksheet to add the row to
      * @param Row $row The row to be written
-     * @return void
      * @throws InvalidArgumentException If a cell value's type is not supported
      * @throws IOException If the data cannot be written
+     * @return void
      */
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
@@ -192,13 +192,13 @@ EOD;
      * Applies styles to the given style, merging the cell's style with its row's style
      * Then builds and returns xml for the cell.
      *
-     * @param Cell  $cell
+     * @param Cell $cell
      * @param Style $rowStyle
-     * @param int   $rowIndexOneBased
-     * @param int   $columnIndexZeroBased
+     * @param int $rowIndexOneBased
+     * @param int $columnIndexZeroBased
      *
-     * @return string
      * @throws InvalidArgumentException If the given value cannot be processed
+     * @return string
      */
     private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $rowIndexOneBased, $columnIndexZeroBased)
     {
@@ -215,13 +215,13 @@ EOD;
     /**
      * Builds and returns xml for a single cell.
      *
-     * @param int  $rowIndexOneBased
-     * @param int  $columnIndexZeroBased
+     * @param int $rowIndexOneBased
+     * @param int $columnIndexZeroBased
      * @param Cell $cell
-     * @param int  $styleId
+     * @param int $styleId
      *
-     * @return string
      * @throws InvalidArgumentException If the given value cannot be processed
+     * @return string
      */
     private function getCellXML($rowIndexOneBased, $columnIndexZeroBased, Cell $cell, $styleId)
     {
@@ -257,8 +257,8 @@ EOD;
      * Returns the XML fragment for a cell containing a non empty string
      *
      * @param string $cellValue The cell value
-     * @return string The XML fragment representing the cell
      * @throws InvalidArgumentException If the string exceeds the maximum number of characters allowed per cell
+     * @return string The XML fragment representing the cell
      */
     private function getCellXMLFragmentForNonEmptyString($cellValue)
     {

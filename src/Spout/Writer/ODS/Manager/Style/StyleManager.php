@@ -190,7 +190,7 @@ EOD;
         }
 
         // Sort column widths since ODS cares about order
-        usort($this->columnWidths, function($a, $b) {
+        usort($this->columnWidths, function ($a, $b) {
             if ($a[0] == $b[0]) {
                 return 0;
             }
@@ -329,9 +329,12 @@ EOD;
     private function transformCellAlignment($cellAlignment)
     {
         switch ($cellAlignment) {
-            case CellAlignment::LEFT: return 'start';
-            case CellAlignment::RIGHT: return 'end';
-            default: return $cellAlignment;
+            case CellAlignment::LEFT:
+                return 'start';
+            case CellAlignment::RIGHT:
+                return 'end';
+            default:
+                return $cellAlignment;
         }
     }
 
@@ -398,7 +401,7 @@ EOD;
         return \sprintf(' fo:background-color="#%s" ', $style->getBackgroundColor());
     }
 
-    public function getTableColumnStylesXMLContent(): string
+    public function getTableColumnStylesXMLContent() : string
     {
         if (empty($this->columnWidths)) {
             return '';
@@ -415,7 +418,7 @@ EOD;
         return $content;
     }
 
-    public function getStyledTableColumnXMLContent(int $maxNumColumns): string
+    public function getStyledTableColumnXMLContent(int $maxNumColumns) : string
     {
         if (empty($this->columnWidths)) {
             return '';

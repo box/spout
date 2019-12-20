@@ -93,7 +93,7 @@ class SheetTest extends TestCase
         $this->assertContains(' table:display="false"', $xmlContents, 'The sheet visibility should have been changed to "hidden"');
     }
 
-    function testThrowsIfWorkbookIsNotInitialized()
+    public function testThrowsIfWorkbookIsNotInitialized()
     {
         $this->expectException(WriterNotOpenedException::class);
         $writer = WriterEntityFactory::createODSWriter();

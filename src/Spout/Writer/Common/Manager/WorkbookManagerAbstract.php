@@ -116,8 +116,8 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     /**
      * Creates a new sheet in the workbook. The current sheet remains unchanged.
      *
-     * @return Worksheet The created sheet
      * @throws IOException
+     * @return Worksheet The created sheet
      */
     private function addNewSheet()
     {
@@ -171,8 +171,8 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * The writing will resume where it stopped (i.e. data won't be truncated).
      *
      * @param Sheet $sheet The "external" sheet to set as current
-     * @return void
      * @throws SheetNotFoundException If the given sheet does not exist in the workbook
+     * @return void
      */
     public function setCurrentSheet(Sheet $sheet)
     {
@@ -220,9 +220,9 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      *
      * @param Row $row The row to be added
      *
-     * @return void
      * @throws IOException If trying to create a new sheet and unable to open the sheet for writing
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException
+     * @return void
      */
     public function addRowToCurrentWorksheet(Row $row)
     {
@@ -260,9 +260,9 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * @param Worksheet $worksheet Worksheet to write the row to
      * @param Row $row The row to be added
      *
-     * @return void
      * @throws IOException
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException
+     * @return void
      */
     private function addRowToWorksheet(Worksheet $worksheet, Row $row)
     {
