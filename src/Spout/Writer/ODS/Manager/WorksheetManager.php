@@ -102,7 +102,7 @@ class WorksheetManager implements WorksheetManagerInterface
         $escapedSheetName = $this->stringsEscaper->escape($externalSheet->getName());
         $tableStyleName = 'ta' . ($externalSheet->getIndex() + 1);
 
-        $tableElement  = '<table:table table:style-name="' . $tableStyleName . '" table:name="' . $escapedSheetName . '">';
+        $tableElement = '<table:table table:style-name="' . $tableStyleName . '" table:name="' . $escapedSheetName . '">';
         $tableElement .= $this->styleManager->getStyledTableColumnXMLContent($worksheet->getMaxNumColumns());
 
         return $tableElement;

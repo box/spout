@@ -60,5 +60,4 @@ trait ManagesCellSize
     {
         $this->columnWidths[] = [$start, $end, $width];
     }
-
 }

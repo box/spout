@@ -191,9 +191,10 @@ EOD;
 
         // Sort column widths since ODS cares about order
         usort($this->columnWidths, function ($a, $b) {
-            if ($a[0] == $b[0]) {
+            if ($a[0] === $b[0]) {
                 return 0;
             }
+
             return ($a[0] < $b[0]) ? -1 : 1;
         });
         $content .= $this->getTableColumnStylesXMLContent();
@@ -415,6 +416,7 @@ EOD;
 </style:style>
 EOD;
         }
+
         return $content;
     }
 
@@ -434,6 +436,7 @@ EOD;
         // Note: This assumes the column widths are contiguous and default width is
         // only applied to columns after the last custom column with a custom width
         $content .= '<table:table-column table:default-cell-style-name="ce1" table:style-name="default-column-style" table:number-columns-repeated="' . ($maxNumColumns - $entry[1]) . '"/>';
+
         return $content;
     }
 }

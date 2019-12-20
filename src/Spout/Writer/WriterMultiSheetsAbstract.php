@@ -57,8 +57,10 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     {
         $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
 
-        $this->optionsManager->setOption(Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY,
-            $shouldCreateNewSheetsAutomatically);
+        $this->optionsManager->setOption(
+            Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY,
+            $shouldCreateNewSheetsAutomatically
+        );
 
         return $this;
     }
@@ -77,8 +79,8 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /**
      * Returns all the workbook's sheets
      *
-     * @return Sheet[] All the workbook's sheets
      * @throws WriterNotOpenedException If the writer has not been opened yet
+     * @return Sheet[] All the workbook's sheets
      */
     public function getSheets()
     {

@@ -232,7 +232,7 @@ EOD;
         if ($cell->isString()) {
             $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cell->getValue());
         } elseif ($cell->isBoolean()) {
-            $cellXML .= ' t="b"><v>' . (int)($cell->getValue()) . '</v></c>';
+            $cellXML .= ' t="b"><v>' . (int) ($cell->getValue()) . '</v></c>';
         } elseif ($cell->isNumeric()) {
             $cellXML .= '><v>' . $cell->getValue() . '</v></c>';
         } elseif ($cell->isError() && is_string($cell->getValueEvenIfError())) {
@@ -291,6 +291,7 @@ EOD;
             $xml .= '<col min="' . $entry[0] . '" max="' . $entry[1] . '" width="' . $entry[2] . '" customWidth="true"/>';
         }
         $xml .= '</cols>';
+
         return $xml;
     }
 
@@ -308,6 +309,7 @@ EOD;
         }
         // Ensure that the required defaultRowHeight is set
         $rowHeightXml = empty($rowHeightXml) ? ' defaultRowHeight="0"' : $rowHeightXml;
+
         return "<sheetFormatPr{$colWidthXml}{$rowHeightXml}/>";
     }
 
