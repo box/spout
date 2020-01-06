@@ -125,7 +125,7 @@ abstract class WriterAbstract implements WriterInterface
 
         // Set headers
         $this->globalFunctionsHelper->header('Content-Type: ' . static::$headerContentType);
-        $this->globalFunctionsHelper->header('Content-Disposition: attachment; filename="' . $this->outputFilePath . '"');
+        $this->globalFunctionsHelper->header($this->getContentDispositionHeader());
 
         /*
          * When forcing the download of a file over SSL,IE8 and lower browsers fail
@@ -141,6 +141,16 @@ abstract class WriterAbstract implements WriterInterface
         $this->isWriterOpened = true;
 
         return $this;
+    }
+
+    /**
+     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
+     * @link https://tools.ietf.org/html/rfc5987
+     * @link https://tools.ietf.org/html/rfc2231#section-4
+     */
+    protected function getContentDispositionHeader(): string
+    {
+        return 'Content-Disposition: attachment; filename="' . iconv('UTF-8', 'ASCII//IGNORE', $this->outputFilePath) . '"; filename*=utf-8\'\'' . rawurlencode($this->outputFilePath);
     }
 
     /**
