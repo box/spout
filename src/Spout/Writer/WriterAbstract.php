@@ -144,11 +144,11 @@ abstract class WriterAbstract implements WriterInterface
     }
 
     /**
-     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
-     * @link https://tools.ietf.org/html/rfc5987
-     * @link https://tools.ietf.org/html/rfc2231#section-4
+     * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
+     * @see https://tools.ietf.org/html/rfc5987
+     * @see https://tools.ietf.org/html/rfc2231#section-4
      */
-    protected function getContentDispositionHeader(): string
+    protected function getContentDispositionHeader() : string
     {
         return 'Content-Disposition: attachment; filename="' . iconv('UTF-8', 'ASCII//IGNORE', $this->outputFilePath) . '"; filename*=utf-8\'\'' . rawurlencode($this->outputFilePath);
     }
