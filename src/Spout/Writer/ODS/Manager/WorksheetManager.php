@@ -209,6 +209,11 @@ class WorksheetManager implements WorksheetManagerInterface
             $data .= ' office:value-type="string" calcext:value-type="error" office:value="">';
             $data .= '<text:p>' . $cell->getValueEvenIfError() . '</text:p>';
             $data .= '</table:table-cell>';
+        } elseif ($cell->isDate()) {
+            $dateStr = $cell->getValue()->format('Y-m-d');
+            $data .= ' office:value-type="date" office:date-value="' . $dateStr . '" calcext:value-type="date">';
+            $data .= '<text:p>' . $dateStr . '</text:p>';
+            $data .= '</table:table-cell>';
         } elseif ($cell->isEmpty()) {
             $data .= '/>';
         } else {
