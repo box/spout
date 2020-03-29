@@ -119,9 +119,22 @@ EOD;
         $worksheet->setFilePointer($sheetFilePointer);
 
         \fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
-        \fwrite($sheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
-        \fwrite($sheetFilePointer, $this->getXMLFragmentForColumnWidths());
-        \fwrite($sheetFilePointer, '<sheetData>');
+    }
+
+    /**
+     * Writes the sheet data header
+     * 
+     * @param Worksheet $worksheet The worksheet to add the row to
+     * @return void
+     */
+    private function ensureSheetDataStated(Worksheet $worksheet) {
+        if (!$worksheet->getSheetDataStarted()) {
+          $worksheetFilePointer = $worksheet->getFilePointer();
+          \fwrite($worksheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
+          \fwrite($worksheetFilePointer, $this->getXMLFragmentForColumnWidths());
+          \fwrite($worksheetFilePointer, '<sheetData>');
+          $worksheet->setSheetDataStarted(true);
+        }
     }
 
     /**
@@ -161,6 +174,7 @@ EOD;
      */
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
+        $this->ensureSheetDataStated($worksheet);
         $sheetFilePointer = $worksheet->getFilePointer();
         $rowStyle = $row->getStyle();
         $rowIndexOneBased = $worksheet->getLastWrittenRowIndex() + 1;
@@ -316,7 +330,7 @@ EOD;
         if (!\is_resource($worksheetFilePointer)) {
             return;
         }
-
+        $this->ensureSheetDataStated($worksheet);
         \fwrite($worksheetFilePointer, '</sheetData>');
         \fwrite($worksheetFilePointer, '</worksheet>');
         \fclose($worksheetFilePointer);
