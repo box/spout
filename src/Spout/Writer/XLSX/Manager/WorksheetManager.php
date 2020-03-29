@@ -65,9 +65,6 @@ EOD;
     /** @var InternalEntityFactory Factory to create entities */
     private $entityFactory;
 
-    /** @var bool Whether rows have been written */
-    private $hasWrittenRows = false;
-
     /**
      * WorksheetManager constructor.
      *
@@ -122,6 +119,9 @@ EOD;
         $worksheet->setFilePointer($sheetFilePointer);
 
         \fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        \fwrite($sheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
+        \fwrite($sheetFilePointer, $this->getXMLFragmentForColumnWidths());
+        \fwrite($sheetFilePointer, '<sheetData>');
     }
 
     /**
@@ -162,12 +162,6 @@ EOD;
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
         $sheetFilePointer = $worksheet->getFilePointer();
-        if (!$this->hasWrittenRows) {
-            fwrite($sheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
-            fwrite($sheetFilePointer, $this->getXMLFragmentForColumnWidths());
-            fwrite($sheetFilePointer, '<sheetData>');
-        }
-
         $rowStyle = $row->getStyle();
         $rowIndexOneBased = $worksheet->getLastWrittenRowIndex() + 1;
         $numCells = $row->getNumCells();
@@ -185,7 +179,6 @@ EOD;
         if ($wasWriteSuccessful === false) {
             throw new IOException("Unable to write data in {$worksheet->getFilePath()}");
         }
-        $this->hasWrittenRows = true;
     }
 
     /**
@@ -324,9 +317,7 @@ EOD;
             return;
         }
 
-        if ($this->hasWrittenRows) {
-            \fwrite($worksheetFilePointer, '</sheetData>');
-        }
+        \fwrite($worksheetFilePointer, '</sheetData>');
         \fwrite($worksheetFilePointer, '</worksheet>');
         \fclose($worksheetFilePointer);
     }

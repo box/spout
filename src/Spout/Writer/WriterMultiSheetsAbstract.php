@@ -142,22 +142,28 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
 
     /**
      * @param float $width
-     * @throws WriterNotOpenedException
+     * @throws WriterAlreadyOpenedException
      */
     public function setDefaultColumnWidth(float $width)
     {
-        $this->throwIfWorkbookIsNotAvailable();
-        $this->workbookManager->setDefaultColumnWidth($width);
+        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
+        $this->optionsManager->setOption(
+            Options::DEFAULT_COLUMN_WIDTH,
+            $width
+        );
     }
 
     /**
      * @param float $height
-     * @throws WriterNotOpenedException
+     * @throws WriterAlreadyOpenedException
      */
     public function setDefaultRowHeight(float $height)
     {
-        $this->throwIfWorkbookIsNotAvailable();
-        $this->workbookManager->setDefaultRowHeight($height);
+        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
+        $this->optionsManager->setOption(
+          Options::DEFAULT_ROW_HEIGHT,
+          $height
+      );
     }
 
     /**
