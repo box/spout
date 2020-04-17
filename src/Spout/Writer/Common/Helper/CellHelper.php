@@ -69,11 +69,11 @@ class CellHelper
      * A numeric value is from type "integer" or "double" ("float" is not returned by gettype).
      *
      * @param $value
-     * @return bool Whether the given value is numeric
+     * @return bool Whether the given value is numeric and not start with zeros
      */
     public static function isNumeric($value)
     {
-        return preg_match('#^-?\d+\.?\d*$#', $value) === 1;
+        return preg_match('#^0\d+$#', $value) === 0 && $value == (string) ((float) $value);
     }
 
     /**
