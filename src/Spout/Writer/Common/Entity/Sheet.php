@@ -27,6 +27,9 @@ class Sheet
     /** @var SheetManager Sheet manager */
     private $sheetManager;
 
+    /** @var bool Sheet is started */
+    private $isSheetStarted = false;
+
     /**
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
      * @param string $associatedWorkbookId ID of the sheet's associated workbook
@@ -105,6 +108,25 @@ class Sheet
     public function setIsVisible($isVisible)
     {
         $this->isVisible = $isVisible;
+
+        return $this;
+    }
+
+    /**
+     * @return bool isSheetStarted Sheet was started
+     */
+    public function isSheetStarted()
+    {
+        return $this->isSheetStarted;
+    }
+
+    /**
+     * @param bool $isSheetStarted Set if sheet was started
+     * @return Sheet
+     */
+    public function setIsSheetStarted($isSheetStarted)
+    {
+        $this->isSheetStarted = $isSheetStarted;
 
         return $this;
     }

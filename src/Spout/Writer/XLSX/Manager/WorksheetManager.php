@@ -37,6 +37,8 @@ class WorksheetManager implements WorksheetManagerInterface
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
 EOD;
+    /** @var OptionsManagerInterface */
+    private $optionsManager;
 
     /** @var bool Whether inline or shared strings should be used */
     protected $shouldUseInlineStrings;
@@ -84,6 +86,7 @@ EOD;
         StringHelper $stringHelper,
         InternalEntityFactory $entityFactory
     ) {
+        $this->optionsManager = $optionsManager;
         $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
         $this->rowManager = $rowManager;
         $this->styleManager = $styleManager;
@@ -113,7 +116,6 @@ EOD;
         $worksheet->setFilePointer($sheetFilePointer);
 
         \fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
-        \fwrite($sheetFilePointer, '<sheetData>');
     }
 
     /**
@@ -153,11 +155,28 @@ EOD;
      */
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
+        if (!$worksheet->getExternalSheet()->isSheetStarted()) {
+            // create nodes for columns widths
+            if ($this->optionsManager->getOption(Options::COLUMN_WIDTHS)) {
+                $colsString = '<cols>';
+                foreach ($this->optionsManager->getOption(Options::COLUMN_WIDTHS) as $index => $width) {
+                    $index++;
+                    $colsString.= '<col collapsed="false" customWidth="true" hidden="false" outlineLevel="0" style="0" max="'.$index.'" min="'.$index.'"  width="'.$width.'"/>';
+                }
+                $colsString.="</cols>";
+                \fwrite($worksheet->getFilePointer(), $colsString);
+            }
+
+            \fwrite($worksheet->getFilePointer(), '<sheetData>');
+            $worksheet->getExternalSheet()->setIsSheetStarted(true);
+        }
+
         $rowStyle = $row->getStyle();
         $rowIndexOneBased = $worksheet->getLastWrittenRowIndex() + 1;
         $numCells = $row->getNumCells();
+        $rowHeight = $row->getHeight();
 
-        $rowXML = '<row r="' . $rowIndexOneBased . '" spans="1:' . $numCells . '">';
+        $rowXML = '<row r="' . $rowIndexOneBased . '" spans="1:' . $numCells . '" customHeight="true"' . ' ht="'. $rowHeight  .  '">';
 
         foreach ($row->getCells() as $columnIndexZeroBased => $cell) {
             $rowXML .= $this->applyStyleAndGetCellXML($cell, $rowStyle, $rowIndexOneBased, $columnIndexZeroBased);
@@ -270,7 +289,26 @@ EOD;
             return;
         }
 
+        if (!$worksheet->getExternalSheet()->isSheetStarted()) {
+            \fwrite($worksheetFilePointer, '<sheetData>');
+            $worksheet->getExternalSheet()->setIsSheetStarted(true);
+        }
+
         \fwrite($worksheetFilePointer, '</sheetData>');
+
+        // create nodes for merge cells
+        if ($this->optionsManager->getOption(Options::MERGE_CELLS)) {
+            $mergeCellString = '<mergeCells count="'.count($this->optionsManager->getOption(Options::MERGE_CELLS)).'">';
+            foreach ($this->optionsManager->getOption(Options::MERGE_CELLS) as $values) {
+                $output = array_map(function($value){
+                    return CellHelper::getColumnLettersFromColumnIndex($value[0]) . $value[1];
+                }, $values);
+                $mergeCellString.= '<mergeCell ref="'.implode(':', $output).'"/>';
+            }
+            $mergeCellString.= '</mergeCells>';
+            \fwrite($worksheet->getFilePointer(), $mergeCellString);
+        }
+
         \fwrite($worksheetFilePointer, '</worksheet>');
         \fclose($worksheetFilePointer);
     }

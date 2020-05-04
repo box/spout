@@ -258,6 +258,10 @@ EOD;
                 if ($style->shouldWrapText()) {
                     $content .= ' wrapText="1"';
                 }
+                if ($style->shouldShrinkToFit()) {
+                    $content .= ' shrinkToFit="true"';
+                }
+
                 $content .= '/>';
                 $content .= '</xf>';
             } else {

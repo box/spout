@@ -66,6 +66,9 @@ class Style
     /** @var bool Whether the wrap text property was set */
     private $hasSetWrapText = false;
 
+    private $shrinkToFit = false;
+    private $shouldShrinkToFit = false;
+
     /** @var Border */
     private $border;
 
@@ -462,5 +465,25 @@ class Style
     public function shouldApplyFormat()
     {
         return $this->hasSetFormat;
+    }
+
+    /**
+     * Sets should shrink to fit
+     * @param bool $shrinkToFit
+     * @return Style
+     */
+    public function setShouldShrinkToFit($shrinkToFit = true)
+    {
+        $this->shrinkToFit = $shrinkToFit;
+        $this->shouldShrinkToFit = $shrinkToFit;
+        return $this;
+    }
+
+     /**
+     * @return bool Whether format should be applied
+     */
+    public function shouldShrinkToFit()
+    {
+        return $this->shouldShrinkToFit;
     }
 }
