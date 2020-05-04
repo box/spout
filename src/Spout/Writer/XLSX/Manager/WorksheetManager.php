@@ -298,12 +298,12 @@ EOD;
 
         // create nodes for merge cells
         if ($this->optionsManager->getOption(Options::MERGE_CELLS)) {
-            $mergeCellString = '<mergeCells count="'.count($this->optionsManager->getOption(Options::MERGE_CELLS)).'">';
+            $mergeCellString = '<mergeCells count="' . \count($this->optionsManager->getOption(Options::MERGE_CELLS)) . '">';
             foreach ($this->optionsManager->getOption(Options::MERGE_CELLS) as $values) {
-                $output = array_map(function($value){
+                $output = \array_map(function($value){
                     return CellHelper::getColumnLettersFromColumnIndex($value[0]) . $value[1];
                 }, $values);
-                $mergeCellString.= '<mergeCell ref="'.implode(':', $output).'"/>';
+                $mergeCellString.= '<mergeCell ref="' . \implode(':', $output) . '"/>';
             }
             $mergeCellString.= '</mergeCells>';
             \fwrite($worksheet->getFilePointer(), $mergeCellString);
