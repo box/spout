@@ -65,9 +65,6 @@ EOD;
     /** @var InternalEntityFactory Factory to create entities */
     private $entityFactory;
 
-    /** @var bool Whether rows have been written */
-    private $hasWrittenRows = false;
-
     /**
      * WorksheetManager constructor.
      *
@@ -125,6 +122,22 @@ EOD;
     }
 
     /**
+     * Writes the sheet data header
+     * 
+     * @param Worksheet $worksheet The worksheet to add the row to
+     * @return void
+     */
+    private function ensureSheetDataStated(Worksheet $worksheet) {
+        if (!$worksheet->getSheetDataStarted()) {
+          $worksheetFilePointer = $worksheet->getFilePointer();
+          \fwrite($worksheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
+          \fwrite($worksheetFilePointer, $this->getXMLFragmentForColumnWidths());
+          \fwrite($worksheetFilePointer, '<sheetData>');
+          $worksheet->setSheetDataStarted(true);
+        }
+    }
+
+    /**
      * Checks if the sheet has been sucessfully created. Throws an exception if not.
      *
      * @param bool|resource $sheetFilePointer Pointer to the sheet data file or FALSE if unable to open the file
@@ -161,13 +174,8 @@ EOD;
      */
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
+        $this->ensureSheetDataStated($worksheet);
         $sheetFilePointer = $worksheet->getFilePointer();
-        if (!$this->hasWrittenRows) {
-            fwrite($sheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
-            fwrite($sheetFilePointer, $this->getXMLFragmentForColumnWidths());
-            fwrite($sheetFilePointer, '<sheetData>');
-        }
-
         $rowStyle = $row->getStyle();
         $rowIndexOneBased = $worksheet->getLastWrittenRowIndex() + 1;
         $numCells = $row->getNumCells();
@@ -185,7 +193,6 @@ EOD;
         if ($wasWriteSuccessful === false) {
             throw new IOException("Unable to write data in {$worksheet->getFilePath()}");
         }
-        $this->hasWrittenRows = true;
     }
 
     /**
@@ -323,10 +330,8 @@ EOD;
         if (!\is_resource($worksheetFilePointer)) {
             return;
         }
-
-        if ($this->hasWrittenRows) {
-            \fwrite($worksheetFilePointer, '</sheetData>');
-        }
+        $this->ensureSheetDataStated($worksheet);
+        \fwrite($worksheetFilePointer, '</sheetData>');
         \fwrite($worksheetFilePointer, '</worksheet>');
         \fclose($worksheetFilePointer);
     }
