@@ -123,17 +123,18 @@ EOD;
 
     /**
      * Writes the sheet data header
-     * 
+     *
      * @param Worksheet $worksheet The worksheet to add the row to
      * @return void
      */
-    private function ensureSheetDataStated(Worksheet $worksheet) {
+    private function ensureSheetDataStated(Worksheet $worksheet)
+    {
         if (!$worksheet->getSheetDataStarted()) {
-          $worksheetFilePointer = $worksheet->getFilePointer();
-          \fwrite($worksheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
-          \fwrite($worksheetFilePointer, $this->getXMLFragmentForColumnWidths());
-          \fwrite($worksheetFilePointer, '<sheetData>');
-          $worksheet->setSheetDataStarted(true);
+            $worksheetFilePointer = $worksheet->getFilePointer();
+            \fwrite($worksheetFilePointer, $this->getXMLFragmentForDefaultCellSizing());
+            \fwrite($worksheetFilePointer, $this->getXMLFragmentForColumnWidths());
+            \fwrite($worksheetFilePointer, '<sheetData>');
+            $worksheet->setSheetDataStarted(true);
         }
     }
 

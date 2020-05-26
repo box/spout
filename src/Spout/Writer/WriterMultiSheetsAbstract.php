@@ -161,9 +161,9 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     {
         $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
         $this->optionsManager->setOption(
-          Options::DEFAULT_ROW_HEIGHT,
-          $height
-      );
+            Options::DEFAULT_ROW_HEIGHT,
+            $height
+        );
     }
 
     /**
