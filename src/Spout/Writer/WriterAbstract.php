@@ -160,7 +160,7 @@ abstract class WriterAbstract implements WriterInterface
          *
          * @see https://github.com/box/spout/issues/745
          */
-        foreach ($headers as $header){
+        foreach ($headers as $header) {
             $this->globalFunctionsHelper->header($header);
         }
 
