@@ -204,6 +204,22 @@ class WorksheetManager implements WorksheetManagerInterface
             $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cell->getValue() . '">';
             $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
+        } elseif ($cell->isDate()) {
+            $value = $cell->getValue();
+            if ($value instanceof \DateTime) {
+                $data .= ' office:value-type="date" calcext:value-type="date" office:date-value="' . $value->format(\DateTimeInterface::W3C) . '">';
+                $data .= '<text:p>' . $value->format(\DateTimeInterface::W3C) . '</text:p>';
+            } else if ($value instanceof \DateInterval) {
+                // workaround for missing DateInterval::format('c'), see https://stackoverflow.com/a/61088115/53538
+                static $f = ['M0S', 'H0M', 'DT0H', 'M0D', 'Y0M', 'P0Y', 'Y0M', 'P0M'];
+                static $r = ['M', 'H', 'DT', 'M', 'Y0M', 'P', 'Y', 'P'];
+                $value = rtrim(str_replace($f, $r, $value->format('P%yY%mM%dDT%hH%iM%sS')), 'PT') ?: $default;
+                $data .= ' office:value-type="time" office:time-value="' . $value . '">';
+                $data .= '<text:p>' . $value . '</text:p>';
+            } else {
+                throw new InvalidArgumentException('Trying to add a date value with an unsupported type: ' . \gettype($cell->getValue()));
+            }
+            $data .= '</table:table-cell>';
         } elseif ($cell->isError() && is_string($cell->getValueEvenIfError())) {
             // only writes the error value if it's a string
             $data .= ' office:value-type="string" calcext:value-type="error" office:value="">';
