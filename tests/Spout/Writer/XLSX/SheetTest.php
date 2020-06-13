@@ -101,13 +101,6 @@ class SheetTest extends TestCase
         $writer->addRow($this->createRowFromValues([]));
     }
 
-    public function testThrowsWhenTryingToSetDefaultsBeforeWorkbookLoaded()
-    {
-        $this->expectException(WriterNotOpenedException::class);
-        $writer = WriterEntityFactory::createXLSXWriter();
-        $writer->setDefaultColumnWidth(10.0);
-    }
-
     public function testWritesDefaultCellSizesIfSet()
     {
         $fileName = 'test_writes_default_cell_sizes_if_set.xlsx';
@@ -115,9 +108,9 @@ class SheetTest extends TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         $writer = WriterEntityFactory::createXLSXWriter();
-        $writer->openToFile($resourcePath);
         $writer->setDefaultColumnWidth(10.0);
         $writer->setDefaultRowHeight(20.0);
+        $writer->openToFile($resourcePath);
         $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
         $writer->close();
 
@@ -137,8 +130,9 @@ class SheetTest extends TestCase
         $resourcePath = $this->getGeneratedResourcePath($fileName);
 
         $writer = WriterEntityFactory::createXLSXWriter();
-        $writer->openToFile($resourcePath);
         $writer->setDefaultColumnWidth(10.0);
+        $writer->openToFile($resourcePath);
+        
         $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
         $writer->close();
 
