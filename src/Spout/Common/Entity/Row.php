@@ -22,7 +22,7 @@ class Row
      * Row height (default is 15)
      * @var string
      */
-    protected $height = "15";
+    protected $height = '15';
 
     /**
      * Row constructor.
@@ -135,18 +135,19 @@ class Row
 
     /**
      * Set row height
-     * @param String $height
+     * @param string $height
      * @return Row
      */
     public function setHeight($height)
     {
         $this->height = $height;
+
         return $this;
     }
 
     /**
      * Returns row height
-     * @return String
+     * @return string
      */
     public function getHeight()
     {

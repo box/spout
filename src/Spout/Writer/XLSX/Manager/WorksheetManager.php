@@ -161,9 +161,9 @@ EOD;
                 $colsString = '<cols>';
                 foreach ($this->optionsManager->getOption(Options::COLUMN_WIDTHS) as $index => $width) {
                     $index++;
-                    $colsString.= '<col collapsed="false" customWidth="true" hidden="false" outlineLevel="0" style="0" max="'.$index.'" min="'.$index.'"  width="'.$width.'"/>';
+                    $colsString.= '<col collapsed="false" customWidth="true" hidden="false" outlineLevel="0" style="0" max="' . $index . '" min="' . $index . '"  width="' . $width . '"/>';
                 }
-                $colsString.="</cols>";
+                $colsString.='</cols>';
                 \fwrite($worksheet->getFilePointer(), $colsString);
             }
 
@@ -176,7 +176,7 @@ EOD;
         $numCells = $row->getNumCells();
         $rowHeight = $row->getHeight();
 
-        $rowXML = '<row r="' . $rowIndexOneBased . '" spans="1:' . $numCells . '" customHeight="true"' . ' ht="'. $rowHeight  .  '">';
+        $rowXML = '<row r="' . $rowIndexOneBased . '" spans="1:' . $numCells . '" customHeight="true"' . ' ht="' . $rowHeight . '">';
 
         foreach ($row->getCells() as $columnIndexZeroBased => $cell) {
             $rowXML .= $this->applyStyleAndGetCellXML($cell, $rowStyle, $rowIndexOneBased, $columnIndexZeroBased);
@@ -300,7 +300,7 @@ EOD;
         if ($this->optionsManager->getOption(Options::MERGE_CELLS)) {
             $mergeCellString = '<mergeCells count="' . \count($this->optionsManager->getOption(Options::MERGE_CELLS)) . '">';
             foreach ($this->optionsManager->getOption(Options::MERGE_CELLS) as $values) {
-                $output = \array_map(function($value){
+                $output = \array_map(function ($value) {
                     return CellHelper::getColumnLettersFromColumnIndex($value[0]) . $value[1];
                 }, $values);
                 $mergeCellString.= '<mergeCell ref="' . \implode(':', $output) . '"/>';

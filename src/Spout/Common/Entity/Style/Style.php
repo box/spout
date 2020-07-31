@@ -476,10 +476,11 @@ class Style
     {
         $this->shrinkToFit = $shrinkToFit;
         $this->shouldShrinkToFit = $shrinkToFit;
+
         return $this;
     }
 
-     /**
+    /**
      * @return bool Whether format should be applied
      */
     public function shouldShrinkToFit()

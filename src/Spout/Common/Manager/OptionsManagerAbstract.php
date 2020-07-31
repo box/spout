@@ -54,6 +54,8 @@ abstract class OptionsManagerAbstract implements OptionsManagerInterface
     /**
      * Add an option to the internal list of options
      * Used only for mergeCells() for now
+     * @param mixed $optionName
+     * @param mixed $optionValue
      * @return void
      */
     public function addOption($optionName, $optionValue)

@@ -185,12 +185,13 @@ class StyleBuilder
 
     /**
      * Set should shrink to fit
-     * @param boolean $shrinkToFit
+     * @param bool $shrinkToFit
      * @return void
      */
     public function setShouldShrinkToFit($shrinkToFit = true)
     {
         $this->style->setShouldShrinkToFit($shrinkToFit);
+
         return $this;
     }
 
