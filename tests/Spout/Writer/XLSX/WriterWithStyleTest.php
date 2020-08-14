@@ -321,7 +321,7 @@ class WriterWithStyleTest extends TestCase
         $cellXfsDomElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'cellXfs');
         $xfElement = $cellXfsDomElement->getElementsByTagName('xf')->item(1);
         $this->assertEquals(1, $xfElement->getAttribute('applyAlignment'));
-        $this->assertFirstChildHasAttributeEquals("true", $xfElement, 'alignment', 'shrinkToFit');
+        $this->assertFirstChildHasAttributeEquals('true', $xfElement, 'alignment', 'shrinkToFit');
     }
 
     /**
