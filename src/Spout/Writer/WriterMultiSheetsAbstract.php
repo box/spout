@@ -4,6 +4,7 @@ namespace Box\Spout\Writer;
 
 use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
@@ -62,31 +63,6 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     }
 
     /**
-     * Set columns widths as list. If value is null will set column with default width (8.43)
-     * @param array $columnWidths
-     * @return WriterMultiSheetsAbstract
-     */
-    public function setColumnWidths(array $columnWidths)
-    {
-        $this->optionsManager->setOption(Options::COLUMN_WIDTHS, $columnWidths);
-
-        return $this;
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @param array $range
-     * @return void
-     */
-    public function mergeCells(array $range1, array $range2)
-    {
-        $this->optionsManager->addOption(Options::MERGE_CELLS, [$range1, $range2]);
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function openWriter()
@@ -122,6 +98,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      * Creates a new sheet and make it the current sheet. The data will now be written to this sheet.
      *
      * @throws WriterNotOpenedException If the writer has not been opened yet
+     * @throws IOException If unable to open the sheet for writing
      * @return Sheet The created sheet
      */
     public function addNewSheetAndMakeItCurrent()

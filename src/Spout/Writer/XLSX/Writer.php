@@ -47,4 +47,34 @@ class Writer extends WriterMultiSheetsAbstract
 
         return $this;
     }
+
+    /**
+     * Set columns widths as list. If value is null will set column with default width (8.43)
+     * @param array $columnWidths
+     * @return WriterMultiSheetsAbstract
+     */
+    public function setColumnWidths(array $columnWidths)
+    {
+        $this->optionsManager->setOption(Options::COLUMN_WIDTHS, $columnWidths);
+
+        return $this;
+    }
+
+    /**
+     * Merge cells.
+     * Row coordinates are indexed from 1, columns from 0 (A = 0),
+     * so a merge B2:G2 looks like $writer->mergeCells([1,2], [6, 2]);
+     *
+     * You may use CellHelper::getColumnLettersFromColumnIndex() to convert from "B2" to "[1,2]"
+     *
+     * @param int[] $range1 - top left cell's coordinate [column, row]
+     * @param int[] $range2 - bottom right cell's coordinate [column, row]
+     * @return $this
+     */
+    public function mergeCells(array $range1, array $range2)
+    {
+        $this->optionsManager->addOption(Options::MERGE_CELLS, [$range1, $range2]);
+
+        return $this;
+    }
 }
