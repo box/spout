@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Common\Entity;
 
+use Box\Spout\Common\Entity\Style\EmptyStyle;
 use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Common\Helper\CellTypeHelper;
 
@@ -104,7 +105,7 @@ class Cell
      */
     public function setStyle($style)
     {
-        $this->style = $style ?: new Style();
+        $this->style = $style ?: new EmptyStyle();
     }
 
     /**
