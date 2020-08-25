@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\ODS\Manager;
 
 use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Entity\Style\EmptyStyle;
 use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
@@ -157,9 +158,13 @@ class WorksheetManager implements WorksheetManagerInterface
      */
     private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $currentCellIndex, $nextCellIndex)
     {
-        // Apply row and extra styles
-        $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
-        $cell->setStyle($mergedCellAndRowStyle);
+        if ($cell->getStyle() instanceof EmptyStyle) {
+            $cell->setStyle($rowStyle);
+        } else {
+            $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
+            $cell->setStyle($mergedCellAndRowStyle);
+        }
+
         $newCellStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
 
         $registeredStyle = $this->styleManager->registerStyle($newCellStyle);

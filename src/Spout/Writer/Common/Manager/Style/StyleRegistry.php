@@ -36,7 +36,7 @@ class StyleRegistry
     {
         $serializedStyle = $this->serialize($style);
 
-        if (!$this->hasStyleAlreadyBeenRegistered($style)) {
+        if (!$this->hasSerializedStyleAlreadyBeenRegistered($serializedStyle)) {
             $nextStyleId = \count($this->serializedStyleToStyleIdMappingTable);
             $style->setId($nextStyleId);
 
@@ -57,6 +57,17 @@ class StyleRegistry
     {
         $serializedStyle = $this->serialize($style);
 
+        return $this->hasSerializedStyleAlreadyBeenRegistered($serializedStyle);
+    }
+
+    /**
+     * Returns whether the serialized style has already been registered.
+     *
+     * @param string $serializedStyle The serialized style
+     * @return bool
+     */
+    protected function hasSerializedStyleAlreadyBeenRegistered(string $serializedStyle)
+    {
         // Using isset here because it is way faster than array_key_exists...
         return isset($this->serializedStyleToStyleIdMappingTable[$serializedStyle]);
     }
