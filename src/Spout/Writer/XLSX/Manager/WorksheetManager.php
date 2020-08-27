@@ -271,7 +271,7 @@ EOD;
         }
 
         \fwrite($worksheetFilePointer, '</sheetData>');
-        // do sth to merging cells
+        // do something to merging cells
         $mergeRanges = $worksheet->getExternalSheet()->getMergeRanges();
         if (!empty($mergeRanges)) {
             $startLine = '<mergeCells count="1">';
