@@ -184,17 +184,25 @@ EOD;
      * @throws InvalidArgumentException If the given value cannot be processed
      * @return string
      */
-    private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $rowIndexOneBased, $columnIndexZeroBased)
+    private function applyStyleAndGetCellXML(Cell $cell, Style &$rowStyle, $rowIndexOneBased, $columnIndexZeroBased)
     {
         if ($cell->getStyle() instanceof EmptyStyle) {
             $cell->setStyle($rowStyle);
+
+            $extraStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+
+            if ($extraStyle) {
+                $registeredStyle = $this->styleManager->registerStyle($extraStyle);
+            } else {
+                $registeredStyle = $rowStyle = $this->styleManager->registerStyle($rowStyle);
+            }
         } else {
             $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
             $cell->setStyle($mergedCellAndRowStyle);
-        }
 
-        $newCellStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
-        $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
+            $newCellStyle = $this->styleManager->applyExtraStylesIfNeeded($cell) ?: $mergedCellAndRowStyle;
+            $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
+        }
 
         return $this->getCellXML($rowIndexOneBased, $columnIndexZeroBased, $cell, $registeredStyle->getId());
     }

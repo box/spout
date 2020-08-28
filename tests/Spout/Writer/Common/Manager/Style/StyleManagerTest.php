@@ -14,7 +14,7 @@ class StyleManagerTest extends TestCase
     /**
      * @return StyleManager
      */
-    private function getStyleManager()
+    private function getStyleManager() : StyleManager
     {
         $style = (new StyleBuilder())->build();
         $styleRegistry = new StyleRegistry($style);
@@ -22,10 +22,7 @@ class StyleManagerTest extends TestCase
         return new StyleManager($styleRegistry);
     }
 
-    /**
-     * @return void
-     */
-    public function testApplyExtraStylesIfNeededShouldApplyWrapTextIfCellContainsNewLine()
+    public function testApplyExtraStylesIfNeededShouldApplyWrapTextIfCellContainsNewLine() : void
     {
         $style = (new StyleBuilder())->build();
         $this->assertFalse($style->shouldWrapText());
@@ -33,13 +30,22 @@ class StyleManagerTest extends TestCase
         $styleManager = $this->getStyleManager();
         $updatedStyle = $styleManager->applyExtraStylesIfNeeded(new Cell("multi\nlines", $style));
 
+        $this->assertNotNull($updatedStyle);
         $this->assertTrue($updatedStyle->shouldWrapText());
     }
 
-    /**
-     * @return void
-     */
-    public function testApplyExtraStylesIfNeededShouldDoNothingIfWrapTextAlreadyApplied()
+    public function testApplyExtraStylesIfNeededShouldReturnNullIfWrapTextNotNeeded() : void
+    {
+        $style = (new StyleBuilder())->build();
+        $this->assertFalse($style->shouldWrapText());
+
+        $styleManager = $this->getStyleManager();
+        $updatedStyle = $styleManager->applyExtraStylesIfNeeded(new Cell('oneline', $style));
+
+        $this->assertNull($updatedStyle);
+    }
+
+    public function testApplyExtraStylesIfNeededShouldReturnNullIfWrapTextAlreadyApplied() : void
     {
         $style = (new StyleBuilder())->setShouldWrapText()->build();
         $this->assertTrue($style->shouldWrapText());
@@ -47,6 +53,6 @@ class StyleManagerTest extends TestCase
         $styleManager = $this->getStyleManager();
         $updatedStyle = $styleManager->applyExtraStylesIfNeeded(new Cell("multi\nlines", $style));
 
-        $this->assertTrue($updatedStyle->shouldWrapText());
+        $this->assertNull($updatedStyle);
     }
 }

@@ -156,18 +156,26 @@ class WorksheetManager implements WorksheetManagerInterface
      * @throws InvalidArgumentException If a cell value's type is not supported
      * @return string
      */
-    private function applyStyleAndGetCellXML(Cell $cell, Style $rowStyle, $currentCellIndex, $nextCellIndex)
+    private function applyStyleAndGetCellXML(Cell $cell, Style &$rowStyle, $currentCellIndex, $nextCellIndex)
     {
         if ($cell->getStyle() instanceof EmptyStyle) {
             $cell->setStyle($rowStyle);
+
+            $extraStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+
+            if ($extraStyle) {
+                $registeredStyle = $this->styleManager->registerStyle($extraStyle);
+            } else {
+                $registeredStyle = $rowStyle = $this->styleManager->registerStyle($rowStyle);
+            }
         } else {
             $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
             $cell->setStyle($mergedCellAndRowStyle);
+
+            $newCellStyle = $this->styleManager->applyExtraStylesIfNeeded($cell) ?: $mergedCellAndRowStyle;
+            $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
         }
 
-        $newCellStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
-
-        $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
         $styleIndex = $registeredStyle->getId() + 1; // 1-based
 
         $numTimesValueRepeated = ($nextCellIndex - $currentCellIndex);

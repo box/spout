@@ -38,7 +38,7 @@ class StyleRegistry
 
         if (!$this->hasSerializedStyleAlreadyBeenRegistered($serializedStyle)) {
             $nextStyleId = \count($this->serializedStyleToStyleIdMappingTable);
-            $style->setId($nextStyleId);
+            $style->register($nextStyleId);
 
             $this->serializedStyleToStyleIdMappingTable[$serializedStyle] = $nextStyleId;
             $this->styleIdToStyleMappingTable[$nextStyleId] = $style;
@@ -112,9 +112,10 @@ class StyleRegistry
      */
     public function serialize(Style $style)
     {
-        // In order to be able to properly compare style, set static ID value
+        // In order to be able to properly compare style, set static ID value and reset registration
         $currentId = $style->getId();
         $style->setId(0);
+        $style->setRegistered(false);
 
         $serializedStyle = \serialize($style);
 

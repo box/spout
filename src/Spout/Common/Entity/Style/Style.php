@@ -84,6 +84,9 @@ class Style
     /** @var bool */
     private $hasSetFormat = false;
 
+    /** @var bool */
+    private $isRegistered = false;
+
     /**
      * @return int|null
      */
@@ -462,5 +465,24 @@ class Style
     public function shouldApplyFormat()
     {
         return $this->hasSetFormat;
+    }
+
+    public function setRegistered(bool $isRegistered = true) : void
+    {
+        $this->isRegistered = $isRegistered;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRegistered() : bool
+    {
+        return $this->isRegistered;
+    }
+
+    public function register(int $id) : void
+    {
+        $this->setId($id);
+        $this->isRegistered = true;
     }
 }
