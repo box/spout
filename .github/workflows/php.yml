@@ -1,0 +1,40 @@
+name: Unit Tests
+
+on:
+    push:
+    pull_request:
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+
+        strategy:
+            matrix:
+                php: ["7.1", "7.2", "7.3", "7.4"]
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Validate composer.json and composer.lock
+              run: composer validate
+
+            - name: Cache Composer packages
+              id: composer-cache
+              uses: actions/cache@v2
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: |
+                      ${{ runner.os }}-php-
+
+            - name: Install dependencies
+              if: steps.composer-cache.outputs.cache-hit != 'true'
+              run: composer install --prefer-dist --no-progress --no-suggest
+
+            - name: Run test suite
+              run: ./vendor/bin/phpunit --no-coverage
+
+            - name: Run code style check
+              if: matrix.php == '7.1'
+              run: vendor/bin/php-cs-fixer fix --config=.php_cs.dist --verbose --diff --dry-run
