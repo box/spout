@@ -208,8 +208,8 @@ class WorksheetManager implements WorksheetManagerInterface
             $value = $cell->getValue();
             if ($value instanceof \DateTime) {
                 $datevalue = substr($value->setTimezone(new \DateTimeZone("UTC"))->format(\DateTimeInterface::W3C),0,-6);
-                $data .= ' office:value-type="date" calcext:value-type="date" office:date-value="' . $datevalue . '">';
-                $data .= '<text:p>' . $datevalue . '</text:p>';
+                $data .= ' office:value-type="date" calcext:value-type="date" office:date-value="' . $datevalue . 'Z">';
+                $data .= '<text:p>' . $datevalue . 'Z</text:p>';
             } else if ($value instanceof \DateInterval) {
                 // workaround for missing DateInterval::format('c'), see https://stackoverflow.com/a/61088115/53538
                 static $f = ['M0S', 'H0M', 'DT0H', 'M0D', 'Y0M', 'P0Y', 'Y0M', 'P0M'];
