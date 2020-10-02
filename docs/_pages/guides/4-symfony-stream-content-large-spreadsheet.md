@@ -94,7 +94,7 @@ class MyStreamController extends Controller
 
                     $i++;
                     // Flushing the buffer every N rows to stream echo'ed content.
-                    if ($i % FLUSH_THRESHOLD === 0) {
+                    if ($i % self::FLUSH_THRESHOLD === 0) {
                         flush();
                     }
                 }
