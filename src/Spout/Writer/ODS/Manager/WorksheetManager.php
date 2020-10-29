@@ -40,25 +40,17 @@ class WorksheetManager implements WorksheetManagerInterface
      * @param StyleMerger $styleMerger
      * @param ODSEscaper $stringsEscaper
      * @param StringHelper $stringHelper
-     * @param OptionsManager|null $optionsManager
      */
     public function __construct(
         StyleManager $styleManager,
         StyleMerger $styleMerger,
         ODSEscaper $stringsEscaper,
-        StringHelper $stringHelper,
-        $optionsManager = null
+        StringHelper $stringHelper
     ) {
         $this->styleManager = $styleManager;
         $this->styleMerger = $styleMerger;
         $this->stringsEscaper = $stringsEscaper;
         $this->stringHelper = $stringHelper;
-
-        if ($optionsManager) {
-            $this->setDefaultColumnWidth($optionsManager->getOption(Options::DEFAULT_COLUMN_WIDTH));
-            $this->setDefaultRowHeight($optionsManager->getOption(Options::DEFAULT_ROW_HEIGHT));
-            $this->columnWidths = $optionsManager->getOption(Options::COLUMN_WIDTHS) ?? [];
-        }
     }
 
     /**

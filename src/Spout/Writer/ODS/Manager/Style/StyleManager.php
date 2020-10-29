@@ -4,6 +4,8 @@ namespace Box\Spout\Writer\ODS\Manager\Style;
 
 use Box\Spout\Common\Entity\Style\BorderPart;
 use Box\Spout\Common\Entity\Style\CellAlignment;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\ManagesCellSize;
 use Box\Spout\Writer\ODS\Helper\BorderHelper;
@@ -18,6 +20,17 @@ class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
 
     /** @var StyleRegistry */
     protected $styleRegistry;
+
+    /**
+     * @param StyleRegistry $styleRegistry
+     */
+    public function __construct(StyleRegistry $styleRegistry, OptionsManagerInterface $optionsManager)
+    {
+        parent::__construct($styleRegistry);
+        $this->setDefaultColumnWidth($optionsManager->getOption(Options::DEFAULT_COLUMN_WIDTH));
+        $this->setDefaultRowHeight($optionsManager->getOption(Options::DEFAULT_ROW_HEIGHT));
+        $this->columnWidths = $optionsManager->getOption(Options::COLUMN_WIDTHS) ?? [];
+    }
 
     /**
      * Returns the content of the "styles.xml" file, given a list of styles.
