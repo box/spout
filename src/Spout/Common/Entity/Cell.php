@@ -65,13 +65,20 @@ class Cell
     protected $style;
 
     /**
+     * The cell formula
+     * @var string|null
+     */
+    protected $formula;
+
+    /**
      * @param $value mixed
      * @param Style|null $style
      */
-    public function __construct($value, Style $style = null)
+    public function __construct($value, ?Style $style = null, $formula = null)
     {
         $this->setValue($value);
         $this->setStyle($style);
+        $this->setFormula($formula);
     }
 
     /**
@@ -129,6 +136,22 @@ class Cell
     public function setType($type)
     {
         $this->type = $type;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFormula()
+    {
+        return $this->formula;
+    }
+
+    /**
+     * @param string|null $formula
+     */
+    public function setFormula(?string $formula)
+    {
+        $this->formula = $formula;
     }
 
     /**

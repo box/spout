@@ -211,18 +211,21 @@ EOD;
         $columnLetters = CellHelper::getColumnLettersFromColumnIndex($columnIndexZeroBased);
         $cellXML = '<c r="' . $columnLetters . $rowIndexOneBased . '"';
         $cellXML .= ' s="' . $styleId . '"';
+        $cellFormulaXMLFragment = $this->getCellFormulaXMLFragment($cell);
 
         if ($cell->isString()) {
-            $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cell->getValue());
+            $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cell);
         } elseif ($cell->isBoolean()) {
-            $cellXML .= ' t="b"><v>' . (int) ($cell->getValue()) . '</v></c>';
+            $cellXML .= ' t="b">' . $cellFormulaXMLFragment . '<v>' . (int) ($cell->getValue()) . '</v></c>';
         } elseif ($cell->isNumeric()) {
-            $cellXML .= '><v>' . $cell->getValue() . '</v></c>';
+            $cellXML .= '>' . $cellFormulaXMLFragment . '<v>' . $cell->getValue() . '</v></c>';
         } elseif ($cell->isError() && is_string($cell->getValueEvenIfError())) {
             // only writes the error value if it's a string
             $cellXML .= ' t="e"><v>' . $cell->getValueEvenIfError() . '</v></c>';
         } elseif ($cell->isEmpty()) {
-            if ($this->styleManager->shouldApplyStyleOnEmptyCell($styleId)) {
+            if ($cellFormulaXMLFragment) {
+                $cellXML .= '>' . $cellFormulaXMLFragment . '<v></v></c>';
+            } else if ($this->styleManager->shouldApplyStyleOnEmptyCell($styleId)) {
                 $cellXML .= '/>';
             } else {
                 // don't write empty cells that do no need styling
@@ -237,19 +240,37 @@ EOD;
     }
 
     /**
-     * Returns the XML fragment for a cell containing a non empty string
+     * Returns the XML fragment for a cell formula
      *
      * @param string $cellValue The cell value
      * @throws InvalidArgumentException If the string exceeds the maximum number of characters allowed per cell
      * @return string The XML fragment representing the cell
      */
-    private function getCellXMLFragmentForNonEmptyString($cellValue)
+    private function getCellFormulaXMLFragment($cell)
     {
+        $cellFormula = $cell->getFormula();
+        return $cellFormula ? '<f>' . $cellFormula . '</f>' : '';
+    }
+
+    /**
+     * Returns the XML fragment for a cell containing a non empty string
+     *
+     * @param Cell $cell cell
+     * @throws InvalidArgumentException If the string exceeds the maximum number of characters allowed per cell
+     * @return string The XML fragment representing the cell
+     */
+    private function getCellXMLFragmentForNonEmptyString($cell)
+    {
+        $cellValue = $cell->getValue();
+        $cellFormulaXMLFragment = $this->getCellFormulaXMLFragment($cell);
+
         if ($this->stringHelper->getStringLength($cellValue) > self::MAX_CHARACTERS_PER_CELL) {
             throw new InvalidArgumentException('Trying to add a value that exceeds the maximum number of characters allowed in a cell (32,767)');
         }
 
-        if ($this->shouldUseInlineStrings) {
+        if ($cellFormulaXMLFragment) {
+            $cellXMLFragment = ' t="str">' . $cellFormulaXMLFragment . '<v>' . $cellValue . '</v></c>';
+        } else if ($this->shouldUseInlineStrings) {
             $cellXMLFragment = ' t="inlineStr"><is><t>' . $this->stringsEscaper->escape($cellValue) . '</t></is></c>';
         } else {
             $sharedStringId = $this->sharedStringsManager->writeString($cellValue);

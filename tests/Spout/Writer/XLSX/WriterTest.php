@@ -192,6 +192,33 @@ class WriterTest extends TestCase
     /**
      * @return void
      */
+    public function testCellFormula()
+    {
+        $fileName = 'test_cell_formula.xlsx';
+
+        $rowsAsArray = [
+            [[1], [3], ['Github link', 'HYPERLINK("https://github.com/","Github link")']],
+            [[0, 'A1+B1'], [-2, 'A1-B1'], ['Google link', 'HYPERLINK("https://google.com/","Google link")'], ['test']],
+        ];
+        $rows = array_map(function($rowAsArray) {
+            return WriterEntityFactory::createRow((array_map(function($cellAsArray) {
+                return new Cell($cellAsArray[0] ?? "", null, $cellAsArray[1] ?? "");
+            }, $rowAsArray)));
+        }, $rowsAsArray);
+
+        $this->writeToXLSXFile($rows, $fileName);
+
+        foreach ($rows as $row) {
+            foreach ($row->getCells() as $cell) {
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cell->getValue());
+                $this->assertInlineDataWasWrittenToSheet($fileName, 1, $cell->getFormula());
+            }
+        }
+    }
+
+    /**
+     * @return void
+     */
     public function testSetCurrentSheet()
     {
         $fileName = 'test_set_current_sheet.xlsx';
