@@ -359,7 +359,9 @@ class RowIterator implements IteratorInterface
     {
         try {
             $cellValue = $this->cellValueFormatter->extractAndFormatNodeValue($node);
+            $cellFormula = $this->cellValueFormatter->extractNodeFormula($node);
             $cell = $this->entityFactory->createCell($cellValue);
+            $cell->setFormula($cellFormula);
         } catch (InvalidValueException $exception) {
             $cell = $this->entityFactory->createCell($exception->getInvalidValue());
             $cell->setType(Cell::TYPE_ERROR);

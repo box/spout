@@ -577,6 +577,29 @@ class ReaderTest extends TestCase
     /**
      * @return void
      */
+    public function testReadShouldReadFormulas()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_formulas.xlsx', false, false, false);
+
+        $expectedRows = [
+            ['', '', '', ''],
+            ['', '', 'A2+B2', 'SUM(A:A)'],
+            ['', '', 'A3+B3', 'SUM(B:B)'],
+        ];
+
+        $rowsWithFormulas = array_map(function($row) {
+            $cells = $row->getCells();
+            return array_map(function($cell) {
+                return $cell->getFormula();
+            }, $cells);
+        }, $allRows);
+
+        $this->assertEquals($expectedRows, $rowsWithFormulas);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadMultipleTimesShouldRewindReader()
     {
         $allRows = [];
@@ -703,9 +726,10 @@ class ReaderTest extends TestCase
      * @param string $fileName
      * @param bool $shouldFormatDates
      * @param bool $shouldPreserveEmptyRows
+     * @param bool $shouldConvertToArray
      * @return array All the read rows the given file
      */
-    private function getAllRowsForFile($fileName, $shouldFormatDates = false, $shouldPreserveEmptyRows = false)
+    private function getAllRowsForFile($fileName, $shouldFormatDates = false, $shouldPreserveEmptyRows = false, $shouldConvertToArray = true)
     {
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
@@ -717,7 +741,7 @@ class ReaderTest extends TestCase
 
         foreach ($reader->getSheetIterator() as $sheetIndex => $sheet) {
             foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-                $allRows[] = $row->toArray();
+                $allRows[] = $shouldConvertToArray ? $row->toArray() : $row;
             }
         }
 
