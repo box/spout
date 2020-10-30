@@ -132,7 +132,7 @@ class SheetTest extends TestCase
         $writer = WriterEntityFactory::createXLSXWriter();
         $writer->setDefaultColumnWidth(10.0);
         $writer->openToFile($resourcePath);
-        
+
         $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
         $writer->close();
 

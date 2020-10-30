@@ -9,7 +9,6 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\Escaper\ODS as ODSEscaper;
 use Box\Spout\Common\Helper\StringHelper;
-use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
