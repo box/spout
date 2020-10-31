@@ -4,6 +4,7 @@ namespace Box\Spout\Reader\XLSX\Creator;
 
 use Box\Spout\Common\Helper\Escaper;
 use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
+use Box\Spout\Reader\XLSX\Helper\CellFormulaFormatter;
 use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Reader\XLSX\Manager\StyleManager;
 
@@ -25,6 +26,13 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
         $escaper = $this->createStringsEscaper();
 
         return new CellValueFormatter($sharedStringsManager, $styleManager, $shouldFormatDates, $shouldUse1904Dates, $escaper);
+    }
+    /**
+     * @return CellFormulaFormatter
+     */
+    public function createCellFormulaFormatter()
+    {
+        return new CellFormulaFormatter();
     }
 
     /**

@@ -14,6 +14,7 @@ use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 use Box\Spout\Reader\XLSX\Helper\CellHelper;
 use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
+use Box\Spout\Reader\XLSX\Helper\CellFormulaFormatter;
 
 /**
  * Class RowIterator
@@ -46,6 +47,9 @@ class RowIterator implements IteratorInterface
 
     /** @var Helper\CellValueFormatter Helper to format cell values */
     protected $cellValueFormatter;
+
+    /** @var Helper\CellFormulaFormatter Helper to format cell formulas */
+    protected $cellFormulaFormatter;
 
     /** @var \Box\Spout\Reader\Common\Manager\RowManager Manages rows */
     protected $rowManager;
@@ -100,6 +104,7 @@ class RowIterator implements IteratorInterface
         $xmlReader,
         XMLProcessor $xmlProcessor,
         CellValueFormatter $cellValueFormatter,
+        CellFormulaFormatter $cellFormulaFormatter,
         RowManager $rowManager,
         InternalEntityFactory $entityFactory
     ) {
@@ -108,6 +113,7 @@ class RowIterator implements IteratorInterface
         $this->shouldPreserveEmptyRows = $shouldPreserveEmptyRows;
         $this->xmlReader = $xmlReader;
         $this->cellValueFormatter = $cellValueFormatter;
+        $this->cellFormulaFormatter = $cellFormulaFormatter;
         $this->rowManager = $rowManager;
         $this->entityFactory = $entityFactory;
 
@@ -359,7 +365,7 @@ class RowIterator implements IteratorInterface
     {
         try {
             $cellValue = $this->cellValueFormatter->extractAndFormatNodeValue($node);
-            $cellFormula = $this->cellValueFormatter->extractNodeFormula($node);
+            $cellFormula = $this->cellFormulaFormatter->extractNodeFormula($node);
             $cell = $this->entityFactory->createCell($cellValue);
             $cell->setFormula($cellFormula);
         } catch (InvalidValueException $exception) {

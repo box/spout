@@ -102,6 +102,7 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
             $shouldFormatDates,
             $shouldUse1904Dates
         );
+        $cellFormulaFormatter = $this->helperFactory->createCellFormulaFormatter();
 
         $shouldPreserveEmptyRows = $optionsManager->getOption(Options::SHOULD_PRESERVE_EMPTY_ROWS);
 
@@ -112,6 +113,7 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
             $xmlReader,
             $xmlProcessor,
             $cellValueFormatter,
+            $cellFormulaFormatter,
             $rowManager,
             $this
         );
