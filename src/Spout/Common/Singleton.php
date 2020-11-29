@@ -36,6 +36,6 @@ trait Singleton
      */
     protected function init() {}
 
-    final private function __wakeup() {}
-    final private function __clone() {}
+    public function __wakeup() {}
+    public function __clone() {}
 }
