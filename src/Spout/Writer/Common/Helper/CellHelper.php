@@ -73,7 +73,8 @@ class CellHelper
      */
     public static function isNumeric($value)
     {
-        return preg_match('#^0\d+$#', $value) === 0 && $value == (string) ((float) $value);
+        return preg_match('#^0\d+$#', $value) === 0 && $value == (string) ((float) $value)
+            && strlen($value) < 12;
     }
 
     /**
