@@ -197,7 +197,8 @@ class WorksheetManager implements WorksheetManagerInterface
 
             $data .= '</table:table-cell>';
         } elseif ($cell->isBoolean()) {
-            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:boolean-value="' . $cell->getValue() . '">';
+            $value = $cell->getValue() ? 'true' : 'false';
+            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:boolean-value="' . $value . '">';
             $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
         } elseif ($cell->isNumeric()) {
