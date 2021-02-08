@@ -214,7 +214,7 @@ class WorksheetManager implements WorksheetManagerInterface
                 // workaround for missing DateInterval::format('c'), see https://stackoverflow.com/a/61088115/53538
                 static $f = ['M0S', 'H0M', 'DT0H', 'M0D', 'Y0M', 'P0Y', 'Y0M', 'P0M'];
                 static $r = ['M', 'H', 'DT', 'M', 'Y0M', 'P', 'Y', 'P'];
-                $value = rtrim(str_replace($f, $r, $value->format('P%yY%mM%dDT%hH%iM%sS')), 'PT') ?: $default;
+                $value = rtrim(str_replace($f, $r, $value->format('P%yY%mM%dDT%hH%iM%sS')), 'PT') ?: 'PT0S';
                 $data .= ' office:value-type="time" office:time-value="' . $value . '">';
                 $data .= '<text:p>' . $value . '</text:p>';
             } else {
