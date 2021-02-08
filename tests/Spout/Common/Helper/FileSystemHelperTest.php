@@ -16,7 +16,7 @@ class FileSystemHelperTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp() : void
     {
         $baseFolder = \sys_get_temp_dir();
         $this->fileSystemHelper = new FileSystemHelper($baseFolder);
