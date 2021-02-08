@@ -25,7 +25,7 @@ class SharedStringsManagerTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->sharedStringsManager = null;
     }
@@ -33,7 +33,7 @@ class SharedStringsManagerTest extends TestCase
     /**
      * @return void
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         if ($this->sharedStringsManager !== null) {
             $this->sharedStringsManager->cleanup();
