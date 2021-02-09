@@ -42,7 +42,7 @@ before_script:
 script:
   - |
     if [[ "$WITH_CS" == "true" ]]; then
-        vendor/bin/php-cs-fixer fix --config=.php_cs.dist --verbose --diff --dry-run
+        vendor/bin/php-cs-fixer fix --config=.php_cs.dist --verbose --diff --dry-run --diff-format=udiff
     fi
   - |
     if [[ "$WITH_PHPUNIT" == "true" ]]; then
