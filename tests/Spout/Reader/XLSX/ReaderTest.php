@@ -539,6 +539,10 @@ class ReaderTest extends TestCase
      */
     public function testReadShouldBeProtectedAgainstQuadraticBlowupAttack()
     {
+        if (function_exists('xdebug_code_coverage_started') && xdebug_code_coverage_started()) {
+            $this->markTestSkipped('test not compatible with code coverage');
+        }
+
         $startTime = microtime(true);
 
         $this->getAllRowsForFile('attack_quadratic_blowup.xlsx');
