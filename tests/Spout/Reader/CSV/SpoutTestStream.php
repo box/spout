@@ -14,10 +14,10 @@ class SpoutTestStream
     const PATH_TO_CSV_RESOURCES = 'tests/resources/csv/';
     const CSV_EXTENSION = '.csv';
 
-    /** @var int $position */
+    /** @var int */
     private $position;
 
-    /** @var resource $fileHandle */
+    /** @var resource */
     private $fileHandle;
 
     /**

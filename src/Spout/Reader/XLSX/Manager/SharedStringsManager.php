@@ -43,7 +43,7 @@ class SharedStringsManager
     /** @var InternalEntityFactory Factory to create entities */
     protected $entityFactory;
 
-    /** @var HelperFactory $helperFactory Factory to create helpers */
+    /** @var HelperFactory Factory to create helpers */
     protected $helperFactory;
 
     /** @var CachingStrategyFactory Factory to create shared strings caching strategies */

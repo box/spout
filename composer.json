@@ -12,12 +12,12 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0",
+        "php": ">=7.2.0",
         "ext-zip": "*",
         "ext-xmlreader" : "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7",
+        "phpunit/phpunit": "^8",
         "friendsofphp/php-cs-fixer": "^2"
     },
     "suggest": {
@@ -36,7 +36,7 @@
     },
     "config": {
         "platform": {
-            "php": "7.1"
+            "php": "7.2"
         }
     }
 }

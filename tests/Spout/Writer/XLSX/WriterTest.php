@@ -608,7 +608,7 @@ class WriterTest extends TestCase
         $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetIndex . '.xml';
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
-        $this->assertContains((string) $inlineData, $xmlContents, $message);
+        $this->assertStringContainsString((string) $inlineData, $xmlContents, $message);
     }
 
     /**
@@ -624,7 +624,7 @@ class WriterTest extends TestCase
         $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetIndex . '.xml';
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
-        $this->assertNotContains((string) $inlineData, $xmlContents, $message);
+        $this->assertStringNotContainsString((string) $inlineData, $xmlContents, $message);
     }
 
     /**
@@ -639,6 +639,6 @@ class WriterTest extends TestCase
         $pathToSharedStringsFile = $resourcePath . '#xl/sharedStrings.xml';
         $xmlContents = file_get_contents('zip://' . $pathToSharedStringsFile);
 
-        $this->assertContains($sharedString, $xmlContents, $message);
+        $this->assertStringContainsString($sharedString, $xmlContents, $message);
     }
 }

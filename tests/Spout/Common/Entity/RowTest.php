@@ -122,6 +122,6 @@ class RowTest extends \PHPUnit\Framework\TestCase
             ->setStyle($this->getStyleMock())
             ->setCells([]);
 
-        $this->assertInternalType('object', $row);
+        $this->assertInstanceOf(Row::class, $row);
     }
 }
