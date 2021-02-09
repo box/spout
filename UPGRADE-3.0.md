@@ -11,7 +11,7 @@ With the 3.0 version, this is now possible: each cell can have its own style.
 
 Spout 3.0 tries to enforce better typing. For instance, instead of using/returning generic arrays, Spout now makes use of specific `Row` and `Cell` objects that can encapsulate more data such as type, style, value.
 
-Finally, **_Spout 3.0 only supports PHP 7.1 and above_**, as other PHP versions are no longer supported by the community.
+Finally, **_Spout 3.2 only supports PHP 7.2 and above_**, as other PHP versions are no longer supported by the community.
 
 Reader changes
 --------------

@@ -197,7 +197,8 @@ class WorksheetManager implements WorksheetManagerInterface
 
             $data .= '</table:table-cell>';
         } elseif ($cell->isBoolean()) {
-            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:boolean-value="' . $cell->getValue() . '">';
+            $value = $cell->getValue() ? 'true' : 'false'; // boolean-value spec: http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#datatype-boolean
+            $data .= ' office:value-type="boolean" calcext:value-type="boolean" office:boolean-value="' . $value . '">';
             $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
         } elseif ($cell->isNumeric()) {
