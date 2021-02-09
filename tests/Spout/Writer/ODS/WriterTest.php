@@ -547,7 +547,7 @@ class WriterTest extends TestCase
         $pathToContentFile = $resourcePath . '#content.xml';
         $xmlContents = file_get_contents('zip://' . $pathToContentFile);
 
-        $this->assertContains($value, $xmlContents, $message);
+        $this->assertStringContainsString($value, $xmlContents, $message);
     }
 
     /**
@@ -562,7 +562,7 @@ class WriterTest extends TestCase
         $sheetXmlAsString = $this->getSheetXmlNodeAsString($fileName, $sheetIndex);
         $valueAsXmlString = "<text:p>$value</text:p>";
 
-        $this->assertContains($valueAsXmlString, $sheetXmlAsString, $message);
+        $this->assertStringContainsString($valueAsXmlString, $sheetXmlAsString, $message);
     }
 
     /**
@@ -577,7 +577,7 @@ class WriterTest extends TestCase
         $sheetXmlAsString = $this->getSheetXmlNodeAsString($fileName, $sheetIndex);
         $valueAsXmlString = "<text:p>$value</text:p>";
 
-        $this->assertNotContains($valueAsXmlString, $sheetXmlAsString, $message);
+        $this->assertStringNotContainsString($valueAsXmlString, $sheetXmlAsString, $message);
     }
 
     /**

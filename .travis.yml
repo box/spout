@@ -5,15 +5,15 @@ language: php
 
 matrix:
   include:
-    - php: 7.1
-      env: WITH_CS=true
-    - php: 7.1
-      env: WITH_PHPUNIT=true WITH_COVERAGE=true
     - php: 7.2
       env: WITH_PHPUNIT=true
     - php: 7.3
       env: WITH_PHPUNIT=true
+    - php: 7.3
+      env: WITH_PHPUNIT=true WITH_COVERAGE=true
     - php: 7.4
+      env: WITH_PHPUNIT=true
+    - php: 8.0
       env: WITH_PHPUNIT=true
 
 

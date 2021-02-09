@@ -18,7 +18,7 @@ class StyleMergerTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->styleMerger = new StyleMerger();
     }

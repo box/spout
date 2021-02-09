@@ -20,7 +20,7 @@ class StyleRegistryTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->defaultStyle = (new StyleBuilder())->build();
         $this->styleRegistry = new StyleRegistry($this->defaultStyle);
