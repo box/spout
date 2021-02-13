@@ -18,7 +18,7 @@ class SheetTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->sheetManager = new SheetManager(new StringHelper());
     }

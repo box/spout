@@ -295,6 +295,10 @@ class ReaderTest extends TestCase
      */
     public function testReadShouldBeProtectedAgainstBillionLaughsAttack()
     {
+        if (function_exists('xdebug_code_coverage_started') && xdebug_code_coverage_started()) {
+            $this->markTestSkipped('test not compatible with code coverage');
+        }
+
         $startTime = microtime(true);
         $fileName = 'attack_billion_laughs.ods';
 
@@ -318,6 +322,10 @@ class ReaderTest extends TestCase
      */
     public function testReadShouldBeProtectedAgainstQuadraticBlowupAttack()
     {
+        if (function_exists('xdebug_code_coverage_started') && xdebug_code_coverage_started()) {
+            $this->markTestSkipped('test not compatible with code coverage');
+        }
+
         $startTime = microtime(true);
 
         $fileName = 'attack_quadratic_blowup.ods';

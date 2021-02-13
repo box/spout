@@ -10,7 +10,7 @@ This guide will help you install {{ site.spout_html }} and teach you how to use 
 
 ## Requirements
 
-* PHP version 7.1 or higher
+* PHP version 7.2 or higher
 * PHP extension `ext-zip` enabled
 * PHP extension `ext-xmlreader` enabled
 

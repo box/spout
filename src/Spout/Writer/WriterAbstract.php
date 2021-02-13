@@ -33,7 +33,7 @@ abstract class WriterAbstract implements WriterInterface
     /** @var GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var HelperFactory $helperFactory */
+    /** @var HelperFactory */
     protected $helperFactory;
 
     /** @var OptionsManagerInterface Writer options manager */
