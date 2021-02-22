@@ -32,7 +32,7 @@ class WriterWithStyleTest extends TestCase
     /**
      * @return void
      */
-    public function setUp(): void
+    public function setUp() : void
     {
         $this->defaultStyle = (new StyleBuilder())->build();
     }

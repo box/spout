@@ -114,8 +114,7 @@ class StyleRegistry
     {
         // In order to be able to properly compare style, set static ID value and reset registration
         $currentId = $style->getId();
-        $style->setId(0);
-        $style->setRegistered(false);
+        $style->unregister();
 
         $serializedStyle = \serialize($style);
 
