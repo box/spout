@@ -87,6 +87,9 @@ class Style
     /** @var bool */
     private $isRegistered = false;
 
+    /** @var bool */
+    private $isEmpty = true;
+
     /**
      * @return int|null
      */
@@ -122,6 +125,7 @@ class Style
     {
         $this->shouldApplyBorder = true;
         $this->border = $border;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -150,6 +154,7 @@ class Style
         $this->fontBold = true;
         $this->hasSetFontBold = true;
         $this->shouldApplyFont = true;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -178,6 +183,7 @@ class Style
         $this->fontItalic = true;
         $this->hasSetFontItalic = true;
         $this->shouldApplyFont = true;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -206,6 +212,7 @@ class Style
         $this->fontUnderline = true;
         $this->hasSetFontUnderline = true;
         $this->shouldApplyFont = true;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -234,6 +241,7 @@ class Style
         $this->fontStrikethrough = true;
         $this->hasSetFontStrikethrough = true;
         $this->shouldApplyFont = true;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -263,6 +271,7 @@ class Style
         $this->fontSize = $fontSize;
         $this->hasSetFontSize = true;
         $this->shouldApplyFont = true;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -294,6 +303,7 @@ class Style
         $this->fontColor = $fontColor;
         $this->hasSetFontColor = true;
         $this->shouldApplyFont = true;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -323,6 +333,7 @@ class Style
         $this->fontName = $fontName;
         $this->hasSetFontName = true;
         $this->shouldApplyFont = true;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -353,6 +364,7 @@ class Style
         $this->cellAlignment = $cellAlignment;
         $this->hasSetCellAlignment = true;
         $this->shouldApplyCellAlignment = true;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -389,6 +401,7 @@ class Style
     {
         $this->shouldWrapText = $shouldWrap;
         $this->hasSetWrapText = true;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -418,6 +431,7 @@ class Style
     {
         $this->hasSetBackgroundColor = true;
         $this->backgroundColor = $color;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -447,6 +461,7 @@ class Style
     {
         $this->hasSetFormat = true;
         $this->format = $format;
+        $this->isEmpty = false;
 
         return $this;
     }
@@ -467,11 +482,6 @@ class Style
         return $this->hasSetFormat;
     }
 
-    public function setRegistered(bool $isRegistered = true) : void
-    {
-        $this->isRegistered = $isRegistered;
-    }
-
     /**
      * @return bool
      */
@@ -484,5 +494,16 @@ class Style
     {
         $this->setId($id);
         $this->isRegistered = true;
+    }
+
+    public function unregister() : void
+    {
+        $this->setId(0);
+        $this->isRegistered = false;
+    }
+
+    public function isEmpty() : bool
+    {
+        return $this->isEmpty;
     }
 }

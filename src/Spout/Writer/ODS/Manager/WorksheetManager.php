@@ -4,7 +4,6 @@ namespace Box\Spout\Writer\ODS\Manager;
 
 use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Common\Entity\Row;
-use Box\Spout\Common\Entity\Style\EmptyStyle;
 use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
@@ -158,13 +157,13 @@ class WorksheetManager implements WorksheetManagerInterface
      */
     private function applyStyleAndGetCellXML(Cell $cell, Style &$rowStyle, $currentCellIndex, $nextCellIndex)
     {
-        if ($cell->getStyle() instanceof EmptyStyle) {
+        if ($cell->getStyle()->isEmpty()) {
             $cell->setStyle($rowStyle);
 
-            $extraStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+            $managedStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
 
-            if ($extraStyle) {
-                $registeredStyle = $this->styleManager->registerStyle($extraStyle);
+            if ($managedStyle->isUpdated()) {
+                $registeredStyle = $this->styleManager->registerStyle($managedStyle->getStyle());
             } else {
                 $registeredStyle = $rowStyle = $this->styleManager->registerStyle($rowStyle);
             }
@@ -172,7 +171,13 @@ class WorksheetManager implements WorksheetManagerInterface
             $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
             $cell->setStyle($mergedCellAndRowStyle);
 
-            $newCellStyle = $this->styleManager->applyExtraStylesIfNeeded($cell) ?: $mergedCellAndRowStyle;
+            $managedStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+            if ($managedStyle->isUpdated()) {
+                $newCellStyle = $managedStyle->getStyle();
+            } else {
+                $newCellStyle = $mergedCellAndRowStyle;
+            }
+
             $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
         }
 

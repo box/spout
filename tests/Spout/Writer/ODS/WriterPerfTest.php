@@ -88,7 +88,7 @@ class WriterPerfTest extends TestCase
         copy($pathToContentXmlFile, $tmpFile);
 
         // Get the last 200 characters
-        $lastCharacters = `tail -c 200 $tmpFile`;
+        $lastCharacters = shell_exec("tail -c 200 $tmpFile");
 
         // remove the temporary file
         unlink($tmpFile);
