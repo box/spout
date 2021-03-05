@@ -38,26 +38,13 @@ class StyleRegistry
 
         if (!$this->hasSerializedStyleAlreadyBeenRegistered($serializedStyle)) {
             $nextStyleId = \count($this->serializedStyleToStyleIdMappingTable);
-            $style->register($nextStyleId);
+            $style->markAsRegistered($nextStyleId);
 
             $this->serializedStyleToStyleIdMappingTable[$serializedStyle] = $nextStyleId;
             $this->styleIdToStyleMappingTable[$nextStyleId] = $style;
         }
 
         return $this->getStyleFromSerializedStyle($serializedStyle);
-    }
-
-    /**
-     * Returns whether the given style has already been registered.
-     *
-     * @param Style $style
-     * @return bool
-     */
-    protected function hasStyleAlreadyBeenRegistered(Style $style)
-    {
-        $serializedStyle = $this->serialize($style);
-
-        return $this->hasSerializedStyleAlreadyBeenRegistered($serializedStyle);
     }
 
     /**
@@ -114,11 +101,11 @@ class StyleRegistry
     {
         // In order to be able to properly compare style, set static ID value and reset registration
         $currentId = $style->getId();
-        $style->unregister();
+        $style->unmarkAsRegistered();
 
         $serializedStyle = \serialize($style);
 
-        $style->setId($currentId);
+        $style->markAsRegistered($currentId);
 
         return $serializedStyle;
     }

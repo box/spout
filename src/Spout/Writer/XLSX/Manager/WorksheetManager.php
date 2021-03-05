@@ -193,7 +193,8 @@ EOD;
             if ($managedStyle->isUpdated()) {
                 $registeredStyle = $this->styleManager->registerStyle($managedStyle->getStyle());
             } else {
-                $registeredStyle = $rowStyle = $this->styleManager->registerStyle($rowStyle);
+                $registeredStyle = $this->styleManager->registerStyle($rowStyle);
+                $rowStyle = $registeredStyle;
             }
         } else {
             $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
