@@ -490,13 +490,13 @@ class Style
         return $this->isRegistered;
     }
 
-    public function register(int $id) : void
+    public function markAsRegistered(?int $id) : void
     {
         $this->setId($id);
         $this->isRegistered = true;
     }
 
-    public function unregister() : void
+    public function unmarkAsRegistered() : void
     {
         $this->setId(0);
         $this->isRegistered = false;
