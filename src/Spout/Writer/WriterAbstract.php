@@ -112,7 +112,7 @@ abstract class WriterAbstract implements WriterInterface
      * @codeCoverageIgnore
      * {@inheritdoc}
      */
-    public function openToBrowser($outputFileName, array $headers = [])
+    public function openToBrowser($outputFileName)
     {
         $this->outputFilePath = $this->globalFunctionsHelper->basename($outputFileName);
 
@@ -153,16 +153,6 @@ abstract class WriterAbstract implements WriterInterface
          */
         $this->globalFunctionsHelper->header('Cache-Control: max-age=0');
         $this->globalFunctionsHelper->header('Pragma: public');
-
-        /*
-         * Set custom Headers
-         * Sometimes need to output or cover more headers.
-         *
-         * @see https://github.com/box/spout/issues/745
-         */
-        foreach ($headers as $header) {
-            $this->globalFunctionsHelper->header($header);
-        }
 
         $this->openWriter();
         $this->isWriterOpened = true;
