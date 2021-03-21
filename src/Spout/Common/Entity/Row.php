@@ -19,6 +19,12 @@ class Row
     protected $style;
 
     /**
+     * Row height (default is 15)
+     * @var string
+     */
+    protected $height = '15';
+
+    /**
      * Row constructor.
      * @param Cell[] $cells
      * @param Style|null $style
@@ -125,5 +131,26 @@ class Row
         return \array_map(function (Cell $cell) {
             return $cell->getValue();
         }, $this->cells);
+    }
+
+    /**
+     * Set row height
+     * @param string $height
+     * @return Row
+     */
+    public function setHeight($height)
+    {
+        $this->height = $height;
+
+        return $this;
+    }
+
+    /**
+     * Returns row height
+     * @return string
+     */
+    public function getHeight()
+    {
+        return $this->height;
     }
 }

@@ -184,6 +184,19 @@ class StyleBuilder
     }
 
     /**
+     * Set should shrink to fit
+     * @param bool $shrinkToFit
+     * @return StyleBuilder
+     * @api
+     */
+    public function setShouldShrinkToFit($shrinkToFit = true)
+    {
+        $this->style->setShouldShrinkToFit($shrinkToFit);
+
+        return $this;
+    }
+
+    /**
      * Returns the configured style. The style is cached and can be reused.
      *
      * @return Style

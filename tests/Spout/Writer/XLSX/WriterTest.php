@@ -7,6 +7,7 @@ use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Exception\SpoutException;
+use Box\Spout\Reader\Wrapper\XMLReader;
 use Box\Spout\TestUsingResource;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
@@ -530,6 +531,105 @@ class WriterTest extends TestCase
     /**
      * @return void
      */
+    public function testAddRowShouldSupportRowHeights()
+    {
+        $fileName = 'test_add_row_should_support_row_heights.xlsx';
+        $dataRows = $this->createRowsFromValues([
+            ['First row with default height'],
+            ['Second row with custom height'],
+        ]);
+
+        $dataRows[1]->setHeight('23');
+
+        $this->writeToXLSXFile($dataRows, $fileName);
+        $firstRow = $this->getXmlRowFromXmlFile($fileName, 1, 1);
+        $secondRow = $this->getXmlRowFromXmlFile($fileName, 1, 2);
+        $this->assertEquals('15', $firstRow->getAttribute('ht'), '1st row does not have default height.');
+        $this->assertEquals('23', $secondRow->getAttribute('ht'), '2nd row does not have custom height.');
+    }
+
+    /**
+     * @return void
+     */
+    public function testAddRowShouldSupportColumnWidths()
+    {
+        $fileName = 'test_add_row_should_support_column_widths.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->setShouldUseInlineStrings(true);
+        $writer->openToFile($resourcePath);
+
+        $columnWidths = [1, 2, 3, 4];
+        $writer->setColumnWidths($columnWidths);
+        $writer->addRows($this->createRowsFromValues([
+            ['Test cell'],
+        ]));
+        $writer->close();
+
+        $xmlReader = $this->getXmlReaderForSheetFromXmlFile($fileName, 1);
+        $xmlReader->readUntilNodeFound('cols');
+        $this->assertEquals('cols', $xmlReader->getCurrentNodeName(), 'Sheet does not have cols tag');
+        $this->assertEquals(count($columnWidths), $xmlReader->expand()->childNodes->length, 'Sheet does not have the specified number of column definitions');
+        foreach ($columnWidths as $index => $columnWidth) {
+            $xmlReader->readUntilNodeFound('col');
+            $this->assertEquals($index + 1, $xmlReader->expand()->getAttribute('min'));
+            $this->assertEquals($index + 1, $xmlReader->expand()->getAttribute('max'));
+            $this->assertEquals($columnWidth, $xmlReader->expand()->getAttribute('width'));
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function testCloseShouldAddMergeCellTags()
+    {
+        $fileName = 'test_add_row_should_support_column_widths.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->setShouldUseInlineStrings(true);
+        $writer->openToFile($resourcePath);
+
+        $writer->mergeCells([0, 1], [3, 1]);
+        $writer->mergeCells([2, 3], [10, 3]);
+        $writer->close();
+
+        $xmlReader = $this->getXmlReaderForSheetFromXmlFile($fileName, 1);
+        $xmlReader->readUntilNodeFound('mergeCells');
+        $this->assertEquals('mergeCells', $xmlReader->getCurrentNodeName(), 'Sheet does not have mergeCells tag');
+        $this->assertEquals(2, $xmlReader->expand()->childNodes->length, 'Sheet does not have the specified number of mergeCell definitions');
+        $xmlReader->readUntilNodeFound('mergeCell');
+        $this->assertEquals('A1:D1', $xmlReader->expand()->getAttribute('ref'), 'Merge ref for first range is not valid.');
+        $xmlReader->readUntilNodeFound('mergeCell');
+        $this->assertEquals('C3:K3', $xmlReader->expand()->getAttribute('ref'), 'Merge ref for second range is not valid.');
+    }
+
+    /**
+     * @return void
+     */
+    public function testGeneratedFileShouldBeValidForEmptySheets()
+    {
+        $fileName = 'test_empty_sheet.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->openToFile($resourcePath);
+
+        $writer->addNewSheetAndMakeItCurrent();
+        $writer->close();
+
+        $xmlReader = $this->getXmlReaderForSheetFromXmlFile($fileName, 1);
+        $xmlReader->setParserProperty(XMLReader::VALIDATE, true);
+        $this->assertTrue($xmlReader->isValid(), 'worksheet xml is not valid');
+        $xmlReader->setParserProperty(XMLReader::VALIDATE, false);
+        $xmlReader->readUntilNodeFound('sheetData');
+        $this->assertEquals('sheetData', $xmlReader->getCurrentNodeName(), 'worksheet xml does not have sheetData');
+    }
+
+    /**
+     * @return void
+     */
     public function testGeneratedFileShouldHaveTheCorrectMimeType()
     {
         $fileName = 'test_mime_type.xlsx';
@@ -640,5 +740,43 @@ class WriterTest extends TestCase
         $xmlContents = file_get_contents('zip://' . $pathToSharedStringsFile);
 
         $this->assertStringContainsString($sharedString, $xmlContents, $message);
+    }
+
+    /**
+     * @param $fileName
+     * @param $sheetIndex - 1 based
+     * @return XMLReader
+     */
+    private function getXmlReaderForSheetFromXmlFile($fileName, $sheetIndex)
+    {
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $xmlReader = new XMLReader();
+        $xmlReader->openFileInZip($resourcePath, 'xl/worksheets/sheet' . $sheetIndex . '.xml');
+
+        return $xmlReader;
+    }
+
+    /**
+     * @param $fileName
+     * @param $sheetIndex - 1 based
+     * @param $rowIndex - 1 based
+     * @throws \Box\Spout\Reader\Exception\XMLProcessingException
+     * @return \DOMNode|null
+     */
+    private function getXmlRowFromXmlFile($fileName, $sheetIndex, $rowIndex)
+    {
+        $xmlReader = $this->getXmlReaderForSheetFromXmlFile($fileName, $sheetIndex);
+        $xmlReader->readUntilNodeFound('sheetData');
+
+        for ($i = 0; $i < $rowIndex; $i++) {
+            $xmlReader->readUntilNodeFound('row');
+        }
+
+        $row = $xmlReader->expand();
+
+        $xmlReader->close();
+
+        return $row;
     }
 }

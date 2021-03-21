@@ -19,4 +19,13 @@ interface OptionsManagerInterface
      * @return mixed|null The set option or NULL if no option with given name found
      */
     public function getOption($optionName);
+
+    /**
+     * Add an option to the internal list of options
+     * Used only for mergeCells() for now
+     * @param mixed $optionName
+     * @param mixed $optionValue
+     * @return void
+     */
+    public function addOption($optionName, $optionValue);
 }
