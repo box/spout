@@ -28,10 +28,10 @@ class StyleManagerTest extends TestCase
         $this->assertFalse($style->shouldWrapText());
 
         $styleManager = $this->getStyleManager();
-        $managedStyle = $styleManager->applyExtraStylesIfNeeded(new Cell("multi\nlines", $style));
+        $possiblyUpdatedStyle = $styleManager->applyExtraStylesIfNeeded(new Cell("multi\nlines", $style));
 
-        $this->assertTrue($managedStyle->isUpdated());
-        $this->assertTrue($managedStyle->getStyle()->shouldWrapText());
+        $this->assertTrue($possiblyUpdatedStyle->isUpdated());
+        $this->assertTrue($possiblyUpdatedStyle->getStyle()->shouldWrapText());
     }
 
     public function testApplyExtraStylesIfNeededShouldReturnNullIfWrapTextNotNeeded() : void
@@ -40,9 +40,9 @@ class StyleManagerTest extends TestCase
         $this->assertFalse($style->shouldWrapText());
 
         $styleManager = $this->getStyleManager();
-        $managedStyle = $styleManager->applyExtraStylesIfNeeded(new Cell('oneline', $style));
+        $possiblyUpdatedStyle = $styleManager->applyExtraStylesIfNeeded(new Cell('oneline', $style));
 
-        $this->assertFalse($managedStyle->isUpdated());
+        $this->assertFalse($possiblyUpdatedStyle->isUpdated());
     }
 
     public function testApplyExtraStylesIfNeededShouldReturnNullIfWrapTextAlreadyApplied() : void
@@ -51,8 +51,8 @@ class StyleManagerTest extends TestCase
         $this->assertTrue($style->shouldWrapText());
 
         $styleManager = $this->getStyleManager();
-        $managedStyle = $styleManager->applyExtraStylesIfNeeded(new Cell("multi\nlines", $style));
+        $possiblyUpdatedStyle = $styleManager->applyExtraStylesIfNeeded(new Cell("multi\nlines", $style));
 
-        $this->assertFalse($managedStyle->isUpdated());
+        $this->assertFalse($possiblyUpdatedStyle->isUpdated());
     }
 }

@@ -128,8 +128,8 @@ class WorksheetManager implements WorksheetManagerInterface
             if ($nextCell === null || $cell->getValue() !== $nextCell->getValue()) {
                 $registeredStyle = $this->applyStyleAndRegister($cell, $rowStyle);
                 $cellStyle = $registeredStyle->getStyle();
-                if ($registeredStyle->isRowStyle()) {
-                    $rowStyle = $cellStyle;
+                if ($registeredStyle->isMatchingRowStyle()) {
+                    $rowStyle = $cellStyle; // Replace actual rowStyle (possibly with null id) by registered style (with id)
                 }
 
                 $data .= $this->getCellXMLWithStyle($cell, $cellStyle, $currentCellIndex, $nextCellIndex);
@@ -161,25 +161,25 @@ class WorksheetManager implements WorksheetManagerInterface
      */
     private function applyStyleAndRegister(Cell $cell, Style $rowStyle) : RegisteredStyle
     {
-        $isRowStyle = false;
+        $isMatchingRowStyle = false;
         if ($cell->getStyle()->isEmpty()) {
             $cell->setStyle($rowStyle);
 
-            $managedStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+            $possiblyUpdatedStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
 
-            if ($managedStyle->isUpdated()) {
-                $registeredStyle = $this->styleManager->registerStyle($managedStyle->getStyle());
+            if ($possiblyUpdatedStyle->isUpdated()) {
+                $registeredStyle = $this->styleManager->registerStyle($possiblyUpdatedStyle->getStyle());
             } else {
                 $registeredStyle = $this->styleManager->registerStyle($rowStyle);
-                $isRowStyle = true;
+                $isMatchingRowStyle = true;
             }
         } else {
             $mergedCellAndRowStyle = $this->styleMerger->merge($cell->getStyle(), $rowStyle);
             $cell->setStyle($mergedCellAndRowStyle);
 
-            $managedStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
-            if ($managedStyle->isUpdated()) {
-                $newCellStyle = $managedStyle->getStyle();
+            $possiblyUpdatedStyle = $this->styleManager->applyExtraStylesIfNeeded($cell);
+            if ($possiblyUpdatedStyle->isUpdated()) {
+                $newCellStyle = $possiblyUpdatedStyle->getStyle();
             } else {
                 $newCellStyle = $mergedCellAndRowStyle;
             }
@@ -187,7 +187,7 @@ class WorksheetManager implements WorksheetManagerInterface
             $registeredStyle = $this->styleManager->registerStyle($newCellStyle);
         }
 
-        return new RegisteredStyle($registeredStyle, $isRowStyle);
+        return new RegisteredStyle($registeredStyle, $isMatchingRowStyle);
     }
 
     private function getCellXMLWithStyle(Cell $cell, Style $style, int $currentCellIndex, int $nextCellIndex) : string
