@@ -50,9 +50,9 @@ class StyleManager implements StyleManagerInterface
      * Typically, set "wrap text" if a cell contains a new line.
      *
      * @param Cell $cell
-     * @return ManagedStyle The eventually updated style
+     * @return PossiblyUpdatedStyle The eventually updated style
      */
-    public function applyExtraStylesIfNeeded(Cell $cell) : ManagedStyle
+    public function applyExtraStylesIfNeeded(Cell $cell) : PossiblyUpdatedStyle
     {
         return $this->applyWrapTextIfCellContainsNewLine($cell);
     }
@@ -67,9 +67,9 @@ class StyleManager implements StyleManagerInterface
      *        on the Windows version of Excel...
      *
      * @param Cell $cell The cell the style should be applied to
-     * @return ManagedStyle The eventually updated style
+     * @return PossiblyUpdatedStyle The eventually updated style
      */
-    protected function applyWrapTextIfCellContainsNewLine(Cell $cell) : ManagedStyle
+    protected function applyWrapTextIfCellContainsNewLine(Cell $cell) : PossiblyUpdatedStyle
     {
         $cellStyle = $cell->getStyle();
 
@@ -77,9 +77,9 @@ class StyleManager implements StyleManagerInterface
         if (!$cellStyle->hasSetWrapText() && $cell->isString() && \strpos($cell->getValue(), "\n") !== false) {
             $cellStyle->setShouldWrapText();
 
-            return new ManagedStyle($cellStyle, true);
+            return new PossiblyUpdatedStyle($cellStyle, true);
         }
 
-        return new ManagedStyle($cellStyle, false);
+        return new PossiblyUpdatedStyle($cellStyle, false);
     }
 }

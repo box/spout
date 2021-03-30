@@ -4,6 +4,10 @@ namespace Box\Spout\Writer\Common\Manager;
 
 use Box\Spout\Common\Entity\Style\Style;
 
+/**
+ * Class RegisteredStyle
+ * Allow to know if this style must replace actual row style.
+ */
 class RegisteredStyle
 {
     /**
@@ -14,12 +18,12 @@ class RegisteredStyle
     /**
      * @var bool
      */
-    private $isRowStyle;
+    private $isMatchingRowStyle;
 
-    public function __construct(Style $style, bool $isRowStyle)
+    public function __construct(Style $style, bool $isMatchingRowStyle)
     {
         $this->style = $style;
-        $this->isRowStyle = $isRowStyle;
+        $this->isMatchingRowStyle = $isMatchingRowStyle;
     }
 
     public function getStyle() : Style
@@ -27,8 +31,8 @@ class RegisteredStyle
         return $this->style;
     }
 
-    public function isRowStyle() : bool
+    public function isMatchingRowStyle() : bool
     {
-        return $this->isRowStyle;
+        return $this->isMatchingRowStyle;
     }
 }

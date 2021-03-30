@@ -4,7 +4,12 @@ namespace Box\Spout\Writer\Common\Manager\Style;
 
 use Box\Spout\Common\Entity\Style\Style;
 
-class ManagedStyle
+/**
+ * Class PossiblyUpdatedStyle
+ * Indicates if style is updated.
+ * It allow to know if style registration must be done.
+ */
+class PossiblyUpdatedStyle
 {
     private $style;
     private $isUpdated;
