@@ -61,7 +61,7 @@ class WriterPerfTest extends TestCase
      */
     private function getNumWrittenRows($resourcePath)
     {
-        $lineCountResult = `wc -l $resourcePath`;
+        $lineCountResult = shell_exec("wc -l $resourcePath");
 
         return (int) $lineCountResult;
     }

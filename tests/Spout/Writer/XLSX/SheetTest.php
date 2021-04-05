@@ -90,7 +90,7 @@ class SheetTest extends TestCase
         $pathToWorkbookFile = $resourcePath . '#xl/workbook.xml';
         $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
 
-        $this->assertContains(' state="hidden"', $xmlContents, 'The sheet visibility should have been changed to "hidden"');
+        $this->assertStringContainsString(' state="hidden"', $xmlContents, 'The sheet visibility should have been changed to "hidden"');
     }
 
     public function testThrowsIfWorkbookIsNotInitialized()
@@ -299,6 +299,6 @@ class SheetTest extends TestCase
         $pathToWorkbookFile = $resourcePath . '#xl/workbook.xml';
         $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
 
-        $this->assertContains("<sheet name=\"$expectedName\"", $xmlContents, $message);
+        $this->assertStringContainsString("<sheet name=\"$expectedName\"", $xmlContents, $message);
     }
 }
