@@ -231,8 +231,9 @@ class WorksheetManager implements WorksheetManagerInterface
             $data .= '<text:p>' . $cell->getValue() . '</text:p>';
             $data .= '</table:table-cell>';
         } elseif ($cell->isNumeric()) {
-            $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cell->getValue() . '">';
-            $data .= '<text:p>' . $cell->getValue() . '</text:p>';
+            $cellValue = $this->stringHelper->formatNumericValue($cell->getValue());
+            $data .= ' office:value-type="float" calcext:value-type="float" office:value="' . $cellValue . '">';
+            $data .= '<text:p>' . $cellValue . '</text:p>';
             $data .= '</table:table-cell>';
         } elseif ($cell->isError() && is_string($cell->getValueEvenIfError())) {
             // only writes the error value if it's a string
