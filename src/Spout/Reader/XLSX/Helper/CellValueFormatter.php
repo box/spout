@@ -31,14 +31,6 @@ class CellValueFormatter
 
     /** Constants used for date formatting */
     const NUM_SECONDS_IN_ONE_DAY = 86400;
-    const NUM_SECONDS_IN_ONE_HOUR = 3600;
-    const NUM_SECONDS_IN_ONE_MINUTE = 60;
-
-    /**
-     * February 29th, 1900 is NOT a leap year but Excel thinks it is...
-     * @see https://en.wikipedia.org/wiki/Year_1900_problem#Microsoft_Excel
-     */
-    const ERRONEOUS_EXCEL_LEAP_YEAR_DAY = 60;
 
     /** @var SharedStringsManager Manages shared strings */
     protected $sharedStringsManager;
