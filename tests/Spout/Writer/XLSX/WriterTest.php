@@ -414,16 +414,6 @@ class WriterTest extends TestCase
             }
             $this->assertEquals(',', \localeconv()['decimal_point']);
 
-            var_dump("Cell value before: " . $valueToWrite);
-            $cellValue = str_replace(
-                [\localeconv()['thousands_sep'], \localeconv()['decimal_point']],
-                ['', '.'],
-                $valueToWrite
-            );
-            var_dump("Cell value after: " . $cellValue);
-            var_dump("Thousands sep: " . \localeconv()['thousands_sep']);
-            var_dump("Decimal point: " . \localeconv()['decimal_point']);
-
             $fileName = 'test_add_row_should_support_float_values_in_different_locale.xlsx';
             $dataRows = $this->createRowsFromValues([
                 [$valueToWrite],
