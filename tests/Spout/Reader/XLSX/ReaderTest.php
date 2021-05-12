@@ -704,6 +704,18 @@ class ReaderTest extends TestCase
     }
 
     /**
+     * https://github.com/box/spout/issues/726
+     * @return void
+     */
+    public function testReaderShouldSupportStrictOOXML()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_strict_ooxml.xlsx');
+
+        $this->assertEquals('UNIQUE_ACCOUNT_IDENTIFIER', $allRows[0][0]);
+        $this->assertEquals('A2Z34NJA7N2ESJ', $allRows[1][0]);
+    }
+
+    /**
      * @param string $fileName
      * @param bool $shouldFormatDates
      * @param bool $shouldPreserveEmptyRows
