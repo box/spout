@@ -175,7 +175,7 @@ class StyleManager
                 $normalizedNumFmtId = ($numFmtId !== null) ? (int) $numFmtId : null;
 
                 $applyNumberFormat = $xmlReader->getAttribute(self::XML_ATTRIBUTE_APPLY_NUMBER_FORMAT);
-                $normalizedApplyNumberFormat = ($applyNumberFormat !== null) ? (bool) $applyNumberFormat : null;
+                $normalizedApplyNumberFormat = ($applyNumberFormat !== null) ? (bool) $applyNumberFormat : false;
 
                 $this->stylesAttributes[] = [
                     self::XML_ATTRIBUTE_NUM_FMT_ID          => $normalizedNumFmtId,
