@@ -692,11 +692,27 @@ class ReaderTest extends TestCase
         $allRows = $this->getAllRowsForFile('sheet_with_empty_cells.xlsx');
 
         $expectedRows = [
-            ['A', 'B', 'C'],
+            ['A', '', 'C'],
             ['0', '', ''],
             ['1', '1', ''],
         ];
         $this->assertEquals($expectedRows, $allRows, 'There should be 3 rows, with equal length');
+    }
+
+    /**
+     * https://github.com/box/spout/issues/184
+     * @return void
+     */
+    public function testReadShouldCreateOutputEmptyCellPreservedWhenNoDimensionsSpecified()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_empty_cells_without_dimensions.xlsx');
+
+        $expectedRows = [
+            ['A', '', 'C'],
+            ['0'],
+            ['1', '1'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
     }
 
     /**
