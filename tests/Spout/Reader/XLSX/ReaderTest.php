@@ -75,6 +75,19 @@ class ReaderTest extends TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportInlineStringsWithMultipleValueNodes()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_multiple_value_nodes_in_inline_strings.xlsx');
+
+        $expectedRows = [
+            ['VALUE 1 VALUE 2 VALUE 3 VALUE 4', 's1 - B1'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldSupportSheetsDefinitionInRandomOrder()
     {
         $allRows = $this->getAllRowsForFile('two_sheets_with_sheets_definition_in_reverse_order.xlsx');
