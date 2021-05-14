@@ -188,16 +188,20 @@ class CellValueFormatterTest extends TestCase
         $nodeListMock = $this->createMock(\DOMNodeList::class);
         $nodeListMock
             ->expects($this->atLeastOnce())
+            ->method('count')
+            ->willReturn(1);
+        $nodeListMock
+            ->expects($this->atLeastOnce())
             ->method('item')
             ->with(0)
-            ->will($this->returnValue((object) ['nodeValue' => $value]));
+            ->willReturn((object) ['nodeValue' => $value]);
 
         $nodeMock = $this->createMock(\DOMElement::class);
         $nodeMock
             ->expects($this->atLeastOnce())
             ->method('getElementsByTagName')
             ->with(CellValueFormatter::XML_NODE_INLINE_STRING_VALUE)
-            ->will($this->returnValue($nodeListMock));
+            ->willReturn($nodeListMock);
 
         $formatter = new CellValueFormatter(null, null, false, false, new Escaper\XLSX());
         $formattedValue = \ReflectionHelper::callMethodOnObject($formatter, 'formatInlineStringCellValue', $nodeMock);
