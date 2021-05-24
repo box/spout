@@ -83,4 +83,25 @@ class CellTypeHelperTest extends TestCase
         $this->assertFalse(CellTypeHelper::isBoolean(new \stdClass()));
         $this->assertFalse(CellTypeHelper::isBoolean(null));
     }
+
+    /**
+     * @return array
+     */
+    public function testIsDateOrInterval()
+    {
+        $this->assertTrue(CellTypeHelper::isDateTimeOrDateInterval(new \DateTime()));
+        $this->assertTrue(CellTypeHelper::isDateTimeOrDateInterval(new \DateInterval('P1D')));
+
+        $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval(true));
+        $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval(false));
+        $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval(0));
+        $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval(1));
+        $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval('0'));
+        $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval('1'));
+        $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval('true'));
+        $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval('false'));
+        $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval([true]));
+        $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval(new \stdClass()));
+        $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval(null));
+    }
 }
