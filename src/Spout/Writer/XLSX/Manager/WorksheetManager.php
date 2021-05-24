@@ -237,6 +237,8 @@ EOD;
 
         if ($cell->isString()) {
             $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cell->getValue());
+        } elseif ($cell->isDate()) {
+            $cellXML .= ' t="d"><v>' . $cell->getValue()->format(\DateTimeInterface::ATOM) . '</v></c>';
         } elseif ($cell->isBoolean()) {
             $cellXML .= ' t="b"><v>' . (int) ($cell->getValue()) . '</v></c>';
         } elseif ($cell->isNumeric()) {

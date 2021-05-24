@@ -365,7 +365,7 @@ class WriterTest extends TestCase
     {
         $fileName = 'test_add_row_should_support_multiple_types_of_data.xlsx';
         $dataRows = $this->createRowsFromValues([
-            ['xlsx--11', true, '', 0, 10.2, null],
+            ['xlsx--11', true, '', 0, 10.2, null, new \DateTime('2021-01-01'), new \DateTimeImmutable('2021-02-02')],
         ]);
 
         $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
