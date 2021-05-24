@@ -90,6 +90,7 @@ class CellTypeHelperTest extends TestCase
     public function testIsDateOrInterval()
     {
         $this->assertTrue(CellTypeHelper::isDateTimeOrDateInterval(new \DateTime()));
+        $this->assertTrue(CellTypeHelper::isDateTimeOrDateInterval(new \DateTimeImmutable()));
         $this->assertTrue(CellTypeHelper::isDateTimeOrDateInterval(new \DateInterval('P1D')));
 
         $this->assertFalse(CellTypeHelper::isDateTimeOrDateInterval(true));
