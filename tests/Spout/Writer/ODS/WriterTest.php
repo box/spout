@@ -306,8 +306,8 @@ class WriterTest extends TestCase
 
             $this->writeToODSFile($dataRows, $fileName);
 
-            $this->assertValueWasNotWrittenToSheet($fileName, 1, "1234,5");
-            $this->assertValueWasWrittenToSheet($fileName, 1, "1234.5");
+            $this->assertValueWasNotWrittenToSheet($fileName, 1, '1234,5');
+            $this->assertValueWasWrittenToSheet($fileName, 1, '1234.5');
         } finally {
             // reset locale
             \setlocale(LC_ALL, $previousLocale);
