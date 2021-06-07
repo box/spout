@@ -6,6 +6,8 @@ language: php
 matrix:
   include:
     - php: 7.2
+      env: WITH_CS=true
+    - php: 7.2
       env: WITH_PHPUNIT=true
     - php: 7.3
       env: WITH_PHPUNIT=true
