@@ -255,7 +255,12 @@ EOD;
         } else {
             $value = $cell->getValueEvenIfError();
 
-            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . (\is_object($value) ? \get_class($value) : \gettype($value)));
+$errorMessage = 'Trying to add a value with an unsupported type: ' . \gettype($value);
+if (is_object($value)) {
+    $errorMessage .= ' (' . get_class($value) . ' given)';
+}
+
+throw new InvalidArgumentException($errorMessage);
         }
 
         return $cellXML;
