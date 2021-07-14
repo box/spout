@@ -15,7 +15,6 @@ use Box\Spout\Writer\Common\Helper\FileSystemWithRootFolderHelperInterface;
 use Box\Spout\Writer\Common\Manager\Style\StyleManagerInterface;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
-use Box\Spout\Writer\Exception\WriterException;
 
 /**
  * Class WorkbookManagerAbstract
@@ -103,7 +102,6 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * Creates a new sheet in the workbook and make it the current sheet.
      * The writing will resume where it stopped (i.e. data won't be truncated).
      *
-     * @throws IOException If unable to open the sheet for writing
      * @return Worksheet The created sheet
      */
     public function addNewSheetAndMakeItCurrent()
@@ -117,7 +115,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     /**
      * Creates a new sheet in the workbook. The current sheet remains unchanged.
      *
-     * @throws \Box\Spout\Common\Exception\IOException If unable to open the sheet for writing
+     * @throws IOException
      * @return Worksheet The created sheet
      */
     private function addNewSheet()
@@ -155,6 +153,16 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     public function getCurrentWorksheet()
     {
         return $this->currentWorksheet;
+    }
+
+    /**
+     * Starts the current sheet and opens the file pointer
+     *
+     * @throws IOException
+     */
+    public function startCurrentSheet()
+    {
+        $this->worksheetManager->startSheet($this->getCurrentWorksheet());
     }
 
     /**
@@ -210,8 +218,9 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      * with the creation of new worksheets if one worksheet has reached its maximum capicity.
      *
      * @param Row $row The row to be added
+     *
      * @throws IOException If trying to create a new sheet and unable to open the sheet for writing
-     * @throws WriterException If unable to write data
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException
      * @return void
      */
     public function addRowToCurrentWorksheet(Row $row)
@@ -249,7 +258,9 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
      *
      * @param Worksheet $worksheet Worksheet to write the row to
      * @param Row $row The row to be added
-     * @throws WriterException If unable to write data
+     *
+     * @throws IOException
+     * @throws \Box\Spout\Common\Exception\InvalidArgumentException
      * @return void
      */
     private function addRowToWorksheet(Worksheet $worksheet, Row $row)
@@ -274,6 +285,41 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
             $mergedStyle = $this->styleMerger->merge($row->getStyle(), $defaultRowStyle);
             $row->setStyle($mergedStyle);
         }
+    }
+
+    /**
+     * @param float $width
+     */
+    public function setDefaultColumnWidth(float $width)
+    {
+        $this->worksheetManager->setDefaultColumnWidth($width);
+    }
+
+    /**
+     * @param float $height
+     */
+    public function setDefaultRowHeight(float $height)
+    {
+        $this->worksheetManager->setDefaultRowHeight($height);
+    }
+
+    /**
+     * @param float $width
+     * @param array $columns One or more columns with this width
+     */
+    public function setColumnWidth(float $width, ...$columns)
+    {
+        $this->worksheetManager->setColumnWidth($width, ...$columns);
+    }
+
+    /**
+     * @param float $width The width to set
+     * @param int $start First column index of the range
+     * @param int $end Last column index of the range
+     */
+    public function setColumnWidthForRange(float $width, int $start, int $end)
+    {
+        $this->worksheetManager->setColumnWidthForRange($width, $start, $end);
     }
 
     /**

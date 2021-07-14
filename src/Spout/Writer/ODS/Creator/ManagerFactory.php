@@ -93,7 +93,7 @@ class ManagerFactory implements ManagerFactoryInterface
     {
         $styleRegistry = $this->createStyleRegistry($optionsManager);
 
-        return new StyleManager($styleRegistry);
+        return new StyleManager($styleRegistry, $optionsManager);
     }
 
     /**
