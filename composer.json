@@ -12,13 +12,13 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0",
+        "php": ">=7.2.0",
         "ext-zip": "*",
-        "ext-xmlreader" : "*"
+        "ext-xmlreader": "*",
+        "ext-dom": "*"
     },
     "require-dev": {
-        "ext-dom": "*",
-        "phpunit/phpunit": "^7",
+        "phpunit/phpunit": "^8",
         "friendsofphp/php-cs-fixer": "^2",
         "phpstan/phpstan": "^0.12.98"
     },
@@ -43,7 +43,7 @@
     },
     "config": {
         "platform": {
-            "php": "7.1"
+            "php": "7.2"
         }
     }
 }

@@ -16,9 +16,6 @@ use Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyInterface;
  */
 class SharedStringsManager
 {
-    /** Main namespace for the sharedStrings.xml file */
-    const MAIN_NAMESPACE_FOR_SHARED_STRINGS_XML = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
-
     /** Definition of XML nodes names used to parse data */
     const XML_NODE_SST = 'sst';
     const XML_NODE_SI = 'si';

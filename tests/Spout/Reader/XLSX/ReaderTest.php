@@ -75,6 +75,19 @@ class ReaderTest extends TestCase
     /**
      * @return void
      */
+    public function testReadShouldSupportInlineStringsWithMultipleValueNodes()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_multiple_value_nodes_in_inline_strings.xlsx');
+
+        $expectedRows = [
+            ['VALUE 1 VALUE 2 VALUE 3 VALUE 4', 's1 - B1'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
+    }
+
+    /**
+     * @return void
+     */
     public function testReadShouldSupportSheetsDefinitionInRandomOrder()
     {
         $allRows = $this->getAllRowsForFile('two_sheets_with_sheets_definition_in_reverse_order.xlsx');
@@ -539,6 +552,10 @@ class ReaderTest extends TestCase
      */
     public function testReadShouldBeProtectedAgainstQuadraticBlowupAttack()
     {
+        if (function_exists('xdebug_code_coverage_started') && xdebug_code_coverage_started()) {
+            $this->markTestSkipped('test not compatible with code coverage');
+        }
+
         $startTime = microtime(true);
 
         $this->getAllRowsForFile('attack_quadratic_blowup.xlsx');
@@ -675,11 +692,27 @@ class ReaderTest extends TestCase
         $allRows = $this->getAllRowsForFile('sheet_with_empty_cells.xlsx');
 
         $expectedRows = [
-            ['A', 'B', 'C'],
+            ['A', '', 'C'],
             ['0', '', ''],
             ['1', '1', ''],
         ];
         $this->assertEquals($expectedRows, $allRows, 'There should be 3 rows, with equal length');
+    }
+
+    /**
+     * https://github.com/box/spout/issues/184
+     * @return void
+     */
+    public function testReadShouldCreateOutputEmptyCellPreservedWhenNoDimensionsSpecified()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_empty_cells_without_dimensions.xlsx');
+
+        $expectedRows = [
+            ['A', '', 'C'],
+            ['0'],
+            ['1', '1'],
+        ];
+        $this->assertEquals($expectedRows, $allRows);
     }
 
     /**
@@ -697,6 +730,18 @@ class ReaderTest extends TestCase
         ];
 
         $this->assertEquals($expectedRows, $allRows, 'Cell values should not be trimmed');
+    }
+
+    /**
+     * https://github.com/box/spout/issues/726
+     * @return void
+     */
+    public function testReaderShouldSupportStrictOOXML()
+    {
+        $allRows = $this->getAllRowsForFile('sheet_with_strict_ooxml.xlsx');
+
+        $this->assertEquals('UNIQUE_ACCOUNT_IDENTIFIER', $allRows[0][0]);
+        $this->assertEquals('A2Z34NJA7N2ESJ', $allRows[1][0]);
     }
 
     /**

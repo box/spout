@@ -5,16 +5,14 @@ language: php
 
 matrix:
   include:
-    - php: 7.1
-      env: WITH_CS=true
-    - php: 7.1
-      env: WITH_PHPSTAN=true
-    - php: 7.1
-      env: WITH_PHPUNIT=true WITH_COVERAGE=true
     - php: 7.2
       env: WITH_PHPUNIT=true
+    - php: 7.2
+      env: WITH_PHPSTAN=true
     - php: 7.3
       env: WITH_PHPUNIT=true
+    - php: 7.3
+      env: WITH_PHPUNIT=true WITH_COVERAGE=true
     - php: 7.4
       env: WITH_PHPUNIT=true
 
@@ -47,7 +45,7 @@ before_script:
 script:
   - |
     if [[ "$WITH_CS" == "true" ]]; then
-        vendor/bin/php-cs-fixer fix --config=.php_cs.dist --verbose --diff --dry-run
+        vendor/bin/php-cs-fixer fix --config=.php_cs.dist --verbose --diff --dry-run --diff-format=udiff
     fi
   - |
     if [[ "$WITH_PHPSTAN" == "true" ]]; then
