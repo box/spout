@@ -28,7 +28,7 @@ class StyleManager
 
     /**
      * @see https://msdn.microsoft.com/en-us/library/ff529597(v=office.12).aspx
-     * @var array Mapping between built-in numFmtId and the associated format - for dates only
+     * @var array<int, string> Mapping between built-in numFmtId and the associated format - for dates only
      */
     protected static $builtinNumFmtIdToNumFormatMapping = [
         14 => 'm/d/yyyy', // @NOTE: ECMA spec is 'mm-dd-yy'
@@ -57,16 +57,16 @@ class StyleManager
     /** @var InternalEntityFactory Factory to create entities */
     protected $entityFactory;
 
-    /** @var array Array containing the IDs of built-in number formats indicating a date */
+    /** @var int[]|string[] Array containing the IDs of built-in number formats indicating a date */
     protected $builtinNumFmtIdIndicatingDates;
 
-    /** @var array Array containing a mapping NUM_FMT_ID => FORMAT_CODE */
+    /** @var array<int,string> Array containing a mapping NUM_FMT_ID => FORMAT_CODE */
     protected $customNumberFormats;
 
-    /** @var array Array containing a mapping STYLE_ID => [STYLE_ATTRIBUTES] */
+    /** @var array<mixed> Array containing a mapping STYLE_ID => [STYLE_ATTRIBUTES] */
     protected $stylesAttributes;
 
-    /** @var array Cache containing a mapping NUM_FMT_ID => IS_DATE_FORMAT. Used to avoid lots of recalculations */
+    /** @var array<int, bool> Cache containing a mapping NUM_FMT_ID => IS_DATE_FORMAT. Used to avoid lots of recalculations */
     protected $numFmtIdToIsDateFormatCache = [];
 
     /**
@@ -189,7 +189,7 @@ class StyleManager
     }
 
     /**
-     * @return array The custom number formats
+     * @return array<int,string>  The custom number formats
      */
     protected function getCustomNumberFormats()
     {
@@ -201,7 +201,7 @@ class StyleManager
     }
 
     /**
-     * @return array The styles attributes
+     * @return array<mixed>  The styles attributes
      */
     protected function getStylesAttributes()
     {
@@ -213,7 +213,7 @@ class StyleManager
     }
 
     /**
-     * @param array $styleAttributes Array containing the style attributes (2 keys: "applyNumberFormat" and "numFmtId")
+     * @param array<string, mixed> $styleAttributes Array containing the style attributes (2 keys: "applyNumberFormat" and "numFmtId")
      * @return bool Whether the style with the given attributes indicates that the number is a date
      */
     protected function doesStyleIndicateDate($styleAttributes)

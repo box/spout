@@ -3,23 +3,30 @@
 namespace Box\Spout\Common\Entity;
 
 use Box\Spout\Common\Entity\Style\Style;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class RowTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Style
+     * @return Style&MockObject
      */
     private function getStyleMock()
     {
-        return $this->createMock(Style::class);
+        /** @var Style&MockObject $styleMock */
+        $styleMock = $this->createMock(Style::class);
+
+        return $styleMock;
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Cell
+     * @return Cell&MockObject
      */
     private function getCellMock()
     {
-        return $this->createMock(Cell::class);
+        /** @var Cell&MockObject $cellMock */
+        $cellMock = $this->createMock(Cell::class);
+
+        return $cellMock;
     }
 
     /**

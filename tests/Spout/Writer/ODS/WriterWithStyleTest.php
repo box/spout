@@ -112,6 +112,7 @@ class WriterWithStyleTest extends TestCase
 
         $this->writeToODSFile([$dataRow], $fileName);
 
+        /** @var \DOMElement $textPropertiesElement */
         $textPropertiesElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'style:text-properties');
         $this->assertEquals(Style::DEFAULT_FONT_SIZE . 'pt', $textPropertiesElement->getAttribute('fo:font-size'));
         $this->assertEquals('#' . Style::DEFAULT_FONT_COLOR, $textPropertiesElement->getAttribute('fo:color'));
@@ -351,6 +352,7 @@ class WriterWithStyleTest extends TestCase
 
         $this->writeToODSFileWithDefaultStyle($dataRows, $fileName, $defaultStyle);
 
+        /** @var \DOMElement $textPropertiesElement */
         $textPropertiesElement = $this->getXmlSectionFromStylesXmlFile($fileName, 'style:text-properties');
         $this->assertEquals($defaultFontSize . 'pt', $textPropertiesElement->getAttribute('fo:font-size'));
     }
@@ -397,7 +399,7 @@ class WriterWithStyleTest extends TestCase
 
     /**
      * @param string $fileName
-     * @return \DOMNode[]
+     * @return \DOMElement[]
      */
     private function getCellElementsFromContentXmlFile($fileName)
     {
@@ -410,7 +412,9 @@ class WriterWithStyleTest extends TestCase
 
         while ($xmlReader->read()) {
             if ($xmlReader->isPositionedOnStartingNode('table:table-cell') && $xmlReader->getAttribute('office:value-type') !== null) {
-                $cellElements[] = $xmlReader->expand();
+                /** @var \DOMElement $element */
+                $element = $xmlReader->expand();
+                $cellElements[] = $element;
             }
         }
 
@@ -421,7 +425,7 @@ class WriterWithStyleTest extends TestCase
 
     /**
      * @param string $fileName
-     * @return \DOMNode[]
+     * @return \DOMElement[]
      */
     private function getCellStyleElementsFromContentXmlFile($fileName)
     {
@@ -434,7 +438,10 @@ class WriterWithStyleTest extends TestCase
 
         while ($xmlReader->read()) {
             if ($xmlReader->isPositionedOnStartingNode('style:style') && $xmlReader->getAttribute('style:family') === 'table-cell') {
-                $cellStyleElements[] = $xmlReader->expand();
+                /** @var \DOMElement $element */
+                $element = $xmlReader->expand();
+
+                $cellStyleElements[] = $element;
             }
         }
 
@@ -456,18 +463,23 @@ class WriterWithStyleTest extends TestCase
         $xmlReader->openFileInZip($resourcePath, 'styles.xml');
         $xmlReader->readUntilNodeFound($section);
 
-        return $xmlReader->expand();
+        /** @var \DOMNode $node */
+        $node =  $xmlReader->expand();
+
+        return $node;
     }
 
     /**
      * @param string $expectedValue
-     * @param \DOMNode $parentElement
+     * @param \DOMElement $parentElement
      * @param string $childTagName
      * @param string $attributeName
      * @return void
      */
     private function assertFirstChildHasAttributeEquals($expectedValue, $parentElement, $childTagName, $attributeName)
     {
-        $this->assertEquals($expectedValue, $parentElement->getElementsByTagName($childTagName)->item(0)->getAttribute($attributeName));
+        /** @var \DOMElement $child */
+        $child = $parentElement->getElementsByTagName($childTagName)->item(0);
+        $this->assertEquals($expectedValue, $child->getAttribute($attributeName));
     }
 }

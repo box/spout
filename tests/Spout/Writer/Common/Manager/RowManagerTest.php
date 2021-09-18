@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class RowManagerTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<mixed>
      */
     public function dataProviderForTestIsEmptyRow()
     {
@@ -26,7 +26,7 @@ class RowManagerTest extends TestCase
     /**
      * @dataProvider dataProviderForTestIsEmptyRow
      *
-     * @param array $cells
+     * @param array<Cell> $cells
      * @param bool $expectedIsEmpty
      * @return void
      */

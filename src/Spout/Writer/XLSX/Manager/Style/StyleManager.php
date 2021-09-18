@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\XLSX\Manager\Style;
 
+use Box\Spout\Common\Entity\Style\BorderPart;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Writer\XLSX\Helper\BorderHelper;
@@ -196,7 +197,7 @@ EOD;
 
             foreach ($sortOrder as $partName) {
                 if ($border->hasPart($partName)) {
-                    /** @var $part \Box\Spout\Common\Entity\Style\BorderPart */
+                    /** @var BorderPart $part */
                     $part = $border->getPart($partName);
                     $content .= BorderHelper::serializeBorderPart($part);
                 }

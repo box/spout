@@ -280,7 +280,7 @@ class WriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestAddRowShouldUseNumberColumnsRepeatedForRepeatedValues()
     {
@@ -296,7 +296,7 @@ class WriterTest extends TestCase
     /**
      * @dataProvider dataProviderForTestAddRowShouldUseNumberColumnsRepeatedForRepeatedValues
      *
-     * @param array $dataRow
+     * @param array<mixed> $dataRow
      * @param int $expectedNumTableCells
      * @param int $expectedNumColumnsRepeated
      * @return void
@@ -306,6 +306,7 @@ class WriterTest extends TestCase
         $fileName = 'test_add_row_should_use_number_columns_repeated.ods';
         $this->writeToODSFile($this->createRowsFromValues([$dataRow]), $fileName);
 
+        /** @var \DOMElement $sheetXmlNode */
         $sheetXmlNode = $this->getSheetXmlNode($fileName, 1);
         $tableCellNodes = $sheetXmlNode->getElementsByTagName('table-cell');
 
@@ -589,7 +590,10 @@ class WriterTest extends TestCase
     {
         $xmlReader = $this->moveReaderToCorrectTableNode($fileName, $sheetIndex);
 
-        return $xmlReader->expand();
+        /** @var \DOMNode $node */
+        $node =  $xmlReader->expand();
+
+        return $node;
     }
 
     /**

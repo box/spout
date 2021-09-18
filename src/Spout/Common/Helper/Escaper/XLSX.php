@@ -22,6 +22,7 @@ class XLSX implements EscaperInterface
 
     /**
      * Initializes the control characters if not already done
+     * @return void
      */
     protected function initIfNeeded()
     {

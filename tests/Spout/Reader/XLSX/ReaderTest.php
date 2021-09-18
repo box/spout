@@ -15,7 +15,7 @@ class ReaderTest extends TestCase
     use TestUsingResource;
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestReadShouldThrowException()
     {
@@ -42,7 +42,7 @@ class ReaderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestReadForAllWorksheets()
     {
@@ -703,7 +703,7 @@ class ReaderTest extends TestCase
      * @param string $fileName
      * @param bool $shouldFormatDates
      * @param bool $shouldPreserveEmptyRows
-     * @return array All the read rows the given file
+     * @return array<array> All the read rows the given file
      */
     private function getAllRowsForFile($fileName, $shouldFormatDates = false, $shouldPreserveEmptyRows = false)
     {

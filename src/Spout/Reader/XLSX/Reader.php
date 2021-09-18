@@ -20,10 +20,10 @@ class Reader extends ReaderAbstract
     /** @var ManagerFactory */
     protected $managerFactory;
 
-    /** @var \ZipArchive */
+    /** @var \ZipArchive|null */
     protected $zip;
 
-    /** @var \Box\Spout\Reader\XLSX\Manager\SharedStringsManager Manages shared strings */
+    /** @var \Box\Spout\Reader\XLSX\Manager\SharedStringsManager|null Manages shared strings */
     protected $sharedStringsManager;
 
     /** @var SheetIterator To iterator over the XLSX sheets */

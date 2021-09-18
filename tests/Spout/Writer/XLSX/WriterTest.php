@@ -120,6 +120,7 @@ class WriterTest extends TestCase
             [str_repeat('a', WorksheetManager::MAX_CHARACTERS_PER_CELL + 1)],
         ];
 
+        /* @phpstan-ignore-next-line */
         $this->writeToXLSXFile($dataRows, $fileName);
     }
 

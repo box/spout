@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class DateFormatHelperTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestToPHPDateFormat()
     {

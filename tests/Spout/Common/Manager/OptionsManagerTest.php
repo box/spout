@@ -14,10 +14,13 @@ class OptionsManagerTest extends TestCase
      */
     protected $optionsManager;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->optionsManager = new class() extends OptionsManagerAbstract {
-            protected function getSupportedOptions()
+            /**
+             * @return string[]
+             */
+            protected function getSupportedOptions() : array
             {
                 return [
                     'foo',

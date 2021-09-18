@@ -10,7 +10,7 @@ use Box\Spout\Common\Entity\Style\Style;
  */
 class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
 {
-    /** @var array [FONT_NAME] => [] Map whose keys contain all the fonts used */
+    /** @var array<string, bool> [FONT_NAME] => [] Map whose keys contain all the fonts used */
     protected $usedFontsSet = [];
 
     /**

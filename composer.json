@@ -17,8 +17,10 @@
         "ext-xmlreader" : "*"
     },
     "require-dev": {
+        "ext-dom": "*",
         "phpunit/phpunit": "^7",
-        "friendsofphp/php-cs-fixer": "^2"
+        "friendsofphp/php-cs-fixer": "^2",
+        "phpstan/phpstan": "^0.12.98"
     },
     "suggest": {
         "ext-iconv": "To handle non UTF-8 CSV files (if \"php-intl\" is not already installed or is too limited)",
@@ -28,6 +30,11 @@
         "psr-4": {
             "Box\\Spout\\": "src/Spout"
         }
+    },
+    "scripts": {
+        "phpunit": "vendor/bin/phpunit",
+        "phpstan": "vendor/bin/phpstan analyse",
+        "phpcs": "vendor/bin/php-cs-fixer fix --config=.php_cs.dist"
     },
     "extra": {
         "branch-alias": {

@@ -12,7 +12,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
 {
     /**
      * @see https://msdn.microsoft.com/en-us/library/ff529597(v=office.12).aspx
-     * @var array Mapping between built-in format and the associated numFmtId
+     * @var array<int|string, int> Mapping between built-in format and the associated numFmtId
      */
     protected static $builtinNumFormatToIdMapping = [
         'General' => 0,
@@ -65,12 +65,12 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
     ];
 
     /**
-     * @var array
+     * @var array<string, int>
      */
     protected $registeredFormats = [];
 
     /**
-     * @var array [STYLE_ID] => [FORMAT_ID] maps a style to a format declaration
+     * @var array <int, int> [STYLE_ID] => [FORMAT_ID] maps a style to a format declaration
      */
     protected $styleIdToFormatsMappingTable = [];
 
@@ -84,12 +84,12 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
     protected $formatIndex = 164;
 
     /**
-     * @var array
+     * @var array<string, int>
      */
     protected $registeredFills = [];
 
     /**
-     * @var array [STYLE_ID] => [FILL_ID] maps a style to a fill declaration
+     * @var array<int, int> [STYLE_ID] => [FILL_ID] maps a style to a fill declaration
      */
     protected $styleIdToFillMappingTable = [];
 
@@ -102,12 +102,12 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
     protected $fillIndex = 2;
 
     /**
-     * @var array
+     * @var array<string, int>
      */
     protected $registeredBorders = [];
 
     /**
-     * @var array [STYLE_ID] => [BORDER_ID] maps a style to a border declaration
+     * @var array<int, int> [STYLE_ID] => [BORDER_ID] maps a style to a border declaration
      */
     protected $styleIdToBorderMappingTable = [];
 
@@ -132,8 +132,9 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
      *
      * @param Style $style
      */
-    protected function registerFormat(Style $style)
+    protected function registerFormat(Style $style) : void
     {
+        /** @var int $styleId */
         $styleId = $style->getId();
 
         $format = $style->getFormat();
@@ -172,8 +173,9 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
      *
      * @param Style $style
      */
-    private function registerFill(Style $style)
+    private function registerFill(Style $style) : void
     {
+        /** @var int $styleId */
         $styleId = $style->getId();
 
         // Currently - only solid backgrounds are supported
@@ -215,8 +217,9 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
      *
      * @param Style $style
      */
-    private function registerBorder(Style $style)
+    private function registerBorder(Style $style) : void
     {
+        /** @var int $styleId */
         $styleId = $style->getId();
 
         if ($style->shouldApplyBorder()) {
@@ -251,7 +254,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
     }
 
     /**
-     * @return array
+     * @return array<string, int>
      */
     public function getRegisteredFills()
     {
@@ -259,7 +262,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
     }
 
     /**
-     * @return array
+     * @return array<string, int>
      */
     public function getRegisteredBorders()
     {
@@ -267,7 +270,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
     }
 
     /**
-     * @return array
+     * @return array<string, int>
      */
     public function getRegisteredFormats()
     {

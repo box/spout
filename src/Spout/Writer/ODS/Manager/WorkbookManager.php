@@ -16,6 +16,7 @@ class WorkbookManager extends WorkbookManagerAbstract
     /**
      * Maximum number of rows a ODS sheet can contain
      * @see https://ask.libreoffice.org/en/question/8631/upper-limit-to-number-of-rows-in-calc/
+     * @var int
      */
     protected static $maxRowsPerWorksheet = 1048576;
 

@@ -12,7 +12,7 @@ use Box\Spout\Reader\ReaderAbstract;
  */
 class Reader extends ReaderAbstract
 {
-    /** @var \ZipArchive */
+    /** @var \ZipArchive|null */
     protected $zip;
 
     /** @var SheetIterator To iterator over the ODS sheets */

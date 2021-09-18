@@ -5,7 +5,6 @@ namespace Box\Spout\Writer\Common\Creator;
 use Box\Spout\Common\Entity\Cell;
 use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Style\Style;
-use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
 use Box\Spout\Writer\WriterInterface;
 
@@ -46,11 +45,10 @@ class WriterEntityFactory
      */
     public static function createCSVWriter()
     {
-        try {
-            return WriterFactory::createFromType(Type::CSV);
-        } catch (UnsupportedTypeException $e) {
-            // should never happen
-        }
+        /** @var \Box\Spout\Writer\CSV\Writer $csvWriter */
+        $csvWriter = WriterFactory::createFromType(Type::CSV);
+
+        return $csvWriter;
     }
 
     /**
@@ -60,11 +58,10 @@ class WriterEntityFactory
      */
     public static function createXLSXWriter()
     {
-        try {
-            return WriterFactory::createFromType(Type::XLSX);
-        } catch (UnsupportedTypeException $e) {
-            // should never happen
-        }
+        /** @var \Box\Spout\Writer\XLSX\Writer $xlsxWriter */
+        $xlsxWriter = WriterFactory::createFromType(Type::XLSX);
+
+        return $xlsxWriter;
     }
 
     /**
@@ -74,11 +71,10 @@ class WriterEntityFactory
      */
     public static function createODSWriter()
     {
-        try {
-            return WriterFactory::createFromType(Type::ODS);
-        } catch (UnsupportedTypeException $e) {
-            // should never happen
-        }
+        /** @var \Box\Spout\Writer\ODS\Writer $odsWriter */
+        $odsWriter = WriterFactory::createFromType(Type::ODS);
+
+        return $odsWriter;
     }
 
     /**
@@ -92,7 +88,7 @@ class WriterEntityFactory
     }
 
     /**
-     * @param array $cellValues
+     * @param array<mixed> $cellValues
      * @param Style|null $rowStyle
      * @return Row
      */

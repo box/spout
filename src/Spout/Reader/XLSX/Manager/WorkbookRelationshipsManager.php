@@ -33,7 +33,7 @@ class WorkbookRelationshipsManager
     /** @var InternalEntityFactory Factory to create entities */
     private $entityFactory;
 
-    /** @var array Cache of the already read workbook relationships: [TYPE] => [FILE_NAME] */
+    /** @var array<string, string> Cache of the already read workbook relationships: [TYPE] => [FILE_NAME] */
     private $cachedWorkbookRelationships;
 
     /**
@@ -107,7 +107,7 @@ class WorkbookRelationshipsManager
      * It caches the result so that the file is read only once.
      *
      * @throws \Box\Spout\Common\Exception\IOException If workbook.xml.rels can't be read
-     * @return array
+     * @return array<string, string>
      */
     private function getWorkbookRelationships()
     {

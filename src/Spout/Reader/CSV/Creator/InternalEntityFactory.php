@@ -84,7 +84,7 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
     }
 
     /**
-     * @param array $cellValues
+     * @param array<mixed> $cellValues
      * @return Row
      */
     public function createRowFromArray(array $cellValues = [])

@@ -33,7 +33,7 @@ class Workbook
     /**
      * @param Worksheet[] $worksheets
      */
-    public function setWorksheets($worksheets)
+    public function setWorksheets($worksheets) : void
     {
         $this->worksheets = $worksheets;
     }

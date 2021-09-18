@@ -33,7 +33,10 @@ class GlobalFunctionsHelper
      */
     public function fgets($handle, $length = null)
     {
-        return \fgets($handle, $length);
+        /** @var string $fgets */
+        $fgets =  \fgets($handle, $length);
+
+        return $fgets;
     }
 
     /**
@@ -46,7 +49,10 @@ class GlobalFunctionsHelper
      */
     public function fputs($handle, $string)
     {
-        return \fputs($handle, $string);
+        /** @var int $fputs */
+        $fputs = \fputs($handle, $string);
+
+        return $fputs;
     }
 
     /**
@@ -82,7 +88,7 @@ class GlobalFunctionsHelper
      * @param int|null $length
      * @param string|null $delimiter
      * @param string|null $enclosure
-     * @return array
+     * @return array<mixed>|false
      */
     public function fgetcsv($handle, $length = null, $delimiter = null, $enclosure = null)
     {
@@ -100,10 +106,10 @@ class GlobalFunctionsHelper
      * @see fputcsv()
      *
      * @param resource $handle
-     * @param array $fields
+     * @param array<mixed> $fields
      * @param string|null $delimiter
      * @param string|null $enclosure
-     * @return int
+     * @return int|false
      */
     public function fputcsv($handle, array $fields, $delimiter = null, $enclosure = null)
     {
@@ -126,7 +132,10 @@ class GlobalFunctionsHelper
      */
     public function fwrite($handle, $string)
     {
-        return \fwrite($handle, $string);
+        /** @var int $fwrite */
+        $fwrite = \fwrite($handle, $string);
+
+        return $fwrite;
     }
 
     /**
@@ -176,7 +185,10 @@ class GlobalFunctionsHelper
     {
         $realFilePath = $this->convertToUseRealPath($filePath);
 
-        return \file_get_contents($realFilePath);
+        /** @var string $content */
+        $content = \file_get_contents($realFilePath);
+
+        return $content;
     }
 
     /**
@@ -197,7 +209,9 @@ class GlobalFunctionsHelper
                 $realFilePath = 'zip://' . \realpath($documentPath) . '#' . $documentInsideZipPath;
             }
         } else {
-            $realFilePath = \realpath($filePath);
+            /** @var string $realPath */
+            $realPath = \realpath($filePath);
+            $realFilePath = $realPath;
         }
 
         return $realFilePath;
@@ -308,7 +322,7 @@ class GlobalFunctionsHelper
      * Wrapper around global function stream_get_wrappers()
      * @see stream_get_wrappers()
      *
-     * @return array
+     * @return array<int, string>
      */
     public function stream_get_wrappers()
     {

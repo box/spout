@@ -8,7 +8,7 @@ namespace Box\Spout\Writer\Common\Helper;
  */
 class CellHelper
 {
-    /** @var array Cache containing the mapping column index => column letters */
+    /** @var array<int, string> Cache containing the mapping column index => column letters */
     private static $columnIndexToColumnLettersCache = [];
 
     /**

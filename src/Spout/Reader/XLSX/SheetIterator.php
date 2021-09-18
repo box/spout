@@ -9,6 +9,7 @@ use Box\Spout\Reader\XLSX\Manager\SheetManager;
 /**
  * Class SheetIterator
  * Iterate over XLSX sheet.
+ * @implements IteratorInterface<Sheet>
  */
 class SheetIterator implements IteratorInterface
 {

@@ -7,6 +7,9 @@ use Box\Spout\Common\Entity\Style\BorderPart;
 
 class BorderHelper
 {
+    /**
+     * @var array<string, array>
+     */
     public static $xlsxStyleMap = [
         Border::STYLE_SOLID => [
             Border::WIDTH_THIN   => 'thin',

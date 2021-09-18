@@ -27,7 +27,7 @@ class EncodingHelper
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
 
-    /** @var array Map representing the encodings supporting BOMs (key) and their associated BOM (value) */
+    /** @var array<string, string> Map representing the encodings supporting BOMs (key) and their associated BOM (value) */
     protected $supportedEncodingsWithBom;
 
     /**
@@ -143,7 +143,7 @@ class EncodingHelper
             throw new EncodingConversionException("The conversion from $sourceEncoding to $targetEncoding is not supported. Please install \"iconv\" or \"PHP Intl\".");
         }
 
-        if ($convertedString === false) {
+        if (!is_string($convertedString)) {
             throw new EncodingConversionException("The conversion from $sourceEncoding to $targetEncoding failed.");
         }
 

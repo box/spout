@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 class XLSXTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestEscape()
     {
@@ -46,7 +46,7 @@ class XLSXTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestUnescape()
     {

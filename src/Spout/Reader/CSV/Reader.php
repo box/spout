@@ -13,7 +13,7 @@ use Box\Spout\Reader\ReaderAbstract;
  */
 class Reader extends ReaderAbstract
 {
-    /** @var resource Pointer to the file to be written */
+    /** @var resource|null Pointer to the file to be written */
     protected $filePointer;
 
     /** @var SheetIterator To iterator over the CSV unique "sheet" */
@@ -84,13 +84,16 @@ class Reader extends ReaderAbstract
      */
     protected function openReader($filePath)
     {
-        $this->originalAutoDetectLineEndings = \ini_get('auto_detect_line_endings');
+        /** @var string $autoDetectLineEndings */
+        $autoDetectLineEndings = \ini_get('auto_detect_line_endings');
+        $this->originalAutoDetectLineEndings = $autoDetectLineEndings;
         \ini_set('auto_detect_line_endings', '1');
 
-        $this->filePointer = $this->globalFunctionsHelper->fopen($filePath, 'r');
-        if (!$this->filePointer) {
+        $filePointer = $this->globalFunctionsHelper->fopen($filePath, 'r');
+        if (!is_resource($filePointer)) {
             throw new IOException("Could not open file $filePath for reading.");
         }
+        $this->filePointer = $filePointer;
 
         /** @var InternalEntityFactory $entityFactory */
         $entityFactory = $this->entityFactory;

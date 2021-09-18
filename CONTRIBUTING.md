@@ -68,6 +68,10 @@ This will add your changes on top of what's already in upstream, minimizing merg
 
 Make sure that all tests are passing before submitting a pull request.
 
+- Phpunit: `composer phpunit`
+- Phpstan: `composer phpstan`
+- Php-cs-fixer: `composer phpcs`
+
 ### Step 8: Send the pull request
 
 Send the pull request from your feature branch to us. Be sure to include a description that lets us know what work you did.

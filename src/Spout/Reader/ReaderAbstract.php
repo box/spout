@@ -45,15 +45,15 @@ abstract class ReaderAbstract implements ReaderInterface
 
     /**
      * Returns an iterator to iterate over sheets.
-     *
-     * @return IteratorInterface To iterate over sheets
+     * @template T
+     * @return IteratorInterface<T>|null To iterate over sheets
      */
     abstract protected function getConcreteSheetIterator();
 
     /**
      * Closes the reader. To be used after reading the file.
      *
-     * @return ReaderAbstract
+     * @return void
      */
     abstract protected function closeReader();
 
@@ -145,7 +145,10 @@ abstract class ReaderAbstract implements ReaderInterface
         }
 
         // Need to use realpath to fix "Can't open file" on some Windows setup
-        return \realpath($filePath);
+        /** @var string $path */
+        $path = \realpath($filePath);
+
+        return $path;
     }
 
     /**
@@ -211,7 +214,8 @@ abstract class ReaderAbstract implements ReaderInterface
      * Returns an iterator to iterate over sheets.
      *
      * @throws \Box\Spout\Reader\Exception\ReaderNotOpenedException If called before opening the reader
-     * @return \Iterator To iterate over sheets
+     * @template T
+     * @return IteratorInterface<T> To iterate over sheets
      */
     public function getSheetIterator()
     {

@@ -32,7 +32,7 @@ class BorderPart
     protected $width;
 
     /**
-     * @var array Allowed style constants for parts.
+     * @var array<string> Allowed style constants for parts.
      */
     protected static $allowedStyles = [
         'none',
@@ -43,7 +43,7 @@ class BorderPart
     ];
 
     /**
-     * @var array Allowed names constants for border parts.
+     * @var array<string> Allowed names constants for border parts.
      */
     protected static $allowedNames = [
         'left',
@@ -53,7 +53,7 @@ class BorderPart
     ];
 
     /**
-     * @var array Allowed width constants for border parts.
+     * @var array<string> Allowed width constants for border parts.
      */
     protected static $allowedWidths = [
         'thin',
@@ -159,7 +159,7 @@ class BorderPart
     }
 
     /**
-     * @return array
+     * @return array<string>
      */
     public static function getAllowedStyles()
     {
@@ -167,7 +167,7 @@ class BorderPart
     }
 
     /**
-     * @return array
+     * @return array<string>
      */
     public static function getAllowedNames()
     {
@@ -175,7 +175,7 @@ class BorderPart
     }
 
     /**
-     * @return array
+     * @return array<string>
      */
     public static function getAllowedWidths()
     {

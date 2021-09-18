@@ -61,6 +61,7 @@ class WorksheetManager implements WorksheetManagerInterface
      */
     public function startSheet(Worksheet $worksheet)
     {
+        /** @var resource $sheetFilePointer */
         $sheetFilePointer = \fopen($worksheet->getFilePath(), 'w');
         $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
 
@@ -85,7 +86,7 @@ class WorksheetManager implements WorksheetManagerInterface
      * Returns the table XML root node as string.
      *
      * @param Worksheet $worksheet
-     * @return string <table> node as string
+     * @return string "<table> node as string"
      */
     public function getTableElementStartAsString(Worksheet $worksheet)
     {

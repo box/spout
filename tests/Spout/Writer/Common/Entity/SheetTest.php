@@ -25,7 +25,7 @@ class SheetTest extends TestCase
 
     /**
      * @param int $sheetIndex
-     * @param int $associatedWorkbookId
+     * @param string $associatedWorkbookId
      * @return Sheet
      */
     private function createSheet($sheetIndex, $associatedWorkbookId)
@@ -57,7 +57,7 @@ class SheetTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForInvalidSheetNames()
     {

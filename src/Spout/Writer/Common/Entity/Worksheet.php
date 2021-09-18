@@ -11,10 +11,10 @@ class Worksheet
     /** @var string Path to the XML file that will contain the sheet data */
     private $filePath;
 
-    /** @var resource Pointer to the sheet data file (e.g. xl/worksheets/sheet1.xml) */
+    /** @var resource|null Pointer to the sheet data file (e.g. xl/worksheets/sheet1.xml) */
     private $filePointer;
 
-    /** @var Sheet The "external" sheet */
+    /** @var Sheet|null The "external" sheet */
     private $externalSheet;
 
     /** @var int Maximum number of columns among all the written rows */
@@ -57,7 +57,7 @@ class Worksheet
     /**
      * @param resource $filePointer
      */
-    public function setFilePointer($filePointer)
+    public function setFilePointer($filePointer) : void
     {
         $this->filePointer = $filePointer;
     }
@@ -81,7 +81,7 @@ class Worksheet
     /**
      * @param int $maxNumColumns
      */
-    public function setMaxNumColumns($maxNumColumns)
+    public function setMaxNumColumns($maxNumColumns) : void
     {
         $this->maxNumColumns = $maxNumColumns;
     }
@@ -97,7 +97,7 @@ class Worksheet
     /**
      * @param int $lastWrittenRowIndex
      */
-    public function setLastWrittenRowIndex($lastWrittenRowIndex)
+    public function setLastWrittenRowIndex($lastWrittenRowIndex) : void
     {
         $this->lastWrittenRowIndex = $lastWrittenRowIndex;
     }

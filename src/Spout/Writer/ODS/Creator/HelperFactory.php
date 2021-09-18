@@ -30,7 +30,7 @@ class HelperFactory extends \Box\Spout\Common\Creator\HelperFactory
     }
 
     /**
-     * @param $entityFactory
+     * @param InternalEntityFactory $entityFactory
      * @return ZipHelper
      */
     private function createZipHelper($entityFactory)

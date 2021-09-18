@@ -394,10 +394,16 @@ class WriterWithStyleTest extends TestCase
             '3 cell xfs present - a default one and two custom ones'
         );
 
-        $firstCustomId = $styleXfsElements->childNodes->item(1)->getAttribute('fillId');
+        /** @var \DOMElement $firstItem */
+        $firstItem = $styleXfsElements->childNodes->item(1);
+
+        $firstCustomId = $firstItem->getAttribute('fillId');
         $this->assertEquals(2, (int) $firstCustomId, 'The first custom fill id should have the index 2');
 
-        $secondCustomId = $styleXfsElements->childNodes->item(2)->getAttribute('fillId');
+        /** @var \DOMElement $secondItem */
+        $secondItem = $styleXfsElements->childNodes->item(2);
+
+        $secondCustomId = $secondItem->getAttribute('fillId');
         $this->assertEquals(2, (int) $secondCustomId, 'The second custom fill id should have the index 2');
     }
 
@@ -468,7 +474,6 @@ class WriterWithStyleTest extends TestCase
             $borderParts = $borderNode->childNodes;
             $ordering = [];
 
-            /** @var \DOMText $part */
             foreach ($borderParts as $part) {
                 if ($part instanceof \DOMElement) {
                     $ordering[] = $part->nodeName;
@@ -617,6 +622,7 @@ class WriterWithStyleTest extends TestCase
         $xmlReader->openFileInZip($resourcePath, 'xl/styles.xml');
         $xmlReader->readUntilNodeFound($section);
 
+        /** @var \DOMElement $xmlSection */
         $xmlSection = $xmlReader->expand();
 
         $xmlReader->close();
@@ -626,7 +632,7 @@ class WriterWithStyleTest extends TestCase
 
     /**
      * @param string $fileName
-     * @return \DOMNode[]
+     * @return \DOMElement[]
      */
     private function getCellElementsFromSheetXmlFile($fileName)
     {
@@ -639,7 +645,9 @@ class WriterWithStyleTest extends TestCase
 
         while ($xmlReader->read()) {
             if ($xmlReader->isPositionedOnStartingNode('c')) {
-                $cellElements[] = $xmlReader->expand();
+                /** @var \DOMElement $element */
+                $element = $xmlReader->expand();
+                $cellElements[] = $element;
             }
         }
 
@@ -650,19 +658,21 @@ class WriterWithStyleTest extends TestCase
 
     /**
      * @param string $expectedValue
-     * @param \DOMNode $parentElement
+     * @param \DOMElement $parentElement
      * @param string $childTagName
      * @param string $attributeName
      * @return void
      */
     private function assertFirstChildHasAttributeEquals($expectedValue, $parentElement, $childTagName, $attributeName)
     {
-        $this->assertEquals($expectedValue, $parentElement->getElementsByTagName($childTagName)->item(0)->getAttribute($attributeName));
+        /** @var \DOMElement $child */
+        $child = $parentElement->getElementsByTagName($childTagName)->item(0);
+        $this->assertEquals($expectedValue, $child->getAttribute($attributeName));
     }
 
     /**
      * @param int $expectedNumber
-     * @param \DOMNode $parentElement
+     * @param \DOMElement $parentElement
      * @param string $message
      * @return void
      */
@@ -672,7 +682,7 @@ class WriterWithStyleTest extends TestCase
     }
 
     /**
-     * @param \DOMNode $parentElement
+     * @param \DOMElement $parentElement
      * @param string $childTagName
      * @return void
      */

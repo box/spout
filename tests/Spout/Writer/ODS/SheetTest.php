@@ -95,7 +95,7 @@ class SheetTest extends TestCase
     /**
      * @param string $fileName
      * @param string $sheetName
-     * @return Sheet
+     * @return void
      */
     private function writeDataAndReturnSheetWithCustomName($fileName, $sheetName)
     {

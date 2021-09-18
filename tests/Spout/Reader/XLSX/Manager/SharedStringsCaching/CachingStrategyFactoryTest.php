@@ -3,6 +3,7 @@
 namespace Box\Spout\Reader\XLSX\Manager\SharedStringsCaching;
 
 use Box\Spout\Reader\XLSX\Creator\HelperFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 class CachingStrategyFactoryTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestCreateBestCachingStrategy()
     {
@@ -36,7 +37,7 @@ class CachingStrategyFactoryTest extends TestCase
      */
     public function testCreateBestCachingStrategy($sharedStringsUniqueCount, $memoryLimitInKB, $expectedStrategyClassName)
     {
-        /** @var CachingStrategyFactory|\PHPUnit_Framework_MockObject_MockObject $factoryStub */
+        /** @var CachingStrategyFactory&MockObject $factoryStub */
         $factoryStub = $this
             ->getMockBuilder('\Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory')
             ->disableOriginalConstructor()
@@ -46,7 +47,7 @@ class CachingStrategyFactoryTest extends TestCase
         $factoryStub->method('getMemoryLimitInKB')->willReturn($memoryLimitInKB);
 
         $tempFolder = sys_get_temp_dir();
-        $helperFactory = new HelperFactory($factoryStub);
+        $helperFactory = new HelperFactory();
         $strategy = $factoryStub->createBestCachingStrategy($sharedStringsUniqueCount, $tempFolder, $helperFactory);
 
         $fullExpectedStrategyClassName = 'Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\\' . $expectedStrategyClassName;
@@ -56,7 +57,7 @@ class CachingStrategyFactoryTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestGetMemoryLimitInKB()
     {
@@ -84,7 +85,7 @@ class CachingStrategyFactoryTest extends TestCase
      */
     public function testGetMemoryLimitInKB($memoryLimitFormatted, $expectedMemoryLimitInKB)
     {
-        /** @var CachingStrategyFactory|\PHPUnit_Framework_MockObject_MockObject $factoryStub */
+        /** @var CachingStrategyFactory&MockObject $factoryStub */
         $factoryStub = $this
             ->getMockBuilder('\Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory')
             ->disableOriginalConstructor()

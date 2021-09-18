@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 class RowManagerTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestFillMissingIndexesWithEmptyCells()
     {
@@ -34,7 +34,7 @@ class RowManagerTest extends TestCase
      * @param Cell[]|null $rowCells
      * @param Cell[] $expectedFilledCells
      */
-    public function testFillMissingIndexesWithEmptyCells($rowCells, $expectedFilledCells)
+    public function testFillMissingIndexesWithEmptyCells($rowCells, $expectedFilledCells) : void
     {
         $rowManager = $this->createRowManager();
 
@@ -48,7 +48,7 @@ class RowManagerTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestIsEmptyRow()
     {
@@ -64,7 +64,7 @@ class RowManagerTest extends TestCase
     /**
      * @dataProvider dataProviderForTestIsEmptyRow
      *
-     * @param array $cells
+     * @param array<Cell> $cells
      * @param bool $expectedIsEmpty
      * @return void
      */
@@ -81,10 +81,13 @@ class RowManagerTest extends TestCase
      */
     private function createRowManager()
     {
-        $entityFactory = new InternalEntityFactory(
-            $this->createMock(ManagerFactory::class),
-            $this->createMock(HelperFactory::class)
-        );
+        /** @var ManagerFactory $managerFactory */
+        $managerFactory = $this->createMock(ManagerFactory::class);
+
+        /** @var HelperFactory $helperFactory */
+        $helperFactory = $this->createMock(HelperFactory::class);
+
+        $entityFactory = new InternalEntityFactory($managerFactory, $helperFactory);
 
         return new RowManager($entityFactory);
     }

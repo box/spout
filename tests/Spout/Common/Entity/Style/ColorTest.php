@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 class ColorTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestRGB()
     {
@@ -54,7 +54,7 @@ class ColorTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestRGBAInvalidColorComponents()
     {

@@ -2,7 +2,6 @@
 
 namespace Box\Spout\Reader\Common\Creator;
 
-use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
 use Box\Spout\Reader\ReaderInterface;
 
@@ -31,11 +30,10 @@ class ReaderEntityFactory
      */
     public static function createCSVReader()
     {
-        try {
-            return ReaderFactory::createFromType(Type::CSV);
-        } catch (UnsupportedTypeException $e) {
-            // should never happen
-        }
+        /** @var \Box\Spout\Reader\CSV\Reader $csvReader */
+        $csvReader = ReaderFactory::createFromType(Type::CSV);
+
+        return $csvReader;
     }
 
     /**
@@ -45,11 +43,10 @@ class ReaderEntityFactory
      */
     public static function createXLSXReader()
     {
-        try {
-            return ReaderFactory::createFromType(Type::XLSX);
-        } catch (UnsupportedTypeException $e) {
-            // should never happen
-        }
+        /** @var \Box\Spout\Reader\XLSX\Reader $xlsxReader */
+        $xlsxReader =  ReaderFactory::createFromType(Type::XLSX);
+
+        return $xlsxReader;
     }
 
     /**
@@ -59,10 +56,9 @@ class ReaderEntityFactory
      */
     public static function createODSReader()
     {
-        try {
-            return ReaderFactory::createFromType(Type::ODS);
-        } catch (UnsupportedTypeException $e) {
-            // should never happen
-        }
+        /** @var \Box\Spout\Reader\ODS\Reader $odsReader */
+        $odsReader = ReaderFactory::createFromType(Type::ODS);
+
+        return $odsReader;
     }
 }

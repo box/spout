@@ -210,6 +210,7 @@ EOD;
 
         // Append sheets content to "content.xml"
         $contentXmlFilePath = $this->rootFolder . '/' . self::CONTENT_XML_FILE_NAME;
+        /** @var resource $contentXmlHandle */
         $contentXmlHandle = \fopen($contentXmlFilePath, 'a');
 
         foreach ($worksheets as $worksheet) {
@@ -241,6 +242,7 @@ EOD;
      */
     protected function copyFileContentsToTarget($sourceFilePath, $targetResource)
     {
+        /** @var resource $sourceHandle */
         $sourceHandle = \fopen($sourceFilePath, 'r');
         \stream_copy_to_stream($sourceHandle, $targetResource);
         \fclose($sourceHandle);

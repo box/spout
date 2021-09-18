@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
  */
 class FileSystemHelperTest extends TestCase
 {
-    /** @var \Box\Spout\Writer\XLSX\Helper\FileSystemHelper */
+    /** @var FileSystemHelper */
     protected $fileSystemHelper;
 
     /**

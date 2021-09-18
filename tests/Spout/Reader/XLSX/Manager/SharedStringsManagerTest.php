@@ -19,7 +19,7 @@ class SharedStringsManagerTest extends TestCase
 {
     use TestUsingResource;
 
-    /** @var SharedStringsManager */
+    /** @var SharedStringsManager|null */
     private $sharedStringsManager;
 
     /**
@@ -144,6 +144,7 @@ class SharedStringsManagerTest extends TestCase
     public function testGetStringAtIndexWithFileBasedStrategy()
     {
         // force the file-based strategy by setting no memory limit
+        /** @var string $originalMemoryLimit */
         $originalMemoryLimit = ini_get('memory_limit');
         ini_set('memory_limit', '-1');
 

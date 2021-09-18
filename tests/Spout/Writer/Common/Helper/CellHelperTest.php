@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 class CellHelperTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestGetColumnLettersFromColumnIndex()
     {

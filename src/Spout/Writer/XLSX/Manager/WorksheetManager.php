@@ -107,6 +107,7 @@ EOD;
      */
     public function startSheet(Worksheet $worksheet)
     {
+        /** @var resource $sheetFilePointer */
         $sheetFilePointer = \fopen($worksheet->getFilePath(), 'w');
         $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
 

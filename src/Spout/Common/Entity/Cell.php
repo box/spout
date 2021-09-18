@@ -65,7 +65,7 @@ class Cell
     protected $style;
 
     /**
-     * @param $value mixed
+     * @param mixed $value
      * @param Style|null $style
      */
     public function __construct($value, Style $style = null)
@@ -77,7 +77,7 @@ class Cell
     /**
      * @param mixed|null $value
      */
-    public function setValue($value)
+    public function setValue($value) : void
     {
         $this->value = $value;
         $this->type = $this->detectType($value);
@@ -102,7 +102,7 @@ class Cell
     /**
      * @param Style|null $style
      */
-    public function setStyle($style)
+    public function setStyle($style) : void
     {
         $this->style = $style ?: new Style();
     }
@@ -126,7 +126,7 @@ class Cell
     /**
      * @param int $type
      */
-    public function setType($type)
+    public function setType($type) : void
     {
         $this->type = $type;
     }

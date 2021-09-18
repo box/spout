@@ -13,6 +13,9 @@ abstract class CellAlignment
     const CENTER = 'center';
     const JUSTIFY = 'justify';
 
+    /**
+     * @var array<string, int>
+     */
     private static $VALID_ALIGNMENTS = [
         self::LEFT => 1,
         self::RIGHT => 1,

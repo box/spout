@@ -4,7 +4,9 @@ namespace Box\Spout\Reader\XLSX\Helper;
 
 use Box\Spout\Common\Helper\Escaper;
 use Box\Spout\Reader\Exception\InvalidValueException;
+use Box\Spout\Reader\XLSX\Manager\SharedStringsManager;
 use Box\Spout\Reader\XLSX\Manager\StyleManager;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 class CellValueFormatterTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestExcelDate()
     {
@@ -72,6 +74,7 @@ class CellValueFormatterTest extends TestCase
             ->with(0)
             ->will($this->returnValue((object) ['nodeValue' => $nodeValue]));
 
+        /** @var \DOMElement&MockObject $nodeMock */
         $nodeMock = $this->createMock(\DOMElement::class);
 
         $nodeMock
@@ -88,7 +91,7 @@ class CellValueFormatterTest extends TestCase
             ->with(CellValueFormatter::XML_NODE_VALUE)
             ->will($this->returnValue($nodeListMock));
 
-        /** @var StyleManager|\PHPUnit_Framework_MockObject_MockObject $styleManagerMock */
+        /** @var StyleManager&MockObject $styleManagerMock */
         $styleManagerMock = $this->createMock(StyleManager::class);
 
         $styleManagerMock
@@ -97,7 +100,10 @@ class CellValueFormatterTest extends TestCase
             ->with(123)
             ->will($this->returnValue(true));
 
-        $formatter = new CellValueFormatter(null, $styleManagerMock, false, $shouldUse1904Dates, new Escaper\XLSX());
+        /** @var SharedStringsManager $sharedStringManager */
+        $sharedStringManager = $this->createMock(SharedStringsManager::class);
+
+        $formatter = new CellValueFormatter($sharedStringManager, $styleManagerMock, false, $shouldUse1904Dates, new Escaper\XLSX());
 
         try {
             $result = $formatter->extractAndFormatNodeValue($nodeMock);
@@ -106,7 +112,9 @@ class CellValueFormatterTest extends TestCase
                 $this->fail('An exception should have been thrown');
             } else {
                 $this->assertInstanceOf(\DateTime::class, $result);
-                $this->assertSame($expectedDateAsString, $result->format('Y-m-d H:i:s'));
+                /** @var \DateTime $datetime */
+                $datetime = $result;
+                $this->assertSame($expectedDateAsString, $datetime->format('Y-m-d H:i:s'));
             }
         } catch (InvalidValueException $exception) {
             // do nothing
@@ -114,7 +122,7 @@ class CellValueFormatterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestFormatNumericCellValueWithNumbers()
     {
@@ -149,14 +157,17 @@ class CellValueFormatterTest extends TestCase
      */
     public function testFormatNumericCellValueWithNumbers($value, $expectedFormattedValue, $expectedType)
     {
-        /** @var StyleManager|\PHPUnit_Framework_MockObject_MockObject $styleManagerMock */
+        /** @var StyleManager&MockObject $styleManagerMock */
         $styleManagerMock = $this->createMock(StyleManager::class);
         $styleManagerMock
             ->expects($this->once())
             ->method('shouldFormatNumericValueAsDate')
             ->will($this->returnValue(false));
 
-        $formatter = new CellValueFormatter(null, $styleManagerMock, false, false, new Escaper\XLSX());
+        /** @var SharedStringsManager $sharedStringManager */
+        $sharedStringManager = $this->createMock(SharedStringsManager::class);
+
+        $formatter = new CellValueFormatter($sharedStringManager, $styleManagerMock, false, false, new Escaper\XLSX());
         $formattedValue = \ReflectionHelper::callMethodOnObject($formatter, 'formatNumericCellValue', $value, 0);
 
         $this->assertEquals($expectedFormattedValue, $formattedValue);
@@ -164,7 +175,7 @@ class CellValueFormatterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestFormatStringCellValue()
     {
@@ -199,7 +210,13 @@ class CellValueFormatterTest extends TestCase
             ->with(CellValueFormatter::XML_NODE_INLINE_STRING_VALUE)
             ->will($this->returnValue($nodeListMock));
 
-        $formatter = new CellValueFormatter(null, null, false, false, new Escaper\XLSX());
+        /** @var SharedStringsManager $sharedStringManager */
+        $sharedStringManager = $this->createMock(SharedStringsManager::class);
+
+        /** @var StyleManager $styleManager */
+        $styleManager = $this->createMock(StyleManager::class);
+
+        $formatter = new CellValueFormatter($sharedStringManager, $styleManager, false, false, new Escaper\XLSX());
         $formattedValue = \ReflectionHelper::callMethodOnObject($formatter, 'formatInlineStringCellValue', $nodeMock);
 
         $this->assertEquals($expectedFormattedValue, $formattedValue);
