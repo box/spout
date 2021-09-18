@@ -284,19 +284,28 @@ class WriterTest extends TestCase
      */
     public function testAddRowShouldSupportFloatValuesInDifferentLocale()
     {
-        $previousLocale = \setlocale(LC_ALL, 0);
+        /** @var string[] $previousLocale */
+        $previousLocale = \setlocale(LC_ALL, '0');
 
         try {
             // Pick a supported locale whose decimal point is a comma.
             // Installed locales differ from one system to another, so we can't pick
             // a given locale.
             $supportedLocales = explode("\n", shell_exec('locale -a'));
+
+            $commaDecimalPointSupported = false;
             foreach ($supportedLocales as $supportedLocale) {
                 \setlocale(LC_ALL, $supportedLocale);
                 if (\localeconv()['decimal_point'] === ',') {
+                    $commaDecimalPointSupported = true;
                     break;
                 }
             }
+
+            if ($commaDecimalPointSupported === false) {
+                $this->markTestSkipped('System has no local which support comma decimal point');
+            }
+
             $this->assertEquals(',', \localeconv()['decimal_point']);
 
             $fileName = 'test_add_row_should_support_float_values_in_different_locale.xlsx';
@@ -306,8 +315,8 @@ class WriterTest extends TestCase
 
             $this->writeToODSFile($dataRows, $fileName);
 
-            $this->assertValueWasNotWrittenToSheet($fileName, 1, "1234,5");
-            $this->assertValueWasWrittenToSheet($fileName, 1, "1234.5");
+            $this->assertValueWasNotWrittenToSheet($fileName, 1, '1234,5');
+            $this->assertValueWasWrittenToSheet($fileName, 1, '1234.5');
         } finally {
             // reset locale
             \setlocale(LC_ALL, $previousLocale);
@@ -581,6 +590,7 @@ class WriterTest extends TestCase
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $pathToContentFile = $resourcePath . '#content.xml';
+        /** @var string $xmlContents */
         $xmlContents = file_get_contents('zip://' . $pathToContentFile);
 
         $this->assertStringContainsString($value, $xmlContents, $message);

@@ -87,6 +87,7 @@ class SheetTest extends TestCase
 
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $pathToContentFile = $resourcePath . '#content.xml';
+        /** @var string $xmlContents */
         $xmlContents = file_get_contents('zip://' . $pathToContentFile);
 
         $this->assertStringContainsString(' table:display="false"', $xmlContents, 'The sheet visibility should have been changed to "hidden"');
@@ -162,6 +163,7 @@ class SheetTest extends TestCase
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $pathToWorkbookFile = $resourcePath . '#content.xml';
+        /** @var string $xmlContents */
         $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
 
         $this->assertStringContainsString("table:name=\"$expectedName\"", $xmlContents, $message);

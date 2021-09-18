@@ -399,7 +399,8 @@ class WriterTest extends TestCase
      */
     public function testAddRowShouldSupportFloatValuesInDifferentLocale()
     {
-        $previousLocale = \setlocale(LC_ALL, 0);
+        /** @var string[] $previousLocale */
+        $previousLocale = \setlocale(LC_ALL, '0');
         $valueToWrite = 1234.5; // needs to be defined before changing the locale as PHP8 would expect 1234,5
 
         try {
@@ -407,12 +408,19 @@ class WriterTest extends TestCase
             // Installed locales differ from one system to another, so we can't pick
             // a given locale.
             $supportedLocales = explode("\n", shell_exec('locale -a'));
+
+            $commaDecimalPointSupported = false;
             foreach ($supportedLocales as $supportedLocale) {
                 \setlocale(LC_ALL, $supportedLocale);
                 if (\localeconv()['decimal_point'] === ',') {
+                    $commaDecimalPointSupported = true;
                     break;
                 }
             }
+            if ($commaDecimalPointSupported === false) {
+                $this->markTestSkipped('System has no local which support comma decimal point');
+            }
+
             $this->assertEquals(',', \localeconv()['decimal_point']);
 
             $fileName = 'test_add_row_should_support_float_values_in_different_locale.xlsx';
@@ -422,8 +430,8 @@ class WriterTest extends TestCase
 
             $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
 
-            $this->assertInlineDataWasNotWrittenToSheet($fileName, 1, "1234,5");
-            $this->assertInlineDataWasWrittenToSheet($fileName, 1, "1234.5");
+            $this->assertInlineDataWasNotWrittenToSheet($fileName, 1, '1234,5');
+            $this->assertInlineDataWasWrittenToSheet($fileName, 1, '1234.5');
         } finally {
             // reset locale
             \setlocale(LC_ALL, $previousLocale);
@@ -643,6 +651,7 @@ class WriterTest extends TestCase
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetIndex . '.xml';
+        /** @var string $xmlContents */
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
         $this->assertStringContainsString((string) $inlineData, $xmlContents, $message);
@@ -659,6 +668,7 @@ class WriterTest extends TestCase
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $pathToSheetFile = $resourcePath . '#xl/worksheets/sheet' . $sheetIndex . '.xml';
+        /** @var string $xmlContents */
         $xmlContents = file_get_contents('zip://' . $pathToSheetFile);
 
         $this->assertStringNotContainsString((string) $inlineData, $xmlContents, $message);
@@ -674,6 +684,7 @@ class WriterTest extends TestCase
     {
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $pathToSharedStringsFile = $resourcePath . '#xl/sharedStrings.xml';
+        /** @var string $xmlContents */
         $xmlContents = file_get_contents('zip://' . $pathToSharedStringsFile);
 
         $this->assertStringContainsString($sharedString, $xmlContents, $message);

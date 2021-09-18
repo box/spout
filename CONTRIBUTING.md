@@ -82,7 +82,28 @@ This will print a diff of proposed code style changes. To apply these suggestion
 vendor/bin/php-cs-fixer fix --config=.php_cs.dist
 ```
 
-### Step 9: Send the pull request
+You can also use
+
+```
+composer phpcs
+```
+
+### Step 9: Fix phpstan
+
+Run the following command to analyse source code.
+Make sure to fix all errors before submitting a pull request.
+
+```
+vendor/bin/phpstan analyse
+```
+
+You can also use
+
+```
+composer phpstan
+```
+
+### Step 10: Send the pull request
 
 Send the pull request from your feature branch to us. Be sure to include a description that lets us know what work you did.
 
