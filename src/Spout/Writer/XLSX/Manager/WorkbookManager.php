@@ -14,6 +14,7 @@ use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
 class WorkbookManager extends WorkbookManagerAbstract
 {
     /**
+     * @var int
      * Maximum number of rows a XLSX sheet can contain
      * @see http://office.microsoft.com/en-us/excel-help/excel-specifications-and-limits-HP010073849.aspx
      */

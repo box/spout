@@ -2,13 +2,15 @@
 
 namespace Box\Spout\Reader;
 
+use Box\Spout\Common\Entity\Row;
+
 /**
  * Interface SheetInterface
  */
 interface SheetInterface
 {
     /**
-     * @return IteratorInterface Iterator to iterate over the sheet's rows.
+     * @return IteratorInterface<Row> Iterator to iterate over the sheet's rows.
      */
     public function getRowIterator();
 

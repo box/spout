@@ -2,6 +2,7 @@
 
 namespace Box\Spout\Writer\XLSX\Manager\Style;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -10,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 class StyleManagerTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestShouldApplyStyleOnEmptyCell()
     {
@@ -38,6 +39,7 @@ class StyleManagerTest extends TestCase
      */
     public function testShouldApplyStyleOnEmptyCell($fillId, $borderId, $expectedResult)
     {
+        /** @var \Box\Spout\Writer\Common\Manager\Style\StyleRegistry&MockObject $styleRegistryMock */
         $styleRegistryMock = $this->getMockBuilder(StyleRegistry::class)
                                 ->disableOriginalConstructor()
                                 ->setMethods(['getFillIdForStyleId', 'getBorderIdForStyleId'])

@@ -69,6 +69,7 @@ class WriterTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $writer = WriterEntityFactory::createCSVWriter();
+        /* @phpstan-ignore-next-line */
         $writer->addRows([['csv--11', 'csv--12']]);
         $writer->close();
     }
@@ -176,7 +177,7 @@ class WriterTest extends TestCase
         $this->assertEquals('#This is, a comma#,csv--12,csv--13', $writtenContent, 'The fields should be enclosed with #');
     }
 
-    public function testWriteShouldSupportedEscapedCharacters()
+    public function testWriteShouldSupportedEscapedCharacters() : void
     {
         $allRows = $this->createRowsFromValues([
             ['"csv--11"', 'csv--12\\', 'csv--13\\\\', 'csv--14\\\\\\'],
@@ -193,7 +194,7 @@ class WriterTest extends TestCase
      * @param string $fieldDelimiter
      * @param string $fieldEnclosure
      * @param bool   $shouldAddBOM
-     * @return string|null
+     * @return string
      */
     private function writeToCsvFileAndReturnWrittenContent($allRows, $fileName, $fieldDelimiter = ',', $fieldEnclosure = '"', $shouldAddBOM = true)
     {
@@ -209,7 +210,10 @@ class WriterTest extends TestCase
         $writer->addRows($allRows);
         $writer->close();
 
-        return file_get_contents($resourcePath);
+        /** @var string $content */
+        $content = file_get_contents($resourcePath);
+
+        return $content;
     }
 
     /**

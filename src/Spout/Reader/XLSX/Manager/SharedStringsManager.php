@@ -46,7 +46,7 @@ class SharedStringsManager
     /** @var CachingStrategyFactory Factory to create shared strings caching strategies */
     protected $cachingStrategyFactory;
 
-    /** @var CachingStrategyInterface The best caching strategy for storing shared strings */
+    /** @var CachingStrategyInterface|null The best caching strategy for storing shared strings */
     protected $cachingStrategy;
 
     /**
@@ -179,6 +179,7 @@ class SharedStringsManager
         $sharedStringValue = '';
 
         // NOTE: expand() will automatically decode all XML entities of the child nodes
+        /** @var \DOMElement $siNode */
         $siNode = $xmlReader->expand();
         $textNodes = $siNode->getElementsByTagName(self::XML_NODE_T);
 

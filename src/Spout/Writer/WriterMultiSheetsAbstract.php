@@ -25,7 +25,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /** @var ManagerFactoryInterface */
     private $managerFactory;
 
-    /** @var WorkbookManagerInterface */
+    /** @var WorkbookManagerInterface|null */
     private $workbookManager;
 
     /**
@@ -143,7 +143,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      */
     protected function throwIfWorkbookIsNotAvailable()
     {
-        if (!$this->workbookManager->getWorkbook()) {
+        if ($this->workbookManager === null) {
             throw new WriterNotOpenedException('The writer must be opened before performing this action.');
         }
     }

@@ -22,11 +22,11 @@ class Border
     const WIDTH_MEDIUM = 'medium';
     const WIDTH_THICK = 'thick';
 
-    /** @var array A list of BorderPart objects for this border. */
+    /** @var array<BorderPart> A list of BorderPart objects for this border. */
     private $parts = [];
 
     /**
-     * @param array $borderParts
+     * @param array<BorderPart> $borderParts
      */
     public function __construct(array $borderParts = [])
     {
@@ -52,7 +52,7 @@ class Border
     }
 
     /**
-     * @return array
+     * @return array<BorderPart>
      */
     public function getParts()
     {
@@ -61,7 +61,7 @@ class Border
 
     /**
      * Set BorderParts
-     * @param array $parts
+     * @param array<BorderPart> $parts
      * @return void
      */
     public function setParts($parts)

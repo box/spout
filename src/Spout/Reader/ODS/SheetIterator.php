@@ -12,6 +12,7 @@ use Box\Spout\Reader\Wrapper\XMLReader;
 /**
  * Class SheetIterator
  * Iterate over ODS sheet.
+ * @implements IteratorInterface<Sheet>
  */
 class SheetIterator implements IteratorInterface
 {
@@ -52,7 +53,7 @@ class SheetIterator implements IteratorInterface
     /** @var string The name of the sheet that was defined as active */
     protected $activeSheetName;
 
-    /** @var array Associative array [STYLE_NAME] => [IS_SHEET_VISIBLE] */
+    /** @var array<string, bool> Associative array [STYLE_NAME] => [IS_SHEET_VISIBLE] */
     protected $sheetsVisibility;
 
     /**
@@ -101,13 +102,14 @@ class SheetIterator implements IteratorInterface
     /**
      * Extracts the visibility of the sheets
      *
-     * @return array Associative array [STYLE_NAME] => [IS_SHEET_VISIBLE]
+     * @return array<string, bool> Associative array [STYLE_NAME] => [IS_SHEET_VISIBLE]
      */
     private function readSheetsVisibility()
     {
         $sheetsVisibility = [];
 
         $this->xmlReader->readUntilNodeFound(self::XML_NODE_AUTOMATIC_STYLES);
+        /** @var \DOMElement $automaticStylesNode */
         $automaticStylesNode = $this->xmlReader->expand();
 
         $tableStyleNodes = $automaticStylesNode->getElementsByTagNameNS(self::XML_STYLE_NAMESPACE, self::XML_NODE_STYLE_TABLE_PROPERTIES);

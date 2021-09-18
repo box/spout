@@ -10,7 +10,10 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
  */
 class CellHelper
 {
-    // Using ord() is super slow... Using a pre-computed hash table instead.
+    /**
+     * Using ord() is super slow... Using a pre-computed hash table instead.
+     * @var array<string, int>
+     */
     private static $columnLetterToIndexMapping = [
         'A' => 0, 'B' => 1, 'C' => 2, 'D' => 3, 'E' => 4, 'F' => 5, 'G' => 6,
         'H' => 7, 'I' => 8, 'J' => 9, 'K' => 10, 'L' => 11, 'M' => 12, 'N' => 13,

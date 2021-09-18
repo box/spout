@@ -15,7 +15,7 @@ class WriterPerfTest extends TestCase
     use TestUsingResource;
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestPerfWhenWritingOneMillionRowsXLSX()
     {
@@ -102,7 +102,7 @@ class WriterPerfTest extends TestCase
 
     /**
      * @param string $filePath
-     * @return string
+     * @return int
      */
     private function getLasRowNumberForFile($filePath)
     {

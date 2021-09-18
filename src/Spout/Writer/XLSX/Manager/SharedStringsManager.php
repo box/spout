@@ -24,7 +24,7 @@ EOD;
      */
     const DEFAULT_STRINGS_COUNT_PART = 'count="9999999999999" uniqueCount="9999999999999"';
 
-    /** @var resource Pointer to the sharedStrings.xml file */
+    /** @var resource|false Pointer to the sharedStrings.xml file */
     protected $sharedStringsFilePointer;
 
     /** @var int Number of shared strings already written */
@@ -40,13 +40,17 @@ EOD;
     public function __construct($xlFolder, $stringsEscaper)
     {
         $sharedStringsFilePath = $xlFolder . '/' . self::SHARED_STRINGS_FILE_NAME;
-        $this->sharedStringsFilePointer = \fopen($sharedStringsFilePath, 'w');
+
+        /** @var resource $sharedStringsFilePointer */
+        $sharedStringsFilePointer =\fopen($sharedStringsFilePath, 'w');
+
+        $this->sharedStringsFilePointer = $sharedStringsFilePointer;
 
         $this->throwIfSharedStringsFilePointerIsNotAvailable();
 
         // the headers is split into different parts so that we can fseek and put in the correct count and uniqueCount later
         $header = self::SHARED_STRINGS_XML_FILE_FIRST_PART_HEADER . ' ' . self::DEFAULT_STRINGS_COUNT_PART . '>';
-        \fwrite($this->sharedStringsFilePointer, $header);
+        \fwrite($sharedStringsFilePointer, $header);
 
         $this->stringsEscaper = $stringsEscaper;
     }
@@ -59,7 +63,7 @@ EOD;
      */
     protected function throwIfSharedStringsFilePointerIsNotAvailable()
     {
-        if (!$this->sharedStringsFilePointer) {
+        if ($this->sharedStringsFilePointer === false) {
             throw new IOException('Unable to open shared strings file for writing.');
         }
     }
@@ -73,7 +77,10 @@ EOD;
      */
     public function writeString($string)
     {
-        \fwrite($this->sharedStringsFilePointer, '<si><t xml:space="preserve">' . $this->stringsEscaper->escape($string) . '</t></si>');
+        /** @var resource $sharedStringsFilePointer */
+        $sharedStringsFilePointer = $this->sharedStringsFilePointer;
+
+        \fwrite($sharedStringsFilePointer, '<si><t xml:space="preserve">' . $this->stringsEscaper->escape($string) . '</t></si>');
         $this->numSharedStrings++;
 
         // Shared string ID is zero-based

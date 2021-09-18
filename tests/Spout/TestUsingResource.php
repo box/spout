@@ -92,7 +92,13 @@ trait TestUsingResource
      */
     protected function getTempFolderPath()
     {
-        return realpath($this->tempFolderPath);
+        $path = realpath($this->tempFolderPath);
+
+        if ($path === false) {
+            throw new \RuntimeException(sprintf("Realpath of '%s' failed.", $path));
+        }
+
+        return $path;
     }
 
     /**

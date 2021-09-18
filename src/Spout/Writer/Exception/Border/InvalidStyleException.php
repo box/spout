@@ -7,6 +7,9 @@ use Box\Spout\Writer\Exception\WriterException;
 
 class InvalidStyleException extends WriterException
 {
+    /**
+     * @param string $name
+     */
     public function __construct($name)
     {
         $msg = '%s is not a valid style identifier for a border. Valid identifiers are: %s.';

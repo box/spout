@@ -11,7 +11,14 @@ use Box\Spout\Common\Entity\Style\Style;
  */
 class PossiblyUpdatedStyle
 {
+    /**
+     * @var Style
+     */
     private $style;
+
+    /**
+     * @var bool
+     */
     private $isUpdated;
 
     public function __construct(Style $style, bool $isUpdated)

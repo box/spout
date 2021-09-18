@@ -17,6 +17,7 @@ use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
 
 /**
  * Class RowIterator
+ * @implements IteratorInterface<Row>
  */
 class RowIterator implements IteratorInterface
 {
@@ -276,6 +277,7 @@ class RowIterator implements IteratorInterface
         $currentColumnIndex = $this->getColumnIndex($xmlReader);
 
         // NOTE: expand() will automatically decode all XML entities of the child nodes
+        /** @var \DOMElement $node */
         $node = $xmlReader->expand();
         $cell = $this->getCell($node);
 
@@ -352,7 +354,7 @@ class RowIterator implements IteratorInterface
     /**
      * Returns the cell with (unescaped) correctly marshalled, cell value associated to the given XML node.
      *
-     * @param \DOMNode $node
+     * @param \DOMElement $node
      * @return Cell The cell set with the associated with the cell
      */
     protected function getCell($node)

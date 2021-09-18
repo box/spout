@@ -19,7 +19,10 @@ class FileSystemHelper implements FileSystemHelperInterface
      */
     public function __construct(string $baseFolderPath)
     {
-        $this->baseFolderRealPath = \realpath($baseFolderPath);
+        /** @var string $realPath */
+        $realPath = \realpath($baseFolderPath);
+
+        $this->baseFolderRealPath = $realPath;
     }
 
     /**
@@ -127,6 +130,7 @@ class FileSystemHelper implements FileSystemHelperInterface
         if (!$this->baseFolderRealPath) {
             throw new IOException("The base folder path is invalid: {$this->baseFolderRealPath}");
         }
+        /** @var string $operationFolderRealPath */
         $isInBaseFolder = (\strpos($operationFolderRealPath, $this->baseFolderRealPath) === 0);
         if (!$isInBaseFolder) {
             throw new IOException("Cannot perform I/O operation outside of the base folder: {$this->baseFolderRealPath}");

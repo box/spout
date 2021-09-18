@@ -24,7 +24,7 @@ abstract class WriterAbstract implements WriterInterface
     /** @var string Path to the output file */
     protected $outputFilePath;
 
-    /** @var resource Pointer to the file/stream we will write to */
+    /** @var resource|null Pointer to the file/stream we will write to */
     protected $filePointer;
 
     /** @var bool Indicates whether the writer has been opened or not */
@@ -99,7 +99,10 @@ abstract class WriterAbstract implements WriterInterface
     {
         $this->outputFilePath = $outputFilePath;
 
-        $this->filePointer = $this->globalFunctionsHelper->fopen($this->outputFilePath, 'wb+');
+        /** @var resource $filePointer */
+        $filePointer = $this->globalFunctionsHelper->fopen($this->outputFilePath, 'wb+');
+
+        $this->filePointer = $filePointer;
         $this->throwIfFilePointerIsNotAvailable();
 
         $this->openWriter();
@@ -115,8 +118,10 @@ abstract class WriterAbstract implements WriterInterface
     public function openToBrowser($outputFileName)
     {
         $this->outputFilePath = $this->globalFunctionsHelper->basename($outputFileName);
+        /** @var resource $filePointer */
+        $filePointer = $this->globalFunctionsHelper->fopen('php://output', 'w');
 
-        $this->filePointer = $this->globalFunctionsHelper->fopen('php://output', 'w');
+        $this->filePointer = $filePointer;
         $this->throwIfFilePointerIsNotAvailable();
 
         // Clear any previous output (otherwise the generated file will be corrupted)

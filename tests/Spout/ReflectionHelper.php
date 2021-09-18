@@ -5,6 +5,9 @@
  */
 class ReflectionHelper
 {
+    /**
+     * @var array<class-string, array>
+     */
     private static $privateVarsToReset = [];
 
     /**
@@ -27,7 +30,7 @@ class ReflectionHelper
      * Get the value of a static private or public class property.
      * Used to test internals of class without having to make the property public
      *
-     * @param string $class
+     * @param class-string $class
      * @param string $valueName
      * @return mixed|null
      */
@@ -48,7 +51,7 @@ class ReflectionHelper
      * Set the value of a static private or public class property.
      * Used to test internals of class without having to make the property public
      *
-     * @param string $class
+     * @param class-string $class
      * @param string $valueName
      * @param mixed|null $value
      * @param bool $saveOriginalValue
@@ -62,7 +65,7 @@ class ReflectionHelper
 
         // to prevent side-effects in later tests, we need to remember the original value and reset it on tear down
         // @NOTE: we need to check isset in case the original value was null or array()
-        if ($saveOriginalValue && (!isset(self::$privateVarsToReset[$class]) || !isset(self::$privateVarsToReset[$class][$name]))) {
+        if ($saveOriginalValue && (!isset(self::$privateVarsToReset[$class]))) {
             self::$privateVarsToReset[$class][$valueName] = $reflectionProperty->getValue();
         }
         $reflectionProperty->setValue($value);
@@ -95,7 +98,6 @@ class ReflectionHelper
      *
      * @param object $object
      * @param string $methodName
-     * @param *mixed|null $params
      *
      * @return mixed|null
      */

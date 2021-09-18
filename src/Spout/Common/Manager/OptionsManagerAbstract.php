@@ -12,7 +12,7 @@ abstract class OptionsManagerAbstract implements OptionsManagerInterface
     /** @var string[] List of all supported option names */
     private $supportedOptions = [];
 
-    /** @var array Associative array [OPTION_NAME => OPTION_VALUE] */
+    /** @var array<string, mixed> Associative array [OPTION_NAME => OPTION_VALUE] */
     private $options = [];
 
     /**
@@ -25,7 +25,7 @@ abstract class OptionsManagerAbstract implements OptionsManagerInterface
     }
 
     /**
-     * @return array List of supported options
+     * @return array<string> List of supported options
      */
     abstract protected function getSupportedOptions();
 

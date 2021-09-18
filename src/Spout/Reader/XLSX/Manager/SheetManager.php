@@ -54,7 +54,7 @@ class SheetManager
     /** @var \Box\Spout\Common\Helper\Escaper\XLSX Used to unescape XML data */
     protected $escaper;
 
-    /** @var array List of sheets */
+    /** @var array<Sheet> List of sheets */
     protected $sheets;
 
     /** @var int Index of the sheet currently read */

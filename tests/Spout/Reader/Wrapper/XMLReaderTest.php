@@ -102,7 +102,7 @@ class XMLReaderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestFileExistsWithinZip()
     {
@@ -134,10 +134,11 @@ class XMLReaderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestGetRealPathURIForFileInZip()
     {
+        /** @var string $tempFolder */
         $tempFolder = realpath(sys_get_temp_dir());
         $tempFolderName = basename($tempFolder);
         $expectedRealPathURI = 'zip://' . $tempFolder . '/test.xlsx#test.xml';
@@ -174,7 +175,7 @@ class XMLReaderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestIsPositionedOnStartingAndEndingNode()
     {

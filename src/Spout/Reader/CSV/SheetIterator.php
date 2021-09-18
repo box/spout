@@ -7,6 +7,7 @@ use Box\Spout\Reader\IteratorInterface;
 /**
  * Class SheetIterator
  * Iterate over CSV unique "sheet".
+ * @implements IteratorInterface<Sheet>
  */
 class SheetIterator implements IteratorInterface
 {

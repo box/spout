@@ -13,6 +13,7 @@ use Box\Spout\Reader\IteratorInterface;
 /**
  * Class RowIterator
  * Iterate over CSV rows.
+ * @implements IteratorInterface<Row>
  */
 class RowIterator implements IteratorInterface
 {
@@ -21,7 +22,7 @@ class RowIterator implements IteratorInterface
      */
     const MAX_READ_BYTES_PER_LINE = 0;
 
-    /** @var resource Pointer to the CSV file to read */
+    /** @var resource|null Pointer to the CSV file to read */
     protected $filePointer;
 
     /** @var int Number of read rows */
@@ -147,6 +148,7 @@ class RowIterator implements IteratorInterface
 
         if ($rowData !== false) {
             // str_replace will replace NULL values by empty strings
+            /** @phpstan-ignore-next-line */
             $rowDataBufferAsArray = \str_replace(null, null, $rowData);
             $this->rowBuffer = $this->entityFactory->createRowFromArray($rowDataBufferAsArray);
             $this->numReadRows++;
@@ -158,7 +160,7 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * @param array|bool $currentRowData
+     * @param array<int, string>|bool $currentRowData
      * @return bool Whether the data for the current row can be returned or if we need to keep reading
      */
     protected function shouldReadNextRow($currentRowData)
@@ -179,7 +181,7 @@ class RowIterator implements IteratorInterface
      * we remove manually whitespace with ltrim or rtrim (depending on the order of the bytes)
      *
      * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
-     * @return array|false The row for the current file pointer, encoded in UTF-8 or FALSE if nothing to read
+     * @return array<int, string>|false The row for the current file pointer, encoded in UTF-8 or FALSE if nothing to read
      */
     protected function getNextUTF8EncodedRow()
     {
@@ -210,7 +212,7 @@ class RowIterator implements IteratorInterface
     }
 
     /**
-     * @param array|bool $lineData Array containing the cells value for the line
+     * @param array<mixed>|bool $lineData Array containing the cells value for the line
      * @return bool Whether the given line is empty
      */
     protected function isEmptyLine($lineData)

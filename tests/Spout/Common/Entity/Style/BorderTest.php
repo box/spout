@@ -113,7 +113,7 @@ class BorderTest extends TestCase
                     $border->addPart($borderPart);
                     $this->assertCount(1, $border->getParts());
 
-                    /** @var $part BorderPart */
+                    /** @var BorderPart $part */
                     $part = $border->getParts()[$allowedName];
 
                     $this->assertEquals($allowedStyle, $part->getStyle());

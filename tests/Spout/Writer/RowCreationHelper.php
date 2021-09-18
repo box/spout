@@ -12,7 +12,7 @@ use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 trait RowCreationHelper
 {
     /**
-     * @param array $cellValues
+     * @param array<mixed> $cellValues
      * @return Row
      */
     protected function createRowFromValues(array $cellValues)
@@ -21,7 +21,7 @@ trait RowCreationHelper
     }
 
     /**
-     * @param array $cellValues
+     * @param array<mixed> $cellValues
      * @param Style|null $rowStyle
      * @return Row
      */
@@ -31,7 +31,7 @@ trait RowCreationHelper
     }
 
     /**
-     * @param array $rowValues
+     * @param array<array> $rowValues
      * @return Row[]
      */
     protected function createRowsFromValues(array $rowValues)
@@ -40,7 +40,7 @@ trait RowCreationHelper
     }
 
     /**
-     * @param array $rowValues
+     * @param array<array> $rowValues
      * @param Style|null $rowsStyle
      * @return Row[]
      */

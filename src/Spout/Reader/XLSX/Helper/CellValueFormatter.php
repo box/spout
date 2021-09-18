@@ -66,7 +66,7 @@ class CellValueFormatter
     /**
      * Returns the (unescaped) correctly marshalled, cell value associated to the given XML node.
      *
-     * @param \DOMNode $node
+     * @param \DOMElement $node
      * @throws InvalidValueException If the value is not valid
      * @return string|int|float|bool|\DateTime The value associated with the cell
      */
@@ -102,7 +102,7 @@ class CellValueFormatter
     /**
      * Returns the cell's string value from a node's nested value node
      *
-     * @param \DOMNode $node
+     * @param \DOMElement $node
      * @return string The value associated with the cell
      */
     protected function getVNodeValue($node)
@@ -117,7 +117,7 @@ class CellValueFormatter
     /**
      * Returns the cell String value where string is inline.
      *
-     * @param \DOMNode $node
+     * @param \DOMElement $node
      * @return string The value associated with the cell
      */
     protected function formatInlineStringCellValue($node)
@@ -207,6 +207,7 @@ class CellValueFormatter
     protected function formatExcelTimestampValue($nodeValue, $cellStyleId)
     {
         if ($this->isValidTimestampValue($nodeValue)) {
+            /** @var \DateTime $cellValue */
             $cellValue = $this->formatExcelTimestampValueAsDateTimeValue($nodeValue, $cellStyleId);
         } else {
             throw new InvalidValueException($nodeValue);
@@ -248,6 +249,7 @@ class CellValueFormatter
         $timeRemainder = \fmod($nodeValue, 1);
         $secondsRemainder = \round($timeRemainder * self::NUM_SECONDS_IN_ONE_DAY, 0);
 
+        /** @var \DateTime $dateObj */
         $dateObj = \DateTime::createFromFormat('|Y-m-d', $baseDate);
         $dateObj->modify('+' . $daysSinceBaseDate . 'days');
         $dateObj->modify('+' . $secondsRemainder . 'seconds');

@@ -6,11 +6,13 @@ use Box\Spout\Common\Creator\HelperFactory;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\EncodingHelper;
 use Box\Spout\Common\Helper\GlobalFunctionsHelper;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Reader\CSV\Creator\InternalEntityFactory;
 use Box\Spout\Reader\CSV\Manager\OptionsManager;
 use Box\Spout\Reader\Exception\ReaderNotOpenedException;
 use Box\Spout\Reader\ReaderInterface;
 use Box\Spout\TestUsingResource;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -47,7 +49,7 @@ class ReaderTest extends TestCase
     {
         $this->expectException(IOException::class);
 
-        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit_Framework_MockObject_MockObject $helperStub */
+        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper&MockObject $helperStub */
         $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
                         ->setMethods(['is_readable'])
                         ->getMock();
@@ -66,7 +68,7 @@ class ReaderTest extends TestCase
     {
         $this->expectException(IOException::class);
 
-        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit_Framework_MockObject_MockObject $helperStub */
+        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper&MockObject $helperStub */
         $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
                         ->setMethods(['fopen'])
                         ->getMock();
@@ -159,7 +161,7 @@ class ReaderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestReadShouldReadEmptyFile()
     {
@@ -241,7 +243,7 @@ class ReaderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestReadShouldSkipBom()
     {
@@ -274,7 +276,7 @@ class ReaderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestReadShouldSupportNonUTF8FilesWithoutBOMs()
     {
@@ -302,7 +304,7 @@ class ReaderTest extends TestCase
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
-        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit_Framework_MockObject_MockObject $helperStub */
+        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper&MockObject $helperStub */
         $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
                         ->setMethods(['function_exists'])
                         ->getMock();
@@ -475,8 +477,8 @@ class ReaderTest extends TestCase
     }
 
     /**
-     * @param \Box\Spout\Common\Helper\GlobalFunctionsHelper|null $optionsManager
-     * @param \Box\Spout\Common\Manager\OptionsManagerInterface|null $globalFunctionsHelper
+     * @param OptionsManagerInterface|null $optionsManager
+     * @param GlobalFunctionsHelper|null $globalFunctionsHelper
      * @return ReaderInterface
      */
     private function createCSVReader($optionsManager = null, $globalFunctionsHelper = null)
@@ -494,7 +496,7 @@ class ReaderTest extends TestCase
      * @param string $fieldEnclosure
      * @param string $encoding
      * @param bool $shouldPreserveEmptyRows
-     * @return array All the read rows the given file
+     * @return array<array> All the read rows the given file
      */
     private function getAllRowsForFile(
         $fileName,

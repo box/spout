@@ -23,13 +23,16 @@ class SpoutTestStream
     /**
      * @param string $path
      * @param int $flag
-     * @return array
+     * @return array<mixed>
      */
     public function url_stat($path, $flag)
     {
         $filePath = $this->getFilePathFromStreamPath($path);
 
-        return stat($filePath);
+        /** @var array<mixed> $stat */
+        $stat = stat($filePath);
+
+        return $stat;
     }
 
     /**
@@ -56,7 +59,11 @@ class SpoutTestStream
 
         // the path is like "spout://csv_name" so the actual file name correspond the name of the host.
         $filePath = $this->getFilePathFromStreamPath($path);
-        $this->fileHandle = fopen($filePath, $mode);
+
+        /** @var resource $fileHandle */
+        $fileHandle = fopen($filePath, $mode);
+
+        $this->fileHandle = $fileHandle;
 
         return true;
     }
@@ -69,7 +76,10 @@ class SpoutTestStream
     {
         $this->position += $numBytes;
 
-        return fread($this->fileHandle, $numBytes);
+        /** @var string $read */
+        $read = fread($this->fileHandle, $numBytes);
+
+        return $read;
     }
 
     /**

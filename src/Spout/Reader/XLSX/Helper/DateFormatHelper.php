@@ -16,7 +16,7 @@ class DateFormatHelper
      * This map is used to replace Excel format characters by their PHP equivalent.
      * Keys should be ordered from longest to smallest.
      *
-     * @var array Mapping between Excel format characters and PHP format characters
+     * @var array<string, array> Mapping between Excel format characters and PHP format characters
      */
     private static $excelDateFormatToPHPDateFormatMapping = [
         self::KEY_GENERAL => [
@@ -104,6 +104,7 @@ class DateFormatHelper
         // For instance, ["Day " dd] should become [\D\a\y\ dd]
         $phpDateFormat = \preg_replace_callback('/"(.+?)"/', function ($matches) {
             $stringToEscape = $matches[1];
+            /** @var string[] $letters */
             $letters = \preg_split('//u', $stringToEscape, -1, PREG_SPLIT_NO_EMPTY);
 
             return '\\' . \implode('\\', $letters);

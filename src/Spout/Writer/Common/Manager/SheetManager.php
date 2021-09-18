@@ -15,10 +15,10 @@ class SheetManager
     /** Sheet name should not exceed 31 characters */
     const MAX_LENGTH_SHEET_NAME = 31;
 
-    /** @var array Invalid characters that cannot be contained in the sheet name */
+    /** @var array<string> Invalid characters that cannot be contained in the sheet name */
     private static $INVALID_CHARACTERS_IN_SHEET_NAME = ['\\', '/', '?', '*', ':', '[', ']'];
 
-    /** @var array Associative array [WORKBOOK_ID] => [[SHEET_INDEX] => [SHEET_NAME]] keeping track of sheets' name to enforce uniqueness per workbook */
+    /** @var array<string, array> Associative array [WORKBOOK_ID] => [[SHEET_INDEX] => [SHEET_NAME]] keeping track of sheets' name to enforce uniqueness per workbook */
     private static $SHEETS_NAME_USED = [];
 
     /** @var StringHelper */
@@ -126,7 +126,7 @@ class SheetManager
     }
 
     /**
-     * @param int $workbookId Workbook ID associated to a Sheet
+     * @param string $workbookId Workbook ID associated to a Sheet
      * @return void
      */
     public function markWorkbookIdAsUsed($workbookId)

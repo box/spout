@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 class ODSTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestEscape()
     {

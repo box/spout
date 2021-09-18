@@ -12,7 +12,7 @@ use Box\Spout\Reader\Exception\SharedStringNotFoundException;
  */
 class InMemoryStrategy implements CachingStrategyInterface
 {
-    /** @var \SplFixedArray Array used to cache the shared strings */
+    /** @var \SplFixedArray<string> Array used to cache the shared strings */
     protected $inMemoryCache;
 
     /** @var bool Whether the cache has been closed */

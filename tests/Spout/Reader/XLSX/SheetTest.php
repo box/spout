@@ -3,6 +3,7 @@
 namespace Box\Spout\Reader\XLSX;
 
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+use Box\Spout\Reader\SheetInterface;
 use Box\Spout\TestUsingResource;
 use PHPUnit\Framework\TestCase;
 
@@ -43,7 +44,7 @@ class SheetTest extends TestCase
 
     /**
      * @param string $fileName
-     * @return Sheet[]
+     * @return SheetInterface[]
      */
     private function openFileAndReturnSheets($fileName)
     {

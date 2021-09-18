@@ -16,7 +16,7 @@ class StringHelper
     /** @var bool Whether the code is running with PHP7 or older versions */
     private $isRunningPhp7OrOlder;
 
-    /** @var array Locale info, used for number formatting */
+    /** @var array<string, mixed> Locale info, used for number formatting */
     private $localeInfo;
 
     /**
@@ -93,13 +93,16 @@ class StringHelper
     public function formatNumericValue($numericValue)
     {
         if ($this->isRunningPhp7OrOlder && is_float($numericValue)) {
-            return str_replace(
+            /** @var string $replaced */
+            $replaced =  str_replace(
                 [$this->localeInfo['thousands_sep'], $this->localeInfo['decimal_point']],
                 ['', '.'],
-                $numericValue
+                (string) $numericValue
             );
+
+            return $replaced;
         }
 
-        return $numericValue;
+        return (string) $numericValue;
     }
 }

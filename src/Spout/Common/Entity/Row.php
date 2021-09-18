@@ -95,7 +95,10 @@ class Row
             return 0;
         }
 
-        return \max(\array_keys($this->cells)) + 1;
+        /** @var int $highest */
+        $highest = \max(\array_keys($this->cells));
+
+        return $highest + 1;
     }
 
     /**
@@ -118,7 +121,7 @@ class Row
     }
 
     /**
-     * @return array The row values, as array
+     * @return array<mixed> The row values, as array
      */
     public function toArray()
     {

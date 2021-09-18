@@ -24,7 +24,7 @@ class BorderHelper
     /**
      * Width mappings
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static $widthMap = [
         Border::WIDTH_THIN   => '0.75pt',
@@ -35,7 +35,7 @@ class BorderHelper
     /**
      * Style mapping
      *
-     * @var array
+     * @var array<string, string>
      */
     protected static $styleMap = [
         Border::STYLE_SOLID  => 'solid',

@@ -181,9 +181,13 @@ class ZipHelper
      */
     protected function getNormalizedRealPath($path)
     {
+        /** @var string $realPath */
         $realPath = \realpath($path);
 
-        return \str_replace(DIRECTORY_SEPARATOR, '/', $realPath);
+        /** @var string $normalized */
+        $normalized = \str_replace(DIRECTORY_SEPARATOR, '/', $realPath);
+
+        return $normalized;
     }
 
     /**
@@ -210,6 +214,7 @@ class ZipHelper
      */
     protected function copyZipToStream($zipFilePath, $pointer)
     {
+        /** @var resource $zipFilePointer */
         $zipFilePointer = \fopen($zipFilePath, 'r');
         \stream_copy_to_stream($zipFilePointer, $pointer);
         \fclose($zipFilePointer);

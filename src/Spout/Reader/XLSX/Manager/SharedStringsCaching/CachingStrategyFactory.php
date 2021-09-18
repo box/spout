@@ -98,7 +98,7 @@ class CachingStrategyFactory
     /**
      * Returns the PHP "memory_limit" in Kilobytes
      *
-     * @return float
+     * @return int
      */
     protected function getMemoryLimitInKB()
     {
@@ -133,6 +133,9 @@ class CachingStrategyFactory
      */
     protected function getMemoryLimitFromIni()
     {
-        return \ini_get('memory_limit');
+        /** @var string $memoryLimit */
+        $memoryLimit = \ini_get('memory_limit');
+
+        return $memoryLimit;
     }
 }

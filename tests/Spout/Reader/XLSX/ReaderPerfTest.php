@@ -15,7 +15,7 @@ class ReaderPerfTest extends TestCase
     use TestUsingResource;
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForTestPerfWhenReading300kRowsXLSX()
     {

@@ -3,6 +3,7 @@
 namespace Box\Spout\Reader\XLSX\Manager;
 
 use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,8 +12,8 @@ use PHPUnit\Framework\TestCase;
 class StyleManagerTest extends TestCase
 {
     /**
-     * @param array $styleAttributes
-     * @param array $customNumberFormats
+     * @param array<mixed> $styleAttributes
+     * @param array<mixed> $customNumberFormats
      * @return StyleManager
      */
     private function getStyleManagerMock($styleAttributes = [], $customNumberFormats = [])
@@ -21,7 +22,7 @@ class StyleManagerTest extends TestCase
         $workbookRelationshipsManager = $this->createMock(WorkbookRelationshipsManager::class);
         $workbookRelationshipsManager->method('hasStylesXMLFile')->willReturn(true);
 
-        /** @var StyleManager $styleManager */
+        /** @var StyleManager&MockObject $styleManager */
         $styleManager = $this->getMockBuilder('\Box\Spout\Reader\XLSX\Manager\StyleManager')
                              ->setConstructorArgs(['/path/to/file.xlsx', $workbookRelationshipsManager, $entityFactory])
                              ->setMethods(['getCustomNumberFormats', 'getStylesAttributes'])
@@ -132,7 +133,7 @@ class StyleManagerTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<array>
      */
     public function dataProviderForCustomDateFormats()
     {

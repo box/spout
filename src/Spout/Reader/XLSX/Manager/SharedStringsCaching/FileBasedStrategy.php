@@ -32,7 +32,7 @@ class FileBasedStrategy implements CachingStrategyInterface
      */
     protected $maxNumStringsPerTempFile;
 
-    /** @var resource Pointer to the last temp file a shared string was written to */
+    /** @var resource|null Pointer to the last temp file a shared string was written to */
     protected $tempFilePointer;
 
     /**
@@ -42,7 +42,7 @@ class FileBasedStrategy implements CachingStrategyInterface
     protected $inMemoryTempFilePath;
 
     /**
-     * @var array Contents of the temporary file that was last read
+     * @var array<string> Contents of the temporary file that was last read
      * @see CachingStrategyFactory::MAX_NUM_STRINGS_PER_TEMP_FILE
      */
     protected $inMemoryTempFileContents;
@@ -78,7 +78,9 @@ class FileBasedStrategy implements CachingStrategyInterface
             if ($this->tempFilePointer) {
                 $this->globalFunctionsHelper->fclose($this->tempFilePointer);
             }
-            $this->tempFilePointer = $this->globalFunctionsHelper->fopen($tempFilePath, 'w');
+            /** @var resource $tempFilePointer */
+            $tempFilePointer = $this->globalFunctionsHelper->fopen($tempFilePath, 'w');
+            $this->tempFilePointer = $tempFilePointer;
         }
 
         // The shared string retrieval logic expects each cell data to be on one line only

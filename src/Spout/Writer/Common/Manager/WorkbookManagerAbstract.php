@@ -265,6 +265,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
 
     /**
      * @param Row $row
+     * @return void
      */
     private function applyDefaultRowStyle(Row $row)
     {
