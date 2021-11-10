@@ -426,8 +426,8 @@ class WriterTest extends TestCase
 
             $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
 
-            $this->assertInlineDataWasNotWrittenToSheet($fileName, 1, "1234,5");
-            $this->assertInlineDataWasWrittenToSheet($fileName, 1, "1234.5");
+            $this->assertInlineDataWasNotWrittenToSheet($fileName, 1, '1234,5');
+            $this->assertInlineDataWasWrittenToSheet($fileName, 1, '1234.5');
         } finally {
             // reset locale
             \setlocale(LC_ALL, $previousLocale);
