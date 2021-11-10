@@ -406,11 +406,16 @@ class WriterTest extends TestCase
             // Installed locales differ from one system to another, so we can't pick
             // a given locale.
             $supportedLocales = explode("\n", shell_exec('locale -a'));
+            $foundCommaLocale = false;
             foreach ($supportedLocales as $supportedLocale) {
                 \setlocale(LC_ALL, $supportedLocale);
                 if (\localeconv()['decimal_point'] === ',') {
+                    $foundCommaLocale = true;
                     break;
                 }
+            }
+            if (!$foundCommaLocale) {
+                $this->markTestSkipped('No locale with comma decimal separator');
             }
             $this->assertEquals(',', \localeconv()['decimal_point']);
 
