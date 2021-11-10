@@ -1,0 +1,8 @@
+version: '3'
+services:
+  php:
+    build: .
+    working_dir: /srv/spout
+    volumes:
+      - $PWD:/srv/spout
+      - $PWD/tests/generated/resources/unwritable:/srv/spout/tests/resources/generated/unwritable:ro

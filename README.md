@@ -40,6 +40,25 @@ For information, the performance tests take about 10 minutes to run (processing 
 
 > Performance tests status: [![Build Status](https://travis-ci.org/box/spout.svg?branch=perf-tests)](https://travis-ci.org/box/spout)
 
+### Running test with Docker
+
+First install the dependencies with docker-compose
+
+```bash
+docker-compose run --rm -u ${UID} php composer install
+```
+
+Then launch the PHPUnit tests
+
+```bash
+docker-compose run --rm php vendor/bin/phpunit
+```
+
+Same for CS Fixer tests
+
+```bash
+docker-compose run --rm php vendor/bin/php-cs-fixer fix --verbose --diff --dry-run --diff-format=udiff
+```
 
 ## Support
 
