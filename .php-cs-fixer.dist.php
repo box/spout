@@ -1,6 +1,6 @@
 <?php
 
-$config = PhpCsFixer\Config::create()
+$config = (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
     ->setRules([
         '@Symfony' => true,
@@ -13,13 +13,14 @@ $config = PhpCsFixer\Config::create()
         'declare_equal_normalize' => ['space' => 'single'],
         'heredoc_to_nowdoc' => true,
         'increment_style' => ['style' => 'post'],
-        'is_null' => ['use_yoda_style' => false],
-        'method_argument_space' => ['ensure_fully_multiline' => true],
+        'method_argument_space' => [
+            'on_multiline' => 'ensure_fully_multiline'
+        ],
         'modernize_types_casting' => true,
         'no_break_comment' => ['comment_text' => 'do nothing'],
         'no_empty_phpdoc' => false,
         'no_null_property_initialization' => true,
-        'no_short_echo_tag' => true,
+        'echo_tag_syntax' => false,
         'no_superfluous_elseif' => true,
         'no_superfluous_phpdoc_tags' => false,
         'no_unneeded_control_parentheses' => ['statements' => ['break', 'clone', 'continue', 'echo_print', 'switch_case', 'yield']],
@@ -37,7 +38,7 @@ $config = PhpCsFixer\Config::create()
         'phpdoc_types_order' => ['null_adjustment' => 'always_last', 'sort_algorithm' => 'none'],
         'phpdoc_separation' => false,
         'protected_to_private' => true,
-        'psr4' => true,
+        'psr_autoloading' => true,
         'return_type_declaration' => ['space_before' => 'one'],
         'semicolon_after_instruction' => true,
         'simplified_null_return' => false,

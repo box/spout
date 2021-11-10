@@ -48,10 +48,16 @@ First install the dependencies with docker-compose
 docker-compose run --rm -u ${UID} php composer install
 ```
 
-Then launch the tests
+Then launch the PHPUnit tests
 
 ```bash
 docker-compose run --rm php vendor/bin/phpunit
+```
+
+Same for CS Fixer tests
+
+```bash
+docker-compose run --rm php vendor/bin/php-cs-fixer fix --verbose --diff --dry-run --diff-format=udiff
 ```
 
 ## Support
