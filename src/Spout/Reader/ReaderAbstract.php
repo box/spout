@@ -7,6 +7,7 @@ use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Reader\Common\Creator\InternalEntityFactoryInterface;
 use Box\Spout\Reader\Common\Entity\Options;
+use Box\Spout\Reader\CSV\SheetIterator;
 use Box\Spout\Reader\Exception\ReaderNotOpenedException;
 
 /**
@@ -46,7 +47,7 @@ abstract class ReaderAbstract implements ReaderInterface
     /**
      * Returns an iterator to iterate over sheets.
      *
-     * @return IteratorInterface To iterate over sheets
+     * @return SheetIteratorInterface To iterate over sheets
      */
     abstract protected function getConcreteSheetIterator();
 
@@ -211,7 +212,7 @@ abstract class ReaderAbstract implements ReaderInterface
      * Returns an iterator to iterate over sheets.
      *
      * @throws \Box\Spout\Reader\Exception\ReaderNotOpenedException If called before opening the reader
-     * @return \Iterator To iterate over sheets
+     * @return SheetIteratorInterface To iterate over sheets
      */
     public function getSheetIterator()
     {
