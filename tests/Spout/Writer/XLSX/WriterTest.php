@@ -575,6 +575,10 @@ class WriterTest extends TestCase
      */
     public function testGeneratedFileShouldHaveTheCorrectMimeType()
     {
+        if (!function_exists('finfo')) {
+            $this->markTestSkipped('finfo is not available on this system (possibly running on Windows where the DLL needs to be added explicitly to the php.ini)');
+        }
+
         $fileName = 'test_mime_type.xlsx';
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $dataRows = $this->createRowsFromValues([['foo']]);

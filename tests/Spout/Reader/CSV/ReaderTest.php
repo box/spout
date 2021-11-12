@@ -237,7 +237,9 @@ class ReaderTest extends TestCase
     public function testReadShouldNotTruncateLineBreak()
     {
         $allRows = $this->getAllRowsForFile('csv_with_line_breaks.csv');
-        $this->assertEquals("This is,\na comma", $allRows[0][0]);
+
+        $newLine = PHP_EOL; // to support both Unix and Windows
+        $this->assertEquals("This is,{$newLine}a comma", $allRows[0][0]);
     }
 
     /**
@@ -419,10 +421,11 @@ class ReaderTest extends TestCase
     {
         $allRows = $this->getAllRowsForFile('sheet_with_untrimmed_strings.csv');
 
+        $newLine = PHP_EOL; // to support both Unix and Windows
         $expectedRows = [
             ['A'],
             [' A '],
-            ["\n\tA\n\t"],
+            ["$newLine\tA$newLine\t"],
         ];
 
         $this->assertEquals($expectedRows, $allRows, 'Cell values should not be trimmed');

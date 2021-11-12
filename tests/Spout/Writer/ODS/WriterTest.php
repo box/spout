@@ -518,6 +518,10 @@ class WriterTest extends TestCase
      */
     public function testGeneratedFileShouldHaveTheCorrectMimeType()
     {
+        if (!function_exists('finfo')) {
+            $this->markTestSkipped('finfo is not available on this system (possibly running on Windows where the DLL needs to be added explicitly to the php.ini)');
+        }
+
         $fileName = 'test_mime_type.ods';
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $dataRow = ['foo'];
