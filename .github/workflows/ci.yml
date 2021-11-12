@@ -1,13 +1,67 @@
-name: Testing Spout
-on: [push, pull_request]
+name: Spout CI
+
+on: push
+
 jobs:
-  tests:
+  tests-on-php-latest:
     strategy:
       matrix:
         operating-system: [ubuntu-latest, windows-latest, macos-latest]
-        php-versions: ['7.2', '7.3', '7.4', '8.0']
     runs-on: ${{ matrix.operating-system }}
-    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    name: Tests - PHP 8.0 on ${{ matrix.operating-system }}
+    env:
+      extensions: zip, xmlreader, dom
+      cache-key: cache-matrix-v1 # can be any string, change to clear the extension cache.
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup cache environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: '8.0'
+          extensions: ${{ env.extensions }}
+          key: ${{ env.cache-key }}
+
+      - name: Cache extensions
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
+        with:
+          php-version: '8.0'
+          extensions: ${{ env.extensions }}
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          # Use composer.json for key, if composer.lock is not committed.
+          # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Test with phpunit
+        run: vendor/bin/phpunit --no-coverage
+
+  tests-on-older-php:
+    strategy:
+      matrix:
+        php-versions: ['7.2', '7.3', '7.4']
+    runs-on: ubuntu-latest
+    name: Tests - PHP ${{ matrix.php-versions }}
     env:
       extensions: zip, xmlreader, dom
       cache-key: cache-matrix-v1 # can be any string, change to clear the extension cache.
@@ -39,7 +93,7 @@ jobs:
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      
+
       - name: Cache composer dependencies
         uses: actions/cache@v2
         with:
@@ -48,10 +102,10 @@ jobs:
           # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
-      
+
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
-      
+
       - name: Test with phpunit
         run: vendor/bin/phpunit --no-coverage
 
@@ -89,7 +143,7 @@ jobs:
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      
+
       - name: Cache composer dependencies
         uses: actions/cache@v2
         with:
@@ -98,17 +152,14 @@ jobs:
           # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
-      
+
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
-      
-      - name: Run Tests with Code Coverage
-        run: vendor/bin/phpunit --coverage-clover=build/logs/coverage.clover
 
-      - name: Send to Scrutinizer
-        run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover build/logs/coverage.clover
+      - name: Run Tests with Code Coverage
+        run: vendor/bin/phpunit --coverage-clover=coverage.clover
+
+        # TODO: Send coverage data to a new provider
 
   coding-style:
     name: Coding Style
@@ -124,7 +175,7 @@ jobs:
         id: extcache
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: '7.4'
+          php-version: '8.0'
           extensions: ${{ env.extensions }}
           key: ${{ env.cache-key }}
 
@@ -138,13 +189,13 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: '8.0'
           extensions: ${{ env.extensions }}
 
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      
+
       - name: Cache composer dependencies
         uses: actions/cache@v2
         with:
@@ -153,10 +204,10 @@ jobs:
           # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
-      
+
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
-      
+
       - name: Run PHP-CS-Fixer
         run: vendor/bin/php-cs-fixer fix --verbose --diff --dry-run --diff-format=udiff
 
@@ -174,7 +225,7 @@ jobs:
         id: extcache
         uses: shivammathur/cache-extensions@v1
         with:
-          php-version: '7.4'
+          php-version: '8.0'
           extensions: ${{ env.extensions }}
           key: ${{ env.cache-key }}
 
@@ -188,14 +239,14 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
+          php-version: '8.0'
           extensions: ${{ env.extensions }}
           tools: phpstan
 
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-      
+
       - name: Cache composer dependencies
         uses: actions/cache@v2
         with:
@@ -204,9 +255,9 @@ jobs:
           # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
-      
+
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
-      
+
       - name: Static Analysis using PHPStan
         run: phpstan analyse --no-progress src/
