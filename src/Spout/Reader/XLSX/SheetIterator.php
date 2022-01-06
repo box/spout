@@ -38,7 +38,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return void
      */
-    public function rewind()
+    public function rewind() : void
     {
         $this->currentSheetIndex = 0;
     }
@@ -49,7 +49,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return bool
      */
-    public function valid()
+    public function valid() : bool
     {
         return ($this->currentSheetIndex < \count($this->sheets));
     }
@@ -60,7 +60,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return void
      */
-    public function next()
+    public function next() : void
     {
         // Using isset here because it is way faster than array_key_exists...
         if (isset($this->sheets[$this->currentSheetIndex])) {
@@ -75,9 +75,9 @@ class SheetIterator implements IteratorInterface
      * Return the current element
      * @see http://php.net/manual/en/iterator.current.php
      *
-     * @return \Box\Spout\Reader\XLSX\Sheet
+     * @return Sheet
      */
-    public function current()
+    public function current() : Sheet
     {
         return $this->sheets[$this->currentSheetIndex];
     }
@@ -88,7 +88,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return int
      */
-    public function key()
+    public function key() : int
     {
         return $this->currentSheetIndex + 1;
     }
@@ -98,7 +98,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return void
      */
-    public function end()
+    public function end() : void
     {
         // make sure we are not leaking memory in case the iteration stopped before the end
         foreach ($this->sheets as $sheet) {
