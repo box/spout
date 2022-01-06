@@ -83,7 +83,7 @@ class XMLReader extends \XMLReader
      * @throws \Box\Spout\Reader\Exception\XMLProcessingException If an error/warning occurred
      * @return bool TRUE on success or FALSE on failure
      */
-    public function read()
+    public function read() : bool
     {
         $this->useXMLInternalErrors();
 
@@ -119,7 +119,7 @@ class XMLReader extends \XMLReader
      * @throws \Box\Spout\Reader\Exception\XMLProcessingException If an error/warning occurred
      * @return bool TRUE on success or FALSE on failure
      */
-    public function next($localName = null)
+    public function next($localName = null) : bool
     {
         $this->useXMLInternalErrors();
 
