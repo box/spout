@@ -4,7 +4,10 @@ namespace Box\Spout\Writer\ODS\Manager\Style;
 
 use Box\Spout\Common\Entity\Style\BorderPart;
 use Box\Spout\Common\Entity\Style\CellAlignment;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
+use Box\Spout\Writer\Common\Manager\ManagesCellSize;
 use Box\Spout\Writer\ODS\Helper\BorderHelper;
 
 /**
@@ -13,8 +16,21 @@ use Box\Spout\Writer\ODS\Helper\BorderHelper;
  */
 class StyleManager extends \Box\Spout\Writer\Common\Manager\Style\StyleManager
 {
+    use ManagesCellSize;
+
     /** @var StyleRegistry */
     protected $styleRegistry;
+
+    /**
+     * @param StyleRegistry $styleRegistry
+     */
+    public function __construct(StyleRegistry $styleRegistry, OptionsManagerInterface $optionsManager)
+    {
+        parent::__construct($styleRegistry);
+        $this->setDefaultColumnWidth($optionsManager->getOption(Options::DEFAULT_COLUMN_WIDTH));
+        $this->setDefaultRowHeight($optionsManager->getOption(Options::DEFAULT_ROW_HEIGHT));
+        $this->columnWidths = $optionsManager->getOption(Options::COLUMN_WIDTHS) ?? [];
+    }
 
     /**
      * Returns the content of the "styles.xml" file, given a list of styles.
@@ -162,12 +178,16 @@ EOD;
             $content .= $this->getStyleSectionContent($style);
         }
 
-        $content .= <<<'EOD'
-<style:style style:family="table-column" style:name="co1">
-    <style:table-column-properties fo:break-before="auto"/>
+        $useOptimalRowHeight = empty($this->defaultRowHeight) ? 'true' : 'false';
+        $defaultRowHeight = empty($this->defaultRowHeight) ? '15pt' : "{$this->defaultRowHeight}pt";
+        $defaultColumnWidth = empty($this->defaultColumnWidth) ? '' : "style:column-width=\"{$this->defaultColumnWidth}pt\"";
+
+        $content .= <<<EOD
+<style:style style:family="table-column" style:name="default-column-style">
+    <style:table-column-properties fo:break-before="auto" {$defaultColumnWidth}/>
 </style:style>
 <style:style style:family="table-row" style:name="ro1">
-    <style:table-row-properties fo:break-before="auto" style:row-height="15pt" style:use-optimal-row-height="true"/>
+    <style:table-row-properties fo:break-before="auto" style:row-height="{$defaultRowHeight}" style:use-optimal-row-height="{$useOptimalRowHeight}"/>
 </style:style>
 EOD;
 
@@ -181,6 +201,16 @@ EOD;
 </style:style>
 EOD;
         }
+
+        // Sort column widths since ODS cares about order
+        usort($this->columnWidths, function ($a, $b) {
+            if ($a[0] === $b[0]) {
+                return 0;
+            }
+
+            return ($a[0] < $b[0]) ? -1 : 1;
+        });
+        $content .= $this->getTableColumnStylesXMLContent();
 
         $content .= '</office:automatic-styles>';
 
@@ -313,9 +343,12 @@ EOD;
     private function transformCellAlignment($cellAlignment)
     {
         switch ($cellAlignment) {
-            case CellAlignment::LEFT: return 'start';
-            case CellAlignment::RIGHT: return 'end';
-            default: return $cellAlignment;
+            case CellAlignment::LEFT:
+                return 'start';
+            case CellAlignment::RIGHT:
+                return 'end';
+            default:
+                return $cellAlignment;
         }
     }
 
@@ -380,5 +413,43 @@ EOD;
     private function getBackgroundColorXMLContent($style)
     {
         return \sprintf(' fo:background-color="#%s" ', $style->getBackgroundColor());
+    }
+
+    public function getTableColumnStylesXMLContent() : string
+    {
+        if (empty($this->columnWidths)) {
+            return '';
+        }
+
+        $content = '';
+        foreach ($this->columnWidths as $styleIndex => $entry) {
+            $content .= <<<EOD
+<style:style style:family="table-column" style:name="co{$styleIndex}">
+    <style:table-column-properties fo:break-before="auto" style:use-optimal-column-width="false" style:column-width="{$entry[2]}pt"/>
+</style:style>
+EOD;
+        }
+
+        return $content;
+    }
+
+    public function getStyledTableColumnXMLContent(int $maxNumColumns) : string
+    {
+        if (empty($this->columnWidths)) {
+            return '';
+        }
+
+        $content = '';
+        foreach ($this->columnWidths as $styleIndex => $entry) {
+            $numCols = $entry[1] - $entry[0] + 1;
+            $content .= <<<EOD
+<table:table-column table:default-cell-style-name='Default' table:style-name="co{$styleIndex}" table:number-columns-repeated="{$numCols}"/>
+EOD;
+        }
+        // Note: This assumes the column widths are contiguous and default width is
+        // only applied to columns after the last custom column with a custom width
+        $content .= '<table:table-column table:default-cell-style-name="ce1" table:style-name="default-column-style" table:number-columns-repeated="' . ($maxNumColumns - $entry[1]) . '"/>';
+
+        return $content;
     }
 }
