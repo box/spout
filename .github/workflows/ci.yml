@@ -157,9 +157,16 @@ jobs:
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
       - name: Run Tests with Code Coverage
-        run: vendor/bin/phpunit --coverage-clover=coverage.clover
+        run: |
+          mkdir -p build/logs
+          vendor/bin/phpunit --coverage-clover=build/logs/clover.xml
 
-        # TODO: Send coverage data to a new provider
+      - name: Upload coverage results to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          composer global require php-coveralls/php-coveralls
+          php-coveralls --coverage_clover=build/logs/clover.xml -v --exclude-no-stmt
 
   coding-style:
     name: Coding Style
