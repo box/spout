@@ -13,38 +13,38 @@ class Cell
     /**
      * Numeric cell type (whole numbers, fractional numbers, dates)
      */
-    const TYPE_NUMERIC = 0;
+    public const TYPE_NUMERIC = 0;
 
     /**
      * String (text) cell type
      */
-    const TYPE_STRING = 1;
+    public const TYPE_STRING = 1;
 
     /**
      * Formula cell type
      * Not used at the moment
      */
-    const TYPE_FORMULA = 2;
+    public const TYPE_FORMULA = 2;
 
     /**
      * Empty cell type
      */
-    const TYPE_EMPTY = 3;
+    public const TYPE_EMPTY = 3;
 
     /**
      * Boolean cell type
      */
-    const TYPE_BOOLEAN = 4;
+    public const TYPE_BOOLEAN = 4;
 
     /**
      * Date cell type
      */
-    const TYPE_DATE = 5;
+    public const TYPE_DATE = 5;
 
     /**
      * Error cell type
      */
-    const TYPE_ERROR = 6;
+    public const TYPE_ERROR = 6;
 
     /**
      * The value of this cell

@@ -21,16 +21,16 @@ use Box\Spout\Reader\XLSX\Helper\CellValueFormatter;
 class RowIterator implements IteratorInterface
 {
     /** Definition of XML nodes names used to parse data */
-    const XML_NODE_DIMENSION = 'dimension';
-    const XML_NODE_WORKSHEET = 'worksheet';
-    const XML_NODE_ROW = 'row';
-    const XML_NODE_CELL = 'c';
+    public const XML_NODE_DIMENSION = 'dimension';
+    public const XML_NODE_WORKSHEET = 'worksheet';
+    public const XML_NODE_ROW = 'row';
+    public const XML_NODE_CELL = 'c';
 
     /** Definition of XML attributes used to parse data */
-    const XML_ATTRIBUTE_REF = 'ref';
-    const XML_ATTRIBUTE_SPANS = 'spans';
-    const XML_ATTRIBUTE_ROW_INDEX = 'r';
-    const XML_ATTRIBUTE_CELL_INDEX = 'r';
+    public const XML_ATTRIBUTE_REF = 'ref';
+    public const XML_ATTRIBUTE_SPANS = 'spans';
+    public const XML_ATTRIBUTE_ROW_INDEX = 'r';
+    public const XML_ATTRIBUTE_CELL_INDEX = 'r';
 
     /** @var string Path of the XLSX file being read */
     protected $filePath;

@@ -19,7 +19,7 @@ class RowIterator implements IteratorInterface
     /**
      * Value passed to fgetcsv. 0 means "unlimited" (slightly slower but accomodates for very long lines).
      */
-    const MAX_READ_BYTES_PER_LINE = 0;
+    public const MAX_READ_BYTES_PER_LINE = 0;
 
     /** @var resource Pointer to the CSV file to read */
     protected $filePointer;

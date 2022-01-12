@@ -59,7 +59,7 @@ jobs:
   tests-on-older-php:
     strategy:
       matrix:
-        php-versions: ['7.2', '7.3', '7.4']
+        php-versions: ['7.3', '7.4']
     runs-on: ubuntu-latest
     name: Tests - PHP ${{ matrix.php-versions }}
     env:
@@ -209,7 +209,7 @@ jobs:
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
       - name: Run PHP-CS-Fixer
-        run: vendor/bin/php-cs-fixer fix --verbose --diff --dry-run --diff-format=udiff
+        run: vendor/bin/php-cs-fixer fix --verbose --diff --dry-run
 
   static-analysis:
     name: Static Analysis
@@ -260,4 +260,4 @@ jobs:
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
       - name: Static Analysis using PHPStan
-        run: phpstan analyse --no-progress src/
+        run: phpstan analyse --no-progress src tests

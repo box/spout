@@ -1,6 +1,12 @@
 <?php
 
-$config = PhpCsFixer\Config::create()
+$finder = PhpCsFixer\Finder::create()
+    ->in(__DIR__)
+    ->name('*.php')
+    ->exclude('vendor');
+
+$config = new PhpCsFixer\Config();
+return $config
     ->setRiskyAllowed(true)
     ->setRules([
         '@Symfony' => true,
@@ -13,8 +19,8 @@ $config = PhpCsFixer\Config::create()
         'declare_equal_normalize' => ['space' => 'single'],
         'heredoc_to_nowdoc' => true,
         'increment_style' => ['style' => 'post'],
-        'is_null' => ['use_yoda_style' => false],
-        'method_argument_space' => ['ensure_fully_multiline' => true],
+        'is_null' => true,
+        'method_argument_space' => ['on_multiline' => 'ensure_fully_multiline'],
         'modernize_types_casting' => true,
         'no_break_comment' => ['comment_text' => 'do nothing'],
         'no_empty_phpdoc' => false,
@@ -44,16 +50,5 @@ $config = PhpCsFixer\Config::create()
         'single_line_comment_style' => ['comment_types' => ['hash']],
         'strict_comparison' => true,
         'yoda_style' => ['equal' => false, 'identical' => false],
-    ]);
-
-$config->setFinder(
-    PhpCsFixer\Finder::create()
-        ->exclude('vendor')
-        ->in(__DIR__)
-        ->name('*.php')
-);
-
-$cacheDir = getenv('TRAVIS') ? getenv('HOME') . '/.php-cs-fixer' : __DIR__;
-$config->setCacheFile($cacheDir . '/.php_cs.cache');
-
-return $config;
+    ])
+    ->setFinder($finder);

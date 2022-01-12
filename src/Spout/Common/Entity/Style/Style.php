@@ -9,9 +9,9 @@ namespace Box\Spout\Common\Entity\Style;
 class Style
 {
     /** Default values */
-    const DEFAULT_FONT_SIZE = 11;
-    const DEFAULT_FONT_COLOR = Color::BLACK;
-    const DEFAULT_FONT_NAME = 'Arial';
+    public const DEFAULT_FONT_SIZE = 11;
+    public const DEFAULT_FONT_COLOR = Color::BLACK;
+    public const DEFAULT_FONT_NAME = 'Arial';
 
     /** @var int|null Style ID */
     private $id;
