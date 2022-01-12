@@ -8,10 +8,10 @@ namespace Box\Spout\Common\Entity\Style;
  */
 abstract class CellAlignment
 {
-    const LEFT = 'left';
-    const RIGHT = 'right';
-    const CENTER = 'center';
-    const JUSTIFY = 'justify';
+    public const LEFT = 'left';
+    public const RIGHT = 'right';
+    public const CENTER = 'center';
+    public const JUSTIFY = 'justify';
 
     private static $VALID_ALIGNMENTS = [
         self::LEFT => 1,

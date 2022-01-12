@@ -13,8 +13,8 @@ use Box\Spout\Writer\Common\Entity\Options;
 class OptionsManager extends OptionsManagerAbstract
 {
     /** Default style font values */
-    const DEFAULT_FONT_SIZE = 12;
-    const DEFAULT_FONT_NAME = 'Calibri';
+    public const DEFAULT_FONT_SIZE = 12;
+    public const DEFAULT_FONT_NAME = 'Calibri';
 
     /** @var StyleBuilder Style builder */
     protected $styleBuilder;

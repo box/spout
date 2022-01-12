@@ -132,7 +132,7 @@ class WriterTest extends TestCase
             $writer->addRows($dataRows);
             $this->fail('Exception should have been thrown');
         } catch (SpoutException $e) {
-            $this->assertFileNotExists($fileName, 'Output file should have been deleted');
+            $this->assertFileDoesNotExist($fileName, 'Output file should have been deleted');
 
             $numFiles = iterator_count(new \FilesystemIterator($tempFolderPath, \FilesystemIterator::SKIP_DOTS));
             $this->assertEquals(0, $numFiles, 'All temp files should have been deleted');

@@ -13,7 +13,7 @@ use Box\Spout\Writer\Exception\InvalidSheetNameException;
 class SheetManager
 {
     /** Sheet name should not exceed 31 characters */
-    const MAX_LENGTH_SHEET_NAME = 31;
+    public const MAX_LENGTH_SHEET_NAME = 31;
 
     /** @var array Invalid characters that cannot be contained in the sheet name */
     private static $INVALID_CHARACTERS_IN_SHEET_NAME = ['\\', '/', '?', '*', ':', '[', ']'];

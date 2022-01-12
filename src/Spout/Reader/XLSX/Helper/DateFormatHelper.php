@@ -8,9 +8,9 @@ namespace Box\Spout\Reader\XLSX\Helper;
  */
 class DateFormatHelper
 {
-    const KEY_GENERAL = 'general';
-    const KEY_HOUR_12 = '12h';
-    const KEY_HOUR_24 = '24h';
+    public const KEY_GENERAL = 'general';
+    public const KEY_HOUR_12 = '12h';
+    public const KEY_HOUR_24 = '24h';
 
     /**
      * This map is used to replace Excel format characters by their PHP equivalent.

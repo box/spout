@@ -10,11 +10,11 @@ use Box\Spout\Writer\Common\Creator\InternalEntityFactory;
  */
 class ZipHelper
 {
-    const ZIP_EXTENSION = '.zip';
+    public const ZIP_EXTENSION = '.zip';
 
     /** Controls what to do when trying to add an existing file */
-    const EXISTING_FILES_SKIP = 'skip';
-    const EXISTING_FILES_OVERWRITE = 'overwrite';
+    public const EXISTING_FILES_SKIP = 'skip';
+    public const EXISTING_FILES_OVERWRITE = 'overwrite';
 
     /** @var InternalEntityFactory Factory to create entities */
     private $entityFactory;

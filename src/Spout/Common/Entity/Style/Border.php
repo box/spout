@@ -7,20 +7,20 @@ namespace Box\Spout\Common\Entity\Style;
  */
 class Border
 {
-    const LEFT = 'left';
-    const RIGHT = 'right';
-    const TOP = 'top';
-    const BOTTOM = 'bottom';
+    public const LEFT = 'left';
+    public const RIGHT = 'right';
+    public const TOP = 'top';
+    public const BOTTOM = 'bottom';
 
-    const STYLE_NONE = 'none';
-    const STYLE_SOLID = 'solid';
-    const STYLE_DASHED = 'dashed';
-    const STYLE_DOTTED = 'dotted';
-    const STYLE_DOUBLE = 'double';
+    public const STYLE_NONE = 'none';
+    public const STYLE_SOLID = 'solid';
+    public const STYLE_DASHED = 'dashed';
+    public const STYLE_DOTTED = 'dotted';
+    public const STYLE_DOUBLE = 'double';
 
-    const WIDTH_THIN = 'thin';
-    const WIDTH_MEDIUM = 'medium';
-    const WIDTH_THICK = 'thick';
+    public const WIDTH_THIN = 'thin';
+    public const WIDTH_MEDIUM = 'medium';
+    public const WIDTH_THICK = 'thick';
 
     /** @var array A list of BorderPart objects for this border. */
     private $parts = [];

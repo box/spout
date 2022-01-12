@@ -46,7 +46,7 @@ class CachingStrategyFactoryTest extends TestCase
         $factoryStub->method('getMemoryLimitInKB')->willReturn($memoryLimitInKB);
 
         $tempFolder = sys_get_temp_dir();
-        $helperFactory = new HelperFactory($factoryStub);
+        $helperFactory = new HelperFactory();
         $strategy = $factoryStub->createBestCachingStrategy($sharedStringsUniqueCount, $tempFolder, $helperFactory);
 
         $fullExpectedStrategyClassName = 'Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\\' . $expectedStrategyClassName;

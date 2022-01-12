@@ -11,20 +11,20 @@ use Box\Spout\Reader\XLSX\Creator\InternalEntityFactory;
 class StyleManager
 {
     /** Nodes used to find relevant information in the styles XML file */
-    const XML_NODE_NUM_FMTS = 'numFmts';
-    const XML_NODE_NUM_FMT = 'numFmt';
-    const XML_NODE_CELL_XFS = 'cellXfs';
-    const XML_NODE_XF = 'xf';
+    public const XML_NODE_NUM_FMTS = 'numFmts';
+    public const XML_NODE_NUM_FMT = 'numFmt';
+    public const XML_NODE_CELL_XFS = 'cellXfs';
+    public const XML_NODE_XF = 'xf';
 
     /** Attributes used to find relevant information in the styles XML file */
-    const XML_ATTRIBUTE_NUM_FMT_ID = 'numFmtId';
-    const XML_ATTRIBUTE_FORMAT_CODE = 'formatCode';
-    const XML_ATTRIBUTE_APPLY_NUMBER_FORMAT = 'applyNumberFormat';
+    public const XML_ATTRIBUTE_NUM_FMT_ID = 'numFmtId';
+    public const XML_ATTRIBUTE_FORMAT_CODE = 'formatCode';
+    public const XML_ATTRIBUTE_APPLY_NUMBER_FORMAT = 'applyNumberFormat';
 
     /** By convention, default style ID is 0 */
-    const DEFAULT_STYLE_ID = 0;
+    public const DEFAULT_STYLE_ID = 0;
 
-    const NUMBER_FORMAT_GENERAL = 'General';
+    public const NUMBER_FORMAT_GENERAL = 'General';
 
     /**
      * @see https://msdn.microsoft.com/en-us/library/ff529597(v=office.12).aspx

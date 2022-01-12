@@ -11,12 +11,12 @@ use Box\Spout\Reader\ODS\Creator\InternalEntityFactory;
  */
 class SettingsHelper
 {
-    const SETTINGS_XML_FILE_PATH = 'settings.xml';
+    public const SETTINGS_XML_FILE_PATH = 'settings.xml';
 
     /** Definition of XML nodes name and attribute used to parse settings data */
-    const XML_NODE_CONFIG_ITEM = 'config:config-item';
-    const XML_ATTRIBUTE_CONFIG_NAME = 'config:name';
-    const XML_ATTRIBUTE_VALUE_ACTIVE_TABLE = 'ActiveTable';
+    public const XML_NODE_CONFIG_ITEM = 'config:config-item';
+    public const XML_ATTRIBUTE_CONFIG_NAME = 'config:name';
+    public const XML_ATTRIBUTE_VALUE_ACTIVE_TABLE = 'ActiveTable';
 
     /** @var InternalEntityFactory Factory to create entities */
     private $entityFactory;
