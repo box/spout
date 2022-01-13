@@ -35,6 +35,7 @@ class ReaderEntityFactory
             return ReaderFactory::createFromType(Type::CSV);
         } catch (UnsupportedTypeException $e) {
             // should never happen
+            return null;
         }
     }
 
@@ -49,6 +50,7 @@ class ReaderEntityFactory
             return ReaderFactory::createFromType(Type::XLSX);
         } catch (UnsupportedTypeException $e) {
             // should never happen
+            return null;
         }
     }
 
@@ -63,6 +65,7 @@ class ReaderEntityFactory
             return ReaderFactory::createFromType(Type::ODS);
         } catch (UnsupportedTypeException $e) {
             // should never happen
+            return null;
         }
     }
 }

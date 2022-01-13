@@ -50,6 +50,7 @@ class WriterEntityFactory
             return WriterFactory::createFromType(Type::CSV);
         } catch (UnsupportedTypeException $e) {
             // should never happen
+            return null;
         }
     }
 
@@ -64,6 +65,7 @@ class WriterEntityFactory
             return WriterFactory::createFromType(Type::XLSX);
         } catch (UnsupportedTypeException $e) {
             // should never happen
+            return null;
         }
     }
 
@@ -78,6 +80,7 @@ class WriterEntityFactory
             return WriterFactory::createFromType(Type::ODS);
         } catch (UnsupportedTypeException $e) {
             // should never happen
+            return null;
         }
     }
 

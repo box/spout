@@ -15,17 +15,17 @@ use Box\Spout\Writer\ODS\Manager\WorksheetManager;
  */
 class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper implements FileSystemWithRootFolderHelperInterface
 {
-    const APP_NAME = 'Spout';
-    const MIMETYPE = 'application/vnd.oasis.opendocument.spreadsheet';
+    public const APP_NAME = 'Spout';
+    public const MIMETYPE = 'application/vnd.oasis.opendocument.spreadsheet';
 
-    const META_INF_FOLDER_NAME = 'META-INF';
-    const SHEETS_CONTENT_TEMP_FOLDER_NAME = 'worksheets-temp';
+    public const META_INF_FOLDER_NAME = 'META-INF';
+    public const SHEETS_CONTENT_TEMP_FOLDER_NAME = 'worksheets-temp';
 
-    const MANIFEST_XML_FILE_NAME = 'manifest.xml';
-    const CONTENT_XML_FILE_NAME = 'content.xml';
-    const META_XML_FILE_NAME = 'meta.xml';
-    const MIMETYPE_FILE_NAME = 'mimetype';
-    const STYLES_XML_FILE_NAME = 'styles.xml';
+    public const MANIFEST_XML_FILE_NAME = 'manifest.xml';
+    public const CONTENT_XML_FILE_NAME = 'content.xml';
+    public const META_XML_FILE_NAME = 'meta.xml';
+    public const MIMETYPE_FILE_NAME = 'mimetype';
+    public const STYLES_XML_FILE_NAME = 'styles.xml';
 
     /** @var ZipHelper Helper to perform tasks with Zip archive */
     private $zipHelper;

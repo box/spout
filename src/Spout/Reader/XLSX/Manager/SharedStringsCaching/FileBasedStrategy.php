@@ -15,7 +15,7 @@ use Box\Spout\Reader\XLSX\Creator\HelperFactory;
 class FileBasedStrategy implements CachingStrategyInterface
 {
     /** Value to use to escape the line feed character ("\n") */
-    const ESCAPED_LINE_FEED_CHARACTER = '_x000A_';
+    public const ESCAPED_LINE_FEED_CHARACTER = '_x000A_';
 
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;

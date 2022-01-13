@@ -10,7 +10,7 @@ use Box\Spout\Writer\Common\Manager\SheetManager;
  */
 class Sheet
 {
-    const DEFAULT_SHEET_NAME_PREFIX = 'Sheet';
+    public const DEFAULT_SHEET_NAME_PREFIX = 'Sheet';
 
     /** @var int Index of the sheet, based on order in the workbook (zero-based) */
     private $index;

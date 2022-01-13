@@ -15,7 +15,7 @@ use Box\Spout\Writer\WriterAbstract;
 class Writer extends WriterAbstract
 {
     /** Number of rows to write before flushing */
-    const FLUSH_THRESHOLD = 500;
+    public const FLUSH_THRESHOLD = 500;
 
     /** @var string Content-Type value for the header */
     protected static $headerContentType = 'text/csv; charset=UTF-8';

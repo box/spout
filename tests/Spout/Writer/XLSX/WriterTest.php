@@ -163,7 +163,7 @@ class WriterTest extends TestCase
             $writer->addRows($dataRows);
             $this->fail('Exception should have been thrown');
         } catch (SpoutException $e) {
-            $this->assertFileNotExists($fileName, 'Output file should have been deleted');
+            $this->assertFileDoesNotExist($fileName, 'Output file should have been deleted');
 
             $numFiles = iterator_count(new \FilesystemIterator($tempFolderPath, \FilesystemIterator::SKIP_DOTS));
             $this->assertEquals(0, $numFiles, 'All temp files should have been deleted');
@@ -406,12 +406,19 @@ class WriterTest extends TestCase
             // Installed locales differ from one system to another, so we can't pick
             // a given locale.
             $supportedLocales = explode("\n", shell_exec('locale -a'));
+            $foundCommaLocale = false;
             foreach ($supportedLocales as $supportedLocale) {
                 \setlocale(LC_ALL, $supportedLocale);
                 if (\localeconv()['decimal_point'] === ',') {
+                    $foundCommaLocale = true;
                     break;
                 }
             }
+
+            if (!$foundCommaLocale) {
+                $this->markTestSkipped('No locale with comma decimal separator');
+            }
+
             $this->assertEquals(',', \localeconv()['decimal_point']);
 
             $fileName = 'test_add_row_should_support_float_values_in_different_locale.xlsx';
@@ -421,8 +428,8 @@ class WriterTest extends TestCase
 
             $this->writeToXLSXFile($dataRows, $fileName, $shouldUseInlineStrings = false);
 
-            $this->assertInlineDataWasNotWrittenToSheet($fileName, 1, "1234,5");
-            $this->assertInlineDataWasWrittenToSheet($fileName, 1, "1234.5");
+            $this->assertInlineDataWasNotWrittenToSheet($fileName, 1, '1234,5');
+            $this->assertInlineDataWasWrittenToSheet($fileName, 1, '1234.5');
         } finally {
             // reset locale
             \setlocale(LC_ALL, $previousLocale);
@@ -568,6 +575,10 @@ class WriterTest extends TestCase
      */
     public function testGeneratedFileShouldHaveTheCorrectMimeType()
     {
+        if (!function_exists('finfo')) {
+            $this->markTestSkipped('finfo is not available on this system (possibly running on Windows where the DLL needs to be added explicitly to the php.ini)');
+        }
+
         $fileName = 'test_mime_type.xlsx';
         $resourcePath = $this->getGeneratedResourcePath($fileName);
         $dataRows = $this->createRowsFromValues([['foo']]);

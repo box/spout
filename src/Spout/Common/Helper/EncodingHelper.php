@@ -11,18 +11,18 @@ use Box\Spout\Common\Exception\EncodingConversionException;
 class EncodingHelper
 {
     /** Definition of the encodings that can have a BOM */
-    const ENCODING_UTF8     = 'UTF-8';
-    const ENCODING_UTF16_LE = 'UTF-16LE';
-    const ENCODING_UTF16_BE = 'UTF-16BE';
-    const ENCODING_UTF32_LE = 'UTF-32LE';
-    const ENCODING_UTF32_BE = 'UTF-32BE';
+    public const ENCODING_UTF8     = 'UTF-8';
+    public const ENCODING_UTF16_LE = 'UTF-16LE';
+    public const ENCODING_UTF16_BE = 'UTF-16BE';
+    public const ENCODING_UTF32_LE = 'UTF-32LE';
+    public const ENCODING_UTF32_BE = 'UTF-32BE';
 
     /** Definition of the BOMs for the different encodings */
-    const BOM_UTF8     = "\xEF\xBB\xBF";
-    const BOM_UTF16_LE = "\xFF\xFE";
-    const BOM_UTF16_BE = "\xFE\xFF";
-    const BOM_UTF32_LE = "\xFF\xFE\x00\x00";
-    const BOM_UTF32_BE = "\x00\x00\xFE\xFF";
+    public const BOM_UTF8     = "\xEF\xBB\xBF";
+    public const BOM_UTF16_LE = "\xFF\xFE";
+    public const BOM_UTF16_BE = "\xFE\xFF";
+    public const BOM_UTF32_LE = "\xFF\xFE\x00\x00";
+    public const BOM_UTF32_BE = "\x00\x00\xFE\xFF";
 
     /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
     protected $globalFunctionsHelper;
