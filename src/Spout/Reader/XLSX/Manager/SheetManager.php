@@ -14,27 +14,27 @@ use Box\Spout\Reader\XLSX\Sheet;
 class SheetManager
 {
     /** Paths of XML files relative to the XLSX file root */
-    const WORKBOOK_XML_RELS_FILE_PATH = 'xl/_rels/workbook.xml.rels';
-    const WORKBOOK_XML_FILE_PATH = 'xl/workbook.xml';
+    public const WORKBOOK_XML_RELS_FILE_PATH = 'xl/_rels/workbook.xml.rels';
+    public const WORKBOOK_XML_FILE_PATH = 'xl/workbook.xml';
 
     /** Definition of XML node names used to parse data */
-    const XML_NODE_WORKBOOK_PROPERTIES = 'workbookPr';
-    const XML_NODE_WORKBOOK_VIEW = 'workbookView';
-    const XML_NODE_SHEET = 'sheet';
-    const XML_NODE_SHEETS = 'sheets';
-    const XML_NODE_RELATIONSHIP = 'Relationship';
+    public const XML_NODE_WORKBOOK_PROPERTIES = 'workbookPr';
+    public const XML_NODE_WORKBOOK_VIEW = 'workbookView';
+    public const XML_NODE_SHEET = 'sheet';
+    public const XML_NODE_SHEETS = 'sheets';
+    public const XML_NODE_RELATIONSHIP = 'Relationship';
 
     /** Definition of XML attributes used to parse data */
-    const XML_ATTRIBUTE_DATE_1904 = 'date1904';
-    const XML_ATTRIBUTE_ACTIVE_TAB = 'activeTab';
-    const XML_ATTRIBUTE_R_ID = 'r:id';
-    const XML_ATTRIBUTE_NAME = 'name';
-    const XML_ATTRIBUTE_STATE = 'state';
-    const XML_ATTRIBUTE_ID = 'Id';
-    const XML_ATTRIBUTE_TARGET = 'Target';
+    public const XML_ATTRIBUTE_DATE_1904 = 'date1904';
+    public const XML_ATTRIBUTE_ACTIVE_TAB = 'activeTab';
+    public const XML_ATTRIBUTE_R_ID = 'r:id';
+    public const XML_ATTRIBUTE_NAME = 'name';
+    public const XML_ATTRIBUTE_STATE = 'state';
+    public const XML_ATTRIBUTE_ID = 'Id';
+    public const XML_ATTRIBUTE_TARGET = 'Target';
 
     /** State value to represent a hidden sheet */
-    const SHEET_STATE_HIDDEN = 'hidden';
+    public const SHEET_STATE_HIDDEN = 'hidden';
 
     /** @var string Path of the XLSX file being read */
     protected $filePath;

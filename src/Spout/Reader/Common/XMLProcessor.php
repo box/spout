@@ -11,16 +11,16 @@ use Box\Spout\Reader\Wrapper\XMLReader;
 class XMLProcessor
 {
     /* Node types */
-    const NODE_TYPE_START = XMLReader::ELEMENT;
-    const NODE_TYPE_END = XMLReader::END_ELEMENT;
+    public const NODE_TYPE_START = XMLReader::ELEMENT;
+    public const NODE_TYPE_END = XMLReader::END_ELEMENT;
 
     /* Keys associated to reflection attributes to invoke a callback */
-    const CALLBACK_REFLECTION_METHOD = 'reflectionMethod';
-    const CALLBACK_REFLECTION_OBJECT = 'reflectionObject';
+    public const CALLBACK_REFLECTION_METHOD = 'reflectionMethod';
+    public const CALLBACK_REFLECTION_OBJECT = 'reflectionObject';
 
     /* Values returned by the callbacks to indicate what the processor should do next */
-    const PROCESSING_CONTINUE = 1;
-    const PROCESSING_STOP = 2;
+    public const PROCESSING_CONTINUE = 1;
+    public const PROCESSING_STOP = 2;
 
     /** @var \Box\Spout\Reader\Wrapper\XMLReader The XMLReader object that will help read sheet's XML data */
     protected $xmlReader;

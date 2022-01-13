@@ -11,7 +11,7 @@ class XMLReader extends \XMLReader
 {
     use XMLInternalErrorsHelper;
 
-    const ZIP_WRAPPER = 'zip://';
+    public const ZIP_WRAPPER = 'zip://';
 
     /**
      * Opens the XML Reader to read a file located inside a ZIP file.

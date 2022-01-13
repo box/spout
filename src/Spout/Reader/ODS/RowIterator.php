@@ -23,14 +23,14 @@ use Box\Spout\Reader\Wrapper\XMLReader;
 class RowIterator implements IteratorInterface
 {
     /** Definition of XML nodes names used to parse data */
-    const XML_NODE_TABLE = 'table:table';
-    const XML_NODE_ROW = 'table:table-row';
-    const XML_NODE_CELL = 'table:table-cell';
-    const MAX_COLUMNS_EXCEL = 16384;
+    public const XML_NODE_TABLE = 'table:table';
+    public const XML_NODE_ROW = 'table:table-row';
+    public const XML_NODE_CELL = 'table:table-cell';
+    public const MAX_COLUMNS_EXCEL = 16384;
 
     /** Definition of XML attribute used to parse data */
-    const XML_ATTRIBUTE_NUM_ROWS_REPEATED = 'table:number-rows-repeated';
-    const XML_ATTRIBUTE_NUM_COLUMNS_REPEATED = 'table:number-columns-repeated';
+    public const XML_ATTRIBUTE_NUM_ROWS_REPEATED = 'table:number-rows-repeated';
+    public const XML_ATTRIBUTE_NUM_COLUMNS_REPEATED = 'table:number-columns-repeated';
 
     /** @var \Box\Spout\Reader\Wrapper\XMLReader The XMLReader object that will help read sheet's XML data */
     protected $xmlReader;

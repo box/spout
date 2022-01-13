@@ -14,20 +14,20 @@ use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
  */
 class FileSystemHelper extends \Box\Spout\Common\Helper\FileSystemHelper implements FileSystemWithRootFolderHelperInterface
 {
-    const APP_NAME = 'Spout';
+    public const APP_NAME = 'Spout';
 
-    const RELS_FOLDER_NAME = '_rels';
-    const DOC_PROPS_FOLDER_NAME = 'docProps';
-    const XL_FOLDER_NAME = 'xl';
-    const WORKSHEETS_FOLDER_NAME = 'worksheets';
+    public const RELS_FOLDER_NAME = '_rels';
+    public const DOC_PROPS_FOLDER_NAME = 'docProps';
+    public const XL_FOLDER_NAME = 'xl';
+    public const WORKSHEETS_FOLDER_NAME = 'worksheets';
 
-    const RELS_FILE_NAME = '.rels';
-    const APP_XML_FILE_NAME = 'app.xml';
-    const CORE_XML_FILE_NAME = 'core.xml';
-    const CONTENT_TYPES_XML_FILE_NAME = '[Content_Types].xml';
-    const WORKBOOK_XML_FILE_NAME = 'workbook.xml';
-    const WORKBOOK_RELS_XML_FILE_NAME = 'workbook.xml.rels';
-    const STYLES_XML_FILE_NAME = 'styles.xml';
+    public const RELS_FILE_NAME = '.rels';
+    public const APP_XML_FILE_NAME = 'app.xml';
+    public const CORE_XML_FILE_NAME = 'core.xml';
+    public const CONTENT_TYPES_XML_FILE_NAME = '[Content_Types].xml';
+    public const WORKBOOK_XML_FILE_NAME = 'workbook.xml';
+    public const WORKBOOK_RELS_XML_FILE_NAME = 'workbook.xml.rels';
+    public const STYLES_XML_FILE_NAME = 'styles.xml';
 
     /** @var ZipHelper Helper to perform tasks with Zip archive */
     private $zipHelper;

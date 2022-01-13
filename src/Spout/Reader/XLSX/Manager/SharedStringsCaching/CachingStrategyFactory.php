@@ -37,7 +37,7 @@ class CachingStrategyFactory
      * This means that in order to store one shared string in memory, the memory amount needed is:
      *   => 20 * 600 ≈ 12KB
      */
-    const AMOUNT_MEMORY_NEEDED_PER_STRING_IN_KB = 12;
+    public const AMOUNT_MEMORY_NEEDED_PER_STRING_IN_KB = 12;
 
     /**
      * To avoid running out of memory when extracting a huge number of shared strings, they can be saved to temporary files
@@ -48,7 +48,7 @@ class CachingStrategyFactory
      * best when the indexes of the shared strings are sorted in the sheet data.
      * 10,000 was chosen because it creates small files that are fast to be loaded in memory.
      */
-    const MAX_NUM_STRINGS_PER_TEMP_FILE = 10000;
+    public const MAX_NUM_STRINGS_PER_TEMP_FILE = 10000;
 
     /**
      * Returns the best caching strategy, given the number of unique shared strings
