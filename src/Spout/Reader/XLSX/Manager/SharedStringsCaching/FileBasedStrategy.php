@@ -32,7 +32,7 @@ class FileBasedStrategy implements CachingStrategyInterface
      */
     protected $maxNumStringsPerTempFile;
 
-    /** @var resource Pointer to the last temp file a shared string was written to */
+    /** @var resource|null Pointer to the last temp file a shared string was written to */
     protected $tempFilePointer;
 
     /**

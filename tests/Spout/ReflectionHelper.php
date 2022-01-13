@@ -95,7 +95,6 @@ class ReflectionHelper
      *
      * @param object $object
      * @param string $methodName
-     * @param *mixed|null $params
      *
      * @return mixed|null
      */

@@ -267,4 +267,4 @@ jobs:
         run: composer install --no-progress --prefer-dist --optimize-autoloader
 
       - name: Static Analysis using PHPStan
-        run: phpstan analyse --no-progress src tests
+        run: ./vendor/bin/phpstan analyse -c phpstan.neon --no-progress

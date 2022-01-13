@@ -152,7 +152,7 @@ class InternalEntityFactory implements InternalEntityFactoryInterface
     }
 
     /**
-     * @param $xmlReader
+     * @param XMLReader $xmlReader
      * @return XMLProcessor
      */
     public function createXMLProcessor($xmlReader)

@@ -56,7 +56,7 @@ class RowIterator implements IteratorInterface
     /** @var Row The currently processed row */
     protected $currentlyProcessedRow;
 
-    /** @var Row Buffer used to store the current row, while checking if there are more rows to read */
+    /** @var Row|null Buffer used to store the current row, while checking if there are more rows to read */
     protected $rowBuffer;
 
     /** @var bool Indicates whether all rows have been read */
@@ -68,7 +68,7 @@ class RowIterator implements IteratorInterface
     /** @var int Row index to be processed next (one-based) */
     protected $nextRowIndexToBeProcessed = 1;
 
-    /** @var Cell Last processed cell (because when reading cell at column N+1, cell N is processed) */
+    /** @var Cell|null Last processed cell (because when reading cell at column N+1, cell N is processed) */
     protected $lastProcessedCell;
 
     /** @var int Number of times the last processed row should be repeated */
@@ -225,6 +225,7 @@ class RowIterator implements IteratorInterface
         $currentNumColumnsRepeated = $this->getNumColumnsRepeatedForCurrentNode($xmlReader);
 
         // NOTE: expand() will automatically decode all XML entities of the child nodes
+        /** @var \DOMElement $node */
         $node = $xmlReader->expand();
         $currentCell = $this->getCell($node);
 
@@ -316,7 +317,7 @@ class RowIterator implements IteratorInterface
     /**
      * Returns the cell with (unescaped) correctly marshalled, cell value associated to the given XML node.
      *
-     * @param \DOMNode $node
+     * @param \DOMElement $node
      * @return Cell The cell set with the associated with the cell
      */
     protected function getCell($node)
@@ -339,7 +340,7 @@ class RowIterator implements IteratorInterface
      * row data yet (as we still need to apply the "num-columns-repeated" attribute).
      *
      * @param Row $currentRow
-     * @param Cell $lastReadCell The last read cell
+     * @param Cell|null $lastReadCell The last read cell
      * @return bool Whether the row is empty
      */
     protected function isEmptyRow($currentRow, $lastReadCell)

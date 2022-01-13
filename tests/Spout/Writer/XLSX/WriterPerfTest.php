@@ -102,7 +102,7 @@ class WriterPerfTest extends TestCase
 
     /**
      * @param string $filePath
-     * @return string
+     * @return int
      */
     private function getLasRowNumberForFile($filePath)
     {
