@@ -66,7 +66,7 @@ class CellValueFormatter
     /**
      * Returns the (unescaped) correctly marshalled, cell value associated to the given XML node.
      *
-     * @param \DOMNode $node
+     * @param \DOMElement $node
      * @throws InvalidValueException If the value is not valid
      * @return string|int|float|bool|\DateTime The value associated with the cell
      */
@@ -102,7 +102,7 @@ class CellValueFormatter
     /**
      * Returns the cell's string value from a node's nested value node
      *
-     * @param \DOMNode $node
+     * @param \DOMElement $node
      * @return string The value associated with the cell
      */
     protected function getVNodeValue($node)
@@ -117,7 +117,7 @@ class CellValueFormatter
     /**
      * Returns the cell String value where string is inline.
      *
-     * @param \DOMNode $node
+     * @param \DOMElement $node
      * @return string The value associated with the cell
      */
     protected function formatInlineStringCellValue($node)

@@ -40,7 +40,7 @@ class StyleManagerTest extends TestCase
     {
         $styleRegistryMock = $this->getMockBuilder(StyleRegistry::class)
                                 ->disableOriginalConstructor()
-                                ->setMethods(['getFillIdForStyleId', 'getBorderIdForStyleId'])
+                                ->onlyMethods(['getFillIdForStyleId', 'getBorderIdForStyleId'])
                                 ->getMock();
 
         $styleRegistryMock

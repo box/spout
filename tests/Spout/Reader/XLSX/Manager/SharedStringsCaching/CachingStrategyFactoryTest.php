@@ -36,11 +36,11 @@ class CachingStrategyFactoryTest extends TestCase
      */
     public function testCreateBestCachingStrategy($sharedStringsUniqueCount, $memoryLimitInKB, $expectedStrategyClassName)
     {
-        /** @var CachingStrategyFactory|\PHPUnit_Framework_MockObject_MockObject $factoryStub */
+        /** @var CachingStrategyFactory|\PHPUnit\Framework\MockObject\MockObject $factoryStub */
         $factoryStub = $this
             ->getMockBuilder('\Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory')
             ->disableOriginalConstructor()
-            ->setMethods(['getMemoryLimitInKB'])
+            ->onlyMethods(['getMemoryLimitInKB'])
             ->getMock();
 
         $factoryStub->method('getMemoryLimitInKB')->willReturn($memoryLimitInKB);
@@ -84,11 +84,11 @@ class CachingStrategyFactoryTest extends TestCase
      */
     public function testGetMemoryLimitInKB($memoryLimitFormatted, $expectedMemoryLimitInKB)
     {
-        /** @var CachingStrategyFactory|\PHPUnit_Framework_MockObject_MockObject $factoryStub */
+        /** @var CachingStrategyFactory|\PHPUnit\Framework\MockObject\MockObject $factoryStub */
         $factoryStub = $this
             ->getMockBuilder('\Box\Spout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory')
             ->disableOriginalConstructor()
-            ->setMethods(['getMemoryLimitFromIni'])
+            ->onlyMethods(['getMemoryLimitFromIni'])
             ->getMock();
 
         $factoryStub->method('getMemoryLimitFromIni')->willReturn($memoryLimitFormatted);

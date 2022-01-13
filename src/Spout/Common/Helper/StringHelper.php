@@ -88,7 +88,7 @@ class StringHelper
      * @see https://wiki.php.net/rfc/locale_independent_float_to_string for the changed behavior in PHP8.
      *
      * @param int|float $numericValue
-     * @return string
+     * @return int|float|string
      */
     public function formatNumericValue($numericValue)
     {

@@ -53,7 +53,7 @@ abstract class ReaderAbstract implements ReaderInterface
     /**
      * Closes the reader. To be used after reading the file.
      *
-     * @return ReaderAbstract
+     * @return void
      */
     abstract protected function closeReader();
 

@@ -108,6 +108,7 @@ class SheetIterator implements IteratorInterface
         $sheetsVisibility = [];
 
         $this->xmlReader->readUntilNodeFound(self::XML_NODE_AUTOMATIC_STYLES);
+        /** @var \DOMElement $automaticStylesNode */
         $automaticStylesNode = $this->xmlReader->expand();
 
         $tableStyleNodes = $automaticStylesNode->getElementsByTagNameNS(self::XML_STYLE_NAMESPACE, self::XML_NODE_STYLE_TABLE_PROPERTIES);

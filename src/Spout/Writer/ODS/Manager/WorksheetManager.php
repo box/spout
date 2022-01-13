@@ -86,7 +86,7 @@ class WorksheetManager implements WorksheetManagerInterface
      * Returns the table XML root node as string.
      *
      * @param Worksheet $worksheet
-     * @return string <table> node as string
+     * @return string "<table>" node as string
      */
     public function getTableElementStartAsString(Worksheet $worksheet)
     {
