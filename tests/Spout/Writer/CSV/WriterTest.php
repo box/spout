@@ -193,7 +193,7 @@ class WriterTest extends TestCase
      * @param string $fieldDelimiter
      * @param string $fieldEnclosure
      * @param bool   $shouldAddBOM
-     * @return string|null
+     * @return string
      */
     private function writeToCsvFileAndReturnWrittenContent($allRows, $fileName, $fieldDelimiter = ',', $fieldEnclosure = '"', $shouldAddBOM = true)
     {

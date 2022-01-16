@@ -84,7 +84,7 @@ class CachingStrategyFactory
 
         $memoryAvailable = $this->getMemoryLimitInKB();
 
-        if ($memoryAvailable === -1) {
+        if ((int) $memoryAvailable === -1) {
             // if cannot get memory limit or if memory limit set as unlimited, don't trust and play safe
             $isInMemoryStrategyUsageSafe = ($sharedStringsUniqueCount < self::MAX_NUM_STRINGS_PER_TEMP_FILE);
         } else {

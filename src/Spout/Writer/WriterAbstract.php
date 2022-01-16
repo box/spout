@@ -169,7 +169,7 @@ abstract class WriterAbstract implements WriterInterface
      */
     protected function throwIfFilePointerIsNotAvailable()
     {
-        if (!$this->filePointer) {
+        if (!is_resource($this->filePointer)) {
             throw new IOException('File pointer has not be opened');
         }
     }

@@ -21,7 +21,7 @@ class RowIterator implements IteratorInterface
      */
     public const MAX_READ_BYTES_PER_LINE = 0;
 
-    /** @var resource Pointer to the CSV file to read */
+    /** @var resource|null Pointer to the CSV file to read */
     protected $filePointer;
 
     /** @var int Number of read rows */

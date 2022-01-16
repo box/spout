@@ -34,7 +34,7 @@ class WorkbookRelationshipsManager
     /** @var InternalEntityFactory Factory to create entities */
     private $entityFactory;
 
-    /** @var array Cache of the already read workbook relationships: [TYPE] => [FILE_NAME] */
+    /** @var array|null Cache of the already read workbook relationships: [TYPE] => [FILE_NAME] */
     private $cachedWorkbookRelationships;
 
     /**

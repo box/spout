@@ -142,7 +142,7 @@ class Reader extends ReaderAbstract
      */
     protected function closeReader()
     {
-        if ($this->filePointer) {
+        if (is_resource($this->filePointer)) {
             $this->globalFunctionsHelper->fclose($this->filePointer);
         }
 

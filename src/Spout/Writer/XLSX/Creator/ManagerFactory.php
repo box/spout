@@ -91,8 +91,7 @@ class ManagerFactory implements ManagerFactoryInterface
             $styleMerger,
             $sharedStringsManager,
             $stringsEscaper,
-            $stringsHelper,
-            $this->entityFactory
+            $stringsHelper
         );
     }
 

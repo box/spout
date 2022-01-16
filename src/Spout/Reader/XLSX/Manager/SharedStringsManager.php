@@ -242,7 +242,7 @@ class SharedStringsManager
      */
     public function cleanup()
     {
-        if ($this->cachingStrategy) {
+        if ($this->cachingStrategy !== null) {
             $this->cachingStrategy->clearCache();
         }
     }
