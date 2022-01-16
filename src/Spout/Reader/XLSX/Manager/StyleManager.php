@@ -60,10 +60,10 @@ class StyleManager
     /** @var array Array containing the IDs of built-in number formats indicating a date */
     protected $builtinNumFmtIdIndicatingDates;
 
-    /** @var array Array containing a mapping NUM_FMT_ID => FORMAT_CODE */
+    /** @var array|null Array containing a mapping NUM_FMT_ID => FORMAT_CODE */
     protected $customNumberFormats;
 
-    /** @var array Array containing a mapping STYLE_ID => [STYLE_ATTRIBUTES] */
+    /** @var array|null Array containing a mapping STYLE_ID => [STYLE_ATTRIBUTES] */
     protected $stylesAttributes;
 
     /** @var array Cache containing a mapping NUM_FMT_ID => IS_DATE_FORMAT. Used to avoid lots of recalculations */

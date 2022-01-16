@@ -66,7 +66,7 @@ class Style
     /** @var bool Whether the wrap text property was set */
     private $hasSetWrapText = false;
 
-    /** @var Border */
+    /** @var Border|null */
     private $border;
 
     /** @var bool Whether border properties should be applied */
@@ -78,7 +78,7 @@ class Style
     /** @var bool */
     private $hasSetBackgroundColor = false;
 
-    /** @var string Format */
+    /** @var string|null Format */
     private $format;
 
     /** @var bool */
@@ -110,7 +110,7 @@ class Style
     }
 
     /**
-     * @return Border
+     * @return Border|null
      */
     public function getBorder()
     {
@@ -467,7 +467,7 @@ class Style
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getFormat()
     {

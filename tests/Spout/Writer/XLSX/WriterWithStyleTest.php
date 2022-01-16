@@ -475,7 +475,6 @@ class WriterWithStyleTest extends TestCase
             $borderParts = $borderNode->childNodes;
             $ordering = [];
 
-            /** @var \DOMText $part */
             foreach ($borderParts as $part) {
                 if ($part instanceof \DOMElement) {
                     $ordering[] = $part->nodeName;

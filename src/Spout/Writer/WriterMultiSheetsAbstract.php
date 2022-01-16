@@ -9,7 +9,6 @@ use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Creator\ManagerFactoryInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Sheet;
-use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\WorkbookManagerInterface;
 use Box\Spout\Writer\Exception\SheetNotFoundException;
 use Box\Spout\Writer\Exception\WriterAlreadyOpenedException;
@@ -25,7 +24,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     /** @var ManagerFactoryInterface */
     private $managerFactory;
 
-    /** @var WorkbookManagerInterface */
+    /** @var WorkbookManagerInterface|null */
     private $workbookManager;
 
     /**
@@ -66,7 +65,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      */
     protected function openWriter()
     {
-        if (!$this->workbookManager) {
+        if ($this->workbookManager === null) {
             $this->workbookManager = $this->managerFactory->createWorkbookManager($this->optionsManager);
             $this->workbookManager->addNewSheetAndMakeItCurrent();
         }
@@ -85,7 +84,6 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
         $externalSheets = [];
         $worksheets = $this->workbookManager->getWorksheets();
 
-        /** @var Worksheet $worksheet */
         foreach ($worksheets as $worksheet) {
             $externalSheets[] = $worksheet->getExternalSheet();
         }
@@ -143,7 +141,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      */
     protected function throwIfWorkbookIsNotAvailable()
     {
-        if (!$this->workbookManager->getWorkbook()) {
+        if ($this->workbookManager->getWorkbook() === null) {
             throw new WriterNotOpenedException('The writer must be opened before performing this action.');
         }
     }
@@ -162,7 +160,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      */
     protected function closeWriter()
     {
-        if ($this->workbookManager) {
+        if ($this->workbookManager !== null) {
             $this->workbookManager->close($this->filePointer);
         }
     }

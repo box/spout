@@ -103,7 +103,7 @@ class GlobalFunctionsHelper
      * @param array $fields
      * @param string|null $delimiter
      * @param string|null $enclosure
-     * @return int
+     * @return int|false
      */
     public function fputcsv($handle, array $fields, $delimiter = null, $enclosure = null)
     {
