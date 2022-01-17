@@ -2,6 +2,7 @@
 *.iml
 
 /tests/resources/generated
+/tests/**/resources/generated
 /tests/coverage
 /vendor
 /composer.lock

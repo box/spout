@@ -136,6 +136,55 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     }
 
     /**
+     * @param float $width
+     * @throws WriterAlreadyOpenedException
+     */
+    public function setDefaultColumnWidth(float $width)
+    {
+        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
+        $this->optionsManager->setOption(
+            Options::DEFAULT_COLUMN_WIDTH,
+            $width
+        );
+    }
+
+    /**
+     * @param float $height
+     * @throws WriterAlreadyOpenedException
+     */
+    public function setDefaultRowHeight(float $height)
+    {
+        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
+        $this->optionsManager->setOption(
+            Options::DEFAULT_ROW_HEIGHT,
+            $height
+        );
+    }
+
+    /**
+     * @param float|null $width
+     * @param array $columns One or more columns with this width
+     * @throws WriterNotOpenedException
+     */
+    public function setColumnWidth($width, ...$columns)
+    {
+        $this->throwIfWorkbookIsNotAvailable();
+        $this->workbookManager->setColumnWidth($width, ...$columns);
+    }
+
+    /**
+     * @param float $width The width to set
+     * @param int $start First column index of the range
+     * @param int $end Last column index of the range
+     * @throws WriterNotOpenedException
+     */
+    public function setColumnWidthForRange(float $width, int $start, int $end)
+    {
+        $this->throwIfWorkbookIsNotAvailable();
+        $this->workbookManager->setColumnWidthForRange($width, $start, $end);
+    }
+
+    /**
      * Checks if the workbook has been created. Throws an exception if not created yet.
      *
      * @throws WriterNotOpenedException If the workbook is not created yet
@@ -143,7 +192,7 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
      */
     protected function throwIfWorkbookIsNotAvailable()
     {
-        if (!$this->workbookManager->getWorkbook()) {
+        if (empty($this->workbookManager) || !$this->workbookManager->getWorkbook()) {
             throw new WriterNotOpenedException('The writer must be opened before performing this action.');
         }
     }

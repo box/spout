@@ -95,7 +95,7 @@ class WorksheetManager implements WorksheetManagerInterface
         $tableStyleName = 'ta' . ($externalSheet->getIndex() + 1);
 
         $tableElement = '<table:table table:style-name="' . $tableStyleName . '" table:name="' . $escapedSheetName . '">';
-        $tableElement .= '<table:table-column table:default-cell-style-name="ce1" table:style-name="co1" table:number-columns-repeated="' . $worksheet->getMaxNumColumns() . '"/>';
+        $tableElement .= $this->styleManager->getStyledTableColumnXMLContent($worksheet->getMaxNumColumns());
 
         return $tableElement;
     }
@@ -264,5 +264,40 @@ class WorksheetManager implements WorksheetManagerInterface
         }
 
         \fclose($worksheetFilePointer);
+    }
+
+    /**
+     * @param float|null $width
+     */
+    public function setDefaultColumnWidth($width)
+    {
+        $this->styleManager->setDefaultColumnWidth($width);
+    }
+
+    /**
+     * @param float|null $height
+     */
+    public function setDefaultRowHeight($height)
+    {
+        $this->styleManager->setDefaultRowHeight($height);
+    }
+
+    /**
+     * @param float $width
+     * @param array $columns One or more columns with this width
+     */
+    public function setColumnWidth(float $width, ...$columns)
+    {
+        $this->styleManager->setColumnWidth($width, ...$columns);
+    }
+
+    /**
+     * @param float $width The width to set
+     * @param int $start First column index of the range
+     * @param int $end Last column index of the range
+     */
+    public function setColumnWidthForRange(float $width, int $start, int $end)
+    {
+        $this->styleManager->setColumnWidthForRange($width, $start, $end);
     }
 }

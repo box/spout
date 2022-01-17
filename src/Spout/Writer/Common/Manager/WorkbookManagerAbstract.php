@@ -158,6 +158,16 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     }
 
     /**
+     * Starts the current sheet and opens the file pointer
+     *
+     * @throws IOException
+     */
+    public function startCurrentSheet()
+    {
+        $this->worksheetManager->startSheet($this->getCurrentWorksheet());
+    }
+
+    /**
      * Sets the given sheet as the current one. New data will be written to this sheet.
      * The writing will resume where it stopped (i.e. data won't be truncated).
      *
@@ -274,6 +284,41 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
             $mergedStyle = $this->styleMerger->merge($row->getStyle(), $defaultRowStyle);
             $row->setStyle($mergedStyle);
         }
+    }
+
+    /**
+     * @param float $width
+     */
+    public function setDefaultColumnWidth(float $width)
+    {
+        $this->worksheetManager->setDefaultColumnWidth($width);
+    }
+
+    /**
+     * @param float $height
+     */
+    public function setDefaultRowHeight(float $height)
+    {
+        $this->worksheetManager->setDefaultRowHeight($height);
+    }
+
+    /**
+     * @param float $width
+     * @param array $columns One or more columns with this width
+     */
+    public function setColumnWidth(float $width, ...$columns)
+    {
+        $this->worksheetManager->setColumnWidth($width, ...$columns);
+    }
+
+    /**
+     * @param float $width The width to set
+     * @param int $start First column index of the range
+     * @param int $end Last column index of the range
+     */
+    public function setColumnWidthForRange(float $width, int $start, int $end)
+    {
+        $this->worksheetManager->setColumnWidthForRange($width, $start, $end);
     }
 
     /**
