@@ -1,6 +1,6 @@
 name: Spout CI
 
-on: push
+on: [push, pull_request]
 
 jobs:
   tests-on-php-latest:
