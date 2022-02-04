@@ -26,6 +26,9 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
 
     /** @var WorkbookManagerInterface|null */
     private $workbookManager;
+        
+    /** @var int Width calculation style */
+    protected $widthCalcuationStyle;
 
     /**
      * @param OptionsManagerInterface $optionsManager
@@ -144,6 +147,22 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
         if ($this->workbookManager->getWorkbook() === null) {
             throw new WriterNotOpenedException('The writer must be opened before performing this action.');
         }
+    }
+
+    /**
+     * Set default sheet width calculation option
+     *
+     * @param int $option The width calculation style
+     * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
+     * @return Writer
+     */
+    public function setWidthCalculation($option)
+    {
+        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
+
+        $this->optionsManager->setOption(Options::ROWWIDTH_CALC_STYLE, $option);
+
+        return $this;
     }
 
     /**

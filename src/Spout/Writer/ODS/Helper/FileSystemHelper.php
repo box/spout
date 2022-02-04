@@ -202,7 +202,7 @@ EOD;
 EOD;
 
         $contentXmlFileContents .= $styleManager->getContentXmlFontFaceSectionContent();
-        $contentXmlFileContents .= $styleManager->getContentXmlAutomaticStylesSectionContent($worksheets);
+        $contentXmlFileContents .= $styleManager->getContentXmlAutomaticStylesSectionContent($worksheetManager, $worksheets);
 
         $contentXmlFileContents .= '<office:body><office:spreadsheet>';
 

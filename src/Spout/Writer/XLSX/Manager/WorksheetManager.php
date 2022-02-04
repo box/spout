@@ -9,6 +9,7 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\Escaper\XLSX as XLSXEscaper;
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Writer\Common\Helper\AppendHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
@@ -35,7 +36,8 @@ class WorksheetManager implements WorksheetManagerInterface
 
     public const SHEET_XML_FILE_HEADER = <<<'EOD'
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:x14="http://schemas.microsoft.com/office/spreadsheetml/2009/9/main" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
 EOD;
 
     /** @var bool Whether inline or shared strings should be used */
@@ -59,6 +61,12 @@ EOD;
     /** @var StringHelper String helper */
     private $stringHelper;
 
+    /** $int file pointer head position */
+    private $headWritePosition;
+
+    /** @var int Width calculation style */
+    protected $widthCalcuationStyle;
+
     /**
      * WorksheetManager constructor.
      *
@@ -80,6 +88,7 @@ EOD;
         StringHelper $stringHelper
     ) {
         $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
+        $this->widthCalcuationStyle = $optionsManager->getOption(Options::ROWWIDTH_CALC_STYLE);
         $this->rowManager = $rowManager;
         $this->styleManager = $styleManager;
         $this->styleMerger = $styleMerger;
@@ -101,12 +110,16 @@ EOD;
      */
     public function startSheet(Worksheet $worksheet)
     {
-        $sheetFilePointer = \fopen($worksheet->getFilePath(), 'w');
+        $sheetFilePointer = \fopen($worksheet->getFilePath(), 'w+');
         $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
 
         $worksheet->setFilePointer($sheetFilePointer);
+        $worksheet->setWidthCalculation($this->widthCalcuationStyle);
 
         \fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {
+            $this->headWritePosition = ftell($sheetFilePointer);
+        }
         \fwrite($sheetFilePointer, '<sheetData>');
     }
 
@@ -159,6 +172,12 @@ EOD;
             if ($registeredStyle->isMatchingRowStyle()) {
                 $rowStyle = $cellStyle; // Replace actual rowStyle (possibly with null id) by registered style (with id)
             }
+
+            if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {
+                //use row style to maintain a fair average based width computation for now
+                $worksheet->autoSetWidth($cell, $rowStyle, $columnIndexZeroBased);
+            }
+
             $rowXML .= $this->getCellXML($rowIndexOneBased, $columnIndexZeroBased, $cell, $cellStyle->getId());
         }
 
@@ -287,6 +306,18 @@ EOD;
         }
 
         \fwrite($worksheetFilePointer, '</sheetData>');
+
+        if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {
+            $colNode ='<cols>';
+            $widths = $worksheet->getColumnWidths();
+            foreach ($widths as $i => $width){
+                $colAffect = $i + 1;
+                $colNode .= '<col hidden="false" collapsed="false" min="'.$colAffect.'" max="'.$colAffect.'" width="'.$width.'" customWidth="true"/>';
+            }
+            $colNode .= '</cols>';
+            $worksheetFilePointer = AppendHelper::insertToFile($worksheetFilePointer, $this->headWritePosition, $colNode);
+        }
+
         \fwrite($worksheetFilePointer, '</worksheet>');
         \fclose($worksheetFilePointer);
     }

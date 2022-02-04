@@ -151,17 +151,21 @@ EOD;
     /**
      * Returns the contents of the "<office:automatic-styles>" section, inside "content.xml" file.
      *
+     * @param WorksheetManager $manager
      * @param Worksheet[] $worksheets
      * @return string
      */
-    public function getContentXmlAutomaticStylesSectionContent($worksheets)
+    public function getContentXmlAutomaticStylesSectionContent($manager, $worksheets)
     {
         $content = '<office:automatic-styles>';
+
+        $content .= $manager->getWidthStylesContent($worksheets[0]);
 
         foreach ($this->styleRegistry->getRegisteredStyles() as $style) {
             $content .= $this->getStyleSectionContent($style);
         }
 
+        
         $content .= <<<'EOD'
 <style:style style:family="table-column" style:name="co1">
     <style:table-column-properties fo:break-before="auto"/>

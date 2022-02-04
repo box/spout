@@ -37,6 +37,7 @@ class OptionsManager extends OptionsManagerAbstract
         return [
             Options::TEMP_FOLDER,
             Options::DEFAULT_ROW_STYLE,
+            Options::ROWWIDTH_CALC_STYLE,
             Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY,
             Options::SHOULD_USE_INLINE_STRINGS,
         ];
@@ -56,5 +57,6 @@ class OptionsManager extends OptionsManagerAbstract
         $this->setOption(Options::DEFAULT_ROW_STYLE, $defaultRowStyle);
         $this->setOption(Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY, true);
         $this->setOption(Options::SHOULD_USE_INLINE_STRINGS, true);
+        $this->setOption(Options::ROWWIDTH_CALC_STYLE, 0);
     }
 }

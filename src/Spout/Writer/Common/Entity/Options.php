@@ -16,6 +16,7 @@ abstract class Options
     // Multisheets options
     public const TEMP_FOLDER = 'tempFolder';
     public const DEFAULT_ROW_STYLE = 'defaultRowStyle';
+    public const ROWWIDTH_CALC_STYLE = 'rowCalcMethod';
     public const SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY = 'shouldCreateNewSheetsAutomatically';
 
     // XLSX specific options
