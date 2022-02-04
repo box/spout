@@ -141,15 +141,13 @@ class Worksheet
      */
     public function autoSetWidth($cell, $style, $zeroBasedIndex)
     {
-        $size = strlen($cell->getValue()) ?? 1;//use 1 as length if cell empty
-        $size *= (float)($style->getFontSize() ?? 10);
+        $size = 1 + strlen($cell->getValue());//ensure we have at least 1 space
         $size *= $style->isFontBold() ? 1.2 : 1.0;
         if ($this->getWidthCalculation() == Worksheet::W_FIXED) {
             $total = array_sum($this->getColumnWidths());
             $total = $total ?: $size;
             $size = ($size / $total) * $this->getFixedSheetWidth();
         }
-        $size /= 10;
         $this->setMaxColumnWidth($zeroBasedIndex, $size);
     }
 

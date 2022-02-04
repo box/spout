@@ -286,6 +286,7 @@ class WorksheetManager implements WorksheetManagerInterface
             $widths = $worksheet->getColumnWidths();
             //todo: this may not be adequate for multiple worksheets
             foreach ($widths as $i => $width){
+                //this is a rough equivalent based on pixel density
                 $win = round($width / 9.6, 2);//convert to inches
                 $colNo = $i + 1;
                 $style .= '<style:style style:name="co'.$colNo.
