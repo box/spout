@@ -42,6 +42,9 @@ class WorksheetManager implements WorksheetManagerInterface
     /** @var int Width calculation style */
     protected $widthCalcuationStyle;
 
+    /** @var int Fixed Width */
+    protected $fixedWidth;
+
     /**
      * WorksheetManager constructor.
      *
@@ -59,6 +62,7 @@ class WorksheetManager implements WorksheetManagerInterface
         StringHelper $stringHelper
     ) {
         $this->widthCalcuationStyle = $optionsManager->getOption(Options::ROWWIDTH_CALC_STYLE);
+        $this->fixedWidth = $optionsManager->getOption(Options::ROWWIDTH_FIXED);
         $this->styleManager = $styleManager;
         $this->styleMerger = $styleMerger;
         $this->stringsEscaper = $stringsEscaper;
@@ -78,6 +82,7 @@ class WorksheetManager implements WorksheetManagerInterface
         $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
 
         $worksheet->setWidthCalculation($this->widthCalcuationStyle);
+        $worksheet->setFixedSheetWidth($this->fixedWidth);
         if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {
             $this->headWritePosition = ftell($sheetFilePointer);
         }
@@ -278,6 +283,11 @@ class WorksheetManager implements WorksheetManagerInterface
         return $data;
     }
 
+    /**
+     * Generate the related column widths style xml to be inserted in content.xml
+     * @param Worksheet $worksheet
+     * @return string
+     */
     public function getWidthStylesContent($worksheet)
     {
         if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {            
@@ -285,8 +295,18 @@ class WorksheetManager implements WorksheetManagerInterface
             $style = '';
             $widths = $worksheet->getColumnWidths();
             //todo: this may not be adequate for multiple worksheets
+
+            //re-calculate width for fixed sets
+            if ($worksheet->getWidthCalculation() == Worksheet::W_FIXED) {
+                $total = array_sum($widths);
+                foreach($widths as $i => $w) {
+                    $wr = ($w / $total) * $worksheet->getFixedSheetWidth();
+                    $widths[$i] = $wr;
+                }
+            }
+            
             foreach ($widths as $i => $width){
-                //this is a rough equivalent based on pixel density
+                //this is a rough equivalent based on pixel density,
                 $win = round($width / 9.6, 2);//convert to inches
                 $colNo = $i + 1;
                 $style .= '<style:style style:name="co'.$colNo.

@@ -166,6 +166,22 @@ abstract class WriterMultiSheetsAbstract extends WriterAbstract
     }
 
     /**
+     * Set fixed sheet width size option
+     *
+     * @param int $option The fixed width
+     * @throws \Box\Spout\Writer\Exception\WriterAlreadyOpenedException If the writer was already opened
+     * @return Writer
+     */
+    public function setFixedWidth($option)
+    {
+        $this->throwIfWriterAlreadyOpened('Writer must be configured before opening it.');
+
+        $this->optionsManager->setOption(Options::ROWWIDTH_FIXED, $option);
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function addRowToWriter(Row $row)

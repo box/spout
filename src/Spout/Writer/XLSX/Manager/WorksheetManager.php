@@ -67,6 +67,9 @@ EOD;
     /** @var int Width calculation style */
     protected $widthCalcuationStyle;
 
+    /** @var int Fixed Width */
+    protected $fixedWidth;
+
     /**
      * WorksheetManager constructor.
      *
@@ -89,6 +92,7 @@ EOD;
     ) {
         $this->shouldUseInlineStrings = $optionsManager->getOption(Options::SHOULD_USE_INLINE_STRINGS);
         $this->widthCalcuationStyle = $optionsManager->getOption(Options::ROWWIDTH_CALC_STYLE);
+        $this->fixedWidth = $optionsManager->getOption(Options::ROWWIDTH_FIXED);
         $this->rowManager = $rowManager;
         $this->styleManager = $styleManager;
         $this->styleMerger = $styleMerger;
@@ -115,6 +119,7 @@ EOD;
 
         $worksheet->setFilePointer($sheetFilePointer);
         $worksheet->setWidthCalculation($this->widthCalcuationStyle);
+        $worksheet->setFixedSheetWidth($this->fixedWidth);
 
         \fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
         if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {
@@ -310,6 +315,16 @@ EOD;
         if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {
             $colNode ='<cols>';
             $widths = $worksheet->getColumnWidths();
+
+            //re-calculate width for fixed sets
+            if ($worksheet->getWidthCalculation() == Worksheet::W_FIXED) {
+                $total = array_sum($widths);
+                foreach($widths as $i => $w) {
+                    $wr = ($w / $total) * $worksheet->getFixedSheetWidth();
+                    $widths[$i] = $wr;
+                }
+            }
+
             foreach ($widths as $i => $width){
                 $colAffect = $i + 1;
                 $colNode .= '<col hidden="false" collapsed="false" min="'.$colAffect.'" max="'.$colAffect.'" width="'.$width.'" customWidth="true"/>';

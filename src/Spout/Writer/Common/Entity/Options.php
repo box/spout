@@ -17,6 +17,7 @@ abstract class Options
     public const TEMP_FOLDER = 'tempFolder';
     public const DEFAULT_ROW_STYLE = 'defaultRowStyle';
     public const ROWWIDTH_CALC_STYLE = 'rowCalcMethod';
+    public const ROWWIDTH_FIXED = 'rowFixedWith';
     public const SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY = 'shouldCreateNewSheetsAutomatically';
 
     // XLSX specific options

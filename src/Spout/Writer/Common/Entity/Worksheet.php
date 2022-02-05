@@ -36,7 +36,7 @@ class Worksheet
     public const W_FIXED = 2;
     public const W_NONE = 0;
     public const DEFAULT_COL_WIDTH = 30;
-    public const DEFAULT_FIXED_WIDTH = 1068;
+    public const DEFAULT_FIXED_WIDTH = 320;
 
     /**
      * Worksheet constructor.
@@ -143,11 +143,6 @@ class Worksheet
     {
         $size = 1 + strlen($cell->getValue());//ensure we have at least 1 space
         $size *= $style->isFontBold() ? 1.2 : 1.0;
-        if ($this->getWidthCalculation() == Worksheet::W_FIXED) {
-            $total = array_sum($this->getColumnWidths());
-            $total = $total ?: $size;
-            $size = ($size / $total) * $this->getFixedSheetWidth();
-        }
         $this->setMaxColumnWidth($zeroBasedIndex, $size);
     }
 
