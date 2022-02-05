@@ -34,6 +34,7 @@ class OptionsManager extends OptionsManagerAbstract
             Options::TEMP_FOLDER,
             Options::DEFAULT_ROW_STYLE,
             Options::ROWWIDTH_CALC_STYLE,
+            Options::ROWWIDTH_FIXED,
             Options::SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY,
         ];
     }

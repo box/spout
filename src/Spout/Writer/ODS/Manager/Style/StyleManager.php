@@ -165,7 +165,6 @@ EOD;
             $content .= $this->getStyleSectionContent($style);
         }
 
-        
         $content .= <<<'EOD'
 <style:style style:family="table-column" style:name="co1">
     <style:table-column-properties fo:break-before="auto"/>
