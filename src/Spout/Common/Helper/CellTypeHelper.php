@@ -61,7 +61,7 @@ class CellTypeHelper
     public static function isDateTimeOrDateInterval($value)
     {
         return (
-            $value instanceof \DateTime ||
+            $value instanceof \DateTimeInterface ||
             $value instanceof \DateInterval
         );
     }
