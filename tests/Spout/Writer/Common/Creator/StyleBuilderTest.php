@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\Common\Creator\Style;
 
 use Box\Spout\Common\Entity\Style\Border;
 use Box\Spout\Common\Entity\Style\CellAlignment;
+use Box\Spout\Common\Entity\Style\CellVerticalAlignment;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
@@ -56,9 +57,27 @@ class StyleBuilderTest extends TestCase
     /**
      * @return void
      */
+    public function testStyleBuilderShouldApplyCellVerticalAlignment()
+    {
+        $style = (new StyleBuilder())->setCellVerticalAlignment(CellVerticalAlignment::CENTER)->build();
+        $this->assertTrue($style->shouldApplyCellVerticalAlignment());
+    }
+
+    /**
+     * @return void
+     */
     public function testStyleBuilderShouldThrowOnInvalidCellAlignment()
     {
         $this->expectException(InvalidArgumentException::class);
         (new StyleBuilder())->setCellAlignment('invalid_cell_alignment')->build();
+    }
+
+    /**
+     * @return void
+     */
+    public function testStyleBuilderShouldThrowOnInvalidCellVerticalAlignment()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new StyleBuilder())->setCellVerticalAlignment('invalid_cell_alignment')->build();
     }
 }

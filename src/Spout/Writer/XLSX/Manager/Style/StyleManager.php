@@ -250,14 +250,17 @@ EOD;
 
             $content .= \sprintf(' applyBorder="%d"', $style->shouldApplyBorder() ? 1 : 0);
 
-            if ($style->shouldApplyCellAlignment() || $style->shouldWrapText()) {
+            if ($style->shouldApplyCellAlignment() || $style->shouldApplyCellVerticalAlignment() || $style->hasSetWrapText()) {
                 $content .= ' applyAlignment="1">';
                 $content .= '<alignment';
                 if ($style->shouldApplyCellAlignment()) {
                     $content .= \sprintf(' horizontal="%s"', $style->getCellAlignment());
                 }
-                if ($style->shouldWrapText()) {
-                    $content .= ' wrapText="1"';
+                if ($style->shouldApplyCellVerticalAlignment()) {
+                    $content .= \sprintf(' vertical="%s"', $style->getCellVerticalAlignment());
+                }
+                if ($style->hasSetWrapText()) {
+                    $content .= ' wrapText="' . ($style->shouldWrapText() ? '1' : '0') . '"';
                 }
                 $content .= '/>';
                 $content .= '</xf>';

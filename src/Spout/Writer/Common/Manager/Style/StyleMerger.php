@@ -82,11 +82,14 @@ class StyleMerger
      */
     private function mergeCellProperties(Style $styleToUpdate, Style $style, Style $baseStyle)
     {
-        if (!$style->hasSetWrapText() && $baseStyle->shouldWrapText()) {
-            $styleToUpdate->setShouldWrapText();
+        if (!$style->hasSetWrapText() && $baseStyle->hasSetWrapText()) {
+            $styleToUpdate->setShouldWrapText($baseStyle->shouldWrapText());
         }
         if (!$style->hasSetCellAlignment() && $baseStyle->shouldApplyCellAlignment()) {
             $styleToUpdate->setCellAlignment($baseStyle->getCellAlignment());
+        }
+        if (!$style->hasSetCellVerticalAlignment() && $baseStyle->shouldApplyCellVerticalAlignment()) {
+            $styleToUpdate->setCellVerticalAlignment($baseStyle->getCellVerticalAlignment());
         }
         if ($style->getBorder() === null && $baseStyle->shouldApplyBorder()) {
             $styleToUpdate->setBorder($baseStyle->getBorder());

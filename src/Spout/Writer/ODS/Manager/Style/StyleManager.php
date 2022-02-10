@@ -4,6 +4,7 @@ namespace Box\Spout\Writer\ODS\Manager\Style;
 
 use Box\Spout\Common\Entity\Style\BorderPart;
 use Box\Spout\Common\Entity\Style\CellAlignment;
+use Box\Spout\Common\Entity\Style\CellVerticalAlignment;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\ODS\Helper\BorderHelper;
 
@@ -277,12 +278,13 @@ EOD;
      */
     private function getParagraphPropertiesSectionContent($style)
     {
-        if (!$style->shouldApplyCellAlignment()) {
+        if (!$style->shouldApplyCellAlignment() && !$style->shouldApplyCellVerticalAlignment()) {
             return '';
         }
 
         return '<style:paragraph-properties '
             . $this->getCellAlignmentSectionContent($style)
+            . $this->getCellVerticalAlignmentSectionContent($style)
             . '/>';
     }
 
@@ -298,6 +300,21 @@ EOD;
         return \sprintf(
             ' fo:text-align="%s" ',
             $this->transformCellAlignment($style->getCellAlignment())
+        );
+    }
+
+    /**
+     * Returns the contents of the cell vertical alignment definition for the "<style:paragraph-properties>" section
+     *
+     * @param \Box\Spout\Common\Entity\Style\Style $style
+     *
+     * @return string
+     */
+    private function getCellVerticalAlignmentSectionContent($style)
+    {
+        return \sprintf(
+            ' fo:vertical-align="%s" ',
+            $this->transformCellVerticalAlignment($style->getCellVerticalAlignment())
         );
     }
 
@@ -320,6 +337,21 @@ EOD;
     }
 
     /**
+     * Spec uses 'middle' rather than 'center'
+     * http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#__RefHeading__1420236_253892949
+     *
+     * @param string $cellAlignment
+     *
+     * @return string
+     */
+    private function transformCellVerticalAlignment($cellVerticalAlignment)
+    {
+        return ($cellVerticalAlignment === CellVerticalAlignment::CENTER)
+            ? 'middle'
+            :  $cellVerticalAlignment;
+    }
+
+    /**
      * Returns the contents of the "<style:table-cell-properties>" section, inside "<style:style>" section
      *
      * @param \Box\Spout\Common\Entity\Style\Style $style
@@ -329,8 +361,8 @@ EOD;
     {
         $content = '<style:table-cell-properties ';
 
-        if ($style->shouldWrapText()) {
-            $content .= $this->getWrapTextXMLContent();
+        if ($style->hasSetWrapText()) {
+            $content .= $this->getWrapTextXMLContent($style->shouldWrapText());
         }
 
         if ($style->shouldApplyBorder()) {
@@ -349,11 +381,12 @@ EOD;
     /**
      * Returns the contents of the wrap text definition for the "<style:table-cell-properties>" section
      *
+     * @param boolean $shouldWrapText
      * @return string
      */
-    private function getWrapTextXMLContent()
+    private function getWrapTextXMLContent($shouldWrapText)
     {
-        return ' fo:wrap-option="wrap" style:vertical-align="automatic" ';
+        return ' fo:wrap-option="' . ($shouldWrapText ? '' : 'no-') . 'wrap" style:vertical-align="automatic" ';
     }
 
     /**
