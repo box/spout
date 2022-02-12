@@ -28,4 +28,21 @@ class AppendHelper {
         fwrite($fp, $trailer);
         return $fp;
     }
+
+    /**
+     * This function overwrite data in pointer from specified position
+     *  
+     * @param $fp Pointer to file only
+     * @param $pos Position to insert
+     * @param $content Content to insert
+     */
+    public static function overwriteToFile($fp, $pos, $content)
+    {
+        $cur = ftell($fp);
+        fseek($fp, $pos);
+        fwrite($fp, $content);
+        fseek($fp, $cur);
+        return $fp;
+    }
+
 }

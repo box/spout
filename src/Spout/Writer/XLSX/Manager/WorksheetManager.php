@@ -120,11 +120,20 @@ EOD;
         $worksheet->setFilePointer($sheetFilePointer);
         $worksheet->setWidthCalculation($this->widthCalcuationStyle);
         $worksheet->setFixedSheetWidth($this->fixedWidth);
-
+        
         \fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
         if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {
             $this->headWritePosition = ftell($sheetFilePointer);
         }
+        //width calculation style 3 with empty spaces.. not suitable if column sizes more than 40
+        if ($worksheet->getWidthCalculation() == Worksheet::W_FULL_ALT) {
+            //insert dummy nodes for up to 40 columns
+            for ($i = 0; $i < 40; $i++) {
+                $dummy = "                                                                             ";
+                \fwrite($sheetFilePointer, $dummy);
+            }
+        }
+
         \fwrite($sheetFilePointer, '<sheetData>');
     }
 
@@ -330,7 +339,11 @@ EOD;
                 $colNode .= '<col hidden="false" collapsed="false" min="'.$colAffect.'" max="'.$colAffect.'" width="'.$width.'" customWidth="true"/>';
             }
             $colNode .= '</cols>';
-            $worksheetFilePointer = AppendHelper::insertToFile($worksheetFilePointer, $this->headWritePosition, $colNode);
+            if ($worksheet->getWidthCalculation() == Worksheet::W_FULL_ALT) {
+                $worksheetFilePointer = AppendHelper::overwriteToFile($worksheetFilePointer, $this->headWritePosition, $colNode);
+            } else {
+                $worksheetFilePointer = AppendHelper::insertToFile($worksheetFilePointer, $this->headWritePosition, $colNode);
+            }
         }
 
         \fwrite($worksheetFilePointer, '</worksheet>');

@@ -34,6 +34,7 @@ class Worksheet
 
     public const W_FULL = 1;
     public const W_FIXED = 2;
+    public const W_FULL_ALT = 3;
     public const W_NONE = 0;
     public const DEFAULT_COL_WIDTH = 30;
     public const DEFAULT_FIXED_WIDTH = 320;
