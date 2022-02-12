@@ -141,7 +141,7 @@ class Worksheet
      */
     public function autoSetWidth($cell, $style, $zeroBasedIndex)
     {
-        $size = 1 + strlen($cell->getValue());//ensure we have at least 1 space
+        $size = 1 + mb_strlen($cell->getValue());//ensure we have at least 1 space
         $size *= $style->isFontBold() ? 1.2 : 1.0;
         $this->setMaxColumnWidth($zeroBasedIndex, $size);
     }
