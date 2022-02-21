@@ -229,7 +229,11 @@ EOD;
         $cellXML .= ' s="' . $styleId . '"';
 
         if ($cell->isFormula()) {
-            $cellXML .= ' ><f>' . substr($cell->getValue(), 1) . '</f></c>';
+            if (is_array($cell->getValue())) {
+                $cellXML .= ' ><f>' . substr($cell->getValue()[0], 1) . '</f><v>' . $cell->getValue()[1] . '</v></c>';
+            } else {
+                $cellXML .= ' ><f>' . substr($cell->getValue(), 1) . '</f></c>';
+            }
         } elseif ($cell->isString()) {
             $cellXML .= $this->getCellXMLFragmentForNonEmptyString($cell->getValue());
         } elseif ($cell->isBoolean()) {

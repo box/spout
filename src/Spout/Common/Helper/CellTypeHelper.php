@@ -73,6 +73,6 @@ class CellTypeHelper
      */
     public static function isFormula($value)
     {
-        return (strpos($value, '=') === 0);
+        return (is_array($value) || strpos($value, '=') === 0);
     }
 }
