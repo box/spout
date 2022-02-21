@@ -139,6 +139,9 @@ class Cell
      */
     protected function detectType($value)
     {
+        if (CellTypeHelper::isFormula($value)) {
+            return self::TYPE_FORMULA;
+        }
         if (CellTypeHelper::isBoolean($value)) {
             return self::TYPE_BOOLEAN;
         }
@@ -196,6 +199,14 @@ class Cell
     public function isDate()
     {
         return $this->type === self::TYPE_DATE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFormula()
+    {
+        return $this->type === self::TYPE_FORMULA;
     }
 
     /**
