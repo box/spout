@@ -93,6 +93,34 @@ class SheetTest extends TestCase
     }
 
     /**
+     * @return void
+     */
+    public function testSetSheetColumnWidthsShouldCreateSheetWidthCustomWidths()
+    {
+        $fileName = 'test_set_column_widths.xlsx';
+        $this->createGeneratedFolderIfNeeded($fileName);
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+
+        $writer = WriterEntityFactory::createXLSXWriter();
+        $writer->openToFile($resourcePath);
+
+        $sheet = $writer->getCurrentSheet();
+        $sheet->setColumnWidths([
+            1 => 10,
+            3 => 40,
+        ]);
+
+        $writer->addRow($this->createRowFromValues(['xlsx--11', 'xlsx--12']));
+        $writer->close();
+
+        $resourcePath = $this->getGeneratedResourcePath($fileName);
+        $pathToWorkbookFile = $resourcePath . '#xl/worksheets/sheet1.xml';
+        $xmlContents = file_get_contents('zip://' . $pathToWorkbookFile);
+
+        $this->assertStringContainsString('<cols>', $xmlContents);
+    }
+
+    /**
      * @param string $fileName
      * @param string $sheetName
      * @return Sheet

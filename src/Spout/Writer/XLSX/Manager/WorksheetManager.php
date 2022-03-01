@@ -59,6 +59,9 @@ EOD;
     /** @var StringHelper String helper */
     private $stringHelper;
 
+    /** @var bool */
+    private $isSheetDataStarted = false;
+
     /**
      * WorksheetManager constructor.
      *
@@ -107,7 +110,35 @@ EOD;
         $worksheet->setFilePointer($sheetFilePointer);
 
         \fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
-        \fwrite($sheetFilePointer, '<sheetData>');
+    }
+
+    /**
+     * @param Worksheet $worksheet The worksheet to start data to
+     * @return void
+     */
+    private function startSheetData(Worksheet $worksheet)
+    {
+        if ($this->isSheetDataStarted) {
+            return;
+        }
+
+        $columnWidths = $worksheet->getExternalSheet()->getColumnWidths();
+        if ($columnWidths !== []) {
+            $columnWidthsSpec = '<cols>';
+            foreach ($columnWidths as $columnIndex => $columnWidth) {
+                $columnWidthsSpec .= sprintf(
+                    '<col min="%1$s" max="%1$s" width="%2$s" customWidth="true"/>',
+                    $columnIndex,
+                    $columnWidth
+                );
+            }
+            $columnWidthsSpec .= '</cols>';
+            \fwrite($worksheet->getFilePointer(), $columnWidthsSpec);
+        }
+
+        \fwrite($worksheet->getFilePointer(), '<sheetData>');
+
+        $this->isSheetDataStarted = true;
     }
 
     /**
@@ -147,6 +178,8 @@ EOD;
      */
     private function addNonEmptyRow(Worksheet $worksheet, Row $row)
     {
+        $this->startSheetData($worksheet);
+
         $rowStyle = $row->getStyle();
         $rowIndexOneBased = $worksheet->getLastWrittenRowIndex() + 1;
         $numCells = $row->getNumCells();
@@ -285,6 +318,8 @@ EOD;
         if (!\is_resource($worksheetFilePointer)) {
             return;
         }
+
+        $this->startSheetData($worksheet);
 
         \fwrite($worksheetFilePointer, '</sheetData>');
         \fwrite($worksheetFilePointer, '</worksheet>');

@@ -26,6 +26,10 @@ class Sheet
 
     /** @var SheetManager Sheet manager */
     private $sheetManager;
+    /**
+     * @var array<int, int>
+     */
+    private $columnWidths = [];
 
     /**
      * @param int $sheetIndex Index of the sheet, based on order in the workbook (zero-based)
@@ -105,6 +109,25 @@ class Sheet
     public function setIsVisible($isVisible)
     {
         $this->isVisible = $isVisible;
+
+        return $this;
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function getColumnWidths()
+    {
+        return $this->columnWidths;
+    }
+
+    /**
+     * @param array<int, int> $columnWidths
+     * @return Sheet
+     */
+    public function setColumnWidths(array $columnWidths)
+    {
+        $this->columnWidths = $columnWidths;
 
         return $this;
     }
