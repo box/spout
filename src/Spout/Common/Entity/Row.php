@@ -7,6 +7,12 @@ use Box\Spout\Common\Entity\Style\Style;
 class Row
 {
     /**
+     * The extended attributes in this row
+     * @var string[]
+     */
+    protected $attributes = [];
+
+    /**
      * The cells in this row
      * @var Cell[]
      */
@@ -28,6 +34,26 @@ class Row
         $this
             ->setCells($cells)
             ->setStyle($style);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * @param string $name
+     * @param $value
+     * @return Row
+     */
+    public function setAttribute(string $name, $value)
+    {
+        $this->attributes[$name] = (string) $value;
+
+        return $this;
     }
 
     /**

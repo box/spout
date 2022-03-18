@@ -151,7 +151,12 @@ EOD;
         $rowIndexOneBased = $worksheet->getLastWrittenRowIndex() + 1;
         $numCells = $row->getNumCells();
 
-        $rowXML = '<row r="' . $rowIndexOneBased . '" spans="1:' . $numCells . '">';
+        $defaultAttributes = [
+            'r' => $rowIndexOneBased,
+            'spans' => '1:' . $numCells,
+        ];
+
+        $rowXML = $this->getRowXML(array_merge($row->getAttributes(), $defaultAttributes));
 
         foreach ($row->getCells() as $columnIndexZeroBased => $cell) {
             $registeredStyle = $this->applyStyleAndRegister($cell, $rowStyle);
@@ -273,6 +278,20 @@ EOD;
         }
 
         return $cellXMLFragment;
+    }
+
+    /**
+     * @param array $attributes
+     * @return string
+     */
+    private function getRowXML(array $attributes)
+    {
+        $attributes = array_map(function($key) use ($attributes)
+        {
+            return $key . '="' . $this->stringsEscaper->escape($attributes[$key]) . '"';
+        }, array_keys($attributes));
+
+        return '<row ' . implode(' ', $attributes) . '>';
     }
 
     /**
