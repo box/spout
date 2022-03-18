@@ -47,9 +47,9 @@ class ReaderTest extends TestCase
     {
         $this->expectException(IOException::class);
 
-        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit_Framework_MockObject_MockObject $helperStub */
+        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit\Framework\MockObject\MockObject $helperStub */
         $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
-                        ->setMethods(['is_readable'])
+                        ->onlyMethods(['is_readable'])
                         ->getMock();
         $helperStub->method('is_readable')->willReturn(false);
 
@@ -66,9 +66,9 @@ class ReaderTest extends TestCase
     {
         $this->expectException(IOException::class);
 
-        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit_Framework_MockObject_MockObject $helperStub */
+        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit\Framework\MockObject\MockObject $helperStub */
         $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
-                        ->setMethods(['fopen'])
+                        ->onlyMethods(['fopen'])
                         ->getMock();
         $helperStub->method('fopen')->willReturn(false);
 
@@ -304,9 +304,9 @@ class ReaderTest extends TestCase
         $allRows = [];
         $resourcePath = $this->getResourcePath($fileName);
 
-        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit_Framework_MockObject_MockObject $helperStub */
+        /** @var \Box\Spout\Common\Helper\GlobalFunctionsHelper|\PHPUnit\Framework\MockObject\MockObject $helperStub */
         $helperStub = $this->getMockBuilder('\Box\Spout\Common\Helper\GlobalFunctionsHelper')
-                        ->setMethods(['function_exists'])
+                        ->onlyMethods(['function_exists'])
                         ->getMock();
 
         $returnValueMap = [

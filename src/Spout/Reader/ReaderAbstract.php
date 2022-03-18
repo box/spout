@@ -53,7 +53,7 @@ abstract class ReaderAbstract implements ReaderInterface
     /**
      * Closes the reader. To be used after reading the file.
      *
-     * @return ReaderAbstract
+     * @return void
      */
     abstract protected function closeReader();
 
@@ -233,7 +233,7 @@ abstract class ReaderAbstract implements ReaderInterface
             $this->closeReader();
 
             $sheetIterator = $this->getConcreteSheetIterator();
-            if ($sheetIterator) {
+            if ($sheetIterator !== null) {
                 $sheetIterator->end();
             }
 

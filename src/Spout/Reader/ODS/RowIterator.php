@@ -56,7 +56,7 @@ class RowIterator implements IteratorInterface
     /** @var Row The currently processed row */
     protected $currentlyProcessedRow;
 
-    /** @var Row Buffer used to store the current row, while checking if there are more rows to read */
+    /** @var Row|null Buffer used to store the current row, while checking if there are more rows to read */
     protected $rowBuffer;
 
     /** @var bool Indicates whether all rows have been read */
@@ -68,7 +68,7 @@ class RowIterator implements IteratorInterface
     /** @var int Row index to be processed next (one-based) */
     protected $nextRowIndexToBeProcessed = 1;
 
-    /** @var Cell Last processed cell (because when reading cell at column N+1, cell N is processed) */
+    /** @var Cell|null Last processed cell (because when reading cell at column N+1, cell N is processed) */
     protected $lastProcessedCell;
 
     /** @var int Number of times the last processed row should be repeated */
@@ -118,7 +118,7 @@ class RowIterator implements IteratorInterface
      * @throws \Box\Spout\Reader\Exception\IteratorNotRewindableException If the iterator is rewound more than once
      * @return void
      */
-    public function rewind()
+    public function rewind() : void
     {
         // Because sheet and row data is located in the file, we can't rewind both the
         // sheet iterator and the row iterator, as XML file cannot be read backwards.
@@ -142,7 +142,7 @@ class RowIterator implements IteratorInterface
      *
      * @return bool
      */
-    public function valid()
+    public function valid() : bool
     {
         return (!$this->hasReachedEndOfFile);
     }
@@ -155,7 +155,7 @@ class RowIterator implements IteratorInterface
      * @throws \Box\Spout\Common\Exception\IOException If unable to read the sheet data XML
      * @return void
      */
-    public function next()
+    public function next() : void
     {
         if ($this->doesNeedDataForNextRowToBeProcessed()) {
             $this->readDataForNextRow();
@@ -225,6 +225,7 @@ class RowIterator implements IteratorInterface
         $currentNumColumnsRepeated = $this->getNumColumnsRepeatedForCurrentNode($xmlReader);
 
         // NOTE: expand() will automatically decode all XML entities of the child nodes
+        /** @var \DOMElement $node */
         $node = $xmlReader->expand();
         $currentCell = $this->getCell($node);
 
@@ -316,7 +317,7 @@ class RowIterator implements IteratorInterface
     /**
      * Returns the cell with (unescaped) correctly marshalled, cell value associated to the given XML node.
      *
-     * @param \DOMNode $node
+     * @param \DOMElement $node
      * @return Cell The cell set with the associated with the cell
      */
     protected function getCell($node)
@@ -339,7 +340,7 @@ class RowIterator implements IteratorInterface
      * row data yet (as we still need to apply the "num-columns-repeated" attribute).
      *
      * @param Row $currentRow
-     * @param Cell $lastReadCell The last read cell
+     * @param Cell|null $lastReadCell The last read cell
      * @return bool Whether the row is empty
      */
     protected function isEmptyRow($currentRow, $lastReadCell)
@@ -356,7 +357,7 @@ class RowIterator implements IteratorInterface
      *
      * @return Row
      */
-    public function current()
+    public function current() : Row
     {
         return $this->rowBuffer;
     }
@@ -367,7 +368,7 @@ class RowIterator implements IteratorInterface
      *
      * @return int
      */
-    public function key()
+    public function key() : int
     {
         return $this->lastRowIndexProcessed;
     }
@@ -377,7 +378,7 @@ class RowIterator implements IteratorInterface
      *
      * @return void
      */
-    public function end()
+    public function end() : void
     {
         $this->xmlReader->close();
     }

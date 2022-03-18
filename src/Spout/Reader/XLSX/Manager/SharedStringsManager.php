@@ -179,6 +179,7 @@ class SharedStringsManager
         $sharedStringValue = '';
 
         // NOTE: expand() will automatically decode all XML entities of the child nodes
+        /** @var \DOMElement $siNode */
         $siNode = $xmlReader->expand();
         $textNodes = $siNode->getElementsByTagName(self::XML_NODE_T);
 
@@ -241,7 +242,7 @@ class SharedStringsManager
      */
     public function cleanup()
     {
-        if ($this->cachingStrategy) {
+        if ($this->cachingStrategy !== null) {
             $this->cachingStrategy->clearCache();
         }
     }

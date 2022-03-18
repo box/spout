@@ -88,6 +88,7 @@ class WriterWithStyleTest extends TestCase
         $this->assertCount(3, $cellStyleElements, 'There should be 3 separate cell styles, including the default one.');
 
         // Second font should contain data from the first created style
+        /** @var \DOMElement $customFont1Element */
         $customFont1Element = $cellStyleElements[1];
         $this->assertFirstChildHasAttributeEquals('bold', $customFont1Element, 'text-properties', 'fo:font-weight');
         $this->assertFirstChildHasAttributeEquals('italic', $customFont1Element, 'text-properties', 'fo:font-style');
@@ -95,6 +96,7 @@ class WriterWithStyleTest extends TestCase
         $this->assertFirstChildHasAttributeEquals('solid', $customFont1Element, 'text-properties', 'style:text-line-through-style');
 
         // Third font should contain data from the second created style
+        /** @var \DOMElement $customFont2Element */
         $customFont2Element = $cellStyleElements[2];
         $this->assertFirstChildHasAttributeEquals('15pt', $customFont2Element, 'text-properties', 'fo:font-size');
         $this->assertFirstChildHasAttributeEquals('#' . Color::RED, $customFont2Element, 'text-properties', 'fo:color');
@@ -397,7 +399,7 @@ class WriterWithStyleTest extends TestCase
 
     /**
      * @param string $fileName
-     * @return \DOMNode[]
+     * @return \DOMElement[]
      */
     private function getCellElementsFromContentXmlFile($fileName)
     {
@@ -410,7 +412,9 @@ class WriterWithStyleTest extends TestCase
 
         while ($xmlReader->read()) {
             if ($xmlReader->isPositionedOnStartingNode('table:table-cell') && $xmlReader->getAttribute('office:value-type') !== null) {
-                $cellElements[] = $xmlReader->expand();
+                /** @var \DOMElement $cellElement */
+                $cellElement = $xmlReader->expand();
+                $cellElements[] = $cellElement;
             }
         }
 
@@ -421,7 +425,7 @@ class WriterWithStyleTest extends TestCase
 
     /**
      * @param string $fileName
-     * @return \DOMNode[]
+     * @return \DOMElement[]
      */
     private function getCellStyleElementsFromContentXmlFile($fileName)
     {
@@ -434,7 +438,9 @@ class WriterWithStyleTest extends TestCase
 
         while ($xmlReader->read()) {
             if ($xmlReader->isPositionedOnStartingNode('style:style') && $xmlReader->getAttribute('style:family') === 'table-cell') {
-                $cellStyleElements[] = $xmlReader->expand();
+                /** @var \DOMElement $cellStyleElement */
+                $cellStyleElement = $xmlReader->expand();
+                $cellStyleElements[] = $cellStyleElement;
             }
         }
 
@@ -446,7 +452,7 @@ class WriterWithStyleTest extends TestCase
     /**
      * @param string $fileName
      * @param string $section
-     * @return \DomNode
+     * @return \DOMElement
      */
     private function getXmlSectionFromStylesXmlFile($fileName, $section)
     {
@@ -456,12 +462,15 @@ class WriterWithStyleTest extends TestCase
         $xmlReader->openFileInZip($resourcePath, 'styles.xml');
         $xmlReader->readUntilNodeFound($section);
 
-        return $xmlReader->expand();
+        /** @var \DOMElement $element */
+        $element = $xmlReader->expand();
+
+        return $element;
     }
 
     /**
      * @param string $expectedValue
-     * @param \DOMNode $parentElement
+     * @param \DOMElement $parentElement
      * @param string $childTagName
      * @param string $attributeName
      * @return void

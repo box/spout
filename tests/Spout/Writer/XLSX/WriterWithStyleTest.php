@@ -92,6 +92,7 @@ class WriterWithStyleTest extends TestCase
         $this->assertEquals(3, $fontElements->length, 'There should be 3 associated "font" elements, including the default one.');
 
         // First font should be the default one
+        /** @var \DOMElement $defaultFontElement */
         $defaultFontElement = $fontElements->item(0);
         $this->assertChildrenNumEquals(3, $defaultFontElement, 'The default font should only have 3 properties.');
         $this->assertFirstChildHasAttributeEquals((string) OptionsManager::DEFAULT_FONT_SIZE, $defaultFontElement, 'sz', 'val');
@@ -99,6 +100,7 @@ class WriterWithStyleTest extends TestCase
         $this->assertFirstChildHasAttributeEquals(OptionsManager::DEFAULT_FONT_NAME, $defaultFontElement, 'name', 'val');
 
         // Second font should contain data from the first created style
+        /** @var \DOMElement $secondFontElement */
         $secondFontElement = $fontElements->item(1);
         $this->assertChildrenNumEquals(7, $secondFontElement, 'The font should only have 7 properties (4 custom styles + 3 default styles).');
         $this->assertChildExists($secondFontElement, 'b');
@@ -110,6 +112,7 @@ class WriterWithStyleTest extends TestCase
         $this->assertFirstChildHasAttributeEquals(OptionsManager::DEFAULT_FONT_NAME, $secondFontElement, 'name', 'val');
 
         // Third font should contain data from the second created style
+        /** @var \DOMElement $thirdFontElement */
         $thirdFontElement = $fontElements->item(2);
         $this->assertChildrenNumEquals(3, $thirdFontElement, 'The font should only have 3 properties.');
         $this->assertFirstChildHasAttributeEquals('15', $thirdFontElement, 'sz', 'val');
@@ -394,10 +397,14 @@ class WriterWithStyleTest extends TestCase
             '3 cell xfs present - a default one and two custom ones'
         );
 
-        $firstCustomId = $styleXfsElements->childNodes->item(1)->getAttribute('fillId');
+        /** @var \DOMElement $styleXfsElementChild1 */
+        $styleXfsElementChild1 = $styleXfsElements->childNodes->item(1);
+        $firstCustomId = $styleXfsElementChild1->getAttribute('fillId');
         $this->assertEquals(2, (int) $firstCustomId, 'The first custom fill id should have the index 2');
 
-        $secondCustomId = $styleXfsElements->childNodes->item(2)->getAttribute('fillId');
+        /** @var \DOMElement $styleXfsElementChild2 */
+        $styleXfsElementChild2 = $styleXfsElements->childNodes->item(2);
+        $secondCustomId = $styleXfsElementChild2->getAttribute('fillId');
         $this->assertEquals(2, (int) $secondCustomId, 'The second custom fill id should have the index 2');
     }
 
@@ -468,7 +475,6 @@ class WriterWithStyleTest extends TestCase
             $borderParts = $borderNode->childNodes;
             $ordering = [];
 
-            /** @var \DOMText $part */
             foreach ($borderParts as $part) {
                 if ($part instanceof \DOMElement) {
                     $ordering[] = $part->nodeName;
@@ -607,7 +613,7 @@ class WriterWithStyleTest extends TestCase
     /**
      * @param string $fileName
      * @param string $section
-     * @return \DomElement
+     * @return \DOMElement
      */
     private function getXmlSectionFromStylesXmlFile($fileName, $section)
     {
@@ -617,6 +623,7 @@ class WriterWithStyleTest extends TestCase
         $xmlReader->openFileInZip($resourcePath, 'xl/styles.xml');
         $xmlReader->readUntilNodeFound($section);
 
+        /** @var \DOMElement $xmlSection */
         $xmlSection = $xmlReader->expand();
 
         $xmlReader->close();
@@ -626,7 +633,7 @@ class WriterWithStyleTest extends TestCase
 
     /**
      * @param string $fileName
-     * @return \DOMNode[]
+     * @return \DOMElement[]
      */
     private function getCellElementsFromSheetXmlFile($fileName)
     {
@@ -639,7 +646,9 @@ class WriterWithStyleTest extends TestCase
 
         while ($xmlReader->read()) {
             if ($xmlReader->isPositionedOnStartingNode('c')) {
-                $cellElements[] = $xmlReader->expand();
+                /** @var \DOMElement $cellElement */
+                $cellElement = $xmlReader->expand();
+                $cellElements[] = $cellElement;
             }
         }
 
@@ -650,7 +659,7 @@ class WriterWithStyleTest extends TestCase
 
     /**
      * @param string $expectedValue
-     * @param \DOMNode $parentElement
+     * @param \DOMElement $parentElement
      * @param string $childTagName
      * @param string $attributeName
      * @return void
@@ -662,7 +671,7 @@ class WriterWithStyleTest extends TestCase
 
     /**
      * @param int $expectedNumber
-     * @param \DOMNode $parentElement
+     * @param \DOMElement $parentElement
      * @param string $message
      * @return void
      */
@@ -672,7 +681,7 @@ class WriterWithStyleTest extends TestCase
     }
 
     /**
-     * @param \DOMNode $parentElement
+     * @param \DOMElement $parentElement
      * @param string $childTagName
      * @return void
      */

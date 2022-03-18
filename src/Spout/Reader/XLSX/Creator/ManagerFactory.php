@@ -21,7 +21,7 @@ class ManagerFactory
     /** @var CachingStrategyFactory */
     private $cachingStrategyFactory;
 
-    /** @var WorkbookRelationshipsManager */
+    /** @var WorkbookRelationshipsManager|null */
     private $cachedWorkbookRelationshipsManager;
 
     /**

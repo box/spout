@@ -23,7 +23,7 @@ use Box\Spout\Writer\Exception\WriterException;
  */
 abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
 {
-    /** @var Workbook The workbook to manage */
+    /** @var Workbook|null The workbook to manage */
     protected $workbook;
 
     /** @var OptionsManagerInterface */
@@ -92,7 +92,7 @@ abstract class WorkbookManagerAbstract implements WorkbookManagerInterface
     abstract protected function getWorksheetFilePath(Sheet $sheet);
 
     /**
-     * @return Workbook
+     * @return Workbook|null
      */
     public function getWorkbook()
     {

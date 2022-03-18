@@ -59,7 +59,7 @@ EOD;
      */
     protected function throwIfSharedStringsFilePointerIsNotAvailable()
     {
-        if (!$this->sharedStringsFilePointer) {
+        if (!is_resource($this->sharedStringsFilePointer)) {
             throw new IOException('Unable to open shared strings file for writing.');
         }
     }

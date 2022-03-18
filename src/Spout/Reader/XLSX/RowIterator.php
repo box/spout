@@ -139,7 +139,7 @@ class RowIterator implements IteratorInterface
      * @throws \Box\Spout\Common\Exception\IOException If the sheet data XML cannot be read
      * @return void
      */
-    public function rewind()
+    public function rewind() : void
     {
         $this->xmlReader->close();
 
@@ -163,7 +163,7 @@ class RowIterator implements IteratorInterface
      *
      * @return bool
      */
-    public function valid()
+    public function valid() : bool
     {
         return (!$this->hasReachedEndOfFile);
     }
@@ -176,7 +176,7 @@ class RowIterator implements IteratorInterface
      * @throws \Box\Spout\Common\Exception\IOException If unable to read the sheet data XML
      * @return void
      */
-    public function next()
+    public function next() : void
     {
         $this->nextRowIndexToBeProcessed++;
 
@@ -276,6 +276,7 @@ class RowIterator implements IteratorInterface
         $currentColumnIndex = $this->getColumnIndex($xmlReader);
 
         // NOTE: expand() will automatically decode all XML entities of the child nodes
+        /** @var \DOMElement $node */
         $node = $xmlReader->expand();
         $cell = $this->getCell($node);
 
@@ -352,7 +353,7 @@ class RowIterator implements IteratorInterface
     /**
      * Returns the cell with (unescaped) correctly marshalled, cell value associated to the given XML node.
      *
-     * @param \DOMNode $node
+     * @param \DOMElement $node
      * @return Cell The cell set with the associated with the cell
      */
     protected function getCell($node)
@@ -374,7 +375,7 @@ class RowIterator implements IteratorInterface
      *
      * @return Row|null
      */
-    public function current()
+    public function current() : ?Row
     {
         $rowToBeProcessed = $this->rowBuffer;
 
@@ -399,7 +400,7 @@ class RowIterator implements IteratorInterface
      *
      * @return int
      */
-    public function key()
+    public function key() : int
     {
         // TODO: This should return $this->nextRowIndexToBeProcessed
         //       but to avoid a breaking change, the return value for
@@ -414,7 +415,7 @@ class RowIterator implements IteratorInterface
      *
      * @return void
      */
-    public function end()
+    public function end() : void
     {
         $this->xmlReader->close();
     }

@@ -17,7 +17,7 @@ use Box\Spout\Writer\Exception\WriterException;
 interface WorkbookManagerInterface
 {
     /**
-     * @return Workbook
+     * @return Workbook|null
      */
     public function getWorkbook();
 

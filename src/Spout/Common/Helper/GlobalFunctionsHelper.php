@@ -82,7 +82,7 @@ class GlobalFunctionsHelper
      * @param int|null $length
      * @param string|null $delimiter
      * @param string|null $enclosure
-     * @return array
+     * @return array|false
      */
     public function fgetcsv($handle, $length = null, $delimiter = null, $enclosure = null)
     {
@@ -103,7 +103,7 @@ class GlobalFunctionsHelper
      * @param array $fields
      * @param string|null $delimiter
      * @param string|null $enclosure
-     * @return int
+     * @return int|false
      */
     public function fputcsv($handle, array $fields, $delimiter = null, $enclosure = null)
     {
@@ -243,10 +243,10 @@ class GlobalFunctionsHelper
      * @see basename()
      *
      * @param string $path
-     * @param string|null $suffix
+     * @param string $suffix
      * @return string
      */
-    public function basename($path, $suffix = null)
+    public function basename($path, $suffix = '')
     {
         return \basename($path, $suffix);
     }

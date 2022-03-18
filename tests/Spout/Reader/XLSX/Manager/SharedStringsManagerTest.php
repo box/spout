@@ -19,7 +19,7 @@ class SharedStringsManagerTest extends TestCase
 {
     use TestUsingResource;
 
-    /** @var SharedStringsManager */
+    /** @var SharedStringsManager|null */
     private $sharedStringsManager;
 
     /**

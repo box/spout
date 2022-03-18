@@ -69,7 +69,7 @@ class Reader extends ReaderAbstract
      */
     protected function closeReader()
     {
-        if ($this->zip) {
+        if ($this->zip !== null) {
             $this->zip->close();
         }
     }
