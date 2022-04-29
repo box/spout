@@ -5,6 +5,7 @@ namespace Box\Spout\Writer\XLSX\Internal;
 use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Writer\XLSX\Formula;
 use Box\Spout\Writer\Common\Helper\CellHelper;
 use Box\Spout\Writer\Common\Internal\WorksheetInterface;
 
@@ -184,7 +185,7 @@ EOD;
 
         $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
 
-        foreach($dataRow as $cellValue) {
+        foreach ($dataRow as $cellValue) {
             $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cellValue, $style->getId());
             $cellNumber++;
         }
@@ -227,6 +228,8 @@ EOD;
                 // NOTE: not appending to $cellXML is the right behavior!!
                 $cellXML = '';
             }
+        } else if ($cellValue instanceof Formula) {
+            $cellXML .= $cellValue->getXml();
         } else {
             throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . gettype($cellValue));
         }

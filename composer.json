@@ -1,5 +1,5 @@
 {
-    "name": "box/spout",
+    "name": "jeremyjumeau/spout",
     "description": "PHP Library to read and write spreadsheet files (CSV, XLSX and ODS), in a fast and scalable way",
     "type": "library",
     "keywords": ["php","read","write","csv","xlsx","ods","odf","open","office","excel","spreadsheet","scale","memory","stream","ooxml"],
