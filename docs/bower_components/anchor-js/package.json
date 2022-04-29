@@ -1,0 +1,31 @@
+{
+  "name": "anchor-js",
+  "version": "3.1.1",
+  "author": "bryanbraun (https://github.com/bryanbraun)",
+  "description": "A Javscript utility for adding deep anchor links to online docs.",
+  "homepage": "https://github.com/bryanbraun/anchorjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bryanbraun/anchorjs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bryanbraun/anchorjs/issues"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint anchor.js test/spec/AnchorSpec.js",
+    "jasmine": "karma start test/config.js --single-run",
+    "release": "uglifyjs anchor.js --compress --mangle --screw-ie8 --comments \"/Copyright/\" -o anchor.min.js",
+    "test": "npm run lint && npm run jasmine"
+  },
+  "devDependencies": {
+    "eslint": "~2.9.0",
+    "jasmine-core": "~2.4.1",
+    "karma": "~0.13.22",
+    "karma-cli": "~0.1.2",
+    "karma-jasmine": "~0.3.8",
+    "karma-phantomjs-launcher": "~1.0.0",
+    "phantomjs-prebuilt": "~2.1.7",
+    "uglify-js": "~2.6.2"
+  }
+}
