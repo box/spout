@@ -7,6 +7,7 @@ use Box\Spout\Common\Entity\Row;
 use Box\Spout\Common\Entity\Style\Style;
 use Box\Spout\Common\Exception\UnsupportedTypeException;
 use Box\Spout\Common\Type;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\WriterInterface;
 
 /**
@@ -101,9 +102,12 @@ class WriterEntityFactory
      */
     public static function createRowFromArray(array $cellValues = [], Style $rowStyle = null)
     {
-        $cells = \array_map(function ($cellValue) {
-            return new Cell($cellValue);
-        }, $cellValues);
+        $format = $rowStyle?->getFormat();
+
+        $cells = \array_map(function ($k, $cellValue) {
+            $cellStyle = (new StyleBuilder())->setFormat($format[$k] ?? '@')->build();
+            return new Cell($cellValue, $cellStyle);
+        }, array_keys($cellValues), $cellValues);
 
         return new Row($cells, $rowStyle);
     }
