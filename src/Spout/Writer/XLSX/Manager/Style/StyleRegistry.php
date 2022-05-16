@@ -141,7 +141,7 @@ class StyleRegistry extends \Box\Spout\Writer\Common\Manager\Style\StyleRegistry
         $styleId = $style->getId();
 
         $format = $style->getFormat();
-        if ($format) {
+        if (!is_array($format)) {
             $isFormatRegistered = isset($this->registeredFormats[$format]);
 
             // We need to track the already registered format definitions
