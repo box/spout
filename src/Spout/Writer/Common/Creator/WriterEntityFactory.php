@@ -103,10 +103,15 @@ class WriterEntityFactory
     public static function createRowFromArray(array $cellValues = [], Style $rowStyle = null)
     {
         $format = $rowStyle?->getFormat();
+        $cellStyles = [];
 
-        $cells = \array_map(function ($k, $cellValue) {
-            $cellStyle = (new StyleBuilder())->setFormat($format[$k] ?? '@')->build();
-            return new Cell($cellValue, $cellStyle);
+        if (is_array($format)) {
+            foreach ($format as $k => $f)
+                $cellStyles[$k] = (new StyleBuilder())->setFormat($f ?? '@')->build();
+        }
+
+        $cells = \array_map(function ($k, $cellValue) use ($cellStyles) {
+            return new Cell($cellValue, $cellStyles[$k] ?? null);
         }, array_keys($cellValues), $cellValues);
 
         return new Row($cells, $rowStyle);
