@@ -112,7 +112,7 @@ class WriterEntityFactory
 
         $cells = \array_map(function ($k, $cellValue) use ($cellStyles) {
             return new Cell($cellValue, $cellStyles[$k] ?? null);
-        }, array_keys($cellValues), $cellValues);
+        }, array_keys(array_values($cellValues)), $cellValues);
 
         return new Row($cells, $rowStyle);
     }
