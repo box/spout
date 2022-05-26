@@ -243,7 +243,14 @@ class WorksheetManager implements WorksheetManagerInterface
         } elseif ($cell->isEmpty()) {
             $data .= '/>';
         } else {
-            throw new InvalidArgumentException('Trying to add a value with an unsupported type: ' . \gettype($cell->getValue()));
+            $value = $cell->getValueEvenIfError();
+
+            $errorMessage = 'Trying to add a value with an unsupported type: ' . \gettype($value);
+            if (\is_object($value)) {
+                $errorMessage .= ' (' . \get_class($value) . ' given)';
+            }
+
+            throw new InvalidArgumentException($errorMessage);
         }
 
         return $data;
