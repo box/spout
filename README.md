@@ -1,10 +1,24 @@
 # Spout
 
 [![Latest Stable Version](https://poser.pugx.org/box/spout/v/stable)](https://packagist.org/packages/box/spout)
-[![Project Status](https://opensource.box.com/badges/active.svg)](https://opensource.box.com/badges)
-[![Build Status](https://travis-ci.org/box/spout.svg?branch=master)](https://travis-ci.org/box/spout)
+[![Project Status](https://opensource.box.com/badges/inactive.svg)](https://opensource.box.com/badges)
+[![example workflow](https://github.com/box/spout/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/box/spout/actions/workflows/ci.yml?query=branch%3Amaster)
 [![Coverage Status](https://coveralls.io/repos/github/box/spout/badge.svg?branch=master)](https://coveralls.io/github/box/spout?branch=master)
 [![Total Downloads](https://poser.pugx.org/box/spout/downloads)](https://packagist.org/packages/box/spout)
+
+## 🪦 Archived project 🪦 
+
+This project has been archived and is no longer maintained. No bug fix and no additional features will be added.<br>
+You won't be able to submit new issues or pull requests, and no additional features will be added
+
+You can still use Spout as is in your projects though :)
+
+> Thanks to everyone who contributed to this project, from a typo fix to the new cool feature.<br>
+> It was great to see the involvement of this community!
+
+<br>
+
+## About
 
 Spout is a PHP library to read and write spreadsheet files (CSV, XLSX and ODS), in a fast and scalable way.
 Unlike other file readers or writers, it is capable of processing very large files, while keeping the memory usage really low (less than 3MB).
@@ -37,17 +51,14 @@ If you just want to check that everything is working as expected, executing the 
 
 For information, the performance tests take about 10 minutes to run (processing 1 million rows files is not a quick thing).
 
-> Performance tests status: [![Build Status](https://travis-ci.org/box/spout.svg?branch=perf-tests)](https://travis-ci.org/box/spout)
-
-
 ## Support
 
-You can ask questions, submit new features ideas or discuss Spout in the chat room:<br>
+Spout is no longer actively supported. You can still ask questions, or discuss about it in the chat room:<br>
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/box/spout?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Copyright and License
 
-Copyright 2017 Box, Inc. All rights reserved.
+Copyright 2022 Box, Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
