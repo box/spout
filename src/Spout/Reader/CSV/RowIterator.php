@@ -8,13 +8,13 @@ use Box\Spout\Common\Helper\GlobalFunctionsHelper;
 use Box\Spout\Common\Manager\OptionsManagerInterface;
 use Box\Spout\Reader\Common\Entity\Options;
 use Box\Spout\Reader\CSV\Creator\InternalEntityFactory;
-use Box\Spout\Reader\IteratorInterface;
+use Box\Spout\Reader\RowIteratorInterface;
 
 /**
  * Class RowIterator
  * Iterate over CSV rows.
  */
-class RowIterator implements IteratorInterface
+class RowIterator implements RowIteratorInterface
 {
     /**
      * Value passed to fgetcsv. 0 means "unlimited" (slightly slower but accomodates for very long lines).
