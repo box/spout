@@ -79,7 +79,7 @@ class SheetIterator implements IteratorInterface
      * @throws \Box\Spout\Common\Exception\IOException If unable to open the XML file containing sheets' data
      * @return void
      */
-    public function rewind()
+    public function rewind() : void
     {
         $this->xmlReader->close();
 
@@ -103,7 +103,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return array Associative array [STYLE_NAME] => [IS_SHEET_VISIBLE]
      */
-    private function readSheetsVisibility()
+    private function readSheetsVisibility() : array
     {
         $sheetsVisibility = [];
 
@@ -133,7 +133,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return bool
      */
-    public function valid()
+    public function valid() : bool
     {
         return $this->hasFoundSheet;
     }
@@ -144,7 +144,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return void
      */
-    public function next()
+    public function next() : void
     {
         $this->hasFoundSheet = $this->xmlReader->readUntilNodeFound(self::XML_NODE_TABLE);
 
@@ -157,9 +157,9 @@ class SheetIterator implements IteratorInterface
      * Return the current element
      * @see http://php.net/manual/en/iterator.current.php
      *
-     * @return \Box\Spout\Reader\ODS\Sheet
+     * @return Sheet
      */
-    public function current()
+    public function current() : Sheet
     {
         $escapedSheetName = $this->xmlReader->getAttribute(self::XML_ATTRIBUTE_TABLE_NAME);
         $sheetName = $this->escaper->unescape($escapedSheetName);
@@ -187,7 +187,7 @@ class SheetIterator implements IteratorInterface
      * @param string|null $activeSheetName Name of the sheet that was defined as active or NULL if none defined
      * @return bool Whether the current sheet was defined as the active one
      */
-    private function isSheetActive($sheetName, $sheetIndex, $activeSheetName)
+    private function isSheetActive($sheetName, $sheetIndex, $activeSheetName) : bool
     {
         // The given sheet is active if its name matches the defined active sheet's name
         // or if no information about the active sheet was found, it defaults to the first sheet.
@@ -203,7 +203,7 @@ class SheetIterator implements IteratorInterface
      * @param string $sheetStyleName Name of the sheet style
      * @return bool Whether the current sheet is visible
      */
-    private function isSheetVisible($sheetStyleName)
+    private function isSheetVisible($sheetStyleName) : bool
     {
         return isset($this->sheetsVisibility[$sheetStyleName]) ?
             $this->sheetsVisibility[$sheetStyleName] :
@@ -216,7 +216,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return int
      */
-    public function key()
+    public function key() : int
     {
         return $this->currentSheetIndex + 1;
     }
@@ -226,7 +226,7 @@ class SheetIterator implements IteratorInterface
      *
      * @return void
      */
-    public function end()
+    public function end() : void
     {
         $this->xmlReader->close();
     }
