@@ -151,12 +151,15 @@ EOD;
     /**
      * Returns the contents of the "<office:automatic-styles>" section, inside "content.xml" file.
      *
+     * @param WorksheetManager $manager
      * @param Worksheet[] $worksheets
      * @return string
      */
-    public function getContentXmlAutomaticStylesSectionContent($worksheets)
+    public function getContentXmlAutomaticStylesSectionContent($manager, $worksheets)
     {
         $content = '<office:automatic-styles>';
+
+        $content .= $manager->getWidthStylesContent($worksheets[0]);
 
         foreach ($this->styleRegistry->getRegisteredStyles() as $style) {
             $content .= $this->getStyleSectionContent($style);

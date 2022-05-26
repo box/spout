@@ -9,6 +9,9 @@ use Box\Spout\Common\Exception\InvalidArgumentException;
 use Box\Spout\Common\Exception\IOException;
 use Box\Spout\Common\Helper\Escaper\ODS as ODSEscaper;
 use Box\Spout\Common\Helper\StringHelper;
+use Box\Spout\Common\Manager\OptionsManagerInterface;
+use Box\Spout\Writer\Common\Helper\AppendHelper;
+use Box\Spout\Writer\Common\Entity\Options;
 use Box\Spout\Writer\Common\Entity\Worksheet;
 use Box\Spout\Writer\Common\Manager\RegisteredStyle;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
@@ -33,20 +36,33 @@ class WorksheetManager implements WorksheetManagerInterface
     /** @var StyleMerger Helper to merge styles together */
     private $styleMerger;
 
+    /** $int file pointer head position */
+    private $headWritePosition;
+
+    /** @var int Width calculation style */
+    protected $widthCalcuationStyle;
+
+    /** @var int Fixed Width */
+    protected $fixedWidth;
+
     /**
      * WorksheetManager constructor.
      *
+     * @param OptionsManagerInterface $optionsManager
      * @param StyleManager $styleManager
      * @param StyleMerger $styleMerger
      * @param ODSEscaper $stringsEscaper
      * @param StringHelper $stringHelper
      */
     public function __construct(
+        OptionsManagerInterface $optionsManager,
         StyleManager $styleManager,
         StyleMerger $styleMerger,
         ODSEscaper $stringsEscaper,
         StringHelper $stringHelper
     ) {
+        $this->widthCalcuationStyle = $optionsManager->getOption(Options::ROWWIDTH_CALC_STYLE);
+        $this->fixedWidth = $optionsManager->getOption(Options::ROWWIDTH_FIXED);
         $this->styleManager = $styleManager;
         $this->styleMerger = $styleMerger;
         $this->stringsEscaper = $stringsEscaper;
@@ -62,8 +78,14 @@ class WorksheetManager implements WorksheetManagerInterface
      */
     public function startSheet(Worksheet $worksheet)
     {
-        $sheetFilePointer = \fopen($worksheet->getFilePath(), 'w');
+        $sheetFilePointer = \fopen($worksheet->getFilePath(), 'w+');
         $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
+
+        $worksheet->setWidthCalculation($this->widthCalcuationStyle);
+        $worksheet->setFixedSheetWidth($this->fixedWidth);
+        if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {
+            $this->headWritePosition = ftell($sheetFilePointer);
+        }
 
         $worksheet->setFilePointer($sheetFilePointer);
     }
@@ -95,7 +117,15 @@ class WorksheetManager implements WorksheetManagerInterface
         $tableStyleName = 'ta' . ($externalSheet->getIndex() + 1);
 
         $tableElement = '<table:table table:style-name="' . $tableStyleName . '" table:name="' . $escapedSheetName . '">';
-        $tableElement .= '<table:table-column table:default-cell-style-name="ce1" table:style-name="co1" table:number-columns-repeated="' . $worksheet->getMaxNumColumns() . '"/>';
+
+        if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {
+            foreach ($worksheet->getColumnWidths() as $i => $w){
+                $colNo = $i + 1;
+                $tableElement .= '<table:table-column table:default-cell-style-name="ce1" table:style-name="co'.$colNo.'"/>';
+            }
+        } else {
+            $tableElement .= '<table:table-column table:default-cell-style-name="ce1" table:style-name="co1" table:number-columns-repeated="' . $worksheet->getMaxNumColumns() . '"/>';
+        }
 
         return $tableElement;
     }
@@ -124,6 +154,10 @@ class WorksheetManager implements WorksheetManagerInterface
             $cell = $cells[$currentCellIndex];
             /** @var Cell|null $nextCell */
             $nextCell = isset($cells[$nextCellIndex]) ? $cells[$nextCellIndex] : null;
+
+            if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {
+                $worksheet->autoSetWidth($cell, $rowStyle, $i);
+            }
 
             if ($nextCell === null || $cell->getValue() !== $nextCell->getValue()) {
                 $registeredStyle = $this->applyStyleAndRegister($cell, $rowStyle);
@@ -247,6 +281,42 @@ class WorksheetManager implements WorksheetManagerInterface
         }
 
         return $data;
+    }
+
+    /**
+     * Generate the related column widths style xml to be inserted in content.xml
+     * @param Worksheet $worksheet
+     * @return string
+     */
+    public function getWidthStylesContent($worksheet)
+    {
+        if ($worksheet->getWidthCalculation() != Worksheet::W_NONE) {            
+            //create the col styles
+            $style = '';
+            $widths = $worksheet->getColumnWidths();
+            //todo: this may not be adequate for multiple worksheets
+
+            //re-calculate width for fixed sets
+            if ($worksheet->getWidthCalculation() == Worksheet::W_FIXED) {
+                $total = array_sum($widths);
+                foreach($widths as $i => $w) {
+                    $wr = ($w / $total) * $worksheet->getFixedSheetWidth();
+                    $widths[$i] = $wr;
+                }
+            }
+            
+            foreach ($widths as $i => $width){
+                //this is a rough equivalent based on pixel density,
+                $win = round($width / 9.6, 2);//convert to inches
+                $colNo = $i + 1;
+                $style .= '<style:style style:name="co'.$colNo.
+                '" style:family="table-column"><style:table-column-properties fo:break-before="auto" style:column-width="'.
+                $win.
+                'in"/></style:style>';
+            }
+            return $style;
+        }
+        return "";
     }
 
     /**

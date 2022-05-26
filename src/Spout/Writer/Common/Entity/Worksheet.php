@@ -22,6 +22,22 @@ class Worksheet
 
     /** @var int Index of the last written row */
     private $lastWrittenRowIndex;
+    
+    /** @var array Array of the column widths */
+    protected $columnWidths;
+    
+    /** @var int Width calculation style */
+    protected $widthCalcuationStyle;
+    
+    /** @var int Fixed sheet width for fixed width calculation style */
+    protected $fixedSheetWidth;
+
+    public const W_FULL = 1;
+    public const W_FIXED = 2;
+    public const W_FULL_ALT = 3;
+    public const W_NONE = 0;
+    public const DEFAULT_COL_WIDTH = 30;
+    public const DEFAULT_FIXED_WIDTH = 320;
 
     /**
      * Worksheet constructor.
@@ -36,6 +52,8 @@ class Worksheet
         $this->externalSheet = $externalSheet;
         $this->maxNumColumns = 0;
         $this->lastWrittenRowIndex = 0;
+        $this->columnWidths = [];
+        $this->widthCalcuationStyle = 0;
     }
 
     /**
@@ -79,11 +97,107 @@ class Worksheet
     }
 
     /**
+     * @return array
+     */
+    public function getColumnWidths()
+    {
+        return $this->columnWidths;
+    }
+
+    /**
+     * Gets the calculated max column width for the specified index
+     * @param int $zeroBasedIndex
+     * @return int
+     */
+    public function getMaxColumnWidth($zeroBasedIndex)
+    {
+        if (isset($this->columnWidths[$zeroBasedIndex])) {
+            return $this->columnWidths[$zeroBasedIndex];
+        }
+
+        $this->columnWidths[$zeroBasedIndex] = self::DEFAULT_COL_WIDTH;
+        return $this->columnWidths[$zeroBasedIndex];
+    }
+
+    /**
+     * Sets the calculated max column width for the specified index
+     * @param int $zeroBasedIndex
+     * @param int $value Value to set to
+     * @return void
+     */
+    public function setMaxColumnWidth($zeroBasedIndex, $value)
+    {
+        $curSize = $this->columnWidths[$zeroBasedIndex] ?? 0;
+        if ($curSize < $value) {
+            $this->columnWidths[$zeroBasedIndex] = $value;
+        }
+    }
+
+    /**
+     * Automatically calculates and sets the max column width for the specified cell
+     * @param Cell $cell The cell
+     * @param Style $style Row/Cell style
+     * @param int $zeroBasedIndex of cell
+     * @return void
+     */
+    public function autoSetWidth($cell, $style, $zeroBasedIndex)
+    {
+        $size = 1 + mb_strlen($cell->getValue());//ensure we have at least 1 space
+        $size *= $style->isFontBold() ? 1.2 : 1.0;
+        $this->setMaxColumnWidth($zeroBasedIndex, $size);
+    }
+
+    /**
+     * Gets the fixed sheet width or returns the default if not available
+     * @return int
+     */
+    public function getFixedSheetWidth()
+    {
+        if (!$this->fixedSheetWidth) {
+            return Worksheet::DEFAULT_FIXED_WIDTH;
+        }
+        return $this->fixedSheetWidth;
+    }
+
+    /**
+     * Sets the fixed sheet width
+     * @param int $width
+     * @return void
+     */
+    public function setFixedSheetWidth($width)
+    {
+        $this->fixedSheetWidth = $width;
+    }
+
+    /**
      * @param int $maxNumColumns
      */
     public function setMaxNumColumns($maxNumColumns)
     {
         $this->maxNumColumns = $maxNumColumns;
+    }
+
+    /**
+     * Set the with calculation style for this sheet.
+     * 1=FullExpand,2=FixedWidth,0=None
+     *
+     * @return Worksheet Enable method chaining for easy set width
+     */
+    public function setWidthCalculation($widthStyle)
+    {
+        $this->widthCalcuationStyle = $widthStyle;
+        return $this;
+    }
+
+    /**
+     * Get the with calculation style for this sheet.
+     * 1=FullExpand,2=FixedWidth,0=None
+     *
+     * @return void
+     */
+    public function getWidthCalculation()
+    {
+        return $this->widthCalcuationStyle;
     }
 
     /**
