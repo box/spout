@@ -116,19 +116,20 @@ $reader->setShouldPreserveEmptyRows(true);
 
 For fonts and alignments, {{ site.spout_html }} does not support all the possible formatting options yet. But you can find the most important ones:
 
-| Category             | Property       | API
-|:---------------------|:---------------|:--------------------------------------
-| Font                 | Bold           | `StyleBuilder::setFontBold()`
-|                      | Italic         | `StyleBuilder::setFontItalic()`
-|                      | Underline      | `StyleBuilder::setFontUnderline()`
-|                      | Strikethrough  | `StyleBuilder::setFontStrikethrough()`
-|                      | Font name      | `StyleBuilder::setFontName('Arial')`
-|                      | Font size      | `StyleBuilder::setFontSize(14)`
-|                      | Font color     | `StyleBuilder::setFontColor(Color::BLUE)`<br>`StyleBuilder::setFontColor(Color::rgb(0, 128, 255))`
-| Alignment            | Cell alignment | `StyleBuilder::setCellAlignment(CellAlignment::CENTER)`
-|                      | Wrap text      | `StyleBuilder::setShouldWrapText(true)`
-| Format _(XLSX only)_ | Number format  | `StyleBuilder::setFormat('0.000')`
-|                      | Date format    | `StyleBuilder::setFormat('m/d/yy h:mm')`
+| Category             | Property                | API
+|:---------------------|:------------------------|:--------------------------------------
+| Font                 | Bold                    | `StyleBuilder::setFontBold()`
+|                      | Italic                  | `StyleBuilder::setFontItalic()`
+|                      | Underline               | `StyleBuilder::setFontUnderline()`
+|                      | Strikethrough           | `StyleBuilder::setFontStrikethrough()`
+|                      | Font name               | `StyleBuilder::setFontName('Arial')`
+|                      | Font size               | `StyleBuilder::setFontSize(14)`
+|                      | Font color              | `StyleBuilder::setFontColor(Color::BLUE)`<br>`StyleBuilder::setFontColor(Color::rgb(0, 128, 255))`
+| Alignment            | Cell alignment          | `StyleBuilder::setCellAlignment(CellAlignment::CENTER)`
+|                      | Cell vertical alignment | `StyleBuilder::setCellVerticalAlignment(CellVerticalAlignment::CENTER)`
+|                      | Wrap text               | `StyleBuilder::setShouldWrapText(true)`
+| Format _(XLSX only)_ | Number format           | `StyleBuilder::setFormat('0.000')`
+|                      | Date format             | `StyleBuilder::setFormat('m/d/yy h:mm')`
 
 ### Styling rows
 
@@ -150,6 +151,7 @@ $style = (new StyleBuilder())
            ->setFontColor(Color::BLUE)
            ->setShouldWrapText()
            ->setCellAlignment(CellAlignment::RIGHT)
+           ->setCellVerticalAlignment(CellVerticalAlignment::BOTTOM)
            ->setBackgroundColor(Color::YELLOW)
            ->build();
 

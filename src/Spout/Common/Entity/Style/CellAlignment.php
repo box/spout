@@ -3,7 +3,7 @@
 namespace Box\Spout\Common\Entity\Style;
 
 /**
- * Class Alignment
+ * Class CellAlignment
  * This class provides constants to work with text alignment.
  */
 abstract class CellAlignment
