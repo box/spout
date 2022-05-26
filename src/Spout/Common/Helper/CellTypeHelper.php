@@ -60,9 +60,19 @@ class CellTypeHelper
      */
     public static function isDateTimeOrDateInterval($value)
     {
-        return (
-            $value instanceof \DateTimeInterface ||
+        return ($value instanceof \DateTimeInterface ||
             $value instanceof \DateInterval
         );
+    }
+
+    /**
+     * Returns whether the given value looks like a formula
+     *
+     * @param $value
+     * @return bool whether the given value looks like a formula
+     */
+    public static function isFormula($value)
+    {
+        return (is_array($value) || strpos($value, '=') === 0);
     }
 }
