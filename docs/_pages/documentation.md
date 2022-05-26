@@ -50,6 +50,23 @@ $writer->setShouldCreateNewSheetsAutomatically(true); // default value
 $writer->setShouldCreateNewSheetsAutomatically(false); // will stop writing new data when limit is reached
 ```
 
+### Sheet view (XLSX writer)
+
+Sheet view settings must be configured before any rows are added to the sheet.
+
+```php
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Writer\XLSX\Entity\SheetView;
+
+$sheetView = (new SheetView())
+    ->setFreezeRow(2) // First row will be fixed
+    ->setFreezeColumn('D') // Columns A to C will be fixed
+    ->setZoomScale(150); // And other options
+
+$writer = WriterEntityFactory::createXLSXWriter();
+$writer->getCurrentSheet()->setSheetView($sheetView);
+```
+
 ### Using a custom temporary folder
 
 Processing XLSX and ODS files requires temporary files to be created. By default, {{ site.spout_html }} will use the system default temporary folder (as returned by `sys_get_temp_dir()`). It is possible to override this by explicitly setting it on the reader or writer:

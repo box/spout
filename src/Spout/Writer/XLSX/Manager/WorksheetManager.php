@@ -17,6 +17,7 @@ use Box\Spout\Writer\Common\Manager\RegisteredStyle;
 use Box\Spout\Writer\Common\Manager\RowManager;
 use Box\Spout\Writer\Common\Manager\Style\StyleMerger;
 use Box\Spout\Writer\Common\Manager\WorksheetManagerInterface;
+use Box\Spout\Writer\XLSX\Entity\SheetView;
 use Box\Spout\Writer\XLSX\Manager\Style\StyleManager;
 
 /**
@@ -101,13 +102,34 @@ EOD;
      */
     public function startSheet(Worksheet $worksheet)
     {
+        // Only start once
+        if ($worksheet->hasStarted()) {
+            return;
+        }
+
         $sheetFilePointer = \fopen($worksheet->getFilePath(), 'w');
         $this->throwIfSheetFilePointerIsNotAvailable($sheetFilePointer);
 
         $worksheet->setFilePointer($sheetFilePointer);
 
         \fwrite($sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+        $this->addSheetViews($sheetFilePointer, $worksheet);
         \fwrite($sheetFilePointer, '<sheetData>');
+
+        $worksheet->setHasStarted();
+    }
+
+    /**
+     * @param resource $sheetFilePointer
+     * @param resourceWorksheet $worksheet
+     * @return void
+     */
+    private function addSheetViews($sheetFilePointer, Worksheet $worksheet): void
+    {
+        $sheet = $worksheet->getExternalSheet();
+        if ($sheet->hasSheetView()) {
+            \fwrite($sheetFilePointer, '<sheetViews>' . $sheet->getSheetView()->getXml() . '</sheetViews>');
+        }
     }
 
     /**
@@ -129,6 +151,9 @@ EOD;
      */
     public function addRow(Worksheet $worksheet, Row $row)
     {
+        // Start the sheet when the first row is added
+        $this->startSheet($worksheet);
+
         if (!$this->rowManager->isEmpty($row)) {
             $this->addNonEmptyRow($worksheet, $row);
         }

@@ -23,6 +23,9 @@ class Worksheet
     /** @var int Index of the last written row */
     private $lastWrittenRowIndex;
 
+    /** @var bool */
+    private $hasStarted = false;
+
     /**
      * Worksheet constructor.
      *
@@ -109,5 +112,21 @@ class Worksheet
     {
         // sheet index is zero-based, while ID is 1-based
         return $this->externalSheet->getIndex() + 1;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasStarted(): bool
+    {
+        return $this->hasStarted;
+    }
+
+    /**
+     * @param bool $hasStarted
+     */
+    public function setHasStarted(bool $hasStarted = true): void
+    {
+        $this->hasStarted = $hasStarted;
     }
 }
